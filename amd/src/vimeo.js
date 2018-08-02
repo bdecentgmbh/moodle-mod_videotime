@@ -12,7 +12,9 @@ define(['jquery', 'mod_vimeo/player'], function($, Vimeo) {
     return {
         init: function() {
             console.log("INIT");
-            var player = new Vimeo('vimeo-embed');
+            var player = new Vimeo('vimeo-embed', {
+                responsive: 1
+            });
 
             player.on('ended', function() {
                 console.log('Finished.');

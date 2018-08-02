@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_vimeo';
-$plugin->release = '0.1.0';
-$plugin->version = 2018072501;
+$plugin->release = '0.2.0';
+$plugin->version = 2018080201;
 $plugin->requires = 2018051700;
 $plugin->maturity = MATURITY_ALPHA;

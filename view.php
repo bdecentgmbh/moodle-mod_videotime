@@ -65,6 +65,7 @@ $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, '
 $moduleinstance->video_description = file_rewrite_pluginfile_urls($moduleinstance->video_description, 'pluginfile.php', $modulecontext->id, 'mod_vimeo', 'video_description', 0);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'vimeo'));
 } else {
