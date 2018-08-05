@@ -17,7 +17,7 @@
 /**
  * Library of interface functions and constants.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $feature Constant representing the feature.
  * @return true | null True if the feature is supported, null otherwise.
  */
-function vimeo_supports($feature) {
+function videotime_supports($feature) {
     switch ($feature) {
         case FEATURE_MOD_INTRO:      return true;
         case FEATURE_BACKUP_MOODLE2: return true;
@@ -40,64 +40,64 @@ function vimeo_supports($feature) {
 }
 
 /**
- * Saves a new instance of the mod_vimeo into the database.
+ * Saves a new instance of the mod_videotime into the database.
  *
  * Given an object containing all the necessary data, (defined by the form
  * in mod_form.php) this function will create a new instance and return the id
  * number of the instance.
  *
  * @param object $moduleinstance An object from the form.
- * @param mod_vimeo_mod_form $mform The form.
+ * @param mod_videotime_mod_form $mform The form.
  * @return int The id of the newly inserted record.
  */
-function vimeo_add_instance($moduleinstance, $mform = null) {
+function videotime_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
     $moduleinstance->timecreated = time();
 
-    $moduleinstance = vimeo_process_video_description($moduleinstance);
+    $moduleinstance = videotime_process_video_description($moduleinstance);
 
-    $id = $DB->insert_record('vimeo', $moduleinstance);
+    $id = $DB->insert_record('videotime', $moduleinstance);
 
     return $id;
 }
 
 /**
- * Updates an instance of the mod_vimeo in the database.
+ * Updates an instance of the mod_videotime in the database.
  *
  * Given an object containing all the necessary data (defined in mod_form.php),
  * this function will update an existing instance with new data.
  *
  * @param object $moduleinstance An object from the form in mod_form.php.
- * @param mod_vimeo_mod_form $mform The form.
+ * @param mod_videotime_mod_form $mform The form.
  * @return bool True if successful, false otherwise.
  */
-function vimeo_update_instance($moduleinstance, $mform = null) {
+function videotime_update_instance($moduleinstance, $mform = null) {
     global $DB;
 
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
 
-    $moduleinstance = vimeo_process_video_description($moduleinstance);
+    $moduleinstance = videotime_process_video_description($moduleinstance);
 
-    return $DB->update_record('vimeo', $moduleinstance);
+    return $DB->update_record('videotime', $moduleinstance);
 }
 
 /**
- * Removes an instance of the mod_vimeo from the database.
+ * Removes an instance of the mod_videotime from the database.
  *
  * @param int $id Id of the module instance.
  * @return bool True if successful, false on failure.
  */
-function vimeo_delete_instance($id) {
+function videotime_delete_instance($id) {
     global $DB;
 
-    $exists = $DB->get_record('vimeo', array('id' => $id));
+    $exists = $DB->get_record('videotime', array('id' => $id));
     if (!$exists) {
         return false;
     }
 
-    $DB->delete_records('vimeo', array('id' => $id));
+    $DB->delete_records('videotime', array('id' => $id));
 
     return true;
 }
@@ -106,11 +106,11 @@ function vimeo_delete_instance($id) {
  * @param $moduleinstance
  * @return mixed
  */
-function vimeo_process_video_description($moduleinstance) {
+function videotime_process_video_description($moduleinstance) {
     $modcontext = context_module::instance($moduleinstance->coursemodule);
     $video_description = $moduleinstance->video_description;
     $moduleinstance->video_description = file_save_draft_area_files($video_description['itemid'], $modcontext->id,
-        'mod_vimeo', 'video_description', 0,
+        'mod_videotime', 'video_description', 0,
         array('subdirs'=>true), $video_description['text']);
     $moduleinstance->video_description_format = $video_description['format'];
     return $moduleinstance;
@@ -128,7 +128,7 @@ function vimeo_process_video_description($moduleinstance) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function vimeo_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -140,7 +140,7 @@ function vimeo_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 
         $relativepath = implode('/', $args);
 
-        $fullpath = "/$context->id/mod_vimeo/$filearea/$relativepath";
+        $fullpath = "/$context->id/mod_videotime/$filearea/$relativepath";
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {

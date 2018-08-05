@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_vimeo course module viewed event.
+ * The mod_videotime course module viewed event.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_vimeo\event;
+namespace mod_videotime\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_vimeo course module viewed event class.
+ * The mod_videotime course module viewed event class.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,12 +41,12 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * @return void
      */
     protected function init() {
-        $this->data['objecttable'] = 'vimeo';
+        $this->data['objecttable'] = 'videotime';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'vimeo', 'restore' => 'vimeo');
+        return array('db' => 'videotime', 'restore' => 'videotime');
     }
 }

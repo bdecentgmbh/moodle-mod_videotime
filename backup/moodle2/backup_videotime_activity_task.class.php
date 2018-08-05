@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_label_activity_task class
+ * Defines backup_videotime_activity_task class
  *
- * @package     mod_label
+ * @package     mod_videotime
  * @category    backup
  * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,12 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/vimeo/backup/moodle2/backup_vimeo_stepslib.php');
+require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/backup_videotime_stepslib.php');
 
 /**
  * Provides the steps to perform one complete backup of the Label instance
  */
-class backup_vimeo_activity_task extends backup_activity_task {
+class backup_videotime_activity_task extends backup_activity_task {
 
     /**
      * No specific settings for this activity
@@ -43,7 +43,7 @@ class backup_vimeo_activity_task extends backup_activity_task {
      * Defines a backup step to store the instance data in the label.xml file
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_vimeo_activity_structure_step('vimeo_structure', 'vimeo.xml'));
+        $this->add_step(new backup_videotime_activity_structure_step('videotime_structure', 'videotime.xml'));
     }
 
     /**

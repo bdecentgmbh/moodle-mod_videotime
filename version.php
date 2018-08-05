@@ -17,14 +17,14 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_vimeo';
+$plugin->component = 'mod_videotime';
 $plugin->release = '0.2.0';
 $plugin->version = 2018080201;
 $plugin->requires = 2018051700;

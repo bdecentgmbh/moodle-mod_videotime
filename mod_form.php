@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The main mod_vimeo configuration form.
+ * The main mod_videotime configuration form.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,11 +29,11 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 /**
  * Module instance settings form.
  *
- * @package    mod_vimeo
+ * @package    mod_videotime
  * @copyright  2018 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_vimeo_mod_form extends moodleform_mod {
+class mod_videotime_mod_form extends moodleform_mod {
 
     /**
      * Defines forms elements
@@ -47,7 +47,7 @@ class mod_vimeo_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('activity_name', 'mod_vimeo'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('activity_name', 'mod_videotime'), array('size' => '64'));
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -57,12 +57,12 @@ class mod_vimeo_mod_form extends moodleform_mod {
 
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'activity_name', 'mod_vimeo');
+        $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
-        $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'vimeo'), ['size' => 100]);
+        $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
         $mform->setType('vimeo_url', PARAM_URL);
         $mform->addRule('vimeo_url', get_string('required'), 'required');
-        $mform->addHelpButton('vimeo_url', 'vimeo_url', 'vimeo');
+        $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');
 
         // Adding the standard "intro" and "introformat" fields.
         if ($CFG->branch >= 29) {
@@ -71,8 +71,8 @@ class mod_vimeo_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
-        // Vimeo video description
-        $mform->addElement('editor', 'video_description', get_string('video_description', 'vimeo'), array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+        // Video Time video description
+        $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'), array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
             'noclean' => true, 'context' => $this->context, 'subdirs' => true));
         $mform->setType('video_description', PARAM_RAW); // no XSS prevention here, users must be trusted
 
@@ -87,7 +87,7 @@ class mod_vimeo_mod_form extends moodleform_mod {
     {
         $errors = [];
         if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
-            $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'vimeo');
+            $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
         }
 
         return $errors;
@@ -101,7 +101,7 @@ class mod_vimeo_mod_form extends moodleform_mod {
             $video_description_format = $default_values['video_description_format'];
             $default_values['video_description'] = [];
             $default_values['video_description']['format'] = $video_description_format;
-            $default_values['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_vimeo', 'video_description', 0, [], $video_description);
+            $default_values['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_videotime', 'video_description', 0, [], $video_description);
             $default_values['video_description']['itemid'] = $draftitemid;
         }
     }

@@ -28,14 +28,14 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Define the complete url structure for backup, with file and id annotations
  */
-class backup_vimeo_activity_structure_step extends backup_activity_structure_step {
+class backup_videotime_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
 
         //the URL module stores no user info
 
         // Define each element separated
-        $module = new backup_nested_element('vimeo', ['id'], [
+        $module = new backup_nested_element('videotime', ['id'], [
             'course',
             'name',
             'intro',
@@ -50,14 +50,14 @@ class backup_vimeo_activity_structure_step extends backup_activity_structure_ste
         //nothing here for URLs
 
         // Define sources
-        $module->set_source_table('vimeo', array('id' => backup::VAR_ACTIVITYID));
+        $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
 
         // Define id annotations
         //module has no id annotations
 
         // Define file annotations
-        $module->annotate_files('mod_vimeo', 'intro', null); // This file area hasn't itemid
-        $module->annotate_files('mod_vimeo', 'video_description', null); // This file area hasn't itemid
+        $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid
+        $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid
 
         // Return the root element (url), wrapped into standard activity structure
         return $this->prepare_activity_structure($module);

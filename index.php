@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Display information about all the mod_vimeo modules in the requested course.
+ * Display information about all the mod_videotime modules in the requested course.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,26 +33,26 @@ require_course_login($course);
 
 $coursecontext = context_course::instance($course->id);
 
-$event = \mod_vimeo\event\course_module_instance_list_viewed::create(array(
+$event = \mod_videotime\event\course_module_instance_list_viewed::create(array(
     'context' => $modulecontext
 ));
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$PAGE->set_url('/mod/vimeo/index.php', array('id' => $id));
+$PAGE->set_url('/mod/videotime/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
 
-$modulenameplural = get_string('modulenameplural', 'mod_vimeo');
+$modulenameplural = get_string('modulenameplural', 'mod_videotime');
 echo $OUTPUT->heading($modulenameplural);
 
-$vimeos = get_all_instances_in_course('vimeo', $course);
+$videotimes = get_all_instances_in_course('videotime', $course);
 
-if (empty($vimeos)) {
-    notice(get_string('nonewmodules', 'mod_vimeo'), new moodle_url('/course/view.php', array('id' => $course->id)));
+if (empty($videotimes)) {
+    notice(get_string('nonewmodules', 'mod_videotime'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $table = new html_table();
@@ -69,20 +69,20 @@ if ($course->format == 'weeks') {
     $table->align = array('left', 'left', 'left');
 }
 
-foreach ($vimeos as $vimeo) {
-    if (!$vimeo->visible) {
+foreach ($videotimes as $videotime) {
+    if (!$videotime->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/vimeo/view.php', array('id' => $vimeo->coursemodule)),
-            format_string($vimeo->name, true),
+            new moodle_url('/mod/videotime/view.php', array('id' => $videotime->coursemodule)),
+            format_string($videotime->name, true),
             array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/vimeo/view.php', array('id' => $vimeo->coursemodule)),
-            format_string($vimeo->name, true));
+            new moodle_url('/mod/videotime/view.php', array('id' => $videotime->coursemodule)),
+            format_string($videotime->name, true));
     }
 
     if ($course->format == 'weeks' or $course->format == 'topics') {
-        $table->data[] = array($vimeo->section, $link);
+        $table->data[] = array($videotime->section, $link);
     } else {
         $table->data[] = array($link);
     }

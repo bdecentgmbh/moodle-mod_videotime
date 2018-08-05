@@ -17,7 +17,7 @@
 /**
  * Plugin strings are defined here.
  *
- * @package     mod_vimeo
+ * @package     mod_videotime
  * @category    string
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,15 +26,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['activity_name'] = 'Activity name';
-$string['activity_name_help'] = 'Name displayed in course for this Vimeo activity module.';
-$string['pluginname'] = 'Vimeo';
-$string['modulename'] = 'Vimeo';
-$string['modulenameplural'] = 'Vimeos';
-$string['pluginadministration'] = 'Vimeo administration';
+$string['activity_name_help'] = 'Name displayed in course for this Video Time activity module.';
+$string['pluginname'] = 'Video Time';
+$string['modulename'] = 'Video Time';
+$string['modulenameplural'] = 'Video Time instances';
+$string['pluginadministration'] = 'Video Time administration';
 $string['video_description'] = 'Video description';
 $string['video_description_help'] = 'Description displayed under video embed.';
-$string['vimeo:addinstance'] = 'Add a new Vimeo module';
-$string['vimeo:view'] = 'View Vimeo video';
+$string['videotime:addinstance'] = 'Add a new Video Time module';
+$string['videotime:view'] = 'View Video Time video';
 $string['vimeo_url'] = 'Vimeo URL';
 $string['vimeo_url_help'] = 'Full URL of Vimeo video.';
 $string['vimeo_url_invalid'] = 'Vimeo URL is invalid. Copy directly from web browser.';

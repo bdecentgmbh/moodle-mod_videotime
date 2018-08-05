@@ -29,18 +29,18 @@
 /**
  * Structure step to restore one label activity
  */
-class restore_vimeo_activity_structure_step extends restore_activity_structure_step {
+class restore_videotime_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
 
         $paths = array();
-        $paths[] = new restore_path_element('vimeo', '/activity/vimeo');
+        $paths[] = new restore_path_element('videotime', '/activity/videotime');
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
     }
 
-    protected function process_vimeo($data) {
+    protected function process_videotime($data) {
         global $DB;
 
         $data = (object)$data;
@@ -51,15 +51,15 @@ class restore_vimeo_activity_structure_step extends restore_activity_structure_s
         // See MDL-9367.
 
         // insert the label record
-        $newitemid = $DB->insert_record('vimeo', $data);
+        $newitemid = $DB->insert_record('videotime', $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
     protected function after_execute() {
         // Add label related files, no need to match by itemname (just internally handled context)
-        $this->add_related_files('mod_vimeo', 'intro', null);
-        $this->add_related_files('mod_vimeo', 'video_description', null);
+        $this->add_related_files('mod_videotime', 'intro', null);
+        $this->add_related_files('mod_videotime', 'video_description', null);
     }
 
 }
