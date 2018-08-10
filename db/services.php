@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * External functions and service definitions.
  *
  * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'mod_videotime';
-$plugin->release = '0.2.0';
-$plugin->version = 2018080204;
-$plugin->requires = 2018051700;
-$plugin->maturity = MATURITY_ALPHA;
+$functions = [
+    'mod_videotime_record_watch_time' => [
+        'classpath'     => '',
+        'classname'     => 'mod_videotime\external',
+        'methodname'    => 'record_watch_time',
+        'description'   => 'Record watch time to user video session.',
+        'type'          => 'write',
+        'ajax'          => true
+    ],
+];
