@@ -150,3 +150,12 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         send_stored_file($file, null, 0, $forcedownload, $options);
     }
 }
+
+/**
+ * Check if Video Time Pro is installed.
+ *
+ * @return bool
+ */
+function videotime_has_pro() {
+    return array_key_exists('pro', core_component::get_plugin_list('videotimeplugin'));
+}

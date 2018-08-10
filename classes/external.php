@@ -25,6 +25,7 @@ namespace mod_videotime;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 class external extends \external_api
 {
@@ -39,6 +40,11 @@ class external extends \external_api
 
     public static function record_watch_time($user_id, $module_id, $time)
     {
+        // Check if pro is installed. This is a pro feature.
+        if (!videotime_has_pro()) {
+            return ['success' => true];
+        }
+
         $params = self::validate_parameters(self::record_watch_time_parameters(), [
             'user_id' => $user_id,
             'module_id' => $module_id,
