@@ -61,7 +61,12 @@ $PAGE->set_url('/mod/videotime/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
-$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$cm, $USER, 5]);
+
+// Watch time tracking is only available in pro.
+if (videotime_has_pro()) {
+    $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
+    $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$session->jsonSerialize(), 5]);
+}
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id, 'mod_videotime', 'intro', null);
 $moduleinstance->video_description = file_rewrite_pluginfile_urls($moduleinstance->video_description, 'pluginfile.php', $modulecontext->id, 'mod_videotime', 'video_description', 0);

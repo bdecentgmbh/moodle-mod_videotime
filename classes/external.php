@@ -32,13 +32,12 @@ class external extends \external_api
     public static function record_watch_time_parameters()
     {
         return new \external_function_parameters([
-            'user_id' => new \external_value(PARAM_INT, 'User watching video', VALUE_REQUIRED),
-            'module_id' => new \external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED),
+            'session_id' => new \external_value(PARAM_INT, 'Session ID', VALUE_REQUIRED),
             'time' => new \external_value(PARAM_INT, 'Time in seconds watched on video', VALUE_REQUIRED)
         ]);
     }
 
-    public static function record_watch_time($user_id, $module_id, $time)
+    public static function record_watch_time($session_id, $time)
     {
         // Check if pro is installed. This is a pro feature.
         if (!videotime_has_pro()) {
@@ -46,13 +45,19 @@ class external extends \external_api
         }
 
         $params = self::validate_parameters(self::record_watch_time_parameters(), [
-            'user_id' => $user_id,
-            'module_id' => $module_id,
+            'session_id' => $session_id,
             'time' => $time
         ]);
-        $user_id = $params['user_id'];
-        $module_id = $params['module_id'];
+        $session_id = $params['session_id'];
         $time = $params['time'];
+
+        // Session should exist and be created when user visits view.php.
+        if (!$session = \videotimeplugin_pro\session::get_one_by_id($session_id)) {
+            throw new \videotimeplugin_pro\exception\session_not_found();
+        }
+
+        $session->set_time($time);
+        $session->persist();
 
         return ['success' => true];
     }

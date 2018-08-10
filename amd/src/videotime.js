@@ -9,8 +9,8 @@
  */
 define(['jquery', 'mod_videotime/player', 'core/ajax'], function($, Vimeo, Ajax) {
     return {
-        init: function(cm, user, interval) {
-            console.log("INIT");
+        init: function(session, interval) {
+            console.log("INIT", session);
             var player = new Vimeo('vimeo-embed', {
                 responsive: 1
             });
@@ -49,14 +49,17 @@ define(['jquery', 'mod_videotime/player', 'core/ajax'], function($, Vimeo, Ajax)
             });
 
             setInterval(function() {
-                time += interval;
                 if (playing) {
-                    Ajax.call([{
-                        methodname: 'mod_videotime_record_watch_time',
-                        args: {user_id: user.id, module_id: cm.id, time: time}
-                    }]);
+                    time++;
+
+                    if (time % interval === 0) {
+                        Ajax.call([{
+                            methodname: 'mod_videotime_record_watch_time',
+                            args: {session_id: session.id, time: time}
+                        }]);
+                    }
                 }
-            }, interval * 1000);
+            }, 1000);
         }
     };
 });
