@@ -31,6 +31,26 @@ $string['completion_on_view'] = 'Completion on view time';
 $string['completion_on_finish'] = 'Completion on video finish';
 $string['modulename'] = 'Video Time';
 $string['modulenameplural'] = 'Video Time instances';
+$string['modulename_help'] = 'The Video Time activity enables the teacher 
+<ul>
+    <li>to easily embed videos from Vimeo, just by adding the url</li>
+    <li>to add content above and below of the video player.</li>
+</ul>
+
+Video Time Pro has advanced features to
+<ul>
+    <li>track the user’s viewing time using activity completion</li>
+    <li>get insights about each user’s viewing time and session</li>
+    <li>set default settings for the plugin</li>
+    <li>and a custom preview picture for the video.</li>
+</ul>
+
+Get Video Time Pro now on <a href="https://bdecent.de/products/videotimepro">https://bdecent.de/products/videotimepro</a>. 
+
+We are constantly improving the plugin, so stay tuned for upcoming versions. You can see what we’re working on and add feature requests in our public roadmap on <a href="https://bdecent.de/products/videotimepro/roadmap">https://bdecent.de/products/videotimepro/roadmap</a>. 
+
+Please let us know if you have any feedback for us.
+';
 $string['pluginname'] = 'Video Time';
 $string['pluginadministration'] = 'Video Time administration';
 $string['seconds'] = 'Seconds';
