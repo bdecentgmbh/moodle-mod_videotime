@@ -83,11 +83,55 @@ class mod_videotime_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Add custom completion rules.
+     *
+     * @return array Array of string IDs of added items, empty array if none
+     * @throws coding_exception
+     */
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+
+        if (videotime_has_pro()) {
+            $group = [];
+            $group[] =& $mform->createElement('checkbox', 'completion_on_view_time', '', get_string('completion_on_view', 'videotime') . ':&nbsp;');
+            $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
+            $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
+            $mform->setType('completion_on_view_time_second', PARAM_INT);
+            $mform->addGroup($group, 'completion_on_view', '', array(' '), false);
+            $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
+
+            $mform->addElement('checkbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));
+            $mform->setType('completion_on_finish', PARAM_BOOL);
+
+            return ['completion_on_view', 'completion_on_finish'];
+        }
+
+        return [];
+    }
+
+    function completion_rule_enabled($data) {
+        return (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second']!=0) ||
+            !empty($data['completion_on_finish']);
+    }
+
+    /**
+     * @param $data
+     * @param $files
+     * @return array
+     * @throws coding_exception
+     */
     public function validation($data, $files)
     {
         $errors = [];
         if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
+        }
+
+        if (isset($data['completion_on_view_time']) && $data['completion_on_view_time']) {
+            if (isset($data['completion_on_view_time_second']) && !$data['completion_on_view_time_second']) {
+                $errors['completion_on_view_time_second'] = get_string('required');
+            }
         }
 
         return $errors;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints an instance of mod_videotime.
+ * Prints Video Time report.
  *
  * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
@@ -33,13 +33,15 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $v  = optional_param('v', 0, PARAM_INT);
 
+$download = optional_param('download', '', PARAM_ALPHA);
+
 if ($id) {
     $cm             = get_coursemodule_from_id('videotime', $id, 0, false, MUST_EXIST);
-    $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-    $moduleinstance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
+    $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if ($v) {
-    $moduleinstance = $DB->get_record('videotime', ['id' => $n], '*', MUST_EXIST);
-    $course         = $DB->get_record('course', ['id' => $moduleinstance->course], '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', array('id' => $n), '*', MUST_EXIST);
+    $course         = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
     print_error('invalidcoursemodule');
@@ -47,37 +49,32 @@ if ($id) {
 
 require_login($course, true, $cm);
 
+if (!videotime_has_pro()) {
+    throw new \Exception('Video Time Pro not installed.');
+}
+
 $modulecontext = context_module::instance($cm->id);
 
-require_capability('mod/videotime:view', $modulecontext);
-
-// Completion and trigger events.
-videotime_view($moduleinstance, $course, $cm, $modulecontext);
-
-$PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
+$PAGE->set_url('/mod/videotime/report.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
-// Watch time tracking is only available in pro.
-if (videotime_has_pro()) {
-    $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
-    $session_data = $session->jsonSerialize();
-} else {
-    $session_data = false;
-}
-$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$session_data, 5, videotime_has_pro()]);
+$table = new \videotimeplugin_pro\sessions_report_table($cm->id);
+$table->define_baseurl($PAGE->url);
+$table->is_downloadable(true);
 
-$moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id, 'mod_videotime', 'intro', null);
-$moduleinstance->video_description = file_rewrite_pluginfile_urls($moduleinstance->video_description, 'pluginfile.php', $modulecontext->id, 'mod_videotime', 'video_description', 0);
+if ($download) {
+    raise_memory_limit(MEMORY_EXTRA);
+    $table->is_downloading($download, 'video-time-report');
+}
+
+ob_start();
+$table->out(10, true);
+$tablehtml = ob_get_contents();
+ob_end_clean();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
-if (!$moduleinstance->vimeo_url) {
-    \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
-} else {
-    echo $OUTPUT->render_from_template('mod_videotime/view', [
-        'instance' => $moduleinstance
-    ]);
-}
+echo $tablehtml;
 echo $OUTPUT->footer();

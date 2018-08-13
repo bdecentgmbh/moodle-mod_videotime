@@ -32,8 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 function videotime_supports($feature) {
     switch ($feature) {
-        case FEATURE_MOD_INTRO:      return true;
-        case FEATURE_BACKUP_MOODLE2: return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_MOD_INTRO:               return true;
+        case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
         default:
             return null;
     }
@@ -117,6 +119,81 @@ function videotime_process_video_description($moduleinstance) {
 }
 
 /**
+ * Obtains the automatic completion state for this forum based on any conditions
+ * in forum settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ * @throws \dml_exception
+ */
+function videotime_get_completion_state($course,$cm,$userid,$type) {
+    global $DB;
+
+    // Get forum details
+    $videotime = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
+
+    // Completion settings are pro features.
+    if (!videotime_has_pro()) {
+        return $type;
+    }
+
+    $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
+
+    if (!$videotime->completion_on_view_time && !$videotime->completion_on_finish) {
+        // Completion options are not enabled so just return $type
+        return $type;
+    }
+
+    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $user->id);
+
+    // Check if watch time is required.
+    if ($videotime->completion_on_view_time) {
+        // If time was never set return false.
+        if (!$videotime->completion_on_view_time_second) {
+            return false;
+        }
+        // Check if total session time is over the required duration.
+        if ($sessions->get_total_time()
+            < $videotime->completion_on_view_time_second) {
+            return false;
+        }
+    }
+
+    // Check if video completion is required.
+    if ($videotime->completion_on_finish) {
+        if (!$sessions->is_finished()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @param $cm_id
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function videotime_update_completion($cm_id) {
+    global $DB, $CFG;
+
+    require_once($CFG->libdir.'/completionlib.php');
+
+    $cm = get_coursemodule_from_id('videotime', $cm_id, 0, false, MUST_EXIST);
+    $course = get_course($cm->course);
+    $moduleinstance = $DB->get_record('videotime', array('id' => $cm->instance), '*', MUST_EXIST);
+
+    $completion = new \completion_info($course);
+    if($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish)) {
+        $completion->update_state($cm,COMPLETION_COMPLETE);
+    }
+}
+
+/**
  * File serving callback
  *
  * @param stdClass $course course object
@@ -152,10 +229,77 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 }
 
 /**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $videotime  Video Time object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ */
+function videotime_view($videotime, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $videotime->id
+    );
+
+    $event = \mod_videotime\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('videotime', $videotime);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
  * Check if Video Time Pro is installed.
  *
  * @return bool
  */
 function videotime_has_pro() {
+    global $CFG;
+
+    if (isset($CFG->disable_videotime_pro) && $CFG->disable_videotime_pro) {
+        return false;
+    }
     return array_key_exists('pro', core_component::get_plugin_list('videotimeplugin'));
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * It is safe to rely on PAGE here as we will only ever be within the module
+ * context when this is called
+ *
+ * @param settings_navigation $settings
+ * @param navigation_node $videtimenode
+ * @return void
+ * @throws \coding_exception
+ * @throws moodle_exception
+ */
+function videotime_extend_settings_navigation($settings, $videtimenode) {
+    global $PAGE, $CFG;
+
+    // We want to add these new nodes after the Edit settings node, and before the
+    // Locally assigned roles node. Of course, both of those are controlled by capabilities.
+    $keys = $videtimenode->get_children_key_list();
+    $beforekey = null;
+    $i = array_search('modedit', $keys);
+    if ($i === false and array_key_exists(0, $keys)) {
+        $beforekey = $keys[0];
+    } else if (array_key_exists($i + 1, $keys)) {
+        $beforekey = $keys[$i + 1];
+    }
+
+    if (videotime_has_pro() && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
+        $node = navigation_node::create(get_string('report'),
+            new moodle_url('/mod/videotime/report.php', array('id' => $PAGE->cm->id)),
+            navigation_node::TYPE_SETTING, null, 'mod_videotime_report',
+            new pix_icon('t/grades', ''));
+        $videtimenode->add_node($node, $beforekey);
+    }
 }
