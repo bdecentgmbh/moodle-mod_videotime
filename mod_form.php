@@ -75,12 +75,44 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'), array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
             'noclean' => true, 'context' => $this->context, 'subdirs' => true));
         $mform->setType('video_description', PARAM_RAW); // no XSS prevention here, users must be trusted
+        $mform->addHelpButton('video_description', 'video_description', 'videotime');
 
         // Add standard elements.
         $this->standard_coursemodule_elements();
 
         // Add standard buttons.
         $this->add_action_buttons();
+    }
+
+    /**
+     * Add an editor for an activity's introduction field.
+     *
+     * NOTE: Copied from parent classes to change showdescription string.
+     *
+     * @param null $customlabel Override default label for editor
+     * @throws coding_exception
+     */
+    protected function standard_intro_elements($customlabel=null) {
+        global $CFG;
+
+        $required = $CFG->requiremodintro;
+
+        $mform = $this->_form;
+        $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
+
+        $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+            'noclean' => true, 'context' => $this->context, 'subdirs' => true));
+        $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
+        if ($required) {
+            $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
+        }
+
+        // If the 'show description' feature is enabled, this checkbox appears below the intro.
+        // We want to hide that when using the singleactivity course format because it is confusing.
+        if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
+            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
+            $mform->addHelpButton('showdescription', 'showdescription', 'videotime');
+        }
     }
 
     /**

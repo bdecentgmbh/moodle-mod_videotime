@@ -54,8 +54,8 @@ Please let us know if you have any feedback for us.
 $string['pluginname'] = 'Video Time';
 $string['pluginadministration'] = 'Video Time administration';
 $string['seconds'] = 'Seconds';
-$string['video_description'] = 'Video description';
-$string['video_description_help'] = 'Description displayed under video embed.';
+$string['video_description'] = 'Notes';
+$string['video_description_help'] = 'Notes are displayed below the video.';
 $string['videotime:addinstance'] = 'Add a new Video Time module';
 $string['videotime:view'] = 'View Video Time video';
 $string['videotime:view_report'] = 'View report (Pro only)';
@@ -65,3 +65,5 @@ $string['vimeo_url'] = 'Vimeo URL';
 $string['vimeo_url_help'] = 'Full URL of Vimeo video.';
 $string['vimeo_url_invalid'] = 'Vimeo URL is invalid. Copy directly from web browser.';
 $string['vimeo_url_missing'] = 'Vimeo URL is not set.';
+$string['showdescription'] = 'Display description';
+$string['showdescription_help'] = 'The description is displayed above the video and can be shown in the course page.';
