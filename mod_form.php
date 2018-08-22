@@ -125,6 +125,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform =& $this->_form;
 
         if (videotime_has_pro()) {
+            // Completion on view and seconds.
             $group = [];
             $group[] =& $mform->createElement('checkbox', 'completion_on_view_time', '', get_string('completion_on_view', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
@@ -133,18 +134,28 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addGroup($group, 'completion_on_view', '', array(' '), false);
             $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
 
+            $group = [];
+            $group[] =& $mform->createElement('checkbox', 'completion_on_percent', '', get_string('completion_on_percent', 'videotime') . ':&nbsp;');
+            $group[] =& $mform->createElement('text', 'completion_on_percent_value', '', ['size' => 3]);
+            $group[] =& $mform->createElement('static', 'percent_label', '', '%');
+            $mform->setType('completion_on_percent_value', PARAM_INT);
+            $mform->addGroup($group, 'completion_on_percent', '', array(' '), false);
+            $mform->disabledIf('completion_on_percent_value', 'completion_on_percent', 'notchecked');
+
             $mform->addElement('checkbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));
             $mform->setType('completion_on_finish', PARAM_BOOL);
 
-            return ['completion_on_view', 'completion_on_finish'];
+            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish'];
         }
 
         return [];
     }
 
     function completion_rule_enabled($data) {
-        return (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second']!=0) ||
-            !empty($data['completion_on_finish']);
+        return (
+            (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second']!=0)) ||
+            !empty($data['completion_on_finish'] ||
+            (!empty($data['completion_on_percent']) && $data['completion_on_percent_value']));
     }
 
     /**
@@ -160,9 +171,17 @@ class mod_videotime_mod_form extends moodleform_mod {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
         }
 
+        // Make sure seconds are set if completion on view time is enabled.
         if (isset($data['completion_on_view_time']) && $data['completion_on_view_time']) {
             if (isset($data['completion_on_view_time_second']) && !$data['completion_on_view_time_second']) {
                 $errors['completion_on_view_time_second'] = get_string('required');
+            }
+        }
+
+        // Make sure percent value is set if completion on percent is enabled.
+        if (isset($data['completion_on_percent']) && $data['completion_on_percent']) {
+            if (isset($data['completion_on_percent_value']) && !$data['completion_on_percent_value']) {
+                $errors['completion_on_percent_value'] = get_string('required');
             }
         }
 

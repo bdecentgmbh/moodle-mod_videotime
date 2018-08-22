@@ -55,6 +55,8 @@ if (!videotime_has_pro()) {
 
 $modulecontext = context_module::instance($cm->id);
 
+require_capability('mod/videotime:view_report', $modulecontext);
+
 $PAGE->set_url('/mod/videotime/report.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -63,18 +65,36 @@ $PAGE->set_context($modulecontext);
 $table = new \videotimeplugin_pro\sessions_report_table($cm->id);
 $table->define_baseurl($PAGE->url);
 $table->is_downloadable(true);
+$table->show_download_buttons_at([TABLE_P_BOTTOM]);
 
 if ($download) {
     raise_memory_limit(MEMORY_EXTRA);
     $table->is_downloading($download, 'video-time-report');
 }
 
+$form = new \videotimeplugin_pro\form\report_settings_form($PAGE->url);
+
+$pagesize = get_user_preferences('videotimeplugin_pro_pagesize', 25);
+
+if ($data = $form->get_data()) {
+    $pagesize = $data->pagesize;
+    set_user_preference('videotimeplugin_pro_pagesize', $data->pagesize);
+} else {
+    $form->set_data(['pagesize' => $pagesize]);
+}
+
+// If downloading get all records.
+if ($table->is_downloading()) {
+    $pagesize = -1;
+}
+
 ob_start();
-$table->out(10, true);
+$table->out($pagesize, true);
 $tablehtml = ob_get_contents();
 ob_end_clean();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 echo $tablehtml;
+$form->display();
 echo $OUTPUT->footer();

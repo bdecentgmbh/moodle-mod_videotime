@@ -65,5 +65,29 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018080205, 'videotime');
     }
 
+    if ($oldversion < 2018080213) {
+
+        // Define field completion_on_percent to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('completion_on_percent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completion_on_finish');
+
+        // Conditionally launch add field completion_on_percent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field completion_on_percent_value to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('completion_on_percent_value', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'completion_on_percent');
+
+        // Conditionally launch add field completion_on_percent_value.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2018080213, 'videotime');
+    }
+
     return true;
 }

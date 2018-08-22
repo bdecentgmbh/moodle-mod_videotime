@@ -143,7 +143,7 @@ function videotime_get_completion_state($course,$cm,$userid,$type) {
 
     $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 
-    if (!$videotime->completion_on_view_time && !$videotime->completion_on_finish) {
+    if (!$videotime->completion_on_view_time && !$videotime->completion_on_finish && !$videotime->completion_on_percent) {
         // Completion options are not enabled so just return $type
         return $type;
     }
@@ -159,6 +159,17 @@ function videotime_get_completion_state($course,$cm,$userid,$type) {
         // Check if total session time is over the required duration.
         if ($sessions->get_total_time()
             < $videotime->completion_on_view_time_second) {
+            return false;
+        }
+    }
+
+    if ($videotime->completion_on_percent) {
+        // If percent value was never set return false.
+        if (!$videotime->completion_on_percent_value) {
+            return false;
+        }
+        // Check if watch percentage is met.
+        if (($sessions->get_percent()*100) < $videotime->completion_on_percent_value) {
             return false;
         }
     }
@@ -302,5 +313,20 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
             navigation_node::TYPE_SETTING, null, 'mod_videotime_report',
             new pix_icon('t/grades', ''));
         $videtimenode->add_node($node, $beforekey);
+    }
+}
+
+/**
+ * This function extends the course navigation.
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $course The course to object for the report
+ * @param stdClass $context The context of the course
+ */
+function videotime_extend_navigation_course($navigation, $course, $context) {
+    $node = $navigation->get('coursereports');
+    if (videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
+        $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
+        $node->add(get_string('pluginname', 'videotime'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }

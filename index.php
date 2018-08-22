@@ -69,6 +69,11 @@ if ($course->format == 'weeks') {
     $table->align = array('left', 'left', 'left');
 }
 
+if (videotime_has_pro() && has_capability('mod/videotime:view_report', $coursecontext)) {
+    // Header for viewing report links.
+    $table->head[] = '';
+}
+
 foreach ($videotimes as $videotime) {
     if (!$videotime->visible) {
         $link = html_writer::link(
@@ -82,10 +87,17 @@ foreach ($videotimes as $videotime) {
     }
 
     if ($course->format == 'weeks' or $course->format == 'topics') {
-        $table->data[] = array($videotime->section, $link);
+        $data = array($videotime->section, $link);
     } else {
-        $table->data[] = array($link);
+        $data = array($link);
     }
+
+    if (videotime_has_pro() && has_capability('mod/videotime:view_report', $coursecontext)) {
+        $url = new moodle_url('/mod/videotime/report.php', ['id' => $videotime->coursemodule]);
+        $data[] = \html_writer::link($url, get_string('view_report', 'videotime'));
+    }
+
+    $table->data[] = $data;
 }
 
 echo html_writer::table($table);
