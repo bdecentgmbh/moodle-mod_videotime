@@ -9,11 +9,13 @@
  */
 define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, Vimeo, Ajax, log) {
     return {
-        init: function(session, interval, hasPro) {
+        init: function(session, interval, hasPro, embedOptions) {
 
-            var player = new Vimeo('vimeo-embed', {
-                responsive: 1
-            });
+            log.debug('VIDEO_TIME embed options', embedOptions);
+
+            embedOptions.responsive = 1;
+
+            var player = new Vimeo('vimeo-embed', embedOptions);
 
             if (hasPro) {
                 var playing = false;

@@ -32,9 +32,17 @@
 class restore_videotime_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
+        global $CFG;
 
-        $paths = array();
+        require_once($CFG->dirroot.'/mod/videotime/lib.php');
+
+        $paths = [];
+        $userinfo = $this->get_setting_value('userinfo');
+
         $paths[] = new restore_path_element('videotime', '/activity/videotime');
+        if ($userinfo && videotime_has_pro()) {
+            $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
+        }
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
@@ -56,10 +64,24 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $this->apply_activity_instance($newitemid);
     }
 
+    protected function process_videotime_session($data)
+    {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->module_id = $this->get_mappingid('course_module', $data->module_id);
+
+        $newitemid = $DB->insert_record('videotime_session', $data);
+        $this->set_mapping('videotime_session', $oldid, $newitemid);
+    }
+
     protected function after_execute() {
         // Add label related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_videotime', 'intro', null);
         $this->add_related_files('mod_videotime', 'video_description', null);
+        $this->add_related_files('mod_videotime', 'preview_image', null);
     }
 
 }

@@ -31,8 +31,12 @@ defined('MOODLE_INTERNAL') || die;
 class backup_videotime_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
+        global $CFG;
 
-        //the URL module stores no user info
+        require_once($CFG->dirroot.'/mod/videotime/lib.php');
+
+        // To know if we are including userinfo
+        $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated
         $module = new backup_nested_element('videotime', ['id'], [
@@ -46,18 +50,40 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'timemodified'
         ]);
 
-        // Build the tree
-        //nothing here for URLs
+        if (videotime_has_pro()) {
+            $sessions = new backup_nested_element('sessions');
+
+            $session = new backup_nested_element('session', ['id'], [
+                'id',
+                'module_id',
+                'user_id',
+                'time',
+                'timestarted',
+                'state',
+                'percent'
+            ]);
+
+            // Build the tree
+            $module->add_child($sessions);
+            $sessions->add_child($session);
+        }
 
         // Define sources
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
 
-        // Define id annotations
-        //module has no id annotations
+        if (videotime_has_pro()) {
+            if ($userinfo) {
+                $session->set_source_table('videotime_session', ['module_id' => backup::VAR_MODID], 'id ASC');
+            }
+
+            // Define id annotations
+            $session->annotate_ids('user', 'user_id');
+        }
 
         // Define file annotations
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid
+        $module->annotate_files('mod_videotime', 'preview_image', null); // This file area hasn't itemid
 
         // Return the root element (url), wrapped into standard activity structure
         return $this->prepare_activity_structure($module);

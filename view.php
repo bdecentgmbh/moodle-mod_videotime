@@ -66,10 +66,13 @@ if (videotime_has_pro()) {
 } else {
     $session_data = false;
 }
-$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$session_data, 5, videotime_has_pro()]);
+$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$session_data, 5, videotime_has_pro(),
+    videotime_get_embed_options($moduleinstance)]);
 
-$moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id, 'mod_videotime', 'intro', null);
-$moduleinstance->video_description = file_rewrite_pluginfile_urls($moduleinstance->video_description, 'pluginfile.php', $modulecontext->id, 'mod_videotime', 'video_description', 0);
+$moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
+    'mod_videotime', 'intro', null);
+$moduleinstance->video_description = file_rewrite_pluginfile_urls($moduleinstance->video_description, 'pluginfile.php',
+    $modulecontext->id, 'mod_videotime', 'video_description', 0);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name), 2);

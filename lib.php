@@ -43,6 +43,45 @@ function videotime_supports($feature) {
 }
 
 /**
+ * Get all module fields that are to be used as player.js options.
+ *
+ * @return array
+ */
+function videotime_get_emnbed_option_names() {
+    return [
+        'autoplay',
+        'byline',
+        'color',
+        'height',
+        'maxheight',
+        'maxwidth',
+        'muted',
+        'playsinline',
+        'portrait',
+        'speed',
+        'title',
+        'transparent',
+        'width',
+    ];
+}
+
+/**
+ * Get all embed options for module instance.
+ *
+ * @param $moduleinstance
+ * @return stdClass
+ */
+function videotime_get_embed_options($moduleinstance) {
+    $options = new \stdClass();
+    foreach (videotime_get_emnbed_option_names() as $name) {
+        if (isset($moduleinstance->$name)) {
+            $options->$name = $moduleinstance->$name;
+        }
+    }
+    return $options;
+}
+
+/**
  * Saves a new instance of the mod_videotime into the database.
  *
  * Given an object containing all the necessary data, (defined by the form
@@ -56,11 +95,20 @@ function videotime_supports($feature) {
 function videotime_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
+    $context = context_module::instance($moduleinstance->coursemodule);
+
     $moduleinstance->timecreated = time();
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
     $id = $DB->insert_record('videotime', $moduleinstance);
+
+    if (!empty($moduleinstance->preview_image)) {
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'mod_videotime', 'preview_image');
+        file_save_draft_area_files($moduleinstance->preview_image, $context->id, 'mod_videotime', 'preview_image',
+            0, array('subdirs' => 0, 'maxfiles' => 1));
+    }
 
     return $id;
 }
@@ -74,14 +122,24 @@ function videotime_add_instance($moduleinstance, $mform = null) {
  * @param object $moduleinstance An object from the form in mod_form.php.
  * @param mod_videotime_mod_form $mform The form.
  * @return bool True if successful, false otherwise.
+ * @throws \dml_exception
  */
 function videotime_update_instance($moduleinstance, $mform = null) {
     global $DB;
+
+    $context = context_module::instance($moduleinstance->coursemodule);
 
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
+
+    if (!empty($moduleinstance->preview_image)) {
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'mod_videotime', 'preview_image');
+        file_save_draft_area_files($moduleinstance->preview_image, $context->id, 'mod_videotime', 'preview_image',
+            0, array('subdirs' => 0, 'maxfiles' => 1));
+    }
 
     return $DB->update_record('videotime', $moduleinstance);
 }

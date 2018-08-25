@@ -89,5 +89,128 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018080213, 'videotime');
     }
 
+    if ($oldversion < 2018080215) {
+
+        // Define field autoplay to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('autoplay', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completion_on_percent_value');
+
+        // Conditionally launch add field autoplay.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field byline to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('byline', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'autoplay');
+
+        // Conditionally launch add field byline.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field color to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('color', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, '00adef', 'byline');
+
+        // Conditionally launch add field color.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field height to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('height', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'color');
+
+        // Conditionally launch add field height.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field maxheight to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('maxheight', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'height');
+
+        // Conditionally launch add field maxheight.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field maxwidth to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('maxwidth', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'maxheight');
+
+        // Conditionally launch add field maxwidth.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field muted to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('muted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'maxwidth');
+
+        // Conditionally launch add field muted.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field playsinline to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('playsinline', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'muted');
+
+        // Conditionally launch add field playsinline.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field portrait to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('portrait', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'playsinline');
+
+        // Conditionally launch add field portrait.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field speed to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('speed', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'portrait');
+
+        // Conditionally launch add field speed.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field title to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('title', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'speed');
+
+        // Conditionally launch add field title.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field transparent to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('transparent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'title');
+
+        // Conditionally launch add field transparent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field width to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('width', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'transparent');
+
+        // Conditionally launch add field width.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2018080215, 'videotime');
+    }
+
     return true;
 }

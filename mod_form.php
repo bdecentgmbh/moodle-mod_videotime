@@ -77,6 +77,81 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setType('video_description', PARAM_RAW); // no XSS prevention here, users must be trusted
         $mform->addHelpButton('video_description', 'video_description', 'videotime');
 
+        // Preview image
+        // Don't display for now.
+//        $mform->addElement('filemanager', 'preview_image', get_string('preview_image', 'videotime'), null, [
+//            'maxfiles' => 1,
+//            'accepted_types' => ['png', 'jpg', 'jpeg']
+//        ]);
+//        $mform->addHelpButton('preview_image', 'preview_image', 'videotime');
+
+        $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
+
+        $mform->addElement('advcheckbox', 'autoplay', get_string('option_autoplay', 'videotime'));
+        $mform->setType('autoplay', PARAM_BOOL);
+        $mform->addHelpButton('autoplay', 'option_autoplay', 'videotime');
+        $mform->setDefault('autoplay', 0);
+
+        $mform->addElement('advcheckbox', 'byline', get_string('option_byline', 'videotime'));
+        $mform->setType('byline', PARAM_BOOL);
+        $mform->addHelpButton('byline', 'option_byline', 'videotime');
+        $mform->setDefault('byline', 1);
+
+        $mform->addElement('text', 'color', get_string('option_color', 'videotime'));
+        $mform->setType('color', PARAM_TEXT);
+        $mform->addHelpButton('color', 'option_color', 'videotime');
+        $mform->setDefault('color', '00adef');
+
+        $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
+        $mform->setType('height', PARAM_INT);
+        $mform->addHelpButton('height', 'option_height', 'videotime');
+        $mform->setDefault('height', null);
+
+        $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
+        $mform->setType('width', PARAM_INT);
+        $mform->addHelpButton('width', 'option_width', 'videotime');
+        $mform->setDefault('width', null);
+
+        $mform->addElement('text', 'maxheight', get_string('option_maxheight', 'videotime'));
+        $mform->setType('maxheight', PARAM_INT);
+        $mform->addHelpButton('maxheight', 'option_maxheight', 'videotime');
+        $mform->setDefault('maxheight', null);
+
+        $mform->addElement('text', 'maxwidth', get_string('option_maxwidth', 'videotime'));
+        $mform->setType('maxwidth', PARAM_INT);
+        $mform->addHelpButton('maxwidth', 'option_maxwidth', 'videotime');
+        $mform->setDefault('maxwidth', null);
+
+        $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
+        $mform->setType('muted', PARAM_BOOL);
+        $mform->addHelpButton('muted', 'option_muted', 'videotime');
+        $mform->setDefault('muted', 0);
+
+        $mform->addElement('advcheckbox', 'playsinline', get_string('option_playsinline', 'videotime'));
+        $mform->setType('playsinline', PARAM_BOOL);
+        $mform->addHelpButton('playsinline', 'option_playsinline', 'videotime');
+        $mform->setDefault('playsinline', 1);
+
+        $mform->addElement('advcheckbox', 'portrait', get_string('option_portrait', 'videotime'));
+        $mform->setType('portrait', PARAM_BOOL);
+        $mform->addHelpButton('portrait', 'option_portrait', 'videotime');
+        $mform->setDefault('portrait', 1);
+
+        $mform->addElement('advcheckbox', 'speed', get_string('option_speed', 'videotime'));
+        $mform->setType('speed', PARAM_BOOL);
+        $mform->addHelpButton('speed', 'option_speed', 'videotime');
+        $mform->setDefault('speed', 0);
+
+        $mform->addElement('advcheckbox', 'title', get_string('option_title', 'videotime'));
+        $mform->setType('title', PARAM_BOOL);
+        $mform->addHelpButton('title', 'option_title', 'videotime');
+        $mform->setDefault('title', 1);
+
+        $mform->addElement('advcheckbox', 'transparent', get_string('option_transparent', 'videotime'));
+        $mform->setType('transparent', PARAM_BOOL);
+        $mform->addHelpButton('transparent', 'option_transparent', 'videotime');
+        $mform->setDefault('transparent', 1);
+
         // Add standard elements.
         $this->standard_coursemodule_elements();
 
@@ -190,6 +265,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
     public function data_preprocessing(&$default_values)
     {
+        // Editing existing instance.
         if ($this->current->instance) {
             $draftitemid = file_get_submitted_draft_itemid('video_description');
             $video_description = $default_values['video_description'];
@@ -198,6 +274,11 @@ class mod_videotime_mod_form extends moodleform_mod {
             $default_values['video_description']['format'] = $video_description_format;
             $default_values['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_videotime', 'video_description', 0, [], $video_description);
             $default_values['video_description']['itemid'] = $draftitemid;
+
+            $draftitemid = file_get_submitted_draft_itemid('preview_image');
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_videotime', 'preview_image', 0,
+                array('subdirs' => 0, 'maxfiles' => 1));
+            $default_values['preview_image'] = $draftitemid;
         }
     }
 }
