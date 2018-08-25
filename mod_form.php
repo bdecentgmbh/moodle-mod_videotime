@@ -87,6 +87,35 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 
+        $mform->addElement('advcheckbox', 'responsive', get_string('option_responsive', 'videotime'));
+        $mform->setType('responsive', PARAM_BOOL);
+        $mform->addHelpButton('responsive', 'option_responsive', 'videotime');
+        $mform->setDefault('responsive', 1);
+
+        $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
+        $mform->setType('height', PARAM_INT);
+        $mform->addHelpButton('height', 'option_height', 'videotime');
+        $mform->setDefault('height', null);
+        $mform->disabledIf('height', 'responsive', 'checked');
+
+        $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
+        $mform->setType('width', PARAM_INT);
+        $mform->addHelpButton('width', 'option_width', 'videotime');
+        $mform->setDefault('width', null);
+        $mform->disabledIf('width', 'responsive', 'checked');
+
+        $mform->addElement('text', 'maxheight', get_string('option_maxheight', 'videotime'));
+        $mform->setType('maxheight', PARAM_INT);
+        $mform->addHelpButton('maxheight', 'option_maxheight', 'videotime');
+        $mform->setDefault('maxheight', null);
+        $mform->disabledIf('maxheight', 'responsive', 'checked');
+
+        $mform->addElement('text', 'maxwidth', get_string('option_maxwidth', 'videotime'));
+        $mform->setType('maxwidth', PARAM_INT);
+        $mform->addHelpButton('maxwidth', 'option_maxwidth', 'videotime');
+        $mform->setDefault('maxwidth', null);
+        $mform->disabledIf('maxwidth', 'responsive', 'checked');
+
         $mform->addElement('advcheckbox', 'autoplay', get_string('option_autoplay', 'videotime'));
         $mform->setType('autoplay', PARAM_BOOL);
         $mform->addHelpButton('autoplay', 'option_autoplay', 'videotime');
@@ -101,26 +130,6 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setType('color', PARAM_TEXT);
         $mform->addHelpButton('color', 'option_color', 'videotime');
         $mform->setDefault('color', '00adef');
-
-        $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
-        $mform->setType('height', PARAM_INT);
-        $mform->addHelpButton('height', 'option_height', 'videotime');
-        $mform->setDefault('height', null);
-
-        $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
-        $mform->setType('width', PARAM_INT);
-        $mform->addHelpButton('width', 'option_width', 'videotime');
-        $mform->setDefault('width', null);
-
-        $mform->addElement('text', 'maxheight', get_string('option_maxheight', 'videotime'));
-        $mform->setType('maxheight', PARAM_INT);
-        $mform->addHelpButton('maxheight', 'option_maxheight', 'videotime');
-        $mform->setDefault('maxheight', null);
-
-        $mform->addElement('text', 'maxwidth', get_string('option_maxwidth', 'videotime'));
-        $mform->setType('maxwidth', PARAM_INT);
-        $mform->addHelpButton('maxwidth', 'option_maxwidth', 'videotime');
-        $mform->setDefault('maxwidth', null);
 
         $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
         $mform->setType('muted', PARAM_BOOL);

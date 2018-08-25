@@ -49,6 +49,7 @@ function videotime_supports($feature) {
  */
 function videotime_get_emnbed_option_names() {
     return [
+        'responsive',
         'autoplay',
         'byline',
         'color',

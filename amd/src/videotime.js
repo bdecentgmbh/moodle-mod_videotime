@@ -13,8 +13,6 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
 
             log.debug('VIDEO_TIME embed options', embedOptions);
 
-            embedOptions.responsive = 1;
-
             var player = new Vimeo('vimeo-embed', embedOptions);
 
             if (hasPro) {

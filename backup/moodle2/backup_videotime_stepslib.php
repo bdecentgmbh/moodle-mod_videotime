@@ -47,7 +47,26 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'vimeo_url',
             'video_description',
             'video_description_format',
-            'timemodified'
+            'timemodified',
+            'completion_on_view_time',
+            'completion_on_view_time_second',
+            'completion_on_finish',
+            'completion_on_percent',
+            'completion_on_percent_value',
+            'autoplay',
+            'byline',
+            'color',
+            'height',
+            'maxheight',
+            'maxwidth',
+            'muted',
+            'playsinline',
+            'portrait',
+            'speed',
+            'title',
+            'transparent',
+            'width',
+            'responsive',
         ]);
 
         if (videotime_has_pro()) {

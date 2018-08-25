@@ -33,6 +33,7 @@
         <FIELD NAME="title" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Show the title on the video."/>
         <FIELD NAME="transparent" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The responsive player and transparent background are enabled by default, to disable set this parameter to false."/>
         <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The exact width of the video. Defaults to the width of the largest available version of the video."/>
+        <FIELD NAME="responsive" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
