@@ -60,7 +60,6 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
                 });
 
                 player.on('timeupdate', function(event) {
-                    playing = true;
                     percent = event.percent;
                     log.debug('VIDEO_TIME timeupdate');
                 });
