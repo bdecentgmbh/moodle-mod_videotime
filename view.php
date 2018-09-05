@@ -27,7 +27,7 @@ require_once(__DIR__.'/lib.php');
 
 global $USER;
 
-// Course_module ID, or
+// Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
 
 // ... module instance id.
@@ -62,11 +62,11 @@ $PAGE->set_context($modulecontext);
 // Watch time tracking is only available in pro.
 if (videotime_has_pro()) {
     $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
-    $session_data = $session->jsonSerialize();
+    $sessiondata = $session->jsonSerialize();
 } else {
-    $session_data = false;
+    $sessiondata = false;
 }
-$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$session_data, 5, videotime_has_pro(),
+$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
     videotime_get_embed_options($moduleinstance)]);
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,

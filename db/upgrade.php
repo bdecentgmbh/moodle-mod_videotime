@@ -36,7 +36,8 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_view_time to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_view_time', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+        $field = new xmldb_field('completion_on_view_time', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
+            'timemodified');
 
         // Conditionally launch add field completion_on_view_time.
         if (!$dbman->field_exists($table, $field)) {
@@ -45,7 +46,8 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_view_time_second to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_view_time_second', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'completion_on_view_time');
+        $field = new xmldb_field('completion_on_view_time_second', XMLDB_TYPE_INTEGER, '10', null, null, null, null,
+            'completion_on_view_time');
 
         // Conditionally launch add field completion_on_view_time_second.
         if (!$dbman->field_exists($table, $field)) {
@@ -54,7 +56,8 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_finish to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_finish', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completion_on_view_time_second');
+        $field = new xmldb_field('completion_on_finish', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
+            'completion_on_view_time_second');
 
         // Conditionally launch add field completion_on_finish.
         if (!$dbman->field_exists($table, $field)) {
@@ -69,7 +72,8 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_percent to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_percent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completion_on_finish');
+        $field = new xmldb_field('completion_on_percent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
+            'completion_on_finish');
 
         // Conditionally launch add field completion_on_percent.
         if (!$dbman->field_exists($table, $field)) {
@@ -78,7 +82,8 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_percent_value to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_percent_value', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'completion_on_percent');
+        $field = new xmldb_field('completion_on_percent_value', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0',
+            'completion_on_percent');
 
         // Conditionally launch add field completion_on_percent_value.
         if (!$dbman->field_exists($table, $field)) {
@@ -93,7 +98,8 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field autoplay to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('autoplay', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completion_on_percent_value');
+        $field = new xmldb_field('autoplay', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
+            'completion_on_percent_value');
 
         // Conditionally launch add field autoplay.
         if (!$dbman->field_exists($table, $field)) {

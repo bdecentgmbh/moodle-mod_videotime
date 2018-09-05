@@ -77,19 +77,22 @@ class mod_videotime_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
-        // Video Time video description
-        $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'), array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+        // Video Time video description.
+        $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'),
+            array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
             'noclean' => true, 'context' => $this->context, 'subdirs' => true));
-        $mform->setType('video_description', PARAM_RAW); // no XSS prevention here, users must be trusted
+        $mform->setType('video_description', PARAM_RAW); // No XSS prevention here, users must be trusted.
         $mform->addHelpButton('video_description', 'video_description', 'videotime');
 
         // Preview image
+        // @codingStandardsIgnoreStart
         // Don't display for now.
-//        $mform->addElement('filemanager', 'preview_image', get_string('preview_image', 'videotime'), null, [
-//            'maxfiles' => 1,
-//            'accepted_types' => ['png', 'jpg', 'jpeg']
-//        ]);
-//        $mform->addHelpButton('preview_image', 'preview_image', 'videotime');
+        // $mform->addElement('filemanager', 'preview_image', get_string('preview_image', 'videotime'), null, [
+        //     'maxfiles' => 1,
+        //     'accepted_types' => ['png', 'jpg', 'jpeg']
+        // ]);
+        // $mform->addHelpButton('preview_image', 'preview_image', 'videotime');
+        // @codingStandardsIgnoreEnd
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 
@@ -301,7 +304,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
             'noclean' => true, 'context' => $this->context, 'subdirs' => true));
-        $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
+        $mform->setType('introeditor', PARAM_RAW); // No XSS prevention here, users must be trusted.
         if ($required) {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
         }
@@ -326,7 +329,8 @@ class mod_videotime_mod_form extends moodleform_mod {
         if (videotime_has_pro()) {
             // Completion on view and seconds.
             $group = [];
-            $group[] =& $mform->createElement('checkbox', 'completion_on_view_time', '', get_string('completion_on_view', 'videotime') . ':&nbsp;');
+            $group[] =& $mform->createElement('checkbox', 'completion_on_view_time', '',
+                get_string('completion_on_view', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
             $mform->setType('completion_on_view_time_second', PARAM_INT);
@@ -334,7 +338,8 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
 
             $group = [];
-            $group[] =& $mform->createElement('checkbox', 'completion_on_percent', '', get_string('completion_on_percent', 'videotime') . ':&nbsp;');
+            $group[] =& $mform->createElement('checkbox', 'completion_on_percent', '',
+                get_string('completion_on_percent', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_percent_value', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'percent_label', '', '%');
             $mform->setType('completion_on_percent_value', PARAM_INT);
@@ -350,9 +355,9 @@ class mod_videotime_mod_form extends moodleform_mod {
         return [];
     }
 
-    function completion_rule_enabled($data) {
+    public function completion_rule_enabled($data) {
         return (
-            (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second']!=0)) ||
+            (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second'] != 0)) ||
             !empty($data['completion_on_finish'] ||
             (!empty($data['completion_on_percent']) && $data['completion_on_percent_value']));
     }
@@ -363,8 +368,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @return array
      * @throws coding_exception
      */
-    public function validation($data, $files)
-    {
+    public function validation($data, $files) {
         $errors = [];
         if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
@@ -387,22 +391,22 @@ class mod_videotime_mod_form extends moodleform_mod {
         return $errors;
     }
 
-    public function data_preprocessing(&$default_values)
-    {
+    public function data_preprocessing(&$defaultvalues) {
         // Editing existing instance.
         if ($this->current->instance) {
             $draftitemid = file_get_submitted_draft_itemid('video_description');
-            $video_description = $default_values['video_description'];
-            $video_description_format = $default_values['video_description_format'];
-            $default_values['video_description'] = [];
-            $default_values['video_description']['format'] = $video_description_format;
-            $default_values['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_videotime', 'video_description', 0, [], $video_description);
-            $default_values['video_description']['itemid'] = $draftitemid;
+            $videodescription = $defaultvalues['video_description'];
+            $videodescriptionformat = $defaultvalues['video_description_format'];
+            $defaultvalues['video_description'] = [];
+            $defaultvalues['video_description']['format'] = $videodescriptionformat;
+            $defaultvalues['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id,
+                'mod_videotime', 'video_description', 0, [], $videodescription);
+            $defaultvalues['video_description']['itemid'] = $draftitemid;
 
             $draftitemid = file_get_submitted_draft_itemid('preview_image');
             file_prepare_draft_area($draftitemid, $this->context->id, 'mod_videotime', 'preview_image', 0,
                 array('subdirs' => 0, 'maxfiles' => 1));
-            $default_values['preview_image'] = $draftitemid;
+            $defaultvalues['preview_image'] = $draftitemid;
         }
     }
 }

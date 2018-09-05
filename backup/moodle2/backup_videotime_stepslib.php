@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all the backup steps that will be used by the backup_url_activity_task
+ * Define all the backup steps that will be used by the backup_videotime_activity_task
  *
- * @package    mod_url
- * @copyright  2010 onwards Andrew Davis
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_videotime
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Define the complete url structure for backup, with file and id annotations
+ * Define the complete videotime structure for backup, with file and id annotations
  */
 class backup_videotime_activity_structure_step extends backup_activity_structure_step {
 
@@ -35,10 +34,10 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
 
         require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $module = new backup_nested_element('videotime', ['id'], [
             'course',
             'name',
@@ -82,12 +81,12 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
                 'percent'
             ]);
 
-            // Build the tree
+            // Build the tree.
             $module->add_child($sessions);
             $sessions->add_child($session);
         }
 
-        // Define sources
+        // Define sources.
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
 
         if (videotime_has_pro()) {
@@ -95,16 +94,16 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
                 $session->set_source_table('videotime_session', ['module_id' => backup::VAR_MODID], 'id ASC');
             }
 
-            // Define id annotations
+            // Define id annotations.
             $session->annotate_ids('user', 'user_id');
         }
 
-        // Define file annotations
-        $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid
-        $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid
-        $module->annotate_files('mod_videotime', 'preview_image', null); // This file area hasn't itemid
+        // Define file annotations.
+        $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
+        $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.
+        $module->annotate_files('mod_videotime', 'preview_image', null); // This file area hasn't itemid.
 
-        // Return the root element (url), wrapped into standard activity structure
+        // Return the root element (videotime), wrapped into standard activity structure.
         return $this->prepare_activity_structure($module);
 
     }

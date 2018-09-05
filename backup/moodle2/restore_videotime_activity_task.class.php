@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,18 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod_label
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_videotime
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_stepslib.php'); // Because it exists (must)
+require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_stepslib.php'); // Because it exists (must).
 
 /**
- * label restore task that provides all the settings and steps to perform one
+ * videotime restore task that provides all the settings and steps to perform one
  * complete restore of the activity
  */
 class restore_videotime_activity_task extends restore_activity_task {
@@ -36,14 +34,14 @@ class restore_videotime_activity_task extends restore_activity_task {
      * Define (add) particular settings this activity can have
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
 
     /**
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // label only has one structure step
+        // Videotime only has one structure step.
         $this->add_step(new restore_videotime_activity_structure_step('videotime_structure', 'videotime.xml'));
     }
 
@@ -71,7 +69,7 @@ class restore_videotime_activity_task extends restore_activity_task {
     /**
      * Define the restore log rules that will be applied
      * by the {@link restore_logs_processor} when restoring
-     * label logs. It must return one array
+     * videotime logs. It must return one array
      * of {@link restore_log_rule} objects
      */
     static public function define_restore_log_rules() {

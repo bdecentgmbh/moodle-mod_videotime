@@ -32,11 +32,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 function videotime_supports($feature) {
     switch ($feature) {
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_COMPLETION_HAS_RULES:    return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
         default:
             return null;
     }
@@ -175,11 +180,11 @@ function videotime_delete_instance($id) {
  */
 function videotime_process_video_description($moduleinstance) {
     $modcontext = context_module::instance($moduleinstance->coursemodule);
-    $video_description = $moduleinstance->video_description;
-    $moduleinstance->video_description = file_save_draft_area_files($video_description['itemid'], $modcontext->id,
+    $videodescription = $moduleinstance->video_description;
+    $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
         'mod_videotime', 'video_description', 0,
-        array('subdirs'=>true), $video_description['text']);
-    $moduleinstance->video_description_format = $video_description['format'];
+        array('subdirs' => true), $videodescription['text']);
+    $moduleinstance->video_description_format = $videodescription['format'];
     return $moduleinstance;
 }
 
@@ -194,10 +199,10 @@ function videotime_process_video_description($moduleinstance) {
  * @return bool True if completed, false if not, $type if conditions not set.
  * @throws \dml_exception
  */
-function videotime_get_completion_state($course,$cm,$userid,$type) {
+function videotime_get_completion_state($course, $cm, $userid, $type) {
     global $DB;
 
-    // Get forum details
+    // Get forum details.
     $videotime = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
 
     // Completion settings are pro features.
@@ -208,7 +213,7 @@ function videotime_get_completion_state($course,$cm,$userid,$type) {
     $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 
     if (!$videotime->completion_on_view_time && !$videotime->completion_on_finish && !$videotime->completion_on_percent) {
-        // Completion options are not enabled so just return $type
+        // Completion options are not enabled so just return $type.
         return $type;
     }
 
@@ -233,7 +238,7 @@ function videotime_get_completion_state($course,$cm,$userid,$type) {
             return false;
         }
         // Check if watch percentage is met.
-        if (($sessions->get_percent()*100) < $videotime->completion_on_percent_value) {
+        if (($sessions->get_percent() * 100) < $videotime->completion_on_percent_value) {
             return false;
         }
     }
@@ -249,23 +254,23 @@ function videotime_get_completion_state($course,$cm,$userid,$type) {
 }
 
 /**
- * @param $cm_id
+ * @param $cmid
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
  */
-function videotime_update_completion($cm_id) {
+function videotime_update_completion($cmid) {
     global $DB, $CFG;
 
     require_once($CFG->libdir.'/completionlib.php');
 
-    $cm = get_coursemodule_from_id('videotime', $cm_id, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_id('videotime', $cmid, 0, false, MUST_EXIST);
     $course = get_course($cm->course);
     $moduleinstance = $DB->get_record('videotime', array('id' => $cm->instance), '*', MUST_EXIST);
 
     $completion = new \completion_info($course);
-    if($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish)) {
-        $completion->update_state($cm,COMPLETION_COMPLETE);
+    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish)) {
+        $completion->update_state($cm, COMPLETION_COMPLETE);
     }
 }
 
@@ -391,6 +396,7 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get('coursereports');
     if (videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
         $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
-        $node->add(get_string('pluginname', 'videotime'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $node->add(get_string('pluginname', 'videotime'), $url, navigation_node::TYPE_SETTING, null, null,
+            new pix_icon('i/report', ''));
     }
 }

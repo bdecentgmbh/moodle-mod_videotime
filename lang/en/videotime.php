@@ -37,7 +37,7 @@ $string['embed_options'] = 'Embed options';
 $string['embed_options_defaults'] = 'Default embed options';
 $string['modulename'] = 'Video Time';
 $string['modulenameplural'] = 'Video Time instances';
-$string['modulename_help'] = 'The Video Time activity enables the teacher 
+$string['modulename_help'] = 'The Video Time activity enables the teacher
 <ul>
     <li>to easily embed videos from Vimeo, just by adding the url</li>
     <li>to add content above and below of the video player.</li>
@@ -51,9 +51,9 @@ Video Time Pro has advanced features to
     <li>and a custom preview picture for the video.</li>
 </ul>
 
-Get Video Time Pro now on <a href="https://bdecent.de/products/videotimepro">https://bdecent.de/products/videotimepro</a>. 
+Get Video Time Pro now on <a href="https://bdecent.de/products/videotimepro">https://bdecent.de/products/videotimepro</a>.
 
-We are constantly improving the plugin, so stay tuned for upcoming versions. You can see what we’re working on and add feature requests in our public roadmap on <a href="https://bdecent.de/products/videotimepro/roadmap">https://bdecent.de/products/videotimepro/roadmap</a>. 
+We are constantly improving the plugin, so stay tuned for upcoming versions. You can see what we’re working on and add feature requests in our public roadmap on <a href="https://bdecent.de/products/videotimepro/roadmap">https://bdecent.de/products/videotimepro/roadmap</a>.
 
 Please let us know if you have any feedback for us.
 ';

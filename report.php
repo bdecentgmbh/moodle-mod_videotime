@@ -27,7 +27,7 @@ require_once(__DIR__.'/lib.php');
 
 global $USER;
 
-// Course_module ID, or
+// Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
 
 // ... module instance id.
