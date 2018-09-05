@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
+    if (!videotime_has_pro()) {
+        $settings->add(new admin_setting_heading('pro', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro3'),
+            html_writer::img('https://link.bdecent.de/videotimepro3/image.jpg', '',
+                ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
+    }
+
     if (videotime_has_pro()) {
         $settings->add(new admin_setting_heading('option_responsive', get_string('default', 'videotime') . ' ' .
             get_string('option_responsive', 'videotime'), ''));
@@ -126,5 +132,11 @@ if ($ADMIN->fulltree) {
             get_string('option_transparent_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/transparent_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
+    }
+
+    if (!videotime_has_pro()) {
+        $settings->add(new admin_setting_heading('pro2', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),
+            html_writer::img('https://link.bdecent.de/videotimepro4/image.jpg', '',
+                ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
     }
 }

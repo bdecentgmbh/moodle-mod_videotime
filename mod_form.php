@@ -45,7 +45,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         if (!videotime_has_pro()) {
             $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro1'),
-                html_writer::img('https://bdecent.de/wp-content/uploads/videotimepro1.jpg', '',
+                html_writer::img('https://link.bdecent.de/videotimepro1/image.jpg', '',
                     ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
         }
 
@@ -281,7 +281,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         if (!videotime_has_pro()) {
             $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro2'),
-                html_writer::img('https://bdecent.de/wp-content/uploads/videotimepro2.jpg', '',
+                html_writer::img('https://link.bdecent.de/videotimepro2/image.jpg', '',
                     ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
         }
     }
