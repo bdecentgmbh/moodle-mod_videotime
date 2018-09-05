@@ -43,6 +43,12 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 
+        if (!videotime_has_pro()) {
+            $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro1'),
+                html_writer::img('https://bdecent.de/wp-content/uploads/videotimepro1.jpg', '',
+                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
+        }
+
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -87,85 +93,194 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 
+        // Add hidden 'disable' element used for disabling embed options when they are globally forced.
+        $mform->addElement('hidden', 'disable');
+        $mform->setType('disable', PARAM_INT);
+        $mform->setDefault('disable', 1);
+
         $mform->addElement('advcheckbox', 'responsive', get_string('option_responsive', 'videotime'));
         $mform->setType('responsive', PARAM_BOOL);
         $mform->addHelpButton('responsive', 'option_responsive', 'videotime');
-        $mform->setDefault('responsive', 1);
+        $mform->setDefault('responsive', get_config('videotime', 'responsive'));
+        if (get_config('videotime', 'responsive_force')) {
+            $mform->addElement('static', 'responsive_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_responsive', 'videotime'),
+                'value' => get_config('videotime', 'responsive')
+            ]));
+            $mform->disabledIf('responsive', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
         $mform->setType('height', PARAM_INT);
         $mform->addHelpButton('height', 'option_height', 'videotime');
-        $mform->setDefault('height', null);
         $mform->disabledIf('height', 'responsive', 'checked');
+        $mform->setDefault('height', get_config('videotime', 'height'));
+        if (get_config('videotime', 'height_force')) {
+            $mform->addElement('static', 'height_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_height', 'videotime'),
+                'value' => get_config('videotime', 'height')
+            ]));
+            $mform->disabledIf('height', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
         $mform->setType('width', PARAM_INT);
         $mform->addHelpButton('width', 'option_width', 'videotime');
-        $mform->setDefault('width', null);
+        $mform->setDefault('width', get_config('videotime', 'width'));
         $mform->disabledIf('width', 'responsive', 'checked');
+        if (get_config('videotime', 'width_force')) {
+            $mform->addElement('static', 'width_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_width', 'videotime'),
+                'value' => get_config('videotime', 'width')
+            ]));
+            $mform->disabledIf('width', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('text', 'maxheight', get_string('option_maxheight', 'videotime'));
         $mform->setType('maxheight', PARAM_INT);
         $mform->addHelpButton('maxheight', 'option_maxheight', 'videotime');
-        $mform->setDefault('maxheight', null);
+        $mform->setDefault('maxheight', get_config('videotime', 'maxheight'));
         $mform->disabledIf('maxheight', 'responsive', 'checked');
+        if (get_config('videotime', 'maxheight_force')) {
+            $mform->addElement('static', 'maxheight_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_maxheight', 'videotime'),
+                'value' => get_config('videotime', 'maxheight')
+            ]));
+            $mform->disabledIf('maxheight', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('text', 'maxwidth', get_string('option_maxwidth', 'videotime'));
         $mform->setType('maxwidth', PARAM_INT);
         $mform->addHelpButton('maxwidth', 'option_maxwidth', 'videotime');
-        $mform->setDefault('maxwidth', null);
+        $mform->setDefault('maxwidth', get_config('videotime', 'maxwidth'));
         $mform->disabledIf('maxwidth', 'responsive', 'checked');
+        if (get_config('videotime', 'maxwidth_force')) {
+            $mform->addElement('static', 'maxwidth_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_maxwidth', 'videotime'),
+                'value' => get_config('videotime', 'maxwidth')
+            ]));
+            $mform->disabledIf('maxwidth', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'autoplay', get_string('option_autoplay', 'videotime'));
         $mform->setType('autoplay', PARAM_BOOL);
         $mform->addHelpButton('autoplay', 'option_autoplay', 'videotime');
-        $mform->setDefault('autoplay', 0);
+        $mform->setDefault('autoplay', get_config('videotime', 'autoplay'));
+        if (get_config('videotime', 'autoplay_force')) {
+            $mform->addElement('static', 'autoplay_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_autoplay', 'videotime'),
+                'value' => get_config('videotime', 'autoplay')
+            ]));
+            $mform->disabledIf('autoplay', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'byline', get_string('option_byline', 'videotime'));
         $mform->setType('byline', PARAM_BOOL);
         $mform->addHelpButton('byline', 'option_byline', 'videotime');
-        $mform->setDefault('byline', 1);
+        $mform->setDefault('byline', get_config('videotime', 'byline'));
+        if (get_config('videotime', 'byline_force')) {
+            $mform->addElement('static', 'byline_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_byline', 'videotime'),
+                'value' => get_config('videotime', 'byline')
+            ]));
+            $mform->disabledIf('byline', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('text', 'color', get_string('option_color', 'videotime'));
         $mform->setType('color', PARAM_TEXT);
         $mform->addHelpButton('color', 'option_color', 'videotime');
-        $mform->setDefault('color', '00adef');
+        $mform->setDefault('color', get_config('videotime', 'color'));
+        if (get_config('videotime', 'color_force')) {
+            $mform->addElement('static', 'color_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_color', 'videotime'),
+                'value' => get_config('videotime', 'color')
+            ]));
+            $mform->disabledIf('color', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
         $mform->setType('muted', PARAM_BOOL);
         $mform->addHelpButton('muted', 'option_muted', 'videotime');
-        $mform->setDefault('muted', 0);
+        $mform->setDefault('muted', get_config('videotime', 'muted'));
+        if (get_config('videotime', 'muted_force')) {
+            $mform->addElement('static', 'muted_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_muted', 'videotime'),
+                'value' => get_config('videotime', 'muted')
+            ]));
+            $mform->disabledIf('muted', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'playsinline', get_string('option_playsinline', 'videotime'));
         $mform->setType('playsinline', PARAM_BOOL);
         $mform->addHelpButton('playsinline', 'option_playsinline', 'videotime');
-        $mform->setDefault('playsinline', 1);
+        $mform->setDefault('playsinline', get_config('videotime', 'playsinline'));
+        if (get_config('videotime', 'playsinline_force')) {
+            $mform->addElement('static', 'playsinline_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_playsinline', 'videotime'),
+                'value' => get_config('videotime', 'playsinline')
+            ]));
+            $mform->disabledIf('playsinline', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'portrait', get_string('option_portrait', 'videotime'));
         $mform->setType('portrait', PARAM_BOOL);
         $mform->addHelpButton('portrait', 'option_portrait', 'videotime');
-        $mform->setDefault('portrait', 1);
+        $mform->setDefault('portrait', get_config('videotime', 'portrait'));
+        if (get_config('videotime', 'portrait_force')) {
+            $mform->addElement('static', 'portrait_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_portrait', 'videotime'),
+                'value' => get_config('videotime', 'portrait')
+            ]));
+            $mform->disabledIf('portrait', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'speed', get_string('option_speed', 'videotime'));
         $mform->setType('speed', PARAM_BOOL);
         $mform->addHelpButton('speed', 'option_speed', 'videotime');
-        $mform->setDefault('speed', 0);
+        $mform->setDefault('speed', get_config('videotime', 'speed'));
+        if (get_config('videotime', 'speed_force')) {
+            $mform->addElement('static', 'speed_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_speed', 'videotime'),
+                'value' => get_config('videotime', 'speed')
+            ]));
+            $mform->disabledIf('speed', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'title', get_string('option_title', 'videotime'));
         $mform->setType('title', PARAM_BOOL);
         $mform->addHelpButton('title', 'option_title', 'videotime');
-        $mform->setDefault('title', 1);
+        $mform->setDefault('title', get_config('videotime', 'title'));
+        if (get_config('videotime', 'title_force')) {
+            $mform->addElement('static', 'title_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_title', 'videotime'),
+                'value' => get_config('videotime', 'title')
+            ]));
+            $mform->disabledIf('title', 'disable', 'eq', 1);
+        }
 
         $mform->addElement('advcheckbox', 'transparent', get_string('option_transparent', 'videotime'));
         $mform->setType('transparent', PARAM_BOOL);
         $mform->addHelpButton('transparent', 'option_transparent', 'videotime');
-        $mform->setDefault('transparent', 1);
+        $mform->setDefault('transparent', get_config('videotime', 'transparent'));
+        if (get_config('videotime', 'transparent_force')) {
+            $mform->addElement('static', 'transparent_forced', '', get_string('option_forced', 'videotime', [
+                'option' => get_string('option_transparent', 'videotime'),
+                'value' => get_config('videotime', 'transparent')
+            ]));
+            $mform->disabledIf('transparent', 'disable', 'eq', 1);
+        }
 
         // Add standard elements.
         $this->standard_coursemodule_elements();
 
         // Add standard buttons.
         $this->add_action_buttons();
+
+        if (!videotime_has_pro()) {
+            $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro2'),
+                html_writer::img('https://bdecent.de/wp-content/uploads/videotimepro2.jpg', '',
+                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
+        }
     }
 
     /**

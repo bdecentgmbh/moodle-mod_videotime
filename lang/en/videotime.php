@@ -25,12 +25,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['force'] = 'Force setting';
+$string['force_help'] = 'If checked this default will override the instance setting.';
 $string['activity_name'] = 'Activity name';
 $string['activity_name_help'] = 'Name displayed in course for this Video Time activity module.';
 $string['completion_on_finish'] = 'Completion on video finish';
 $string['completion_on_percent'] = 'Completion on watch percentage';
 $string['completion_on_view'] = 'Completion on view time';
+$string['default'] = 'Default';
 $string['embed_options'] = 'Embed options';
+$string['embed_options_defaults'] = 'Default embed options';
 $string['modulename'] = 'Video Time';
 $string['modulenameplural'] = 'Video Time instances';
 $string['modulename_help'] = 'The Video Time activity enables the teacher 
@@ -100,3 +104,4 @@ $string['option_transparent'] = 'Transparent';
 $string['option_transparent_help'] = 'The responsive player and transparent background are enabled by default, to disable set this parameter to false.';
 $string['option_width'] = 'Width';
 $string['option_width_help'] = 'The exact width of the video. Defaults to the width of the largest available version of the video.';
+$string['option_forced'] = '{$a->option} is globally forced to: {$a->value}';

@@ -76,7 +76,12 @@ function videotime_get_embed_options($moduleinstance) {
     $options = new \stdClass();
     foreach (videotime_get_emnbed_option_names() as $name) {
         if (isset($moduleinstance->$name)) {
-            $options->$name = $moduleinstance->$name;
+            // If option is globally forced, use the default instead.
+            if (get_config('videotime', $name . '_force')) {
+                $options->$name = get_config('videotime', $name);
+            } else {
+                $options->$name = $moduleinstance->$name;
+            }
         }
     }
     return $options;
