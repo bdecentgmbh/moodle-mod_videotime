@@ -39,7 +39,7 @@ $string['embed_options'] = 'Embed options';
 $string['embed_options_defaults'] = 'Default embed options';
 $string['modulename'] = 'Video Time';
 $string['modulenameplural'] = 'Video Time instances';
-if (!videotime_has_pro()) {
+if (!file_exists($CFG->dirroot . '/mod/videotime/plugin/pro')) {
     $string['modulename_help'] = 'The Video Time activity enables the teacher
 <ul>
     <li>to easily embed videos from Vimeo, just by adding the url</li>
