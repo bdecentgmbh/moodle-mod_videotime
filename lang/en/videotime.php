@@ -50,8 +50,8 @@ Video Time Pro has advanced features to
 <ul>
     <li>track the user’s viewing time using activity completion</li>
     <li>get insights about each user’s viewing time</li>
-    <li>set default settings for the plugin</li>
-    <li>and a custom preview picture for the video.</li>
+    <li>set default embed options for the plugin</li>
+    <li>and override the instances\' embed options globally.</li>
 </ul>
 
 Get Video Time Pro now on <a href="https://bdecent.de/products/videotimepro">https://bdecent.de/products/videotimepro</a>.
@@ -67,8 +67,8 @@ Please let us know if you have any feedback for us.
     <li>to add content above and below of the video player</li>
     <li>track the user’s viewing time using activity completion</li>
     <li>get insights about each user’s viewing time</li>
-    <li>set default settings for the plugin</li>
-    <li>and a custom preview picture for the video.</li>
+    <li>set default embed options for the plugin</li>
+    <li>and override the instances\' embed options globally.</li>
 </ul>
 
 We are constantly improving the plugin, so stay tuned for upcoming versions. You can see what we’re working on and add feature requests in our public roadmap on <a href="https://bdecent.de/products/videotimepro/roadmap">https://bdecent.de/products/videotimepro/roadmap</a>.
