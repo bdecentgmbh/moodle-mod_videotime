@@ -29,7 +29,8 @@ if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
     if (!videotime_has_pro()) {
-        $settings->add(new admin_setting_heading('pro', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro3'),
+        $settings->add(new admin_setting_heading('pro', '',
+            html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro3'),
             html_writer::img('https://link.bdecent.de/videotimepro3/image.jpg', '',
                 ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
     }
@@ -135,7 +136,8 @@ if ($ADMIN->fulltree) {
     }
 
     if (!videotime_has_pro()) {
-        $settings->add(new admin_setting_heading('pro2', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),
+        $settings->add(new admin_setting_heading('pro2', '',
+            html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),
             html_writer::img('https://link.bdecent.de/videotimepro4/image.jpg', '',
                 ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
     }

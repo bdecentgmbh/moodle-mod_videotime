@@ -49,7 +49,7 @@ if (!file_exists($CFG->dirroot . '/mod/videotime/plugin/pro')) {
 Video Time Pro has advanced features to
 <ul>
     <li>track the user’s viewing time using activity completion</li>
-    <li>get insights about each user’s viewing time and session</li>
+    <li>get insights about each user’s viewing time</li>
     <li>set default settings for the plugin</li>
     <li>and a custom preview picture for the video.</li>
 </ul>
@@ -66,7 +66,7 @@ Please let us know if you have any feedback for us.
     <li>to easily embed videos from Vimeo, just by adding the url</li>
     <li>to add content above and below of the video player</li>
     <li>track the user’s viewing time using activity completion</li>
-    <li>get insights about each user’s viewing time and session</li>
+    <li>get insights about each user’s viewing time</li>
     <li>set default settings for the plugin</li>
     <li>and a custom preview picture for the video.</li>
 </ul>
