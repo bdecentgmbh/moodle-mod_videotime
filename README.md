@@ -1,8 +1,20 @@
-# Vimeo #
+# Video Time #
 
-TODO Describe the plugin shortly here.
+The Video Time activity enables the teacher
+- to easily embed videos from Vimeo, just by adding the url
+- to add content above and below of the video player.
 
-TODO Provide more detailed description here.
+Video Time Pro has advanced features to
+- track the user’s viewing time using activity completion
+- get insights about each user’s viewing time
+- set default embed options for the plugin
+- and override the instances' embed options globally.
+
+Get Video Time Pro now on <a href="https://bdecent.de/products/videotimepro">https://bdecent.de/products/videotimepro</a>.
+
+We are constantly improving the plugin, so stay tuned for upcoming versions. You can see what we’re working on and add feature requests in our public roadmap on <a href="https://bdecent.de/products/videotimepro/roadmap">https://bdecent.de/products/videotimepro/roadmap</a>.
+
+Please let us know if you have any feedback for us.
 
 ## License ##
 
