@@ -329,7 +329,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         if (videotime_has_pro()) {
             // Completion on view and seconds.
             $group = [];
-            $group[] =& $mform->createElement('checkbox', 'completion_on_view_time', '',
+            $group[] =& $mform->createElement('advcheckbox', 'completion_on_view_time', '',
                 get_string('completion_on_view', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
@@ -338,7 +338,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
 
             $group = [];
-            $group[] =& $mform->createElement('checkbox', 'completion_on_percent', '',
+            $group[] =& $mform->createElement('advcheckbox', 'completion_on_percent', '',
                 get_string('completion_on_percent', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_percent_value', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'percent_label', '', '%');
