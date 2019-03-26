@@ -37,6 +37,8 @@ $string['completion_on_view'] = 'Completion on view time';
 $string['default'] = 'Default';
 $string['embed_options'] = 'Embed options';
 $string['embed_options_defaults'] = 'Default embed options';
+$string['label_mode'] = 'Label mode';
+$string['label_mode_help'] = 'Embed video on course layout, similar to the Label activity.';
 $string['modulename'] = 'Video Time';
 $string['modulenameplural'] = 'Video Time instances';
 if (!file_exists($CFG->dirroot . '/mod/videotime/plugin/pro')) {

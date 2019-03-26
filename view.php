@@ -45,9 +45,10 @@ if ($id) {
     print_error('invalidcoursemodule');
 }
 
-require_login($course, true, $cm);
-
 $modulecontext = context_module::instance($cm->id);
+$PAGE->set_context($modulecontext);
+
+require_login($course, true, $cm);
 
 require_capability('mod/videotime:view', $modulecontext);
 
@@ -57,7 +58,6 @@ videotime_view($moduleinstance, $course, $cm, $modulecontext);
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($modulecontext);
 
 // Watch time tracking is only available in pro.
 if (videotime_has_pro()) {

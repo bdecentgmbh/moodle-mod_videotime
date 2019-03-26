@@ -400,3 +400,46 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
             new pix_icon('i/report', ''));
     }
 }
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ * mod_folder can be displayed inline on course page and therefore have no course link
+ *
+ * @param cm_info $cm
+ * @throws dml_exception
+ * @throws coding_exception
+ */
+function videotime_cm_info_dynamic(cm_info $cm) {
+    global $OUTPUT, $PAGE, $DB;
+
+    // Ensure we are on the course view page. This was throwing an error when viewing the module
+    // because OUTPUT was being used.
+    if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
+        return;
+    }
+
+    $instance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
+
+    if (videotime_has_pro() && $instance->label_mode) {
+        $cm->set_no_view_link();
+    }
+
+    $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [false, 5, videotime_has_pro(),
+        videotime_get_embed_options($instance)]);
+
+    if (!$instance->vimeo_url) {
+        \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
+    } else {
+        $content = $OUTPUT->render_from_template('mod_videotime/view', [
+            'instance' => $instance
+        ]);
+    }
+
+    if ($instance->label_mode) {
+        $cm->set_extra_classes('label_mode');
+    }
+
+    $cm->set_content($content);
+}

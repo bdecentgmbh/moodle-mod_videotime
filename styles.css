@@ -1,0 +1,9 @@
+.vimeo-container {
+    display: flex;
+}
+
+.modtype_videotime.label_mode,
+.modtype_videotime.label_mode .mod-indent-outer,
+.modtype_videotime.label_mode .contentwithoutlink {
+    display: block !important;
+}

@@ -233,5 +233,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2018080218, 'videotime');
     }
 
+    if ($oldversion < 2019031901) {
+
+        // Define field label_mode to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('label_mode', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'responsive');
+
+        // Conditionally launch add field label_mode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019031901, 'videotime');
+    }
+
     return true;
 }
