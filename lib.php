@@ -412,7 +412,7 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  * @throws coding_exception
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
-    global $OUTPUT, $PAGE, $DB;
+    global $OUTPUT, $PAGE, $DB, $USER;
 
     // Ensure we are on the course view page. This was throwing an error when viewing the module
     // because OUTPUT was being used.
@@ -420,26 +420,36 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         return;
     }
 
+    if (!videotime_has_pro()) {
+        return;
+    }
+
     $instance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
 
-    if (videotime_has_pro() && $instance->label_mode) {
-        $cm->set_no_view_link();
-    }
-
-    $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [false, 5, videotime_has_pro(),
-        videotime_get_embed_options($instance)]);
-
-    if (!$instance->vimeo_url) {
-        \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
-    } else {
-        $content = $OUTPUT->render_from_template('mod_videotime/view', [
-            'instance' => $instance
-        ]);
-    }
-
     if ($instance->label_mode) {
-        $cm->set_extra_classes('label_mode');
-    }
+        $cm->set_no_view_link();
 
-    $cm->set_content($content);
+        // Watch time tracking is only available in pro.
+        $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
+        $sessiondata = $session->jsonSerialize();
+        $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
+            videotime_get_embed_options($instance), $cm->id]);
+
+        if (!$instance->vimeo_url) {
+            \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
+        } else {
+            $content = $OUTPUT->render_from_template('mod_videotime/view', [
+                'instance' => $instance,
+                'cmid' => $cm->id
+            ]);
+        }
+
+        if ($instance->label_mode) {
+            $cm->set_extra_classes('label_mode');
+        }
+
+        videotime_view($instance, $PAGE->course, $cm, context_module::instance($cm->id));
+
+        $cm->set_content($content);
+    }
 }

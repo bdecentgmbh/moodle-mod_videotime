@@ -67,7 +67,7 @@ if (videotime_has_pro()) {
     $sessiondata = false;
 }
 $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-    videotime_get_embed_options($moduleinstance)]);
+    videotime_get_embed_options($moduleinstance), $cm->id]);
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
     'mod_videotime', 'intro', null);
@@ -80,7 +80,8 @@ if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
     echo $OUTPUT->render_from_template('mod_videotime/view', [
-        'instance' => $moduleinstance
+        'instance' => $moduleinstance,
+        'cmid' => $cm->id
     ]);
 }
 echo $OUTPUT->footer();
