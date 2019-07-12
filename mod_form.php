@@ -279,6 +279,41 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->disabledIf('transparent', 'disable', 'eq', 1);
         }
 
+        if (videotime_has_pro()) {
+            // -------------------------------------------------------------------------------
+            // Grade settings.
+            $mform->addElement('header', 'modstandardgrade', get_string('grade'));
+            global $COURSE, $OUTPUT;
+
+            $mform->addElement('checkbox', 'viewpercentgrade', get_string('viewpercentgrade', 'videotime'));
+            $mform->setType('viewpercentgrade', PARAM_BOOL);
+            $mform->addHelpButton('viewpercentgrade', 'viewpercentgrade', 'videotime');
+
+            $mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
+                grade_get_categories_menu($COURSE->id, false));
+            $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
+            $mform->disabledIf('gradecat', 'viewpercentgrade');
+
+            // Grade to pass.
+            $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
+            $mform->addHelpButton('gradepass', 'gradepass', 'grades');
+            $mform->setDefault('gradepass', '');
+            $mform->setType('gradepass', PARAM_RAW);
+            $mform->disabledIf('gradepass', 'viewpercentgrade');
+
+            if ($this->_cm) {
+                if (!grade_item::fetch(array('itemtype' => 'mod',
+                    'itemmodule' => $this->_cm->modname,
+                    'iteminstance' => $this->_cm->instance,
+                    'itemnumber' => 0,
+                    'courseid' => $COURSE->id))) {
+
+                    $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'), null, ['id' => 'id_gradewarning']);
+                    $mform->hideIf('gradewarning', 'viewpercentgrade', 'checked');
+                }
+            }
+        }
+
         // Add standard elements.
         $this->standard_coursemodule_elements();
 

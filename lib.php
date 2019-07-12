@@ -26,25 +26,107 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Return if the plugin supports $feature.
- *
+ *http://localhost/moodle35/course/mod.php?sesskey=nzkiyHyS2D&sr=0&update=2
  * @param string $feature Constant representing the feature.
  * @return true | null True if the feature is supported, null otherwise.
  */
 function videotime_supports($feature) {
     switch ($feature) {
-        case FEATURE_COMPLETION_TRACKS_VIEWS:
-            return true;
-        case FEATURE_MOD_INTRO:
-            return true;
-        case FEATURE_BACKUP_MOODLE2:
-            return true;
-        case FEATURE_COMPLETION_HAS_RULES:
-            return true;
-        case FEATURE_SHOW_DESCRIPTION:
-            return true;
+        case FEATURE_GRADE_HAS_GRADE:         return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_MOD_INTRO:               return true;
+        case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_GRADE_OUTCOMES:          return false;
         default:
             return null;
     }
+}
+
+/**
+ * Update/create grade item for given data
+ *
+ * @category grade
+ * @param stdClass $data A videotime instance with extra cmidnumber property
+ * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return object grade_item
+ */
+function videotime_grade_item_update($videotime, $grades=NULL) {
+    global $CFG;
+
+    require_once($CFG->libdir.'/gradelib.php');
+
+    if (!videotime_has_pro()) {
+        return null;
+    }
+
+    $params = [
+        'itemname' => $videotime->name,
+        'idnumber' => $videotime->cmidnumber,
+        'gradetype' => GRADE_TYPE_VALUE,
+        'grademax' => 100,
+        'grademin' => 0];
+
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = NULL;
+    }
+
+    return grade_update('mod/videotime', $videotime->course, 'mod', 'videotime', $videotime->id, 0, $grades, $params);
+}
+
+/**
+ * Update grades in central gradebook
+ *
+ * @category grade
+ * @param object $videotime
+ * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone
+ */
+function videotime_update_grades($videotime, $userid=0, $nullifnone=true) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    if (!videotime_has_pro() || !$videotime->viewpercentgrade) {
+        return null;
+    }
+
+    if ($grades = videotime_get_user_grades($videotime, $userid)) {
+        videotime_grade_item_update($videotime, $grades);
+    }
+}
+
+/**
+ * Return grade for given user or all users.
+ *
+ * @param stdClass $videotime videotime instance
+ * @param int $userid optional user id, 0 means all users
+ * @return array|false array of grades, false if none.
+ */
+function videotime_get_user_grades($videotime, $userid = 0) {
+    global $DB;
+
+    if (!videotime_has_pro() || !$videotime->viewpercentgrade) {
+        return false;
+    }
+
+    $cm = get_coursemodule_from_instance('videotime', $videotime->id);
+
+    $params = ['cmid' => $cm->id];
+    $where = 'WHERE module_id = :cmid';
+
+    if ($userid > 0) {
+        $params['userid'] = $userid;
+        $where .= ' AND user_id = :userid';
+    }
+
+    return $DB->get_records_sql('SELECT
+                                 user_id as userid,
+                                 MAX(percent)*100 as rawgrade
+                                 FROM {' . \videotimeplugin_pro\session::TABLE . '}
+                                 ' . $where . '
+                                 GROUP BY user_id', $params);
 }
 
 /**
@@ -112,7 +194,7 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
-    $id = $DB->insert_record('videotime', $moduleinstance);
+    $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
     if (!empty($moduleinstance->preview_image)) {
         $fs = get_file_storage();
@@ -121,7 +203,9 @@ function videotime_add_instance($moduleinstance, $mform = null) {
             0, array('subdirs' => 0, 'maxfiles' => 1));
     }
 
-    return $id;
+    videotime_grade_item_update($moduleinstance);
+
+    return $moduleinstance->id;
 }
 
 /**
@@ -151,6 +235,8 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         file_save_draft_area_files($moduleinstance->preview_image, $context->id, 'mod_videotime', 'preview_image',
             0, array('subdirs' => 0, 'maxfiles' => 1));
     }
+
+    videotime_grade_item_update($moduleinstance);
 
     return $DB->update_record('videotime', $moduleinstance);
 }

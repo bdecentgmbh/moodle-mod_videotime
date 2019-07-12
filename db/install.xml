@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/videotime/db" VERSION="20190319" COMMENT="XMLDB file for URL module"
+<XMLDB PATH="mod/videotime/db" VERSION="20190712" COMMENT="XMLDB file for URL module"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -35,6 +35,7 @@
         <FIELD NAME="width" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The exact width of the video. Defaults to the width of the largest available version of the video."/>
         <FIELD NAME="responsive" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="label_mode" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="If true than video will be embedded in the course page."/>
+        <FIELD NAME="viewpercentgrade" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="If true sync view percentage to student grade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

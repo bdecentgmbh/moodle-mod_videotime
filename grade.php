@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Redirects the user to Video Time instance.
  *
  * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once("../../config.php");
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '0.5.0';
-$plugin->version = 2019071200;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+$id = required_param('id', PARAM_INT);
+
+$cm = get_coursemodule_from_id('videotime', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+
+$PAGE->set_url('/mod/videotime/grade.php', ['id' => $cm->id]);
+
+redirect(new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]));

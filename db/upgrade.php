@@ -248,5 +248,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019031901, 'videotime');
     }
 
+    if ($oldversion < 2019071200) {
+
+        // Define field viewpercentgrade to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('viewpercentgrade', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'label_mode');
+
+        // Conditionally launch add field viewpercentgrade.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019071200, 'videotime');
+    }
+
     return true;
 }
