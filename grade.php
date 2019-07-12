@@ -18,13 +18,14 @@
  * Redirects the user to Video Time instance.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2019 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("../../config.php");
 
 $id = required_param('id', PARAM_INT);
+$userid = optional_param('userid', null, PARAM_INT);
 
 $cm = get_coursemodule_from_id('videotime', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -33,4 +34,8 @@ require_login($course, false, $cm);
 
 $PAGE->set_url('/mod/videotime/grade.php', ['id' => $cm->id]);
 
-redirect(new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]));
+if (videotime_has_pro() && $userid) {
+    redirect(new moodle_url('/mod/videotime/report.php', ['id' => $cm->id]));
+} else {
+    redirect(new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]));
+}
