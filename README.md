@@ -16,6 +16,30 @@ We are constantly improving the plugin, so stay tuned for upcoming versions. You
 
 Please let us know if you have any feedback for us.
 
+## How to install
+
+#### Option 1: Install from Moodle.org (recommended)
+1. Login as an admin and go to Site administration > Plugins > Install plugins. (If you can't find this location, then plugin installation is prevented on your site.)
+2. Click the button 'Install plugins from Moodle plugins directory'.
+3. Search for "Video Time", click the Install button then click Continue.
+4. Confirm the installation request
+5. Check the plugin validation report
+
+#### Option 2: Install from zip package
+1. Download Video Time from <https://moodle.org/plugins/pluginversions.php?plugin=mod_videotime>
+2. Login to your Moodle site as an admin and go to Administration > Site administration > Plugins > Install plugins.
+3. Upload the ZIP file. You should only be prompted to add extra details (in the Show more section) if the plugin is not automatically detected.
+4. If your target directory is not writeable, you will see a warning message.
+5. Check the plugin validation report
+
+#### Option 3: Install manually on server
+1. Download Video Time from <https://moodle.org/plugins/pluginversions.php?plugin=mod_videotime>
+2. Upload or copy it to your Moodle server.
+Unzip it in the `/mod` directory.
+3. In your Moodle site (as admin) go to Settings > Site administration > Notifications (you should, for most plugin types, get a message saying the plugin is installed).
+
+For more detailed info, visit <https://docs.moodle.org/35/en/Installing_plugins>
+
 ## License ##
 
 2018 bdecent gmbh <https://bdecent.de>
