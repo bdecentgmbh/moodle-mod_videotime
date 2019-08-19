@@ -134,7 +134,7 @@ function videotime_get_user_grades($videotime, $userid = 0) {
  *
  * @return array
  */
-function videotime_get_emnbed_option_names() {
+function videotime_get_embed_option_names() {
     return [
         'responsive',
         'autoplay',
@@ -161,7 +161,7 @@ function videotime_get_emnbed_option_names() {
  */
 function videotime_get_embed_options($moduleinstance) {
     $options = new \stdClass();
-    foreach (videotime_get_emnbed_option_names() as $name) {
+    foreach (videotime_get_embed_option_names() as $name) {
         if (isset($moduleinstance->$name)) {
             // If option is globally forced, use the default instead.
             if (get_config('videotime', $name . '_force')) {

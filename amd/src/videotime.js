@@ -9,7 +9,7 @@
  */
 define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, Vimeo, Ajax, log) {
     return {
-        init: function(session, interval, hasPro, embedOptions, cmid) {
+        init: function(session, interval, hasPro, embedOptions, cmid, resumeTime) {
 
             log.debug('VIDEO_TIME embed options', embedOptions);
 
@@ -19,6 +19,13 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
                 var playing = false;
                 var time = 0;
                 var percent = 0;
+                var currentTime = 0;
+
+                if (resumeTime > 0) {
+                    player.on('loaded', function() {
+                        player.setCurrentTime(resumeTime);
+                    });
+                }
 
                 player.on('play', function () {
                     playing = true;
@@ -61,7 +68,8 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
 
                 player.on('timeupdate', function(event) {
                     percent = event.percent;
-                    log.debug('VIDEO_TIME timeupdate');
+                    currentTime = event.seconds;
+                    log.debug('VIDEO_TIME timeupdate. Percent: ' + percent + '. Current time: ' + currentTime);
                 });
 
                 setInterval(function () {
@@ -77,6 +85,10 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
                             Ajax.call([{
                                 methodname: 'videotimeplugin_pro_set_percent',
                                 args: {session_id: session.id, percent: percent}
+                            }]);
+                            Ajax.call([{
+                                methodname: 'videotimeplugin_pro_set_session_current_time',
+                                args: {session_id: session.id, current_time: currentTime}
                             }]);
                         }
                     }

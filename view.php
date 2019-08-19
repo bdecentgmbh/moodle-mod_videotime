@@ -45,6 +45,8 @@ if ($id) {
     print_error('invalidcoursemodule');
 }
 
+$sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
+
 $modulecontext = context_module::instance($cm->id);
 $PAGE->set_context($modulecontext);
 
@@ -67,7 +69,7 @@ if (videotime_has_pro()) {
     $sessiondata = false;
 }
 $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-    videotime_get_embed_options($moduleinstance), $cm->id]);
+    videotime_get_embed_options($moduleinstance), $cm->id, $sessions->get_current_watch_time()]);
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
     'mod_videotime', 'intro', null);
