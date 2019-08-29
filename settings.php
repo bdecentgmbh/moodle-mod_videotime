@@ -36,6 +36,20 @@ if ($ADMIN->fulltree) {
     }
 
     if (videotime_has_pro()) {
+        $settings->add(new admin_setting_heading('default_resume_playback', get_string('default', 'videotime') . ' ' .
+            get_string('resume_playback', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/resume_playback', get_string('resume_playback', 'videotime'),
+            get_string('resume_playback_help', 'videotime'), 0));
+        $settings->add(new admin_setting_configcheckbox('videotime/resume_playback_force', get_string('force', 'videotime'),
+            get_string('force_help', 'videotime'), '0'));
+
+        $settings->add(new admin_setting_heading('default_next_activity_button', get_string('default', 'videotime') . ' ' .
+            get_string('next_activity_button', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button', get_string('next_activity_button', 'videotime'),
+            get_string('next_activity_button_help', 'videotime'), 0));
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button_force', get_string('force', 'videotime'),
+            get_string('force_help', 'videotime'), '0'));
+
         $settings->add(new admin_setting_heading('option_responsive', get_string('default', 'videotime') . ' ' .
             get_string('option_responsive', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/responsive', get_string('option_responsive', 'videotime'),

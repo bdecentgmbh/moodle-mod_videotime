@@ -263,5 +263,45 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019071200, 'videotime');
     }
 
+    if ($oldversion < 2019082800) {
+
+        // Define field next_activity_button to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('next_activity_button', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'viewpercentgrade');
+
+        // Conditionally launch add field next_activity_button.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field next_activity_id to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('next_activity_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'next_activity_button');
+
+        // Conditionally launch add field next_activity_id.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019082800, 'videotime');
+    }
+
+    if ($oldversion < 2019082801) {
+
+        // Define field resume_playback to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('resume_playback', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'next_activity_id');
+
+        // Conditionally launch add field resume_playback.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019082801, 'videotime');
+    }
+
+
     return true;
 }

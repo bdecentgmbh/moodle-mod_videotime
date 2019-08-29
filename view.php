@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\output\next_activity_button;
+
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 
@@ -45,6 +47,8 @@ if ($id) {
     print_error('invalidcoursemodule');
 }
 
+$moduleinstance = videotime_populate_with_defaults($moduleinstance);
+
 $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
 
 $modulecontext = context_module::instance($cm->id);
@@ -61,15 +65,21 @@ $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 
+$renderer = $PAGE->get_renderer('mod_videotime');
+
 // Watch time tracking is only available in pro.
+$resume_time = 0;
 if (videotime_has_pro()) {
     $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
     $sessiondata = $session->jsonSerialize();
+    if ($moduleinstance->resume_playback) {
+        $resume_time = $sessions->get_current_watch_time();
+    }
 } else {
     $sessiondata = false;
 }
 $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-    videotime_get_embed_options($moduleinstance), $cm->id, $sessions->get_current_watch_time()]);
+    $moduleinstance, $cm->id, $resume_time]);
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
     'mod_videotime', 'intro', null);
@@ -81,9 +91,17 @@ echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
-    echo $OUTPUT->render_from_template('mod_videotime/view', [
+
+    $context = [
         'instance' => $moduleinstance,
         'cmid' => $cm->id
-    ]);
+    ];
+
+    if (videotime_has_pro()) {
+        $next_activity_button = new next_activity_button(cm_info::create($cm));
+        $context['next_activity_button_html'] = $renderer->render($next_activity_button);
+    }
+
+    echo $OUTPUT->render_from_template('mod_videotime/view', $context);
 }
 echo $OUTPUT->footer();

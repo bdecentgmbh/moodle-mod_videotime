@@ -1,0 +1,16 @@
+{{#hasnextcm}}
+    <div class="clearfix" style="margin-bottom: 10px">
+        <div class="pull-right">
+            {{#is_restricted}}
+                <span>{{#str}}next{{/str}}: </span>
+                <button type="button" class="btn btn-dark" data-container="body" data-toggle="popover" data-html="true" data-placement="left" data-content="{{{availability_info}}}">
+                    {{#pix}}i/lock, mod_videotime{{/pix}}
+                    {{nextcm.name}}
+                </button>
+            {{/is_restricted}}
+            {{^is_restricted}}
+                <span>{{#str}}next{{/str}}: </span><a href="{{nextcm.url}}" class="btn btn-dark">{{nextcm.name}}</a>
+            {{/is_restricted}}
+        </div>
+    </div>
+{{/hasnextcm}}

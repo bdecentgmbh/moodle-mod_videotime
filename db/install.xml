@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/videotime/db" VERSION="20190712" COMMENT="XMLDB file for URL module"
+<XMLDB PATH="mod/videotime/db" VERSION="20190828" COMMENT="XMLDB file for URL module"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -36,6 +36,9 @@
         <FIELD NAME="responsive" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="label_mode" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="If true than video will be embedded in the course page."/>
         <FIELD NAME="viewpercentgrade" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="If true sync view percentage to student grade"/>
+        <FIELD NAME="next_activity_button" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Enable the next activity button"/>
+        <FIELD NAME="next_activity_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="CM ID of next activity. -1 is next activity in course."/>
+        <FIELD NAME="resume_playback" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="If the video should resume where the user left off."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

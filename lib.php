@@ -134,8 +134,10 @@ function videotime_get_user_grades($videotime, $userid = 0) {
  *
  * @return array
  */
-function videotime_get_embed_option_names() {
+function videotime_get_fields_with_defaults() {
     return [
+        'resume_playback',
+        'next_activity_button',
         'responsive',
         'autoplay',
         'byline',
@@ -159,19 +161,16 @@ function videotime_get_embed_option_names() {
  * @param $moduleinstance
  * @return stdClass
  */
-function videotime_get_embed_options($moduleinstance) {
-    $options = new \stdClass();
-    foreach (videotime_get_embed_option_names() as $name) {
+function videotime_populate_with_defaults($moduleinstance) {
+    foreach (videotime_get_fields_with_defaults() as $name) {
         if (isset($moduleinstance->$name)) {
             // If option is globally forced, use the default instead.
             if (get_config('videotime', $name . '_force')) {
-                $options->$name = get_config('videotime', $name);
-            } else {
-                $options->$name = $moduleinstance->$name;
+                $moduleinstance->$name = get_config('videotime', $name);
             }
         }
     }
-    return $options;
+    return $moduleinstance;
 }
 
 /**
@@ -511,19 +510,28 @@ function videotime_cm_info_dynamic(cm_info $cm) {
     }
 
     $instance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
+    $instance = videotime_populate_with_defaults($instance);
+
+    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
 
     if ($instance->label_mode) {
         $cm->set_no_view_link();
+
+        $resume_time = 0;
+        if ($instance->resume_playback) {
+            $resume_time = $sessions->get_current_watch_time();
+        }
 
         // Watch time tracking is only available in pro.
         $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
         $sessiondata = $session->jsonSerialize();
         $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-            videotime_get_embed_options($instance), $cm->id]);
+            $instance, $cm->id, $resume_time]);
 
         if (!$instance->vimeo_url) {
             \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
         } else {
+            $instance->next_activity_button = false;
             $content = $OUTPUT->render_from_template('mod_videotime/view', [
                 'instance' => $instance,
                 'cmid' => $cm->id
@@ -538,4 +546,13 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 
         $cm->set_content($content);
     }
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_videotime_get_fontawesome_icon_map() {
+    return [
+        'mod_videotime:i/lock' => 'fa-lock',
+    ];
 }

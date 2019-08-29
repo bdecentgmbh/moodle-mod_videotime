@@ -39,7 +39,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $COURSE;
 
         $mform = $this->_form;
 
@@ -99,6 +99,45 @@ class mod_videotime_mod_form extends moodleform_mod {
         // ]);
         // $mform->addHelpButton('preview_image', 'preview_image', 'videotime');
         // @codingStandardsIgnoreEnd
+
+        if (videotime_has_pro()) {
+            $mform->addElement('advcheckbox', 'resume_playback', get_string('resume_playback', 'videotime'));
+            $mform->addHelpButton('resume_playback', 'resume_playback', 'videotime');
+            $mform->setType('resume_playback', PARAM_BOOL);
+            $mform->setDefault('resume_playback', get_config('videotime', 'resume_playback'));
+            if (get_config('videotime', 'resume_playback_force')) {
+                $mform->addElement('static', 'resume_playback_forced', '', get_string('option_forced', 'videotime', [
+                    'option' => get_string('resume_playback', 'videotime'),
+                    'value' => get_config('videotime', 'resume_playback') ? get_string('yes') : get_string('no')
+                ]));
+                $mform->disabledIf('resume_playback', 'disable', 'eq', 1);
+            }
+
+            $mform->addElement('advcheckbox', 'next_activity_button', get_string('next_activity_button', 'videotime'));
+            $mform->addHelpButton('next_activity_button', 'next_activity_button', 'videotime');
+            $mform->setType('next_activity_button', PARAM_BOOL);
+            $mform->setDefault('next_activity_button', get_config('videotime', 'resume_playback'));
+            if (get_config('videotime', 'next_activity_button_force')) {
+                $mform->addElement('static', 'next_activity_button_forced', '', get_string('option_forced', 'videotime', [
+                    'option' => get_string('next_activity_button', 'videotime'),
+                    'value' => get_config('videotime', 'next_activity_button') ? get_string('yes') : get_string('no')
+                ]));
+                $mform->disabledIf('next_activity_button', 'disable', 'eq', 1);
+            }
+
+            $modinfo = get_fast_modinfo($COURSE->id);
+            $modoptions = [-1 => get_string('next_activity_in_course', 'videotime')];
+            foreach ($modinfo->get_cms() as $cm) {
+                if ($this->_cm->id && $this->_cm->id == $cm->id) {
+                    continue;
+                }
+                $modoptions[$cm->id] = $cm->name;
+            }
+
+            $mform->addElement('select', 'next_activity_id', get_string('next_activity', 'videotime'), $modoptions);
+            $mform->setType('next_activity_id', PARAM_INT);
+            $mform->hideIf('next_activity_id', 'next_activity_button');
+        }
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 

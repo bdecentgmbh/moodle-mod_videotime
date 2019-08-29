@@ -67,7 +67,10 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'width',
             'responsive',
             'label_mode',
-            'viewpercentgrade'
+            'viewpercentgrade',
+            'next_activity_button',
+            'next_activity_id',
+            'resume_playback'
         ]);
 
         if (videotime_has_pro()) {
@@ -99,6 +102,8 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             // Define id annotations.
             $session->annotate_ids('user', 'user_id');
         }
+
+        $module->annotate_ids('course_module', 'next_activity_id');
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
