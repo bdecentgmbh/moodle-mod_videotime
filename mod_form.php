@@ -116,7 +116,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addElement('advcheckbox', 'next_activity_button', get_string('next_activity_button', 'videotime'));
             $mform->addHelpButton('next_activity_button', 'next_activity_button', 'videotime');
             $mform->setType('next_activity_button', PARAM_BOOL);
-            $mform->setDefault('next_activity_button', get_config('videotime', 'resume_playback'));
+            $mform->setDefault('next_activity_button', get_config('videotime', 'next_activity_button'));
             if (get_config('videotime', 'next_activity_button_force')) {
                 $mform->addElement('static', 'next_activity_button_forced', '', get_string('option_forced', 'videotime', [
                     'option' => get_string('next_activity_button', 'videotime'),
@@ -137,6 +137,19 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addElement('select', 'next_activity_id', get_string('next_activity', 'videotime'), $modoptions);
             $mform->setType('next_activity_id', PARAM_INT);
             $mform->hideIf('next_activity_id', 'next_activity_button');
+
+            $mform->addElement('advcheckbox', 'next_activity_auto', get_string('next_activity_auto', 'videotime'));
+            $mform->addHelpButton('next_activity_auto', 'next_activity_auto', 'videotime');
+            $mform->setType('next_activity_auto', PARAM_BOOL);
+            $mform->hideIf('next_activity_auto', 'next_activity_button');
+            $mform->setDefault('next_activity_auto', get_config('videotime', 'next_activity_auto'));
+            if (get_config('videotime', 'next_activity_auto_force')) {
+                $mform->addElement('static', 'next_activity_auto_forced', '', get_string('option_forced', 'videotime', [
+                    'option' => get_string('next_activity_auto', 'videotime'),
+                    'value' => get_config('videotime', 'next_activity_auto') ? get_string('yes') : get_string('no')
+                ]));
+                $mform->disabledIf('next_activity_auto', 'disable', 'eq', 1);
+            }
         }
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));

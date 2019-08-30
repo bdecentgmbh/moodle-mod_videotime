@@ -41,6 +41,9 @@ class next_activity_button implements \templatable, \renderable {
      */
     private $availability_info = '';
 
+    /**
+     * @var bool
+     */
     private $is_restricted = false;
 
     public function __construct(\cm_info $cm)
@@ -95,6 +98,22 @@ class next_activity_button implements \templatable, \renderable {
 
             $this->is_restricted = !$this->nextcm->uservisible;
         }
+    }
+
+    /**
+     * @return \cm_info|mixed
+     */
+    public function get_next_cm()
+    {
+        return $this->nextcm;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_restricted()
+    {
+        return $this->is_restricted;
     }
 
     public function export_for_template(renderer_base $output) {

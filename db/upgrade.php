@@ -302,6 +302,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019082801, 'videotime');
     }
 
+    if ($oldversion < 2019082901) {
+
+        // Define field next_activity_auto to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('next_activity_auto', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'next_activity_id');
+
+        // Conditionally launch add field next_activity_auto.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019082901, 'videotime');
+    }
 
     return true;
 }

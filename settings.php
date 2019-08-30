@@ -50,6 +50,13 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
+        $settings->add(new admin_setting_heading('default_next_activity_auto', get_string('default', 'videotime') . ' ' .
+            get_string('next_activity_auto', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_auto', get_string('next_activity_auto', 'videotime'),
+            get_string('next_activity_auto_help', 'videotime'), 0));
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_auto_force', get_string('force', 'videotime'),
+            get_string('force_help', 'videotime'), '0'));
+
         $settings->add(new admin_setting_heading('option_responsive', get_string('default', 'videotime') . ' ' .
             get_string('option_responsive', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/responsive', get_string('option_responsive', 'videotime'),

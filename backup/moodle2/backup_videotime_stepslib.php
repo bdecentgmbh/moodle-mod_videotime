@@ -70,6 +70,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'viewpercentgrade',
             'next_activity_button',
             'next_activity_id',
+            'next_activity_auto',
             'resume_playback'
         ]);
 

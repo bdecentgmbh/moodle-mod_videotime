@@ -69,17 +69,24 @@ $renderer = $PAGE->get_renderer('mod_videotime');
 
 // Watch time tracking is only available in pro.
 $resume_time = 0;
+$next_activity_url = null;
+$sessiondata = false;
+$next_activity_button = null;
+
 if (videotime_has_pro()) {
     $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
     $sessiondata = $session->jsonSerialize();
     if ($moduleinstance->resume_playback) {
         $resume_time = $sessions->get_current_watch_time();
     }
-} else {
-    $sessiondata = false;
+    $next_activity_button = new next_activity_button(cm_info::create($cm));
+    if (!$next_activity_button->is_restricted() && $next_cm = $next_activity_button->get_next_cm()) {
+        $next_activity_url = $next_cm->url->out(false);
+    }
 }
+
 $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-    $moduleinstance, $cm->id, $resume_time]);
+    $moduleinstance, $cm->id, $resume_time, $next_activity_url]);
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
     'mod_videotime', 'intro', null);
@@ -97,8 +104,7 @@ if (!$moduleinstance->vimeo_url) {
         'cmid' => $cm->id
     ];
 
-    if (videotime_has_pro()) {
-        $next_activity_button = new next_activity_button(cm_info::create($cm));
+    if (videotime_has_pro() && $next_activity_button) {
         $context['next_activity_button_html'] = $renderer->render($next_activity_button);
     }
 

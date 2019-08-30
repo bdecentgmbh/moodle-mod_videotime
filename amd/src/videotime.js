@@ -9,7 +9,7 @@
  */
 define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, Vimeo, Ajax, log) {
     return {
-        init: function(session, interval, hasPro, embedOptions, cmid, resumeTime) {
+        init: function(session, interval, hasPro, embedOptions, cmid, resumeTime, nextActivityUrl) {
 
             log.debug('VIDEO_TIME embed options', embedOptions);
 
@@ -59,11 +59,17 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
                     Ajax.call([{
                         methodname: 'videotimeplugin_pro_set_session_state',
                         args: {session_id: session.id, state: 1}
-                    }]);
-                    Ajax.call([{
-                        methodname: 'videotimeplugin_pro_set_percent',
-                        args: {session_id: session.id, percent: 1}
-                    }]);
+                    }])[0].done(function() {
+                        Ajax.call([{
+                            methodname: 'videotimeplugin_pro_set_percent',
+                            args: {session_id: session.id, percent: 1}
+                        }])[0].done(function() {
+                            if (nextActivityUrl) {
+                                window.location.href = nextActivityUrl;
+                            }
+                        });
+                    });
+
                 });
 
                 player.on('timeupdate', function(event) {
