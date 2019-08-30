@@ -121,6 +121,10 @@ class next_activity_button implements \templatable, \renderable {
      */
     public function get_data()
     {
+        if (!$this->nextcm) {
+            return [];
+        }
+
         return [
             'cm' => $this->cm,
             'nextcm_url' => $this->nextcm->url->out(false),
