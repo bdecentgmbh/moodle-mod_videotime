@@ -80,8 +80,10 @@ if (videotime_has_pro()) {
         $resume_time = $sessions->get_current_watch_time();
     }
     $next_activity_button = new next_activity_button(cm_info::create($cm));
-    if (!$next_activity_button->is_restricted() && $next_cm = $next_activity_button->get_next_cm()) {
-        $next_activity_url = $next_cm->url->out(false);
+    if ($moduleinstance->next_activity_auto) {
+        if (!$next_activity_button->is_restricted() && $next_cm = $next_activity_button->get_next_cm()) {
+            $next_activity_url = $next_cm->url->out(false);
+        }
     }
 }
 

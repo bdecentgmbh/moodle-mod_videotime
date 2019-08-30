@@ -7,7 +7,7 @@
 /**
  * @module block_overview/helloworld
  */
-define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, Vimeo, Ajax, log) {
+define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templates'], function($, Vimeo, Ajax, log, Templates) {
     return {
         init: function(session, interval, hasPro, embedOptions, cmid, resumeTime, nextActivityUrl) {
 
@@ -56,19 +56,44 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log'], function($, 
                 player.on('ended', function () {
                     playing = false;
                     log.debug('VIDEO_TIME ended');
+
+                    // Ugly JavaScript chain.
+                    // First set the state.
                     Ajax.call([{
                         methodname: 'videotimeplugin_pro_set_session_state',
                         args: {session_id: session.id, state: 1}
                     }])[0].done(function() {
+
+                        // Then set the percentage.
                         Ajax.call([{
                             methodname: 'videotimeplugin_pro_set_percent',
                             args: {session_id: session.id, percent: 1}
                         }])[0].done(function() {
-                            if (nextActivityUrl) {
-                                window.location.href = nextActivityUrl;
-                            }
+
+                            // Then set the watch time to the end.
+                            Ajax.call([{
+                                methodname: 'videotimeplugin_pro_set_session_current_time',
+                                args: {session_id: session.id, current_time: currentTime}
+                            }])[0].done(function() {
+
+                                // Now that all data has been set on the session...
+                                if (nextActivityUrl) {
+                                    window.location.href = nextActivityUrl;
+                                } else {
+                                    Ajax.call([{
+                                        methodname: 'videotimeplugin_pro_get_next_activity_button_data',
+                                        args: {session_id: session.id}
+                                    }])[0].done(function(response) {
+                                        Templates.render('videotime/next_activity_button', JSON.parse(response.data))
+                                            .then(function(html, js) {
+                                                $('#next-activity-button').html(html);
+                                            });
+                                    });
+                                }
+                            });
                         });
                     });
+
 
                 });
 

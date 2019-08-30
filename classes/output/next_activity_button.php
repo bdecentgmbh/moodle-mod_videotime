@@ -116,13 +116,23 @@ class next_activity_button implements \templatable, \renderable {
         return $this->is_restricted;
     }
 
-    public function export_for_template(renderer_base $output) {
+    /**
+     * @return array
+     */
+    public function get_data()
+    {
         return [
             'cm' => $this->cm,
-            'nextcm' => $this->nextcm,
+            'nextcm_url' => $this->nextcm->url->out(false),
+            'nextcm_name' => $this->nextcm->name,
             'hasnextcm' => !empty($this->nextcm),
             'availability_info' => $this->availability_info,
             'is_restricted' => $this->is_restricted
         ];
+    }
+
+    public function export_for_template(renderer_base $output)
+    {
+        return $this->get_data();
     }
 }
