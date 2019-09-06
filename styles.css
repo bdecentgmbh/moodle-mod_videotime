@@ -11,3 +11,7 @@
 .path-course-view .modtype_videotime.label_mode>div {
     padding: 0 25px 0 0;
 }
+
+.path-mod-videotime .btn-dark {
+    color: white !important;
+}
