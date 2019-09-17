@@ -12,6 +12,9 @@
     padding: 0 25px 0 0;
 }
 
+/** Compatible with non-Bootstrap 4 themes **/
 .path-mod-videotime .btn-dark {
     color: white !important;
+    background-color: #373a3c;
+    border-color: #373a3c;
 }
