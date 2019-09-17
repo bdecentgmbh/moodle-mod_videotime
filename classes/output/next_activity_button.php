@@ -63,7 +63,7 @@ class next_activity_button implements \templatable, \renderable {
 
         foreach ($modules as $module) {
             // Only add activities that aren't in stealth mode and have a url (eg. mod_label does not).
-            if ($module->is_stealth() || empty($module->url)) {
+            if (!$module->is_visible_on_course_page() || empty($module->url)) {
                 continue;
             }
             $mods[$module->id] = $module;
@@ -72,7 +72,7 @@ class next_activity_button implements \templatable, \renderable {
         $nummods = count($mods);
 
         // If there is only one mod then do nothing.
-        if ($nummods == 1) {
+        if ($nummods <= 1) {
             return '';
         }
 
