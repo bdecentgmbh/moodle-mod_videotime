@@ -39,7 +39,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $PAGE;
 
         $mform = $this->_form;
 
@@ -65,10 +65,25 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
-        $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
+        if (videotime_has_pro() && videotime_has_repository()) {
+            $group = [];
+            $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
+            $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
+            $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
+            $mform->addGroup($group, '', get_string('vimeo_url', 'videotime'));
+
+            $PAGE->requires->js_init_code("
+            require(['videotimeplugin_repository/choose-video-modal'], function(ChooseVideoModal) {
+                var modal = new ChooseVideoModal();
+                modal.init();
+            });
+            ");
+        } else {
+            $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
+            $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');
+        }
+
         $mform->setType('vimeo_url', PARAM_URL);
-        $mform->addRule('vimeo_url', get_string('required'), 'required');
-        $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');
 
         if (videotime_has_pro()) {
             $mform->addElement('advcheckbox', 'label_mode', get_string('label_mode', 'videotime'));
@@ -463,7 +478,9 @@ class mod_videotime_mod_form extends moodleform_mod {
      */
     public function validation($data, $files) {
         $errors = [];
-        if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
+        if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
+            $errors['required'] = get_string('required');
+        } else if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
         }
 

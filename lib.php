@@ -436,6 +436,20 @@ function videotime_has_pro() {
 }
 
 /**
+ * Check if Video Time Repository is installed.
+ *
+ * @return bool
+ */
+function videotime_has_repository() {
+    global $CFG;
+
+    if (isset($CFG->disable_videotime_repository) && $CFG->disable_videotime_repository) {
+        return false;
+    }
+    return array_key_exists('repository', core_component::get_plugin_list('videotimeplugin'));
+}
+
+/**
  * This function extends the settings navigation block for the site.
  *
  * It is safe to rely on PAGE here as we will only ever be within the module

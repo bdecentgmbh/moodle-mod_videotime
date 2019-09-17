@@ -25,14 +25,30 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/mod/videotime/lib.php');
+
+$ADMIN->add('modsettings', new admin_category('modvideotimefolder', new lang_string('pluginname', 'videotime'), $module->is_enabled() === false));
+
+$settings = new admin_settingpage($section, get_string('settings', 'videotime'), 'moodle/site:config', $module->is_enabled() === false);
+
 if ($ADMIN->fulltree) {
-    require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
     if (!videotime_has_pro()) {
         $settings->add(new admin_setting_heading('pro', '',
             html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro3'),
             html_writer::img('https://link.bdecent.de/videotimepro3/image.jpg', '',
                 ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
+    }
+
+    if (videotime_has_pro() && videotime_has_repository()) {
+        $settings->add(new admin_setting_configtext('videotime/client_id', get_string('client_id', 'videotime'),
+            get_string('client_id_help', 'videotime'), '', PARAM_TEXT));
+
+        $settings->add(new admin_setting_configtext('videotime/client_secret', get_string('client_secret', 'videotime'),
+            get_string('client_secret_help', 'videotime'), '', PARAM_TEXT));
+
+        $settings->add(new admin_setting_configcheckbox('videotime/store_pictures', get_string('store_pictures', 'videotime'),
+            get_string('store_pictures_help', 'videotime'), 1));
     }
 
     if (videotime_has_pro()) {
@@ -162,4 +178,15 @@ if ($ADMIN->fulltree) {
             html_writer::img('https://link.bdecent.de/videotimepro4/image.jpg', '',
                 ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
     }
+}
+
+$ADMIN->add('modvideotimefolder', $settings);
+// Tell core we already added the settings structure.
+$settings = null;
+
+if (videotime_has_pro() && videotime_has_repository()) {
+    $ADMIN->add('modvideotimefolder', new admin_externalpage(
+        'authenticate',
+        get_string('authenticate_vimeo', 'videotime'),
+        new moodle_url('/mod/videotime/plugin/repository/authenticate.php')));
 }
