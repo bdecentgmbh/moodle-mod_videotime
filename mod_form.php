@@ -72,10 +72,12 @@ class mod_videotime_mod_form extends moodleform_mod {
             $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
             $mform->addGroup($group, '', get_string('vimeo_url', 'videotime'));
 
-            $PAGE->requires->js_init_code("
-            require(['videotimeplugin_repository/choose-video-modal'], function(ChooseVideoModal) {
-                var modal = new ChooseVideoModal();
-                modal.init();
+            $PAGE->requires->strings_for_js(['choose_video'], 'videotime');
+            $PAGE->requires->js_amd_inline("
+            require(['jquery', 'core/modal_factory', 'videotimeplugin_repository/modal_video_list'], function($, ModalFactory, ModalVideoList) {
+                var trigger = $('#id_choose_video');
+             
+                ModalFactory.create({type: ModalVideoList.TYPE, title: M.util.get_string('choose_video', 'videotime')}, trigger); 
             });
             ");
         } else {
