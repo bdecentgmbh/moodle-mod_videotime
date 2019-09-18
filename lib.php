@@ -302,7 +302,9 @@ function videotime_get_completion_state($course, $cm, $userid, $type) {
         return $type;
     }
 
-    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $user->id);
+    if (videotime_has_pro()) {
+        $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $user->id);
+    }
 
     // Check if watch time is required.
     if ($videotime->completion_on_view_time) {
@@ -311,8 +313,7 @@ function videotime_get_completion_state($course, $cm, $userid, $type) {
             return false;
         }
         // Check if total session time is over the required duration.
-        if ($sessions->get_total_time()
-            < $videotime->completion_on_view_time_second) {
+        if (videotime_has_pro() && $sessions->get_total_time() < $videotime->completion_on_view_time_second) {
             return false;
         }
     }
@@ -323,13 +324,13 @@ function videotime_get_completion_state($course, $cm, $userid, $type) {
             return false;
         }
         // Check if watch percentage is met.
-        if (($sessions->get_percent() * 100) < $videotime->completion_on_percent_value) {
+        if (videotime_has_pro() && ($sessions->get_percent() * 100) < $videotime->completion_on_percent_value) {
             return false;
         }
     }
 
     // Check if video completion is required.
-    if ($videotime->completion_on_finish) {
+    if (videotime_has_pro() && $videotime->completion_on_finish) {
         if (!$sessions->is_finished()) {
             return false;
         }

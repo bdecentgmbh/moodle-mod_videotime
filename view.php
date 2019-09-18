@@ -49,8 +49,6 @@ if ($id) {
 
 $moduleinstance = videotime_populate_with_defaults($moduleinstance);
 
-$sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
-
 $modulecontext = context_module::instance($cm->id);
 $PAGE->set_context($modulecontext);
 
@@ -74,6 +72,8 @@ $sessiondata = false;
 $next_activity_button = null;
 
 if (videotime_has_pro()) {
+    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
+
     $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
     $sessiondata = $session->jsonSerialize();
     if ($moduleinstance->resume_playback) {
