@@ -38,9 +38,9 @@
 .path-mod-videotime .img-hover img:hover {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transform:translateZ(0) scale(1.20); /* Safari and Chrome */
-    -moz-transform:scale(1.20); /* Firefox */
-    -ms-transform:scale(1.20); /* IE 9 */
-    -o-transform:translatZ(0) scale(1.20); /* Opera */
-    transform:translatZ(0) scale(1.20);
+    -webkit-transform: translateZ(0) scale(1.8) translate(22px, 0); /* Safari and Chrome */
+    -moz-transform: translateZ(0) scale(1.8) translate(22px, 0); /* Firefox */
+    -ms-transform: translateZ(0) scale(1.8) translate(22px, 0); /* IE 9 */
+    -o-transform: translateZ(0) scale(1.8) translate(22px, 0); /* Opera */
+    transform: translateZ(0) scale(1.8) translate(22px, 0);
 }
