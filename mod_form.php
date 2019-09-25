@@ -39,7 +39,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG, $COURSE, $PAGE;
+        global $CFG, $COURSE, $PAGE, $DB;
 
         $mform = $this->_form;
 
@@ -72,14 +72,11 @@ class mod_videotime_mod_form extends moodleform_mod {
             $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
             $mform->addGroup($group, '', get_string('vimeo_url', 'videotime'));
 
+            $albums = array_values($DB->get_records('videotime_vimeo_album'));
+            $tags = array_values($DB->get_records('videotime_vimeo_tag'));
+
             $PAGE->requires->strings_for_js(['choose_video'], 'videotime');
-            $PAGE->requires->js_amd_inline("
-            require(['jquery', 'core/modal_factory', 'videotimeplugin_repository/modal_video_list'], function($, ModalFactory, ModalVideoList) {
-                var trigger = $('#id_choose_video');
-             
-                ModalFactory.create({type: ModalVideoList.TYPE, title: M.util.get_string('choose_video', 'videotime')}, trigger); 
-            });
-            ");
+            $PAGE->requires->js_call_amd('videotimeplugin_repository/mod_form', 'init', [$albums, $tags]);
         } else {
             $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
             $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');
