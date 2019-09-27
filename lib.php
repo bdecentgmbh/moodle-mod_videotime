@@ -451,6 +451,16 @@ function videotime_has_repository() {
 }
 
 /**
+ * Check if system is Totara.
+ *
+ * @return bool
+ */
+function videotime_is_totara() {
+    global $CFG;
+    return file_exists("$CFG->dirroot/totara");
+};
+
+/**
  * This function extends the settings navigation block for the site.
  *
  * It is safe to rely on PAGE here as we will only ever be within the module

@@ -24,6 +24,8 @@ namespace mod_videotime\output;
 
 use renderer_base;
 
+require_once("$CFG->dirroot/mod/videotime/lib.php");
+
 class next_activity_button implements \templatable, \renderable {
 
     /**
@@ -56,15 +58,28 @@ class next_activity_button implements \templatable, \renderable {
         $moduleinstance = videotime_populate_with_defaults($moduleinstance);
 
         // Get a list of all the activities in the course.
-        $modules = get_fast_modinfo($this->cm->course)->get_cms();
+        $modinfo = get_fast_modinfo($this->cm->course);
+        $modules = $modinfo->get_cms();
 
         // Put the modules into an array in order by the position they are shown in the course.
         $mods = [];
 
         foreach ($modules as $module) {
-            // Only add activities that aren't in stealth mode and have a url (eg. mod_label does not).
-            if (!$module->is_visible_on_course_page() || empty($module->url)) {
+            // Only add activities that have a url (eg. mod_label does not).
+            if (empty($module->url)) {
                 continue;
+            }
+
+            // Only add activities that aren't in stealth mode.
+            if (videotime_is_totara()) {
+                if (!$module->visibleoncoursepage || ($module->visible &&
+                        ($section = $modinfo->get_section_info($module->sectionnum)) && !$section->visible)) {
+                    continue;
+                }
+            } else {
+                if ($module->is_stealth()) {
+                    continue;
+                }
             }
             $mods[$module->id] = $module;
         }
@@ -83,10 +98,10 @@ class next_activity_button implements \templatable, \renderable {
         $position = array_search($cm->id, $modids);
 
         // Check if we have a next mod to show.
-        if ($moduleinstance->next_activity_button && $position < ($nummods - 1)) {
-            if ($moduleinstance->next_activity_id == -1) {
+        if ($moduleinstance->next_activity_button) {
+            if ($moduleinstance->next_activity_id == -1 && $position < ($nummods - 1)) {
                 $this->nextcm = $mods[$modids[$position + 1]];
-            } else {
+            } else if ($moduleinstance->next_activity_id > 0) {
                 $this->nextcm = $mods[$moduleinstance->next_activity_id];
             }
         }
@@ -131,7 +146,8 @@ class next_activity_button implements \templatable, \renderable {
             'nextcm_name' => $this->nextcm->name,
             'hasnextcm' => !empty($this->nextcm),
             'availability_info' => $this->availability_info,
-            'is_restricted' => $this->is_restricted
+            'availability_title' => videotime_is_totara() ? strip_tags($this->availability_info) : null,
+            'is_restricted' => $this->is_restricted,
         ];
     }
 
