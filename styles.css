@@ -20,7 +20,7 @@
 }
 
 .path-mod-videotime .modal-xl {
-    max-width: 95%;
+    max-width: 95% !important;
 }
 
 .path-mod-videotime .badge-dark {
@@ -47,6 +47,11 @@
 
 .path-mod-videotime .video-search {
     max-width: 380px;
+}
+
+/* Totara styling */
+[data-action=jump-page] {
+    display: inline;
 }
 
 /*!
