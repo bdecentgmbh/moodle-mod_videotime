@@ -180,7 +180,11 @@ $string['store_pictures_help'] = 'If enabled, the Vimeo thumbnails will be store
 $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
 $string['todo'] = 'TODO';
-$string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p> <p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p> <p>Otherwise you may have to wait until the scheduled task runs.</p>';
+$string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p> 
+<p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p> 
+<p>Otherwise you may have to wait until the scheduled task runs.</p>
+<p>You can also run the command to pull in album information manually (instead of waiting):</p>
+<p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\update_albums</b></p>';
 $string['update_albums'] = 'Update video albums';
 $string['upgrade_vimeo_account'] = 'NOTICE: Consider upgrading your Vimeo account. Your API request limit is too low.';
 $string['use'] = 'Use';
