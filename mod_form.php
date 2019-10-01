@@ -66,10 +66,27 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
         if (videotime_has_pro() && videotime_has_repository()) {
+
+            $needs_setup = false;
+            try {
+                $api = new \videotimeplugin_repository\api();
+            } catch (\videotimeplugin_repository\exception\api_not_configured $e) {
+                $needs_setup = true;
+            } catch (\videotimeplugin_repository\exception\api_not_authenticated $e) {
+                $needs_setup = true;
+            }
+
             $group = [];
             $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
-            $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
-            $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
+            if (!$needs_setup) {
+                $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
+                $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
+            } else if (is_siteadmin()) {
+                $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
+                $group[] = $mform->createElement('html',
+                    html_writer::link(new moodle_url('/mod/videotime/plugin/repository/overview.php'),
+                        get_string('setup_repository', 'videotime')));
+            }
             $mform->addGroup($group, '', get_string('vimeo_url', 'videotime'));
 
             $albums = array_values($DB->get_records('videotime_vimeo_album'));

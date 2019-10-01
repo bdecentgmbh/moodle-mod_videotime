@@ -188,5 +188,11 @@ if (videotime_has_pro() && videotime_has_repository()) {
     $ADMIN->add('modvideotimefolder', new admin_externalpage(
         'authenticate',
         get_string('authenticate_vimeo', 'videotime'),
-        new moodle_url('/mod/videotime/plugin/repository/authenticate.php')));
+        new moodle_url('/mod/videotime/plugin/repository/authenticate.php'),
+        'moodle/site:config', true));
+
+    $ADMIN->add('modvideotimefolder', new admin_externalpage(
+        'overview',
+        get_string('vimeo_overview', 'videotime'),
+        new moodle_url('/mod/videotime/plugin/repository/overview.php')));
 }

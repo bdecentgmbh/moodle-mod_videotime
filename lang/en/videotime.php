@@ -44,9 +44,24 @@ $string['client_secret_help'] = 'Client Secret is generated when you create an "
 $string['completion_on_finish'] = 'Completion on video finish';
 $string['completion_on_percent'] = 'Completion on watch percentage';
 $string['completion_on_view'] = 'Completion on view time';
+$string['configure_vimeo_first'] = 'You must configure a Vimeo App before authenticating.';
+$string['configure_vimeo_help'] = '<ol><li>Go to <a href="https://developer.vimeo.com/apps/new">https://developer.vimeo.com/apps/new</a> and login with your Vimeo account</li>
+<li>Enter a name and description for your app. Example: Video Time Repository API</li>
+<li>Ensure the checkbox "No. The only Vimeo accounts that will have access to the app are my own" is checked</li>
+<li>Agree to Vimeo\'s Terms of Service and click "Create App"</li>
+<li>You should now be taken to your new app</li>
+<li>Click "Edit settings"</li>
+<li>Enter an App description, this will be displayed to admins when authenticating with Vimeo</li>
+<li>Enter App URL, it must be set to <b>{$a->redirect_url}</b></li>
+<li>Click "Update"</li>
+<li>Add a callback URL, it must be set to <b>{$a->redirect_url}</b></li>
+<li>Copy down the Client Identifier (near the top) and the Client Secret (Manage App Secrets)</li>
+<li>Enter Client ID and Client Secret <a href="{$a->configure_url}">here</a></li></ol>';
+$string['create_vimeo_app'] = 'Create Vimeo App';
 $string['default'] = 'Default';
 $string['discover_videos'] = 'Discover Vimeo videos';
 $string['discovering_videos'] = 'Discovering {$a->count} videos';
+$string['done'] = 'Done';
 $string['duration'] = 'Duration';
 $string['embed_options'] = 'Embed options';
 $string['embed_options_defaults'] = 'Default embed options';
@@ -67,6 +82,7 @@ $string['next_activity_in_course'] = 'Default: Next Activity In Course';
 $string['next_activity_button'] = 'Enable Next Activity Button';
 $string['next_activity_button_help'] = 'Display a button above the video which links to the next activity the user should complete.';
 $string['not_authenticated'] = 'Not authenticated';
+$string['of'] = 'of';
 $string['option_autoplay'] = 'Autoplay';
 $string['option_autoplay_help'] = 'Automatically start playback of the video. Note that this won’t work on some devices or browsers that block it.';
 $string['option_byline'] = 'Byline';
@@ -141,13 +157,17 @@ $string['process_videos'] = 'Process videos';
 $string['rate_limit'] = 'Vimeo API request limit';
 $string['resume_playback'] = 'Resume Playback';
 $string['resume_playback_help'] = 'Automatically resume video when user returns to activity. Playback starts where the user left off.';
+$string['run_discovery_task'] = 'Run this "Discover Vimeo videos" task to begin pulling in your video data. Otherwise you can wait until it runs automatically.';
 $string['estimated_request_time'] = 'Estimated time remaining';
 $string['search_help'] = 'Search name, description, albums, tags...';
 $string['seconds'] = 'Seconds';
 $string['session_not_found'] = 'User session not found.';
+$string['set_client_id_and_secret'] = 'Set Client ID and Secret';
 $string['settings'] = 'Video Time settings';
+$string['setup_repository'] = 'Setup repository';
 $string['showdescription'] = 'Display description';
 $string['showdescription_help'] = 'The description is displayed above the video and can be shown in the course page.';
+$string['showing_results'] = 'Showing {$a->total} results';
 $string['state'] = 'State';
 $string['state_finished'] = 'Finished';
 $string['state_help'] = 'Has the user finished the video?';
@@ -157,6 +177,8 @@ $string['store_pictures'] = 'Store thumbnails';
 $string['store_pictures_help'] = 'If enabled, the Vimeo thumbnails will be stored locally. Otherwise the images will be delivered from Vimeo externally.';
 $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
+$string['todo'] = 'TODO';
+$string['update_albums'] = 'Update video albums';
 $string['upgrade_vimeo_account'] = 'NOTICE: Consider upgrading your Vimeo account. Your API request limit is too low.';
 $string['use'] = 'Use';
 $string['viewpercentgrade'] = 'Set grade equal to view percentage.';
@@ -167,6 +189,8 @@ $string['view_report'] = 'View report';
 $string['videotime:view_report'] = 'View report (Pro only)';
 $string['video_description'] = 'Notes';
 $string['video_description_help'] = 'Notes are displayed below the video.';
+$string['videos_discovered'] = 'Videos discovered';
+$string['videos_processed'] = 'Videos processed';
 $string['videotime:addinstance'] = 'Add a new Video Time module';
 $string['videotime:view'] = 'View Video Time video';
 $string['vimeo_url'] = 'Vimeo URL';
@@ -177,3 +201,4 @@ $string['watch_time'] = 'Watch time';
 $string['watch_time_help'] = 'How long the student has watched the video in total (in 5s steps).';
 $string['watch_percent'] = 'Watch percent';
 $string['watch_percent_help'] = 'The furthest moment in the video the student has watched.';
+$string['vimeo_overview'] = 'Overview and setup';
