@@ -52,19 +52,6 @@ class mod_videotime_mod_form extends moodleform_mod {
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('activity_name', 'mod_videotime'), array('size' => '64'));
-
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEANHTML);
-        }
-
-        $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
-
         if (videotime_has_pro() && videotime_has_repository()) {
 
             $needs_setup = false;
@@ -101,6 +88,19 @@ class mod_videotime_mod_form extends moodleform_mod {
         }
 
         $mform->setType('vimeo_url', PARAM_URL);
+
+        // Adding the standard "name" field.
+        $mform->addElement('text', 'name', get_string('activity_name', 'mod_videotime'), array('size' => '64'));
+
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEANHTML);
+        }
+
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
         if (videotime_has_pro()) {
             $mform->addElement('advcheckbox', 'label_mode', get_string('label_mode', 'videotime'));

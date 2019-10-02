@@ -37,6 +37,7 @@ $string['authenticated'] = 'Authenticated';
 $string['authenticate_vimeo'] = 'Authenticate with Vimeo';
 $string['authenticate_vimeo_success'] = 'Vimeo authentication successful. You can now use features that rely on the Vimeo API.';
 $string['choose_video'] = 'Choose Video';
+$string['choose_video_confirm'] = 'Are you sure you want to choose the video';
 $string['client_id'] = 'Vimeo Client ID';
 $string['client_id_help'] = 'Client ID is generated when you create an "App" under your Vimeo account. Go to https://developer.vimeo.com/apps/new to start this process.';
 $string['client_secret'] = 'Vimeo Client Secret';
@@ -57,6 +58,7 @@ $string['configure_vimeo_help'] = '<ol><li>Go to <a href="https://developer.vime
 <li>Add a callback URL, it must be set to <b>{$a->redirect_url}</b></li>
 <li>Copy down the Client Identifier (near the top) and the Client Secret (Manage App Secrets)</li>
 <li>Enter Client ID and Client Secret <a href="{$a->configure_url}">here</a></li></ol>';
+$string['confirmation'] = 'Confirmation';
 $string['create_vimeo_app'] = 'Create Vimeo App';
 $string['default'] = 'Default';
 $string['discover_videos'] = 'Discover Vimeo videos';
@@ -71,6 +73,7 @@ $string['force_help'] = 'If checked this default will override the instance sett
 $string['goback'] = 'Go back';
 $string['gradeitemnotcreatedyet'] = 'A gradebook item does not exist for this activity. Check <b>Set grade equal to view percentage</b> above, save, and edit this activity again to set grade category and passing grade.';
 $string['invalid_session_state'] = 'Invalid session state.';
+$string['insert_video_metadata'] = 'Insert metadata from video (may override activity settings)';
 $string['label_mode'] = 'Label mode';
 $string['label_mode_help'] = 'Embed video on course layout, similar to the Label activity.';
 $string['modulename'] = 'Video Time';
