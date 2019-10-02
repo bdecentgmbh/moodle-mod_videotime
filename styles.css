@@ -49,6 +49,10 @@
     max-width: 380px;
 }
 
+.path-mod-videotime .cursor-pointer {
+    cursor: pointer;
+}
+
 /* Totara styling */
 [data-action=jump-page] {
     display: inline;

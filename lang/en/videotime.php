@@ -68,6 +68,7 @@ $string['embed_options_defaults'] = 'Default embed options';
 $string['embeds'] = 'Embeds';
 $string['force'] = 'Force setting';
 $string['force_help'] = 'If checked this default will override the instance setting.';
+$string['goback'] = 'Go back';
 $string['gradeitemnotcreatedyet'] = 'A gradebook item does not exist for this activity. Check <b>Set grade equal to view percentage</b> above, save, and edit this activity again to set grade category and passing grade.';
 $string['invalid_session_state'] = 'Invalid session state.';
 $string['label_mode'] = 'Label mode';
