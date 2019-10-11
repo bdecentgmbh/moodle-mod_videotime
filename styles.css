@@ -53,6 +53,31 @@
     cursor: pointer;
 }
 
+.activity.videotime .video-image-preview {
+    position: relative;
+    display: inline-block;
+}
+.activity.videotime .video-image-preview .video-duration {
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+}
+.activity.videotime .video-image-preview .video-progress {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    height: 10px;
+}
+.activity.videotime.preview_mode .actions {
+    display: none;
+}
+body.editing .activity.videotime.preview_mode .actions {
+    display: block;
+}
+.path-course-view li.activity.videotime.preview_mode > div {
+    padding: 0;
+}
+
 /* Totara styling */
 [data-action=jump-page] {
     display: inline;

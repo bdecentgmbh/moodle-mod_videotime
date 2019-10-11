@@ -317,5 +317,84 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019082901, 'videotime');
     }
 
+    if ($oldversion < 2019100201) {
+
+        // Define field preview_image to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('preview_image', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'resume_playback');
+
+        // Conditionally launch add field preview_image.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019100201, 'videotime');
+    }
+
+    if ($oldversion < 2019101000) {
+
+        // Define field show_description to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_description', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'preview_image');
+
+        // Conditionally launch add field show_description.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field show_title to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_title', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'show_description');
+
+        // Conditionally launch add field show_title.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field show_tags to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_tags', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'show_title');
+
+        // Conditionally launch add field show_tags.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field show_duration to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_duration', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'show_tags');
+
+        // Conditionally launch add field show_duration.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field show_viewed_duration to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_viewed_duration', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'show_duration');
+
+        // Conditionally launch add field show_viewed_duration.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019101000, 'videotime');
+    }
+
+    if ($oldversion < 2019101100) {
+
+        // Rename field preview_image on table videotime to preview_picture.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('preview_image', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'resume_playback');
+
+        // Launch rename field preview_image.
+        $dbman->rename_field($table, $field, 'preview_picture');
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019101100, 'videotime');
+    }
+
     return true;
 }

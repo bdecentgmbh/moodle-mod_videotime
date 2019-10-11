@@ -103,9 +103,51 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
         if (videotime_has_pro()) {
-            $mform->addElement('advcheckbox', 'label_mode', get_string('label_mode', 'videotime'));
-            $mform->setType('label_mode', PARAM_BOOL);
-            $mform->addHelpButton('label_mode', 'label_mode', 'videotime');
+            $group = [];
+            $group[] = $mform->createElement('radio', 'label_mode', '', get_string('normal_mode', 'videotime'), 0);
+            $group[] = $mform->createElement('radio', 'label_mode', '', get_string('label_mode', 'videotime'), 1);
+            if (videotime_has_repository()) {
+                $group[] = $mform->createElement('radio', 'label_mode', '', get_string('preview_mode', 'videotime'), 2);
+            }
+
+            $mform->addGroup($group, 'modegroup', get_string('mode', 'videotime'), array('<br>'), false);
+            $mform->addHelpButton('modegroup', 'mode', 'videotime');
+
+            if (videotime_has_repository()) {
+                $group = [];
+                $group[] = $mform->createElement('advcheckbox', 'show_title', '', get_string('show_title', 'videotime'));
+                $mform->setDefault('show_title', 1);
+                $mform->hideIf('show_title', 'label_mode', 'noeq', 2);
+
+                $group[] = $mform->createElement('advcheckbox', 'show_description', '', get_string('show_description', 'videotime'));
+                $mform->setDefault('show_description', 1);
+                $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
+
+                $group[] = $mform->createElement('advcheckbox', 'show_tags', '', get_string('show_tags', 'videotime'));
+                $mform->setDefault('show_tags', 1);
+                $mform->hideIf('show_tags', 'label_mode', 'noeq', 2);
+
+                $group[] = $mform->createElement('advcheckbox', 'show_duration', '', get_string('show_duration', 'videotime'));
+                $mform->setDefault('show_duration', 1);
+                $mform->hideIf('show_duration', 'label_mode', 'noeq', 2);
+
+                $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '', get_string('show_viewed_duration', 'videotime'));
+                $mform->setDefault('show_viewed_duration', 1);
+                $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
+
+                $mform->addGroup($group, 'displaygroup', get_string('display_options', 'videotime'), array('<br>'), false);
+
+                $mform->addElement('select', 'preview_picture', get_string('preview_picture', 'videotime'), [
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG => '1920 x 1200',
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM => '640 x 400',
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG_WITH_PLAY => '1920 x 1200 ' .
+                        get_string('with_play_button', 'videotime'),
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM_WITH_PLAY => '640 x 400 ' .
+                        get_string('with_play_button', 'videotime')
+                ]);
+                $mform->setType('preview_picture', PARAM_INT);
+                $mform->hideIf('preview_picture', 'label_mode', 'noeq', 2);
+            }
         }
 
         // Adding the standard "intro" and "introformat" fields.
@@ -121,16 +163,6 @@ class mod_videotime_mod_form extends moodleform_mod {
             'noclean' => true, 'context' => $this->context, 'subdirs' => true));
         $mform->setType('video_description', PARAM_RAW); // No XSS prevention here, users must be trusted.
         $mform->addHelpButton('video_description', 'video_description', 'videotime');
-
-        // Preview image
-        // @codingStandardsIgnoreStart
-        // Don't display for now.
-        // $mform->addElement('filemanager', 'preview_image', get_string('preview_image', 'videotime'), null, [
-        //     'maxfiles' => 1,
-        //     'accepted_types' => ['png', 'jpg', 'jpeg']
-        // ]);
-        // $mform->addHelpButton('preview_image', 'preview_image', 'videotime');
-        // @codingStandardsIgnoreEnd
 
         if (videotime_has_pro()) {
             $mform->addElement('advcheckbox', 'resume_playback', get_string('resume_playback', 'videotime'));
@@ -160,7 +192,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $modinfo = get_fast_modinfo($COURSE->id);
             $modoptions = [-1 => get_string('next_activity_in_course', 'videotime')];
             foreach ($modinfo->get_cms() as $cm) {
-                if ($this->_cm->id && $this->_cm->id == $cm->id) {
+                if (isset($this->_cm->id) && $this->_cm->id == $cm->id) {
                     continue;
                 }
                 $modoptions[$cm->id] = $cm->name;
@@ -532,11 +564,6 @@ class mod_videotime_mod_form extends moodleform_mod {
             $defaultvalues['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id,
                 'mod_videotime', 'video_description', 0, [], $videodescription);
             $defaultvalues['video_description']['itemid'] = $draftitemid;
-
-            $draftitemid = file_get_submitted_draft_itemid('preview_image');
-            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_videotime', 'preview_image', 0,
-                array('subdirs' => 0, 'maxfiles' => 1));
-            $defaultvalues['preview_image'] = $draftitemid;
         }
     }
 }

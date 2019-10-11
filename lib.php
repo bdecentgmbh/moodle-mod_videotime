@@ -195,13 +195,6 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
-    if (!empty($moduleinstance->preview_image)) {
-        $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'mod_videotime', 'preview_image');
-        file_save_draft_area_files($moduleinstance->preview_image, $context->id, 'mod_videotime', 'preview_image',
-            0, array('subdirs' => 0, 'maxfiles' => 1));
-    }
-
     videotime_grade_item_update($moduleinstance);
 
     return $moduleinstance->id;
@@ -227,13 +220,6 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     $moduleinstance->id = $moduleinstance->instance;
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
-
-    if (!empty($moduleinstance->preview_image)) {
-        $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'mod_videotime', 'preview_image');
-        file_save_draft_area_files($moduleinstance->preview_image, $context->id, 'mod_videotime', 'preview_image',
-            0, array('subdirs' => 0, 'maxfiles' => 1));
-    }
 
     videotime_grade_item_update($moduleinstance);
 
@@ -522,7 +508,7 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  * @throws coding_exception
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
-    global $OUTPUT, $PAGE, $DB, $USER;
+    global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
     // Ensure we are on the course view page. This was throwing an error when viewing the module
     // because OUTPUT was being used.
@@ -539,8 +525,8 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 
     $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
 
-    if ($instance->label_mode) {
-        $cm->set_no_view_link();
+    if ($instance->label_mode == 1) {
+
 
         $resume_time = 0;
         if ($instance->resume_playback) {
@@ -554,7 +540,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
             $instance, $cm->id, $resume_time]);
 
         if (!$instance->vimeo_url) {
-            \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
+            $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
         } else {
             $instance->next_activity_button = false;
             $content = $OUTPUT->render_from_template('mod_videotime/view', [
@@ -563,12 +549,41 @@ function videotime_cm_info_dynamic(cm_info $cm) {
             ]);
         }
 
-        if ($instance->label_mode) {
-            $cm->set_extra_classes('label_mode');
-        }
-
         videotime_view($instance, $PAGE->course, $cm, context_module::instance($cm->id));
 
+        $cm->set_no_view_link();
+        $cm->set_extra_classes('label_mode');
+        $cm->set_content($content);
+    } else if ($instance->label_mode == 2 && videotime_has_repository()) {
+        // Preview image mode.
+        if (!$instance->vimeo_url) {
+            $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
+        } else {
+            if (!$video = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
+                $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime'));
+            } else {
+                $video = \videotimeplugin_repository\video::create($video, $cm->context);
+
+                $completioninfo = new completion_info($COURSE);
+
+                $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
+                    'video' => $video->jsonSerialize(),
+                    'module_sessions' => $sessions->jsonSerialize(),
+                    'url' => $cm->url,
+                    'instance' => $instance,
+                    'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
+                        $cm),
+                    'show_description' => $instance->show_description,
+                    'show_title' => $instance->show_title,
+                    'show_tags' => $instance->show_tags,
+                    'show_duration' => $instance->show_duration,
+                    'show_viewed_duration' => $instance->show_viewed_duration,
+                ]);
+            }
+        }
+
+        $cm->set_no_view_link();
+        $cm->set_extra_classes('preview_mode');
         $cm->set_content($content);
     }
 }

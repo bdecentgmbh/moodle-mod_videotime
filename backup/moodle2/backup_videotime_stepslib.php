@@ -71,7 +71,13 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'next_activity_button',
             'next_activity_id',
             'next_activity_auto',
-            'resume_playback'
+            'resume_playback',
+            'preview_picture',
+            'show_description',
+            'show_title',
+            'show_tags',
+            'show_duration',
+            'show_viewed_duration',
         ]);
 
         if (videotime_has_pro()) {
@@ -109,7 +115,6 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.
-        $module->annotate_files('mod_videotime', 'preview_image', null); // This file area hasn't itemid.
 
         // Return the root element (videotime), wrapped into standard activity structure.
         return $this->prepare_activity_structure($module);
