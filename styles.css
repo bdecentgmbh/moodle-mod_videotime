@@ -38,11 +38,12 @@
 .path-mod-videotime .img-hover img:hover {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transform: translateZ(0) scale(1.8) translate(22px, 0); /* Safari and Chrome */
-    -moz-transform: translateZ(0) scale(1.8) translate(22px, 0); /* Firefox */
-    -ms-transform: translateZ(0) scale(1.8) translate(22px, 0); /* IE 9 */
-    -o-transform: translateZ(0) scale(1.8) translate(22px, 0); /* Opera */
-    transform: translateZ(0) scale(1.8) translate(22px, 0);
+    -webkit-transform: translateZ(0) scale(5) translate(22px, 0); /* Safari and Chrome */
+    -moz-transform: translateZ(0) scale(5) translate(22px, 0); /* Firefox */
+    -ms-transform: translateZ(0) scale(5) translate(22px, 0); /* IE 9 */
+    -o-transform: translateZ(0) scale(5) translate(22px, 0); /* Opera */
+    transform: translateZ(0) scale(5) translate(22px, 0);
+    z-index: 999;
 }
 
 .path-mod-videotime .video-search {
