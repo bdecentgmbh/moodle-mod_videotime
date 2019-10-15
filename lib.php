@@ -566,8 +566,13 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 
                 $completioninfo = new completion_info($COURSE);
 
+                $description = file_rewrite_pluginfile_urls($instance->intro, 'pluginfile.php', $PAGE->context->id,
+                    'mod_videotime', 'intro', null);
+
                 $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
                     'video' => $video->jsonSerialize(),
+                    'description' => $description,
+                    'description_excerpt' => videotime_get_excerpt(strip_tags($description)),
                     'module_sessions' => $sessions->jsonSerialize(),
                     'url' => $cm->url,
                     'instance' => $instance,
@@ -604,4 +609,25 @@ function mod_videotime_get_fontawesome_icon_map() {
     return [
         'mod_videotime:i/lock' => 'fa-lock',
     ];
+}
+
+/**
+ * Get shortened version of description for display.
+ *
+ * @param string $description
+ * @param int $max_length
+ * @return string
+ */
+function videotime_get_excerpt($description, $max_length = 150)
+{
+    if(strlen($description) > $max_length) {
+        $excerpt   = substr($description, 0, $max_length-3);
+        $lastSpace = strrpos($excerpt, ' ');
+        $excerpt   = substr($excerpt, 0, $lastSpace);
+        $excerpt  .= '...';
+    } else {
+        $excerpt = $description;
+    }
+
+    return $excerpt;
 }
