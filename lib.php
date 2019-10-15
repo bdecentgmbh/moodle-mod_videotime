@@ -569,10 +569,13 @@ function videotime_cm_info_dynamic(cm_info $cm) {
                 $description = file_rewrite_pluginfile_urls($instance->intro, 'pluginfile.php', $PAGE->context->id,
                     'mod_videotime', 'intro', null);
 
+                $description_excerpt = videotime_get_excerpt(strip_tags($description));
+
                 $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
                     'video' => $video->jsonSerialize(),
                     'description' => $description,
-                    'description_excerpt' => videotime_get_excerpt(strip_tags($description)),
+                    'description_excerpt' => $description_excerpt,
+                    'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
                     'module_sessions' => $sessions->jsonSerialize(),
                     'url' => $cm->url,
                     'instance' => $instance,
