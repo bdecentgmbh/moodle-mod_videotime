@@ -170,6 +170,80 @@ if ($ADMIN->fulltree) {
             get_string('option_transparent_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/transparent_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
+
+        if (videotime_has_repository()) {
+            $settings->add(new admin_setting_heading('label_mode', get_string('default') . ' ' .
+                get_string('mode', 'videotime'), ''));
+            $settings->add(new admin_setting_configselect('videotime/label_mode', get_string('mode', 'videotime'),
+                get_string('mode_help', 'videotime'), 0, [
+                    0 => get_string('normal_mode', 'videotime'),
+                    1 => get_string('label_mode', 'videotime'),
+                    2 => get_string('preview_mode', 'videotime')
+                ]));
+            $settings->add(new admin_setting_configcheckbox('videotime/label_mode_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('show_title', get_string('default') . ' ' .
+                get_string('show_title', 'videotime'), ''));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_title', get_string('show_title', 'videotime'),
+                '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_title_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('show_description', get_string('default') . ' ' .
+                get_string('show_description', 'videotime'), ''));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_description', get_string('show_description', 'videotime'),
+                '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_description_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('show_tags', get_string('default') . ' ' .
+                get_string('show_tags', 'videotime'), ''));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_tags', get_string('show_tags', 'videotime'),
+                '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_tags_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('show_duration', get_string('default') . ' ' .
+                get_string('show_duration', 'videotime'), ''));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_duration', get_string('show_duration', 'videotime'),
+                '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_duration_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('show_viewed_duration', get_string('default') . ' ' .
+                get_string('show_viewed_duration', 'videotime'), ''));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_viewed_duration', get_string('show_viewed_duration', 'videotime'),
+                '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_viewed_duration_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('columns', get_string('default') . ' ' .
+                get_string('columns', 'videotime'), ''));
+            $settings->add(new admin_setting_configselect('videotime/columns', get_string('columns', 'videotime'),
+                get_string('columns_help', 'videotime'), 0, [
+                    1 => '1 (100% width)',
+                    2 => '2 (50% width)',
+                    3 => '3 (33% width)',
+                    4 => '4 (25% width'
+                ]));
+            $settings->add(new admin_setting_configcheckbox('videotime/columns_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+
+            $settings->add(new admin_setting_heading('preview_picture', get_string('default') . ' ' .
+                get_string('preview_picture', 'videotime'), ''));
+            $settings->add(new admin_setting_configselect('videotime/preview_picture', get_string('preview_picture', 'videotime'),
+                get_string('preview_picture_help', 'videotime'), 0, [
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG => '1920 x 1200',
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM => '640 x 400',
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG_WITH_PLAY => '1920 x 1200 ' .
+                        get_string('with_play_button', 'videotime'),
+                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM_WITH_PLAY => '640 x 400 ' .
+                        get_string('with_play_button', 'videotime')
+                ]));
+            $settings->add(new admin_setting_configcheckbox('videotime/preview_picture_force', get_string('force', 'videotime'),
+                get_string('force_help', 'videotime'), '0'));
+        }
     }
 
     if (!videotime_has_pro()) {

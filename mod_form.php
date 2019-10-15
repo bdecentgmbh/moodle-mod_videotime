@@ -115,28 +115,76 @@ class mod_videotime_mod_form extends moodleform_mod {
 
             $mform->addGroup($group, 'modegroup', get_string('mode', 'videotime'), array('<br>'), false);
             $mform->addHelpButton('modegroup', 'mode', 'videotime');
+            $mform->setDefault('label_mode', get_config('videotime', 'label_mode'));
+            if (get_config('videotime', 'label_mode_force')) {
+                $mform->addElement('static', 'label_mode_forced', '', get_string('option_forced', 'videotime', [
+                    'option' => get_string('label_mode', 'videotime'),
+                    'value' => get_config('videotime', 'label_mode')
+                ]));
+                $mform->disabledIf('label_mode', 'disable', 'eq', 1);
+            }
 
             if (videotime_has_repository()) {
                 $group = [];
                 $group[] = $mform->createElement('advcheckbox', 'show_title', '', get_string('show_title', 'videotime'));
                 $mform->setDefault('show_title', 1);
                 $mform->hideIf('show_title', 'label_mode', 'noeq', 2);
+                $mform->setDefault('show_title', get_config('videotime', 'show_title'));
+                if (get_config('videotime', 'show_title_force')) {
+                    $group[] = $mform->createElement('static', 'show_title_forced', '', get_string('option_forced', 'videotime', [
+                        'option' => get_string('show_title', 'videotime'),
+                        'value' => get_config('videotime', 'show_title')
+                    ]));
+                    $mform->disabledIf('show_title', 'disable', 'eq', 1);
+                }
 
                 $group[] = $mform->createElement('advcheckbox', 'show_description', '', get_string('show_description', 'videotime'));
                 $mform->setDefault('show_description', 1);
                 $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
+                $mform->setDefault('show_description', get_config('videotime', 'show_description'));
+                if (get_config('videotime', 'show_description_force')) {
+                    $group[] = $mform->createElement('static', 'show_description_forced', '', get_string('option_forced', 'videotime', [
+                        'option' => get_string('show_description', 'videotime'),
+                        'value' => get_config('videotime', 'show_description')
+                    ]));
+                    $mform->disabledIf('show_description', 'disable', 'eq', 1);
+                }
 
                 $group[] = $mform->createElement('advcheckbox', 'show_tags', '', get_string('show_tags', 'videotime'));
                 $mform->setDefault('show_tags', 1);
                 $mform->hideIf('show_tags', 'label_mode', 'noeq', 2);
+                $mform->setDefault('show_tags', get_config('videotime', 'show_tags'));
+                if (get_config('videotime', 'show_tags_force')) {
+                    $group[] = $mform->createElement('static', 'show_tags_forced', '', get_string('option_forced', 'videotime', [
+                        'option' => get_string('show_tags', 'videotime'),
+                        'value' => get_config('videotime', 'show_tags')
+                    ]));
+                    $mform->disabledIf('show_tags', 'disable', 'eq', 1);
+                }
 
                 $group[] = $mform->createElement('advcheckbox', 'show_duration', '', get_string('show_duration', 'videotime'));
                 $mform->setDefault('show_duration', 1);
                 $mform->hideIf('show_duration', 'label_mode', 'noeq', 2);
+                $mform->setDefault('show_duration', get_config('videotime', 'show_duration'));
+                if (get_config('videotime', 'show_duration_force')) {
+                    $group[] = $mform->createElement('static', 'show_duration_forced', '', get_string('option_forced', 'videotime', [
+                        'option' => get_string('show_duration', 'videotime'),
+                        'value' => get_config('videotime', 'show_duration')
+                    ]));
+                    $mform->disabledIf('show_duration', 'disable', 'eq', 1);
+                }
 
                 $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '', get_string('show_viewed_duration', 'videotime'));
                 $mform->setDefault('show_viewed_duration', 1);
                 $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
+                $mform->setDefault('show_viewed_duration', get_config('videotime', 'show_viewed_duration'));
+                if (get_config('videotime', 'show_viewed_duration_force')) {
+                    $group[] = $mform->createElement('static', 'show_viewed_duration_forced', '', get_string('option_forced', 'videotime', [
+                        'option' => get_string('show_viewed_duration', 'videotime'),
+                        'value' => get_config('videotime', 'show_viewed_duration')
+                    ]));
+                    $mform->disabledIf('show_viewed_duration', 'disable', 'eq', 1);
+                }
 
                 $mform->addGroup($group, 'displaygroup', get_string('display_options', 'videotime'), array('<br>'), false);
 
@@ -148,6 +196,12 @@ class mod_videotime_mod_form extends moodleform_mod {
                 ]);
                 $mform->setType('columns', PARAM_INT);
                 $mform->addHelpButton('columns', 'columns', 'videotime');
+                $mform->hideIf('columns', 'label_mode', 'noeq', 2);
+                $mform->setDefault('columns', get_config('videotime', 'columns'));
+                if (get_config('videotime', 'columns_force')) {
+                    $mform->hideIf('columns_forced', 'label_mode', 'noeq', 2);
+                    $mform->disabledIf('columns', 'disable', 'eq', 1);
+                }
 
                 $mform->addElement('select', 'preview_picture', get_string('preview_picture', 'videotime'), [
                     \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG => '1920 x 1200',
@@ -159,6 +213,11 @@ class mod_videotime_mod_form extends moodleform_mod {
                 ]);
                 $mform->setType('preview_picture', PARAM_INT);
                 $mform->hideIf('preview_picture', 'label_mode', 'noeq', 2);
+                $mform->setDefault('preview_picture', get_config('videotime', 'preview_picture'));
+                if (get_config('videotime', 'preview_picture_force')) {
+                    $mform->hideIf('preview_picture_forced', 'label_mode', 'noeq', 2);
+                    $mform->disabledIf('preview_picture', 'disable', 'eq', 1);
+                }
             }
         }
 
