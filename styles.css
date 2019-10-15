@@ -78,8 +78,14 @@ body.editing .activity.videotime.preview_mode .actions {
 .path-course-view li.activity.videotime.preview_mode > div {
     padding: 0;
 }
+.path-course-view li.activity.videotime.preview_mode {
+    clear: none;
+}
+body.editing.path-course-view li.activity.videotime.preview_mode {
+    width: 100%;
+}
 
-/* Totara styling */
+    /* Totara styling */
 [data-action=jump-page] {
     display: inline;
 }

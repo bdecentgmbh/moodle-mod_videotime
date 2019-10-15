@@ -140,6 +140,15 @@ class mod_videotime_mod_form extends moodleform_mod {
 
                 $mform->addGroup($group, 'displaygroup', get_string('display_options', 'videotime'), array('<br>'), false);
 
+                $mform->addElement('select', 'columns', get_string('columns', 'videotime'), [
+                    1 => '1 (100% width)',
+                    2 => '2 (50% width)',
+                    3 => '3 (33% width)',
+                    4 => '4 (25% width'
+                ]);
+                $mform->setType('columns', PARAM_INT);
+                $mform->addHelpButton('columns', 'columns', 'videotime');
+
                 $mform->addElement('select', 'preview_picture', get_string('preview_picture', 'videotime'), [
                     \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG => '1920 x 1200',
                     \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM => '640 x 400',

@@ -582,8 +582,17 @@ function videotime_cm_info_dynamic(cm_info $cm) {
             }
         }
 
+        $column_class = 'col-sm-12';
+        if ($instance->columns == 2) {
+            $column_class = 'col-sm-6';
+        } else if ($instance->columns == 3) {
+            $column_class = 'col-sm-4';
+        } else if ($instance->columns == 4) {
+            $column_class = 'col-sm-3';
+        }
+
         $cm->set_no_view_link();
-        $cm->set_extra_classes('preview_mode');
+        $cm->set_extra_classes('preview_mode ' . $column_class);
         $cm->set_content($content);
     }
 }

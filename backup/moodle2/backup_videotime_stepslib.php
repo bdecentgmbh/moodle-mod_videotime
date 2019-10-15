@@ -78,6 +78,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'show_tags',
             'show_duration',
             'show_viewed_duration',
+            'columns'
         ]);
 
         if (videotime_has_pro()) {

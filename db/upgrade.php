@@ -396,5 +396,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019101100, 'videotime');
     }
 
+    if ($oldversion < 2019101502) {
+
+        // Define field columns to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('columns', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'show_viewed_duration');
+
+        // Conditionally launch add field columns.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2019101502, 'videotime');
+    }
+
     return true;
 }
