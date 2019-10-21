@@ -84,6 +84,9 @@ body.editing .activity.videotime.preview_mode .actions {
 body.editing.path-course-view li.activity.videotime.preview_mode {
     width: 100%;
 }
+.path-course-view li.activity.videotime.preview_mode .panel {
+    min-height: 440px;
+}
 
     /* Totara styling */
 [data-action=jump-page] {
