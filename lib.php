@@ -634,3 +634,25 @@ function videotime_get_excerpt($description, $max_length = 150)
 
     return $excerpt;
 }
+
+/**
+ * Check if Video Time module is displayed label-like or not.
+ *
+ * @param cm_info $mod
+ * @return bool
+ * @throws dml_exception
+ */
+function mod_videotime_treat_as_label(cm_info $mod)
+{
+    global $DB;
+
+    if ($mod->modname != 'videotime') {
+        return false;
+    }
+
+    if ($instance = $DB->get_record('videotime', ['id' => $mod->instance])) {
+        return $instance->label_mode == 1;
+    }
+
+    return false;
+}
