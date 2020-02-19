@@ -79,10 +79,11 @@
     VimeoVideo.prototype.setupPlayer = function () {
         const self = this;
 
-        this.player = new Player(this.element.id, JSON.parse(this.embedOptions.options));
-
         if (!this.hasPro) {
+            this.player = new Player(this.element.id, {});
             return;
+        } else {
+            this.player = new Player(this.element.id, JSON.parse(this.embedOptions.options));
         }
 
         if (this.resumeTime) {
@@ -123,12 +124,9 @@
         });
 
         this.interval = setInterval(function () {
-            console.log("LOOPING");
             if (self.playing) {
                 self.time++;
                 if (self.time % 5 === 0) {
-                    console.log("SESSION", self.session);
-                    console.log('VIDEO_TIME watch_time: ' + self.time + '. percent: ' + self.percent);
                     self.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_record_watch_time',
                         {session_id: self.session.id, time: self.time}).then(function() {
                         self.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_set_percent',
