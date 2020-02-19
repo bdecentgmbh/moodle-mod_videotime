@@ -74,7 +74,7 @@ $next_activity_button = null;
 if (videotime_has_pro()) {
     $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
 
-    $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
+    $session = \videotimeplugin_pro\session::create_new($cm->id, $USER->id);
     $sessiondata = $session->jsonSerialize();
     if ($moduleinstance->resume_playback) {
         $resume_time = $sessions->get_current_watch_time();

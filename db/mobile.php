@@ -15,17 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Subplugin definitions for the Video Time module.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.3';
-$plugin->version = 2020021900;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+$addons = [
+    'mod_videotime' => [
+        'handlers' => [
+            'videotime' => [
+                'displaydata' => [
+                    'icon' => $CFG->wwwroot . '/mod/videotime/pix/icon.png',
+                    'class' => '',
+                ],
+
+                'delegate' => 'CoreCourseModuleDelegate',
+                'method' => 'mobile_course_view',
+                'offlinefunctions' => [
+                    'mobile_course_view' => [],
+                ],
+                'init' => 'view_init'
+            ],
+        ],
+        'lang' => [
+            ['pluginname', 'videotime'],
+        ],
+    ],
+];

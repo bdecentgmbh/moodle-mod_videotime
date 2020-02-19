@@ -250,12 +250,14 @@ function videotime_delete_instance($id) {
  * @return mixed
  */
 function videotime_process_video_description($moduleinstance) {
-    $modcontext = context_module::instance($moduleinstance->coursemodule);
-    $videodescription = $moduleinstance->video_description;
-    $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
-        'mod_videotime', 'video_description', 0,
-        array('subdirs' => true), $videodescription['text']);
-    $moduleinstance->video_description_format = $videodescription['format'];
+    if (isset($moduleinstance->video_description['itemid'])) {
+        $modcontext = context_module::instance($moduleinstance->coursemodule);
+        $videodescription = $moduleinstance->video_description;
+        $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
+            'mod_videotime', 'video_description', 0,
+            array('subdirs' => true), $videodescription['text']);
+        $moduleinstance->video_description_format = $videodescription['format'];
+    }
     return $moduleinstance;
 }
 
@@ -534,7 +536,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         }
 
         // Watch time tracking is only available in pro.
-        $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
+        $session = \videotimeplugin_pro\session::create_new($cm->id, $USER->id);
         $sessiondata = $session->jsonSerialize();
         $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
             $instance, $cm->id, $resume_time]);
