@@ -77,7 +77,7 @@ class mobile
             'templates' => [
                 [
                     'id' => 'main',
-                    'html' => $OUTPUT->render_from_template('mod_videotime/view', $data),
+                    'html' => $OUTPUT->render_from_template('mod_videotime/view_mobile', $data),
                 ],
             ],
             'javascript' => file_get_contents($CFG->dirroot . '/mod/videotime/appjs/videotime.js'),
