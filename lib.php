@@ -557,39 +557,78 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         $cm->set_extra_classes('label_mode');
         $cm->set_content($content);
     } else if ($instance->label_mode == 2 && videotime_has_repository()) {
-        // Preview image mode.
-        if (!$instance->vimeo_url) {
-            $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
-        } else {
-            if (!$video = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
-                $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime'));
+        try {
+            // Preview image mode.
+            if (!$instance->vimeo_url) {
+                $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
             } else {
-                $video = \videotimeplugin_repository\video::create($video, $cm->context);
+                if (!$video = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
 
-                $completioninfo = new completion_info($COURSE);
+                    // If the video does not exist in the database yet, add it here now.
+                    $videoid = null;
+                    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $instance->vimeo_url, $output_array)) {
+                        $videoid = $output_array[5];
+                    }
 
-                $description = file_rewrite_pluginfile_urls($instance->intro, 'pluginfile.php', $PAGE->context->id,
-                    'mod_videotime', 'intro', null);
+                    $api = new \videotimeplugin_repository\api();
+                    $response = $api->request('/videos/' . $videoid);
+                    if ($response['status'] == 200) {
+                        $record = new \stdClass();
 
-                $description_excerpt = videotime_get_excerpt(strip_tags($description));
+                        $record->name = $response['body']['name'];
+                        $record->uri = $response['body']['uri'];
+                        $record->link = $response['body']['link'];
+                        $modified_date = \DateTime::createFromFormat(\DateTime::ISO8601, $response['body']['modified_time']);
+                        $modified_date->setTimezone(new \DateTimeZone('UTC'));
+                        $record->modified_time = $modified_date->getTimestamp();
+                        $record->state = \videotimeplugin_repository\video_interface::STATE_NOT_PROCESSED;
+                        $record->id = $DB->insert_record('videotime_vimeo_video', $record);
 
-                $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
-                    'video' => $video->jsonSerialize(),
-                    'description' => $description,
-                    'description_excerpt' => $description_excerpt,
-                    'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
-                    'module_sessions' => $sessions->jsonSerialize(),
-                    'url' => $cm->url,
-                    'instance' => $instance,
-                    'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
-                        $cm),
-                    'show_description' => $instance->show_description,
-                    'show_title' => $instance->show_title,
-                    'show_tags' => $instance->show_tags,
-                    'show_duration' => $instance->show_duration,
-                    'show_viewed_duration' => $instance->show_viewed_duration,
-                ]);
+                        $video = $record;
+                    }
+                }
+
+                // Check if video is still not found.
+                if (!$video) {
+                    $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime'));
+                } else {
+
+                    // Video record definitely exists now.
+                    $video = \videotimeplugin_repository\video::create($video, $cm->context);
+
+                    // Can't display video preview without full video info. Wait until fully processed.
+                    if ($video->get_record()->state == \videotimeplugin_repository\video_interface::STATE_NOT_PROCESSED) {
+                        $content = $OUTPUT->notification(get_string('vimeo_video_not_processed', 'videotime'));
+                    } else {
+
+                        $completioninfo = new completion_info($COURSE);
+
+                        $description = file_rewrite_pluginfile_urls($instance->intro, 'pluginfile.php', $PAGE->context->id,
+                            'mod_videotime', 'intro', null);
+
+                        $description_excerpt = videotime_get_excerpt(strip_tags($description));
+
+                        $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
+                            'video' => $video->jsonSerialize(),
+                            'description' => $description,
+                            'description_excerpt' => $description_excerpt,
+                            'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
+                            'module_sessions' => $sessions->jsonSerialize(),
+                            'url' => $cm->url,
+                            'instance' => $instance,
+                            'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
+                                $cm),
+                            'show_description' => $instance->show_description,
+                            'show_title' => $instance->show_title,
+                            'show_tags' => $instance->show_tags,
+                            'show_duration' => $instance->show_duration,
+                            'show_viewed_duration' => $instance->show_viewed_duration,
+                        ]);
+                    }
+                }
             }
+        } catch(\Exception $e) {
+            $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
         }
 
         $column_class = 'col-sm-12';

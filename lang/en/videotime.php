@@ -227,6 +227,7 @@ $string['vimeo_url_help'] = 'Full URL of Vimeo video.';
 $string['vimeo_url_invalid'] = 'Vimeo URL is invalid. Copy directly from web browser.';
 $string['vimeo_url_missing'] = 'Vimeo URL is not set.';
 $string['vimeo_video_not_found'] = 'Video does not exist in database.';
+$string['vimeo_video_not_processed'] = 'Video has not been fully processed yet. Please check back later.';
 $string['watch_time'] = 'Watch time';
 $string['watch_time_help'] = 'How long the student has watched the video in total (in 5s steps).';
 $string['watch_percent'] = 'Watch percent';
