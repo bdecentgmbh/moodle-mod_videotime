@@ -18,14 +18,29 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.3';
-$plugin->version = 2020022400;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+/**
+ * The mod_videotime module does not store any data.
+ *
+ * @package     mod_videotime
+ * @copyright   2020 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
