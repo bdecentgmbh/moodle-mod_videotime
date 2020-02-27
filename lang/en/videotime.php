@@ -166,6 +166,7 @@ $string['pluginadministration'] = 'Video Time administration';
 $string['preview_picture'] = 'Preview image';
 $string['preview_picture_help'] = 'Image displayed for user.';
 $string['preview_mode'] = 'Preview image mode';
+$string['privacy:metadata'] = 'The Video Time activity module does not store any personal data.';
 $string['process_videos'] = 'Process videos';
 $string['process_videos_help'] = 'Videos will be processed via scheduled task. For larger Vimeo accounts, it may take time to fully process all videos.';
 $string['pull_from_vimeo'] = 'Pull Metadata from Vimeo';
