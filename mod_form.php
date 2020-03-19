@@ -604,7 +604,7 @@ class mod_videotime_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = [];
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
-            $errors['required'] = get_string('required');
+            $errors['vimeo_url'] = get_string('required');
         } else if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
         }
