@@ -23,6 +23,7 @@
  */
 
 use mod_videotime\output\next_activity_button;
+use mod_videotime\videotime_instance;
 
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
@@ -47,7 +48,7 @@ if ($id) {
     print_error('invalidcoursemodule');
 }
 
-$moduleinstance = videotime_populate_with_defaults($moduleinstance);
+$moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 
 $modulecontext = context_module::instance($cm->id);
 $PAGE->set_context($modulecontext);
@@ -88,7 +89,7 @@ if (videotime_has_pro()) {
 }
 
 $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-    $moduleinstance, $cm->id, $resume_time, $next_activity_url]);
+    $moduleinstance->to_record(), $cm->id, $resume_time, $next_activity_url]);
 
 $moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
     'mod_videotime', 'intro', null);
@@ -102,7 +103,7 @@ if (!$moduleinstance->vimeo_url) {
 } else {
 
     $context = [
-        'instance' => $moduleinstance,
+        'instance' => $moduleinstance->to_record(),
         'cmid' => $cm->id
     ];
 

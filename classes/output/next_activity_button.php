@@ -22,6 +22,7 @@
 
 namespace mod_videotime\output;
 
+use mod_videotime\videotime_instance;
 use renderer_base;
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
@@ -50,12 +51,9 @@ class next_activity_button implements \templatable, \renderable {
 
     public function __construct(\cm_info $cm)
     {
-        global $DB;
-
         $this->cm = $cm;
 
-        $moduleinstance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
-        $moduleinstance = videotime_populate_with_defaults($moduleinstance);
+        $moduleinstance = videotime_instance::instance_by_id($cm->instance);
 
         // Get a list of all the activities in the course.
         $modinfo = get_fast_modinfo($this->cm->course);

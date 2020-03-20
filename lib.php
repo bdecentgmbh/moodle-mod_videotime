@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\videotime_instance;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -127,59 +129,6 @@ function videotime_get_user_grades($videotime, $userid = 0) {
                                  FROM {' . \videotimeplugin_pro\session::TABLE . '}
                                  ' . $where . '
                                  GROUP BY user_id', $params);
-}
-
-/**
- * Get all module fields that are to be used as player.js options.
- *
- * @return array
- */
-function videotime_get_fields_with_defaults() {
-    return [
-        'resume_playback',
-        'next_activity_button',
-        'next_activity_auto',
-        'responsive',
-        'height',
-        'width',
-        'maxheight',
-        'maxwidth',
-        'autoplay',
-        'byline',
-        'color',
-        'muted',
-        'playsinline',
-        'portrait',
-        'speed',
-        'title',
-        'transparent',
-        'label_mode',
-        'show_title',
-        'show_description',
-        'show_tags',
-        'show_duration',
-        'show_viewed_duration',
-        'columns',
-        'preview_picture',
-    ];
-}
-
-/**
- * Get all embed options for module instance.
- *
- * @param $moduleinstance
- * @return stdClass
- */
-function videotime_populate_with_defaults($moduleinstance) {
-    foreach (videotime_get_fields_with_defaults() as $name) {
-        if (isset($moduleinstance->$name)) {
-            // If option is globally forced, use the default instead.
-            if (get_config('videotime', $name . '_force')) {
-                $moduleinstance->$name = get_config('videotime', $name);
-            }
-        }
-    }
-    return $moduleinstance;
 }
 
 /**
@@ -395,12 +344,12 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 /**
  * Mark the activity completed (if required) and trigger the course_module_viewed event.
  *
- * @param  stdClass $videotime  Video Time object
+ * @param  videotime_instance $videotime  Video Time object
  * @param  stdClass $course     course object
  * @param  stdClass $cm         course module object
  * @param  stdClass $context    context object
  */
-function videotime_view($videotime, $course, $cm, $context) {
+function videotime_view(videotime_instance $videotime, $course, $cm, $context) {
 
     // Trigger course_module_viewed event.
     $params = array(
@@ -411,7 +360,7 @@ function videotime_view($videotime, $course, $cm, $context) {
     $event = \mod_videotime\event\course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
     $event->add_record_snapshot('course', $course);
-    $event->add_record_snapshot('videotime', $videotime);
+    $event->add_record_snapshot('videotime', $videotime->to_record());
     $event->trigger();
 
     // Completion.
@@ -531,8 +480,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         return;
     }
 
-    $instance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
-    $instance = videotime_populate_with_defaults($instance);
+    $instance = videotime_instance::instance_by_id($cm->instance);
 
     $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
 
@@ -548,14 +496,14 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         $session = \videotimeplugin_pro\session::create_new($cm->id, $USER->id);
         $sessiondata = $session->jsonSerialize();
         $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-            $instance, $cm->id, $resume_time]);
+            $instance->to_record(), $cm->id, $resume_time]);
 
         if (!$instance->vimeo_url) {
             $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
         } else {
             $instance->next_activity_button = false;
             $content = $OUTPUT->render_from_template('mod_videotime/view', [
-                'instance' => $instance,
+                'instance' => $instance->to_record(),
                 'cmid' => $cm->id
             ]);
         }
@@ -624,7 +572,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
                             'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
                             'module_sessions' => $sessions->jsonSerialize(),
                             'url' => $cm->url,
-                            'instance' => $instance,
+                            'instance' => $instance->to_record(),
                             'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
                                 $cm),
                             'show_description' => $instance->show_description,
