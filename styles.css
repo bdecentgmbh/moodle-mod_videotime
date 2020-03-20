@@ -88,6 +88,11 @@ body.editing.path-course-view li.activity.videotime.preview_mode {
     min-height: 440px;
 }
 
+/** IE backwards compatibility **/
+.video-image-preview .img-responsive {
+    width: 100%;
+}
+
     /* Totara styling */
 [data-action=jump-page] {
     display: inline;
