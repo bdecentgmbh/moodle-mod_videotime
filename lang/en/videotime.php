@@ -80,7 +80,7 @@ $string['insert_video_metadata'] = 'Insert metadata from video (may override act
 $string['label_mode'] = 'Label mode';
 $string['mode'] = 'Mode';
 $string['mode_help'] = '<b>Normal mode</b>: Displays the standard activity link, no extras on course page.<br>
-<b>Lable mode</b>: Embed video on course layout, similar to the Label activity.<br>
+<b>Label mode</b>: Embed video on course layout, similar to the Label activity.<br>
 <b>Preview image mode</b>: Displays video thumbnail on course page that links to activity (Video Time Repository only).';
 $string['modulename'] = 'Video Time';
 $string['modulenameplural'] = 'Video Time instances';
