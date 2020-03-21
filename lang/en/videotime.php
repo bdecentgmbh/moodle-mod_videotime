@@ -38,6 +38,7 @@ $string['authenticate_vimeo'] = 'Authenticate with Vimeo';
 $string['authenticate_vimeo_success'] = 'Vimeo authentication successful. You can now use features that rely on the Vimeo API.';
 $string['choose_video'] = 'Choose Video';
 $string['choose_video_confirm'] = 'Are you sure you want to choose the video';
+$string['cleanupalbumsandtags'] = 'Cleanup albums and tags';
 $string['client_id'] = 'Vimeo Client ID';
 $string['client_id_help'] = 'Client ID is generated when you create an "App" under your Vimeo account. Go to https://developer.vimeo.com/apps/new to start this process.';
 $string['client_secret'] = 'Vimeo Client Secret';
