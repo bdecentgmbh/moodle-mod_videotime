@@ -516,7 +516,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         return;
     }
 
-    if (!videotime_has_pro()) {
+    if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
         return;
     }
 

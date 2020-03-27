@@ -13,6 +13,12 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
 
             log.debug('VIDEO_TIME embed options', embedOptions);
 
+            // Check if Vimeo video element exists.
+            if ($('#vimeo-embed-' + cmid).length == 0) {
+                log.debug("Vimeo video element not found: #vimeo-embed-" + cmid);
+                return;
+            }
+
             var player = new Vimeo('vimeo-embed-' + cmid, embedOptions);
 
             if (hasPro) {
