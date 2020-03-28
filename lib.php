@@ -480,39 +480,22 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         return;
     }
 
+    $renderer = $PAGE->get_renderer('mod_videotime');
+
     $instance = videotime_instance::instance_by_id($cm->instance);
 
     $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
 
     if ($instance->label_mode == 1) {
 
-
-        $resume_time = 0;
-        if ($instance->resume_playback) {
-            $resume_time = $sessions->get_current_watch_time();
-        }
-
-        // Watch time tracking is only available in pro.
-        $session = \videotimeplugin_pro\session::create_new($cm->id, $USER->id);
-        $sessiondata = $session->jsonSerialize();
-        $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-            $instance->to_record(), $cm->id, $resume_time]);
-
-        if (!$instance->vimeo_url) {
-            $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
-        } else {
-            $instance->next_activity_button = false;
-            $content = $OUTPUT->render_from_template('mod_videotime/view', [
-                'instance' => $instance->to_record(),
-                'cmid' => $cm->id
-            ]);
-        }
-
         videotime_view($instance, $PAGE->course, $cm, context_module::instance($cm->id));
+
+        $instance->set_embed(true);
+        $instance->init_js($PAGE, $USER->id);
 
         $cm->set_no_view_link();
         $cm->set_extra_classes('label_mode');
-        $cm->set_content($content);
+        $cm->set_content($renderer->render($instance));
     } else if ($instance->label_mode == 2 && videotime_has_repository()) {
         try {
             // Preview image mode.

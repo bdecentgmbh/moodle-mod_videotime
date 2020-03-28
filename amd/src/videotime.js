@@ -135,7 +135,6 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             if (!document.getElementById('vimeo-embed-' + cmid)) {
                 // Init player for Moodle mobile page.
                 const i = setInterval(function() {
-                    console.log("TICK");
                     if (document.getElementById('vimeo-embed-' + cmid)) {
                         initPlayer(session, interval, hasPro, embedOptions, cmid, resumeTime, nextActivityUrl);
                         clearInterval(i);

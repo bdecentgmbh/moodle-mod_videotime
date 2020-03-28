@@ -22,6 +22,9 @@
 
 namespace mod_videotime;
 
+use mod_videotime\output\next_activity_button;
+use renderer_base;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -29,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package mod_videotime
  */
-class videotime_instance {
+class videotime_instance implements \renderable, \templatable {
 
     const NORMAL_MODE = 0;
     const LABEL_MODE = 1;
@@ -44,6 +47,25 @@ class videotime_instance {
      * @var array Temporary storage for force settings. Do not use directly. use get_force_settings() instead.
      */
     private $forcesettings;
+
+    /**
+     * Temporary storage for course module. Use $this->get_cm() instead.
+     *
+     * @var \stdClass|null
+     */
+    private $cm = null;
+
+    /**
+     * Temporary storage for next activity button. Use $this->get_next_activity_button() instead.
+     *
+     * @var next_activity_button
+     */
+    private $next_activity_button = null;
+
+    /**
+     * @var bool
+     */
+    private $embed = false;
 
     /**
      * @var array Vimeo embed option fields.
@@ -118,6 +140,17 @@ class videotime_instance {
     }
 
     /**
+     * Get context of this Video Time instance.
+     *
+     * @return \context
+     * @throws \coding_exception
+     */
+    public function get_context(): \context
+    {
+        return \context_module::instance($this->get_cm()->id);
+    }
+
+    /**
      * Get force settings. These settings will override fields on the Video Time instance.
      *
      * @return array
@@ -158,6 +191,38 @@ class videotime_instance {
     }
 
     /**
+     * Set if this instance will be used as an embed during rendering.
+     *
+     * @param bool $embed
+     */
+    public function set_embed(bool $embed): void
+    {
+        $this->embed = $embed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_embed(): bool
+    {
+        return $this->embed;
+    }
+
+    /**
+     * Get course module of this instance.
+     *
+     * @return \stdClass
+     * @throws \coding_exception
+     */
+    public function get_cm()
+    {
+        if (is_null($this->cm)) {
+            $this->cm = get_coursemodule_from_instance('videotime', $this->id);
+        }
+        return $this->cm;
+    }
+
+    /**
      * Get database record for Video Time instance
      *
      * @param bool $useforcedsettings
@@ -178,6 +243,11 @@ class videotime_instance {
                 }
             }
         }
+
+        $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
+            'mod_videotime', 'intro', null);
+        $record->video_description = file_rewrite_pluginfile_urls($record->video_description, 'pluginfile.php',
+            $this->get_context()->id, 'mod_videotime', 'video_description', 0);
 
         return $record;
     }
@@ -246,5 +316,106 @@ class videotime_instance {
             self::LABEL_MODE => get_string('label_mode', 'videotime'),
             self::PREVIEW_MODE => get_string('preview_mode', 'videotime')
         ];
+    }
+
+    /**
+     * Get next activity button for instance.
+     *
+     * @return next_activity_button|null
+     * @throws \coding_exception
+     */
+    public function get_next_activity_button()
+    {
+        // Next activity button is a pro feature.
+        if (videotime_has_pro() && is_null($this->next_activity_button)) {
+            $this->next_activity_button = new next_activity_button(\cm_info::create($this->get_cm()));
+        }
+
+        return $this->next_activity_button;
+    }
+
+    /**
+     * Get the current time the user has watched or paused at. Used for resuming playback.
+     *
+     * @param $userid
+     * @return float
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function get_resume_time($userid): float
+    {
+        // Resuming is a pro feature.
+        if (!videotime_has_pro()) {
+            return 0;
+        }
+
+        if (!$sessions = \videotimeplugin_pro\module_sessions::get($this->get_cm()->id, $userid)) {
+            return 0;
+        }
+
+        if ($this->resume_playback) {
+            return $sessions->get_current_watch_time();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Initializes JavaScript and creates a new viewing session (if pro).
+     *
+     * @param \moodle_page $page
+     * @param $userid
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function init_js(\moodle_page $page, $userid): void
+    {
+        $next_activity_url = null;
+        $sessiondata = false;
+
+        if (videotime_has_pro() && !$this->is_embed()) {
+            $session = \videotimeplugin_pro\session::create_new($this->get_cm()->id, $userid);
+            $sessiondata = $session->jsonSerialize();
+
+            $next_activity_button = $this->get_next_activity_button();
+
+            if ($this->next_activity_auto) {
+                if (!$next_activity_button->is_restricted() && $next_cm = $next_activity_button->get_next_cm()) {
+                    $next_activity_url = $next_cm->url->out(false);
+                }
+            }
+        }
+
+        $page->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
+            $this->to_record(), $this->get_cm()->id, $this->get_resume_time($userid), $next_activity_url]);
+    }
+
+    /**
+     * Function to export the renderer data in a format that is suitable for a
+     * mustache template. This means:
+     * 1. No complex types - only stdClass, array, int, string, float, bool
+     * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return \stdClass|array
+     */
+    public function export_for_template(renderer_base $output)
+    {
+        global $PAGE;
+        $cm = get_coursemodule_from_instance('videotime', $this->id);
+
+        $context = [
+            'instance' => $this->to_record(),
+            'cmid' => $cm->id,
+            'has-pro' => videotime_has_pro()
+        ];
+
+
+        if (videotime_has_pro() && !$this->is_embed() && $next_activity_button = $this->get_next_activity_button()) {
+            $renderer = $PAGE->get_renderer('mod_videotime');
+            $context['next_activity_button_html'] = $renderer->render($next_activity_button);
+        }
+
+        return $context;
     }
 }

@@ -50,15 +50,16 @@ if ($id) {
 
 $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 
-$modulecontext = context_module::instance($cm->id);
-$PAGE->set_context($modulecontext);
+$PAGE->set_context($moduleinstance->get_context());
 
 require_login($course, true, $cm);
 
-require_capability('mod/videotime:view', $modulecontext);
+require_capability('mod/videotime:view', $moduleinstance->get_context());
+
+$moduleinstance->init_js($PAGE, $USER->id);
 
 // Completion and trigger events.
-videotime_view($moduleinstance, $course, $cm, $modulecontext);
+videotime_view($moduleinstance, $course, $cm, $moduleinstance->get_context());
 
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -66,51 +67,11 @@ $PAGE->set_heading(format_string($course->fullname));
 
 $renderer = $PAGE->get_renderer('mod_videotime');
 
-// Watch time tracking is only available in pro.
-$resume_time = 0;
-$next_activity_url = null;
-$sessiondata = false;
-$next_activity_button = null;
-
-if (videotime_has_pro()) {
-    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
-
-    $session = \videotimeplugin_pro\session::create_new($cm->id, $USER->id);
-    $sessiondata = $session->jsonSerialize();
-    if ($moduleinstance->resume_playback) {
-        $resume_time = $sessions->get_current_watch_time();
-    }
-    $next_activity_button = new next_activity_button(cm_info::create($cm));
-    if ($moduleinstance->next_activity_auto) {
-        if (!$next_activity_button->is_restricted() && $next_cm = $next_activity_button->get_next_cm()) {
-            $next_activity_url = $next_cm->url->out(false);
-        }
-    }
-}
-
-$PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-    $moduleinstance->to_record(), $cm->id, $resume_time, $next_activity_url]);
-
-$moduleinstance->intro  = file_rewrite_pluginfile_urls($moduleinstance->intro, 'pluginfile.php', $modulecontext->id,
-    'mod_videotime', 'intro', null);
-$moduleinstance->video_description = file_rewrite_pluginfile_urls($moduleinstance->video_description, 'pluginfile.php',
-    $modulecontext->id, 'mod_videotime', 'video_description', 0);
-
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
-
-    $context = [
-        'instance' => $moduleinstance->to_record(),
-        'cmid' => $cm->id
-    ];
-
-    if (videotime_has_pro() && $next_activity_button) {
-        $context['next_activity_button_html'] = $renderer->render($next_activity_button);
-    }
-
-    echo $OUTPUT->render_from_template('mod_videotime/view', $context);
+    $renderer->render($moduleinstance);
 }
 echo $OUTPUT->footer();
