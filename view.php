@@ -72,6 +72,6 @@ echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
-    $renderer->render($moduleinstance);
+    echo $renderer->render($moduleinstance);
 }
 echo $OUTPUT->footer();
