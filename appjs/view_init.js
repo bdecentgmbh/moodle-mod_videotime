@@ -72,7 +72,7 @@
     };
 
     VimeoVideo.prototype.getEmbedOptions = function() {
-        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_get_embed_options',
+        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('mod_videotime_get_embed_options',
             {cmid: this.element.getAttribute('data-cmid')});
     };
 

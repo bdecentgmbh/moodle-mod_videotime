@@ -64,6 +64,7 @@ $string['configure_vimeo_help'] = '<ol><li>Go to <a href="https://developer.vime
 $string['confirmation'] = 'Confirmation';
 $string['create_vimeo_app'] = 'Create Vimeo App';
 $string['default'] = 'Default';
+$string['deletesessiondata'] = 'Delete session data';
 $string['discover_videos'] = 'Discover Vimeo videos';
 $string['discovering_videos'] = 'Discovering {$a->count} videos';
 $string['display_options'] = 'Display options';
@@ -203,6 +204,7 @@ $string['store_pictures'] = 'Store thumbnails';
 $string['store_pictures_help'] = 'If enabled, the Vimeo thumbnails will be stored locally. Otherwise the images will be delivered from Vimeo externally.';
 $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
+$string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['todo'] = 'TODO';
 $string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p> 
 <p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p> 

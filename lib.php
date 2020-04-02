@@ -470,6 +470,10 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
 function videotime_cm_info_dynamic(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
+    if (WS_SERVER || AJAX_SCRIPT) {
+        return;
+    }
+
     // Ensure we are on the course view page. This was throwing an error when viewing the module
     // because OUTPUT was being used.
     if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
@@ -488,10 +492,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 
     if ($instance->label_mode == 1) {
 
-        videotime_view($instance, $PAGE->course, $cm, context_module::instance($cm->id));
-
         $instance->set_embed(true);
-        $instance->init_js($PAGE, $USER->id);
 
         $cm->set_no_view_link();
         $cm->set_extra_classes('label_mode');

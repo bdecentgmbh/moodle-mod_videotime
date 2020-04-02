@@ -49,11 +49,13 @@ class next_activity_button implements \templatable, \renderable {
      */
     private $is_restricted = false;
 
+    private $moduleinstance = null;
+
     public function __construct(\cm_info $cm)
     {
         $this->cm = $cm;
 
-        $moduleinstance = videotime_instance::instance_by_id($cm->instance);
+        $this->moduleinstance = videotime_instance::instance_by_id($cm->instance);
 
         // Get a list of all the activities in the course.
         $modinfo = get_fast_modinfo($this->cm->course);
@@ -96,11 +98,11 @@ class next_activity_button implements \templatable, \renderable {
         $position = array_search($cm->id, $modids);
 
         // Check if we have a next mod to show.
-        if ($moduleinstance->next_activity_button) {
-            if ($moduleinstance->next_activity_id == -1 && $position < ($nummods - 1)) {
+        if ($this->moduleinstance->next_activity_button) {
+            if ($this->moduleinstance->next_activity_id == -1 && $position < ($nummods - 1)) {
                 $this->nextcm = $mods[$modids[$position + 1]];
-            } else if ($moduleinstance->next_activity_id > 0) {
-                $this->nextcm = $mods[$moduleinstance->next_activity_id];
+            } else if ($this->moduleinstance->next_activity_id > 0) {
+                $this->nextcm = $mods[$this->moduleinstance->next_activity_id];
             }
         }
 
@@ -146,6 +148,7 @@ class next_activity_button implements \templatable, \renderable {
             'availability_info' => $this->availability_info,
             'availability_title' => videotime_is_totara() ? strip_tags($this->availability_info) : null,
             'is_restricted' => $this->is_restricted,
+            'instance' => $this->moduleinstance->to_record()
         ];
     }
 

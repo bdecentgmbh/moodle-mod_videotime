@@ -361,36 +361,6 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
-     * Initializes JavaScript and creates a new viewing session (if pro).
-     *
-     * @param \moodle_page $page
-     * @param $userid
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public function init_js(\moodle_page $page, $userid): void
-    {
-        $next_activity_url = null;
-        $sessiondata = false;
-
-        if (videotime_has_pro() && !$this->is_embed()) {
-            $session = \videotimeplugin_pro\session::create_new($this->get_cm()->id, $userid);
-            $sessiondata = $session->jsonSerialize();
-
-            $next_activity_button = $this->get_next_activity_button();
-
-            if ($this->next_activity_auto) {
-                if (!$next_activity_button->is_restricted() && $next_cm = $next_activity_button->get_next_cm()) {
-                    $next_activity_url = $next_cm->url->out(false);
-                }
-            }
-        }
-
-        $page->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-            $this->to_record(), $this->get_cm()->id, $this->get_resume_time($userid), $next_activity_url]);
-    }
-
-    /**
      * Function to export the renderer data in a format that is suitable for a
      * mustache template. This means:
      * 1. No complex types - only stdClass, array, int, string, float, bool
@@ -407,9 +377,10 @@ class videotime_instance implements \renderable, \templatable {
         $context = [
             'instance' => $this->to_record(),
             'cmid' => $cm->id,
-            'has-pro' => videotime_has_pro()
+            'haspro' => videotime_has_pro(),
+            'interval' => 5,
+            'uniqueid' => uniqid()
         ];
-
 
         if (videotime_has_pro() && !$this->is_embed() && $next_activity_button = $this->get_next_activity_button()) {
             $renderer = $PAGE->get_renderer('mod_videotime');
