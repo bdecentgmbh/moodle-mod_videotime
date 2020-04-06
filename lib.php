@@ -464,10 +464,22 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  * mod_folder can be displayed inline on course page and therefore have no course link
  *
  * @param cm_info $cm
- * @throws dml_exception
- * @throws coding_exception
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
+
+    $instance = videotime_instance::instance_by_id($cm->instance);
+
+    if (in_array($instance->label_mode, [videotime_instance::LABEL_MODE, videotime_instance::PREVIEW_MODE])) {
+        $cm->set_no_view_link();
+    }
+}
+
+/**
+ * Called when viewing course page.
+ *
+ * @param cm_info $cm Course module information
+ */
+function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
     if (WS_SERVER || AJAX_SCRIPT) {
@@ -494,9 +506,8 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 
         $instance->set_embed(true);
 
-        $cm->set_no_view_link();
         $cm->set_extra_classes('label_mode');
-        $cm->set_content($renderer->render($instance));
+        $cm->set_content($renderer->render($instance), true);
     } else if ($instance->label_mode == 2 && videotime_has_repository()) {
         try {
             // Preview image mode.
@@ -581,9 +592,8 @@ function videotime_cm_info_dynamic(cm_info $cm) {
             $column_class = 'col-sm-3';
         }
 
-        $cm->set_no_view_link();
         $cm->set_extra_classes('preview_mode ' . $column_class);
-        $cm->set_content($content);
+        $cm->set_content($content, true);
     }
 }
 
