@@ -58,7 +58,20 @@ class renderer extends plugin_renderer_base {
         if (isset($interfaces['templatable'])) {
             // Default implementation of template-based rendering.
             $data = $widget->export_for_template($this);
-            return parent::render_from_template('videotime/'.$plainclassname, $data);
+
+            if (method_exists($widget, 'get_component_name')) {
+                $component = $widget->get_component_name();
+            } else {
+                $component = 'videotime';
+            }
+
+            if (method_exists($widget, 'get_template_name')) {
+                $templatename = $widget->get_template_name();
+            } else {
+                $templatename = $plainclassname;
+            }
+
+            return parent::render_from_template($component . '/' . $templatename, $data);
 
         } else {
             return parent::render($widget);

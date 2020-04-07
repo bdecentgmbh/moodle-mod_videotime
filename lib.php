@@ -155,6 +155,10 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     videotime_grade_item_update($moduleinstance);
 
+    if (videotime_has_repository()) {
+        \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
+    }
+
     return $moduleinstance->id;
 }
 
@@ -180,6 +184,10 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
     videotime_grade_item_update($moduleinstance);
+
+    if (videotime_has_repository()) {
+        \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
+    }
 
     return $DB->update_record('videotime', $moduleinstance);
 }
@@ -502,103 +510,32 @@ function videotime_cm_info_view(cm_info $cm) {
 
     $renderer = $PAGE->get_renderer('mod_videotime');
 
-    $instance = videotime_instance::instance_by_id($cm->instance);
+    try {
+        $instance = videotime_instance::instance_by_id($cm->instance);
 
-    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
+        if ($instance->label_mode == videotime_instance::LABEL_MODE) {
+            $instance->set_embed(true);
+            $content = $renderer->render($instance);
+        } else if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
+            $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
+            $content = $renderer->render($preview);
 
-    if ($instance->label_mode == 1) {
-
-        $instance->set_embed(true);
-
-        $cm->set_extra_classes('label_mode');
-        $cm->set_content($renderer->render($instance), true);
-    } else if ($instance->label_mode == 2 && videotime_has_repository()) {
-        try {
-            // Preview image mode.
-            if (!$instance->vimeo_url) {
-                $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
-            } else {
-                if (!$video = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
-
-                    // If the video does not exist in the database yet, add it here now.
-                    $videoid = null;
-                    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $instance->vimeo_url, $output_array)) {
-                        $videoid = $output_array[5];
-                    }
-
-                    $api = new \videotimeplugin_repository\api();
-                    $response = $api->request('/videos/' . $videoid);
-                    if ($response['status'] == 200) {
-                        $record = new \stdClass();
-
-                        $record->name = $response['body']['name'];
-                        $record->uri = $response['body']['uri'];
-                        $record->link = $response['body']['link'];
-                        $modified_date = \DateTime::createFromFormat(\DateTime::ISO8601, $response['body']['modified_time']);
-                        $modified_date->setTimezone(new \DateTimeZone('UTC'));
-                        $record->modified_time = $modified_date->getTimestamp();
-                        $record->state = \videotimeplugin_repository\video_interface::STATE_NOT_PROCESSED;
-                        $record->id = $DB->insert_record('videotime_vimeo_video', $record);
-
-                        $video = $record;
-                    }
-                }
-
-                // Check if video is still not found.
-                if (!$video) {
-                    $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime'));
-                } else {
-
-                    // Video record definitely exists now.
-                    $video = \videotimeplugin_repository\video::create($video, $cm->context);
-
-                    // Can't display video preview without full video info. Wait until fully processed.
-                    if ($video->get_record()->state == \videotimeplugin_repository\video_interface::STATE_NOT_PROCESSED) {
-                        $content = $OUTPUT->notification(get_string('vimeo_video_not_processed', 'videotime'));
-                    } else {
-
-                        $completioninfo = new completion_info($COURSE);
-
-                        $description = file_rewrite_pluginfile_urls($instance->intro, 'pluginfile.php', $PAGE->context->id,
-                            'mod_videotime', 'intro', null);
-
-                        $description_excerpt = videotime_get_excerpt(strip_tags($description));
-
-                        $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
-                            'video' => $video->jsonSerialize(),
-                            'description' => $description,
-                            'description_excerpt' => $description_excerpt,
-                            'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
-                            'module_sessions' => $sessions->jsonSerialize(),
-                            'url' => new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]),
-                            'instance' => $instance->to_record(),
-                            'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
-                                $cm),
-                            'show_description' => $instance->show_description,
-                            'show_title' => $instance->show_title,
-                            'show_tags' => $instance->show_tags,
-                            'show_duration' => $instance->show_duration,
-                            'show_viewed_duration' => $instance->show_viewed_duration,
-                        ]);
-                    }
-                }
+            $column_class = 'col-sm-12';
+            if ($instance->columns == 2) {
+                $column_class = 'col-sm-6';
+            } else if ($instance->columns == 3) {
+                $column_class = 'col-sm-4';
+            } else if ($instance->columns == 4) {
+                $column_class = 'col-sm-3';
             }
-        } catch(\Exception $e) {
-            $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
-        }
 
-        $column_class = 'col-sm-12';
-        if ($instance->columns == 2) {
-            $column_class = 'col-sm-6';
-        } else if ($instance->columns == 3) {
-            $column_class = 'col-sm-4';
-        } else if ($instance->columns == 4) {
-            $column_class = 'col-sm-3';
+            $cm->set_extra_classes('preview_mode ' . $column_class);
         }
-
-        $cm->set_extra_classes('preview_mode ' . $column_class);
-        $cm->set_content($content, true);
+    } catch(\Exception $e) {
+        $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
     }
+
+    $cm->set_content($content, true);
 }
 
 /**
