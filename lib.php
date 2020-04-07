@@ -467,6 +467,10 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
 
+    if (!videotime_has_pro()) {
+        return;
+    }
+
     $instance = videotime_instance::instance_by_id($cm->instance);
 
     if (in_array($instance->label_mode, [videotime_instance::LABEL_MODE, videotime_instance::PREVIEW_MODE])) {
@@ -566,7 +570,7 @@ function videotime_cm_info_view(cm_info $cm) {
                             'description_excerpt' => $description_excerpt,
                             'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
                             'module_sessions' => $sessions->jsonSerialize(),
-                            'url' => $cm->url,
+                            'url' => new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]),
                             'instance' => $instance->to_record(),
                             'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
                                 $cm),
