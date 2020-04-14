@@ -530,12 +530,17 @@ function videotime_cm_info_view(cm_info $cm) {
             }
 
             $cm->set_extra_classes('preview_mode ' . $column_class);
+        } else {
+            // Normal mode, do not set any additional content.
+            $content = null;
         }
     } catch(\Exception $e) {
         $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
     }
 
-    $cm->set_content($content, true);
+    if ($content) {
+        $cm->set_content($content, true);
+    }
 }
 
 /**
