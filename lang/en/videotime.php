@@ -36,6 +36,7 @@ $string['apply'] = 'Apply';
 $string['authenticated'] = 'Authenticated';
 $string['authenticate_vimeo'] = 'Authenticate with Vimeo';
 $string['authenticate_vimeo_success'] = 'Vimeo authentication successful. You can now use features that rely on the Vimeo API.';
+$string['browsevideos'] = 'Browse videos';
 $string['choose_video'] = 'Choose Video';
 $string['choose_video_confirm'] = 'Are you sure you want to choose the video';
 $string['cleanupalbumsandtags'] = 'Cleanup albums and tags';

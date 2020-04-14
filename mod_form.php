@@ -84,11 +84,8 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
             $mform->addGroup($group);
 
-            $albums = array_values($DB->get_records('videotime_vimeo_album', null, 'name'));
-            $tags = array_values($DB->get_records('videotime_vimeo_tag', null, 'name'));
-
             $PAGE->requires->js_call_amd('videotimeplugin_repository/mod_form', 'init',
-                [$albums, $tags, videotime_is_totara(), $this->context->id]);
+                [videotime_is_totara(), $this->context->id]);
         } else {
             $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
             $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');

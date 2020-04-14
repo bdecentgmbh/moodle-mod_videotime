@@ -589,3 +589,19 @@ function mod_videotime_treat_as_label(cm_info $mod)
 
     return false;
 }
+
+/**
+ * Parse Vimeo link/URL and return video ID.
+ *
+ * @param $link
+ * @return mixed|null
+ */
+function mod_videotime_get_vimeo_id_from_link($link)
+{
+    $videoid = null;
+    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $output_array)) {
+        return $output_array[5];
+    }
+
+    return null;
+}
