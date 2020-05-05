@@ -26,12 +26,8 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.currentTime = 0;
     };
 
-    VideoTime.prototype.initialize = async function() {
+    VideoTime.prototype.initialize = function() {
         Log.debug('Initializing Video Time ' + this.elementId);
-
-        if (this.hasPro) {
-            this.resumeTime = await this.getResumeTime(this.cmId);
-        }
 
         this.getEmbedOptions().then(function(response) {
             Log.debug('Initializing Vimeo player with options:');
@@ -65,11 +61,14 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         }
 
         // If resume is present force seek the player to that point.
-        if (this.resumeTime && this.resumeTime.seconds > 0) {
-            this.player.on('loaded', function() {
-                this.player.setCurrentTime(this.resumeTime.seconds);
-            }.bind(this));
-        }
+        this.getResumeTime(this.cmId).then((seconds) => {
+            Log.debug('VIDEO_TIME resuming at ' + seconds);
+            if (seconds && seconds > 0) {
+                this.player.on('loaded', () => {
+                    this.player.setCurrentTime(seconds);
+                });
+            }
+        });
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
@@ -258,10 +257,19 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
      * @returns {Promise}
      */
     VideoTime.prototype.getResumeTime = function(cmId) {
-        return Ajax.call([{
-            methodname: 'videotimeplugin_pro_get_resume_time',
-            args: { cmid: cmId }
-        }])[0];
+        if (this.resumeTime) {
+            return Promise.resolve(this.resumeTime);
+        }
+
+        return new Promise((resolve, reject) => {
+            Ajax.call([{
+                methodname: 'videotimeplugin_pro_get_resume_time',
+                args: { cmid: cmId }
+            }])[0].then(function(response) {
+                this.resumeTime = response.seconds;
+                resolve(this.resumeTime);
+            }.bind(this));
+        });
     };
 
     /**
