@@ -62,15 +62,10 @@ $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
-$table = new \videotimeplugin_pro\sessions_report_table($cm->id);
+$table = new \videotimeplugin_pro\sessions_report_table($cm->id, $download);
 $table->define_baseurl($PAGE->url);
 $table->is_downloadable(true);
 $table->show_download_buttons_at([TABLE_P_BOTTOM]);
-
-if ($download) {
-    raise_memory_limit(MEMORY_EXTRA);
-    $table->is_downloading($download, 'video-time-report');
-}
 
 $form = new \videotimeplugin_pro\form\report_settings_form($PAGE->url);
 

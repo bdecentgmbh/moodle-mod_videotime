@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\videotime_instance;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/videotime/lib.php');
@@ -175,11 +177,7 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_heading('label_mode', get_string('default') . ' ' .
                 get_string('mode', 'videotime'), ''));
             $settings->add(new admin_setting_configselect('videotime/label_mode', get_string('mode', 'videotime'),
-                get_string('mode_help', 'videotime'), 0, [
-                    0 => get_string('normal_mode', 'videotime'),
-                    1 => get_string('label_mode', 'videotime'),
-                    2 => get_string('preview_mode', 'videotime')
-                ]));
+                get_string('mode_help', 'videotime'), videotime_instance::NORMAL_MODE, videotime_instance::get_mode_options()));
             $settings->add(new admin_setting_configcheckbox('videotime/label_mode_force', get_string('force', 'videotime'),
                 get_string('force_help', 'videotime'), '0'));
 

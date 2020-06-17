@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\videotime_instance;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -130,50 +132,6 @@ function videotime_get_user_grades($videotime, $userid = 0) {
 }
 
 /**
- * Get all module fields that are to be used as player.js options.
- *
- * @return array
- */
-function videotime_get_fields_with_defaults() {
-    return [
-        'resume_playback',
-        'next_activity_button',
-        'responsive',
-        'autoplay',
-        'byline',
-        'color',
-        'height',
-        'maxheight',
-        'maxwidth',
-        'muted',
-        'playsinline',
-        'portrait',
-        'speed',
-        'title',
-        'transparent',
-        'width',
-    ];
-}
-
-/**
- * Get all embed options for module instance.
- *
- * @param $moduleinstance
- * @return stdClass
- */
-function videotime_populate_with_defaults($moduleinstance) {
-    foreach (videotime_get_fields_with_defaults() as $name) {
-        if (isset($moduleinstance->$name)) {
-            // If option is globally forced, use the default instead.
-            if (get_config('videotime', $name . '_force')) {
-                $moduleinstance->$name = get_config('videotime', $name);
-            }
-        }
-    }
-    return $moduleinstance;
-}
-
-/**
  * Saves a new instance of the mod_videotime into the database.
  *
  * Given an object containing all the necessary data, (defined by the form
@@ -196,6 +154,10 @@ function videotime_add_instance($moduleinstance, $mform = null) {
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
     videotime_grade_item_update($moduleinstance);
+
+    if (videotime_has_repository()) {
+        \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
+    }
 
     return $moduleinstance->id;
 }
@@ -222,6 +184,10 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
     videotime_grade_item_update($moduleinstance);
+
+    if (videotime_has_repository()) {
+        \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
+    }
 
     return $DB->update_record('videotime', $moduleinstance);
 }
@@ -250,12 +216,14 @@ function videotime_delete_instance($id) {
  * @return mixed
  */
 function videotime_process_video_description($moduleinstance) {
-    $modcontext = context_module::instance($moduleinstance->coursemodule);
-    $videodescription = $moduleinstance->video_description;
-    $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
-        'mod_videotime', 'video_description', 0,
-        array('subdirs' => true), $videodescription['text']);
-    $moduleinstance->video_description_format = $videodescription['format'];
+    if (isset($moduleinstance->video_description['itemid'])) {
+        $modcontext = context_module::instance($moduleinstance->coursemodule);
+        $videodescription = $moduleinstance->video_description;
+        $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
+            'mod_videotime', 'video_description', 0,
+            array('subdirs' => true), $videodescription['text']);
+        $moduleinstance->video_description_format = $videodescription['format'];
+    }
     return $moduleinstance;
 }
 
@@ -384,12 +352,12 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 /**
  * Mark the activity completed (if required) and trigger the course_module_viewed event.
  *
- * @param  stdClass $videotime  Video Time object
+ * @param  videotime_instance $videotime  Video Time object
  * @param  stdClass $course     course object
  * @param  stdClass $cm         course module object
  * @param  stdClass $context    context object
  */
-function videotime_view($videotime, $course, $cm, $context) {
+function videotime_view(videotime_instance $videotime, $course, $cm, $context) {
 
     // Trigger course_module_viewed event.
     $params = array(
@@ -400,7 +368,7 @@ function videotime_view($videotime, $course, $cm, $context) {
     $event = \mod_videotime\event\course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
     $event->add_record_snapshot('course', $course);
-    $event->add_record_snapshot('videotime', $videotime);
+    $event->add_record_snapshot('videotime', $videotime->to_record());
     $event->trigger();
 
     // Completion.
@@ -504,11 +472,31 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  * mod_folder can be displayed inline on course page and therefore have no course link
  *
  * @param cm_info $cm
- * @throws dml_exception
- * @throws coding_exception
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
+
+    if (!videotime_has_pro()) {
+        return;
+    }
+
+    $instance = videotime_instance::instance_by_id($cm->instance);
+
+    if (in_array($instance->label_mode, [videotime_instance::LABEL_MODE, videotime_instance::PREVIEW_MODE])) {
+        $cm->set_no_view_link();
+    }
+}
+
+/**
+ * Called when viewing course page.
+ *
+ * @param cm_info $cm Course module information
+ */
+function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
+
+    if (WS_SERVER || AJAX_SCRIPT) {
+        return;
+    }
 
     // Ensure we are on the course view page. This was throwing an error when viewing the module
     // because OUTPUT was being used.
@@ -520,88 +508,39 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         return;
     }
 
-    $instance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
-    $instance = videotime_populate_with_defaults($instance);
+    $renderer = $PAGE->get_renderer('mod_videotime');
 
-    $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
+    try {
+        $instance = videotime_instance::instance_by_id($cm->instance);
 
-    if ($instance->label_mode == 1) {
+        if ($instance->label_mode == videotime_instance::LABEL_MODE) {
+            $instance->set_embed(true);
+            $content = $renderer->render($instance);
+            $cm->set_extra_classes('label_mode');
+        } else if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
+            $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
+            $content = $renderer->render($preview);
 
-
-        $resume_time = 0;
-        if ($instance->resume_playback) {
-            $resume_time = $sessions->get_current_watch_time();
-        }
-
-        // Watch time tracking is only available in pro.
-        $session = \videotimeplugin_pro\session::create_new($cm->id, $USER);
-        $sessiondata = $session->jsonSerialize();
-        $PAGE->requires->js_call_amd('mod_videotime/videotime', 'init', [$sessiondata, 5, videotime_has_pro(),
-            $instance, $cm->id, $resume_time]);
-
-        if (!$instance->vimeo_url) {
-            $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
-        } else {
-            $instance->next_activity_button = false;
-            $content = $OUTPUT->render_from_template('mod_videotime/view', [
-                'instance' => $instance,
-                'cmid' => $cm->id
-            ]);
-        }
-
-        videotime_view($instance, $PAGE->course, $cm, context_module::instance($cm->id));
-
-        $cm->set_no_view_link();
-        $cm->set_extra_classes('label_mode');
-        $cm->set_content($content);
-    } else if ($instance->label_mode == 2 && videotime_has_repository()) {
-        // Preview image mode.
-        if (!$instance->vimeo_url) {
-            $content = $OUTPUT->notification(get_string('vimeo_url_missing', 'videotime'));
-        } else {
-            if (!$video = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
-                $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime'));
-            } else {
-                $video = \videotimeplugin_repository\video::create($video, $cm->context);
-
-                $completioninfo = new completion_info($COURSE);
-
-                $description = file_rewrite_pluginfile_urls($instance->intro, 'pluginfile.php', $PAGE->context->id,
-                    'mod_videotime', 'intro', null);
-
-                $description_excerpt = videotime_get_excerpt(strip_tags($description));
-
-                $content = $OUTPUT->render_from_template('videotimeplugin_repository/video_preview', [
-                    'video' => $video->jsonSerialize(),
-                    'description' => $description,
-                    'description_excerpt' => $description_excerpt,
-                    'show_more_link' => strlen(strip_tags($description_excerpt)) < strlen(strip_tags($description)),
-                    'module_sessions' => $sessions->jsonSerialize(),
-                    'url' => $cm->url,
-                    'instance' => $instance,
-                    'modicons' => $PAGE->get_renderer('course')->course_section_cm_completion($COURSE, $completioninfo,
-                        $cm),
-                    'show_description' => $instance->show_description,
-                    'show_title' => $instance->show_title,
-                    'show_tags' => $instance->show_tags,
-                    'show_duration' => $instance->show_duration,
-                    'show_viewed_duration' => $instance->show_viewed_duration,
-                ]);
+            $column_class = 'col-sm-12';
+            if ($instance->columns == 2) {
+                $column_class = 'col-sm-6';
+            } else if ($instance->columns == 3) {
+                $column_class = 'col-sm-4';
+            } else if ($instance->columns == 4) {
+                $column_class = 'col-sm-3';
             }
-        }
 
-        $column_class = 'col-sm-12';
-        if ($instance->columns == 2) {
-            $column_class = 'col-sm-6';
-        } else if ($instance->columns == 3) {
-            $column_class = 'col-sm-4';
-        } else if ($instance->columns == 4) {
-            $column_class = 'col-sm-3';
+            $cm->set_extra_classes('preview_mode ' . $column_class);
+        } else {
+            // Normal mode, do not set any additional content.
+            $content = null;
         }
+    } catch(\Exception $e) {
+        $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
+    }
 
-        $cm->set_no_view_link();
-        $cm->set_extra_classes('preview_mode ' . $column_class);
-        $cm->set_content($content);
+    if ($content) {
+        $cm->set_content($content, true);
     }
 }
 
@@ -655,4 +594,20 @@ function mod_videotime_treat_as_label(cm_info $mod)
     }
 
     return false;
+}
+
+/**
+ * Parse Vimeo link/URL and return video ID.
+ *
+ * @param $link
+ * @return mixed|null
+ */
+function mod_videotime_get_vimeo_id_from_link($link)
+{
+    $videoid = null;
+    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $output_array)) {
+        return $output_array[5];
+    }
+
+    return null;
 }

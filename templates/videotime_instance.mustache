@@ -7,9 +7,16 @@
         <div class="vimeo-intro">
             {{{intro}}}
         </div>
-        <div data-vimeo-url="{{vimeo_url}}" id="vimeo-embed-{{cmid}}"></div>
+        <div class="vimeo-embed" data-vimeo-url="{{vimeo_url}}" id="vimeo-embed-{{uniqueid}}"></div>
         <div class="vimeo-video-description">
             {{{video_description}}}
         </div>
     </div>
+
+    {{#js}}
+        require(['mod_videotime/videotime'], function(VideoTime) {
+            let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
+            v.initialize();
+        });
+    {{/js}}
 {{/instance}}
