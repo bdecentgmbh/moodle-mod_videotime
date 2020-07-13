@@ -91,7 +91,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
                 'time',
                 'timestarted',
                 'state',
-                'percent'
+                'percent_watch'
             ]);
 
             // Build the tree.
