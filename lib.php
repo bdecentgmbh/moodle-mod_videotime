@@ -125,7 +125,7 @@ function videotime_get_user_grades($videotime, $userid = 0) {
 
     return $DB->get_records_sql('SELECT
                                  user_id as userid,
-                                 MAX(percent)*100 as rawgrade
+                                 MAX(percent_watch)*100 as rawgrade
                                  FROM {' . \videotimeplugin_pro\session::TABLE . '}
                                  ' . $where . '
                                  GROUP BY user_id', $params);
