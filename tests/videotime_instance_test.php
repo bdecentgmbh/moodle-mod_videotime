@@ -53,6 +53,13 @@ class videotime_instance_test extends advanced_testcase {
         $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
     }
 
+    public function tearDown()
+    {
+        $this->course = null;
+        $this->instancerecord = null;
+        $this->videotimeinstance = null;
+    }
+
     public function test_force_settings() {
         $this->assertNotEmpty($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));

@@ -54,6 +54,13 @@ class videotime_external_test extends externallib_advanced_testcase {
         parent::setUp();
     }
 
+    public function tearDown()
+    {
+        $this->course = null;
+        $this->videotimeinstance = null;
+        $this->student = null;
+    }
+
     public function test_get_embed_options() {
         $this->resetAfterTest();
 
