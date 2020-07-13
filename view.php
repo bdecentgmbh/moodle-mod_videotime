@@ -56,6 +56,8 @@ require_login($course, true, $cm);
 
 require_capability('mod/videotime:view', $moduleinstance->get_context());
 
+videotime_view($moduleinstance, $course, $cm, $moduleinstance->get_context());
+
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
