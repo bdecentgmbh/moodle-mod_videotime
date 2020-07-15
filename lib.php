@@ -309,7 +309,8 @@ function videotime_update_completion($cmid) {
     $moduleinstance = $DB->get_record('videotime', array('id' => $cm->instance), '*', MUST_EXIST);
 
     $completion = new \completion_info($course);
-    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish)) {
+    // Update completion status only if any extra criteria is set on the activity.
+    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish || $moduleinstance->completion_on_percent)) {
         $completion->update_state($cm, COMPLETION_COMPLETE);
     }
 }
