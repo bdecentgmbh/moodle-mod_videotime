@@ -225,7 +225,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $modinfo = get_fast_modinfo($COURSE->id);
             $modoptions = [-1 => get_string('next_activity_in_course', 'videotime')];
             foreach ($modinfo->get_cms() as $cm) {
-                if (isset($this->_cm->id) && $this->_cm->id == $cm->id) {
+                if ((isset($this->_cm->id) && $this->_cm->id == $cm->id) || !$cm->url) {
                     continue;
                 }
                 $modoptions[$cm->id] = $cm->name;
