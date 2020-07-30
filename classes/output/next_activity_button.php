@@ -199,10 +199,6 @@ class next_activity_button implements \templatable, \renderable {
                         ($section = $modinfo->get_section_info($cm->sectionnum)) && !$section->visible)) {
                     continue;
                 }
-            } else {
-                if ($cm->is_stealth()) {
-                    continue;
-                }
             }
 
             $cms[$cm->id] = $cm;
