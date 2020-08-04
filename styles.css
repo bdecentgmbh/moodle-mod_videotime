@@ -90,8 +90,9 @@ body.editing.path-course-view li.activity.videotime.preview_mode {
 }
 
 /** IE backwards compatibility **/
-.video-image-preview .img-responsive {
+body.ie .video-image-preview .img-responsive {
     width: 100%;
+    max-height: 500px;
 }
 
     /* Totara styling */
