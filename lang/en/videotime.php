@@ -177,6 +177,7 @@ $string['pull_from_vimeo_invalid_videoid'] = 'Could not determine Video ID. Ensu
 $string['pull_from_vimeo_loading'] = 'Pulling Metadata from Vimeo...';
 $string['pull_from_vimeo_success'] = 'Metadata was successfully pulled from Vimeo. Some of the activity settings have been overridden.';
 $string['rate_limit'] = 'Vimeo API request limit';
+$string['refreshpage'] = 'Please refresh your page to view duplicated activity';
 $string['results'] = 'results';
 $string['resume_playback'] = 'Resume Playback';
 $string['resume_playback_help'] = 'Automatically resume video when user returns to activity. Playback starts where the user left off.';

@@ -495,24 +495,33 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
-    if (WS_SERVER || AJAX_SCRIPT) {
-        return;
-    }
-
-    // Ensure we are on the course view page. This was throwing an error when viewing the module
-    // because OUTPUT was being used.
-    if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
-        return;
-    }
-
-    if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
-        return;
-    }
-
-    $renderer = $PAGE->get_renderer('mod_videotime');
-
     try {
+
         $instance = videotime_instance::instance_by_id($cm->instance);
+
+        // Check if activity in preview mode is being duplicated.
+        // Unfortunately, there is no easy way to handle duplication. The page context is module level which has caused
+        // issues in the past. For now tell user to simply refresh their page.
+        if ($instance->label_mode == videotime_instance::PREVIEW_MODE && AJAX_SCRIPT) {
+            $cm->set_content($OUTPUT->notification(get_string('refreshpage', 'videotime'), 'warning'), true);
+            return;
+        }
+
+        if (WS_SERVER || AJAX_SCRIPT) {
+            return;
+        }
+
+        // Ensure we are on the course view page. This was throwing an error when viewing the module
+        // because OUTPUT was being used.
+        if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
+            return;
+        }
+
+        $renderer = $PAGE->get_renderer('mod_videotime');
 
         if ($instance->label_mode == videotime_instance::LABEL_MODE) {
             $instance->set_embed(true);
