@@ -503,7 +503,7 @@ function videotime_cm_info_view(cm_info $cm) {
         // Unfortunately, there is no easy way to handle duplication. The page context is module level which has caused
         // issues in the past. For now tell user to simply refresh their page.
         if ($instance->label_mode == videotime_instance::PREVIEW_MODE && AJAX_SCRIPT) {
-            $cm->set_content($OUTPUT->notification(get_string('refreshpage', 'videotime'), 'warning'), true);
+            $cm->set_content($OUTPUT->render_from_template('mod_videotime/refresh_warning', []));
             return;
         }
 
