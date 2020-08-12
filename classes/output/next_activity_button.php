@@ -22,7 +22,10 @@
 
 namespace mod_videotime\output;
 
+use dml_exception;
 use mod_videotime\videotime_instance;
+use moodle_exception;
+use moodle_url;
 use renderer_base;
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
@@ -57,38 +60,14 @@ class next_activity_button implements \templatable, \renderable {
 
         $this->moduleinstance = videotime_instance::instance_by_id($cm->instance);
 
-        // Get a list of all the activities in the course.
-        $modinfo = get_fast_modinfo($this->cm->course);
-        $modules = $modinfo->get_cms();
-
         // Put the modules into an array in order by the position they are shown in the course.
-        $mods = [];
-
-        foreach ($modules as $module) {
-            // Only add activities that have a url (eg. mod_label does not).
-            if (empty($module->url)) {
-                continue;
-            }
-
-            // Only add activities that aren't in stealth mode.
-            if (videotime_is_totara()) {
-                if (!$module->visibleoncoursepage || ($module->visible &&
-                        ($section = $modinfo->get_section_info($module->sectionnum)) && !$section->visible)) {
-                    continue;
-                }
-            } else {
-                if ($module->is_stealth()) {
-                    continue;
-                }
-            }
-            $mods[$module->id] = $module;
-        }
+        $mods = self::get_available_cms($cm->course);
 
         $nummods = count($mods);
 
         // If there is only one mod then do nothing.
         if ($nummods <= 1) {
-            return '';
+            return;
         }
 
         // Get an array of just the course module ids used to get the cmid value based on their position in the course.
@@ -124,6 +103,31 @@ class next_activity_button implements \templatable, \renderable {
     }
 
     /**
+     * Get next cm URL.
+     *
+     * @return moodle_url|null
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    public function get_next_cm_url()
+    {
+        if (!$this->nextcm) {
+            return null;
+        }
+
+        $url = $this->nextcm->url;
+        if ($this->nextcm->modname == 'videotime') {
+            if ($instance = videotime_instance::instance_by_id($this->nextcm->instance)) {
+                if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
+                    $url = new moodle_url('/mod/videotime/view.php', ['id' => $this->nextcm->id]);
+                }
+            }
+        }
+
+        return $url;
+    }
+
+    /**
      * @return bool
      */
     public function is_restricted()
@@ -133,6 +137,8 @@ class next_activity_button implements \templatable, \renderable {
 
     /**
      * @return array
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public function get_data()
     {
@@ -140,9 +146,13 @@ class next_activity_button implements \templatable, \renderable {
             return [];
         }
 
+        if ($url = $this->get_next_cm_url()) {
+            $url = $url->out(false);
+        }
+
         return [
             'cm' => $this->cm,
-            'nextcm_url' => $this->nextcm->url->out(false),
+            'nextcm_url' => $url,
             'nextcm_name' => $this->nextcm->name,
             'hasnextcm' => !empty($this->nextcm),
             'availability_info' => $this->availability_info,
@@ -155,5 +165,45 @@ class next_activity_button implements \templatable, \renderable {
     public function export_for_template(renderer_base $output)
     {
         return $this->get_data();
+    }
+
+    /**
+     * Get activities that can be used as the "next activity".
+     *
+     * @param $courseid
+     * @return array
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    public static function get_available_cms($courseid)
+    {
+        $cms = [];
+        $modinfo = get_fast_modinfo($courseid);
+        foreach ($modinfo->get_cms() as $cm) {
+            if ($cm->modname == 'videotime') {
+                // Some video time instances should be skipped.
+                if ($instance = videotime_instance::instance_by_id($cm->instance)) {
+                    if ($instance->label_mode == videotime_instance::LABEL_MODE) {
+                        // Skip video time instances in label mode.
+                        continue;
+                    }
+                }
+            } else if (!$cm->url) {
+                // Skip label-like activities.
+                continue;
+            }
+
+            // Only add activities that aren't in stealth mode.
+            if (videotime_is_totara()) {
+                if (!$cm->visibleoncoursepage || ($cm->visible &&
+                        ($section = $modinfo->get_section_info($cm->sectionnum)) && !$section->visible)) {
+                    continue;
+                }
+            }
+
+            $cms[$cm->id] = $cm;
+        }
+
+        return $cms;
     }
 }

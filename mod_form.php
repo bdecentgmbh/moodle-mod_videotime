@@ -22,6 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\output\next_activity_button;
 use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
@@ -222,10 +223,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->setDefault('next_activity_button', get_config('videotime', 'next_activity_button'));
             videotime_instance::create_additional_field_form_elements('next_activity_button', $mform);
 
-            $modinfo = get_fast_modinfo($COURSE->id);
             $modoptions = [-1 => get_string('next_activity_in_course', 'videotime')];
-            foreach ($modinfo->get_cms() as $cm) {
-                if (isset($this->_cm->id) && $this->_cm->id == $cm->id) {
+            foreach (next_activity_button::get_available_cms($COURSE->id) as $cm) {
+                // Do not include current module in select list.
+                if ((isset($this->_cm->id) && $this->_cm->id == $cm->id)) {
                     continue;
                 }
                 $modoptions[$cm->id] = $cm->name;
