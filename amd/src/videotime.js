@@ -132,7 +132,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
 
-                        if (data.instance.next_activity_auto) {
+                        if (parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
                                 window.location.href = data.nextcm_url;
                             }
