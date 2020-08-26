@@ -24,6 +24,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.time = 0;
         this.percent = 0;
         this.currentTime = 0;
+        this.playbackRate = 1;
     };
 
     VideoTime.prototype.initialize = function() {
@@ -100,6 +101,14 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
+        this.player.getPlaybackRate().then(function(playbackRate) {
+            this.playbackRate = playbackRate;
+        }.bind(this));
+
+        this.player.on('playbackratechange', function(event) {
+            this.playbackRate = event.playbackRate;
+        }.bind(this));
+
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
             this.percent = event.percent;
@@ -156,7 +165,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
     VideoTime.prototype.startWatchInterval = function() {
         setInterval(function () {
             if (this.playing) {
-                this.time++;
+                this.time += this.playbackRate;
 
                 this.getSession().then(function(session) {
                     if (this.time % this.interval === 0) {
