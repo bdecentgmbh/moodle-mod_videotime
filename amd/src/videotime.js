@@ -47,14 +47,19 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         }
 
         // Fire view event in Moodle on first play only.
-        this.player.on('play', function () {
+        this.player.on('play', () => {
             if (!this.played) {
-                // Getting a new session on first play.
-                this.getSession().then(function() {
+                if (this.hasPro) {
+                    // Getting a new session on first play.
+                    this.getSession().then(() => {
+                        this.view();
+                    });
+                } else {
+                    // Free version can still mark completion on video time view.
                     this.view();
-                }.bind(this));
+                }
             }
-        }.bind(this));
+        });
 
         // Features beyond this point are for pro only.
         if (!this.hasPro) {
