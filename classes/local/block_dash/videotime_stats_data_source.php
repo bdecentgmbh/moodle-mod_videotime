@@ -29,6 +29,7 @@ use block_dash\local\data_source\abstract_data_source;
 use context;
 use local_dash\data_grid\filter\my_dashboards_condition;
 use local_dash\data_grid\filter\nonpublic_dashboards_condition;
+use local_dash\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
 class videotime_stats_data_source extends abstract_data_source {
@@ -40,6 +41,7 @@ class videotime_stats_data_source extends abstract_data_source {
      */
     public function __construct(context $context)  {
         $this->add_table(new videotime_table());
+        $this->add_table(new course_table());
         parent::__construct($context);
     }
 
@@ -50,7 +52,8 @@ class videotime_stats_data_source extends abstract_data_source {
         $builder = new builder();
         $builder
             ->select('vt.id', 'vt_id')
-            ->from('videotime', 'vt');
+            ->from('videotime', 'vt')
+            ->join('course', 'c', 'id', 'vt.course');
 
         return $builder;
     }

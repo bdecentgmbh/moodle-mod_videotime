@@ -27,10 +27,26 @@ namespace mod_videotime\local\dash_framework\structure;
 use block_dash\local\dash_framework\structure\field;
 use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\dash_framework\structure\table;
+use block_dash\local\data_grid\field\attribute\bool_attribute;
+use block_dash\local\data_grid\field\attribute\date_attribute;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
+use block_dash\local\data_grid\field\attribute\image_attribute;
+use block_dash\local\data_grid\field\attribute\image_url_attribute;
 use block_dash\local\data_grid\field\attribute\link_attribute;
+use block_dash\local\data_grid\field\attribute\linked_data_attribute;
 use block_dash\local\data_grid\field\attribute\moodle_url_attribute;
+use block_dash\local\data_grid\field\attribute\time_attribute;
 use lang_string;
+use mod_videotime\local\block_dash\attribute\average_view_time_attribute;
+use mod_videotime\local\block_dash\attribute\first_session_attribute;
+use mod_videotime\local\block_dash\attribute\intro_attribute;
+use mod_videotime\local\block_dash\attribute\last_session_attribute;
+use mod_videotime\local\block_dash\attribute\notes_attribute;
+use mod_videotime\local\block_dash\attribute\percentage_of_video_finished_attribute;
+use mod_videotime\local\block_dash\attribute\unique_visitors_attribute;
+use mod_videotime\local\block_dash\attribute\video_created_attribute;
+use mod_videotime\local\block_dash\attribute\video_preview_attribute;
+use mod_videotime\local\block_dash\attribute\views_attribute;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -77,14 +93,67 @@ class videotime_table extends table {
                 new moodle_url_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])]),
                 new link_attribute(['label' => get_string('view')])
             ]),
-            new field('video_description', new lang_string('video_description', 'videotime'), $this), // Notes
-            new field('intro', new lang_string('video_description', 'videotime'), $this), // Notes
-            new field('video_notes', new lang_string('video_description', 'videotime'), $this)
+            new field('video_description', new lang_string('video_description', 'videotime'), $this, 'vt.id', [
+                new notes_attribute()
+            ]), // Notes
+            new field('intro', new lang_string('moduleintro'), $this, 'vt.id', [
+                new intro_attribute()
+            ]),
+
         ];
 
         if (videotime_has_pro()) {
             $fields = array_merge($fields, [
+                new field('unique_visitors', new lang_string('totaluniquevisitors', 'videotime'), $this, 'vt.id', [
+                    new unique_visitors_attribute()
+                ]),
+                new field('views', new lang_string('totalviews', 'videotime'), $this, 'vt.id', [
+                    new views_attribute()
+                ]),
+                new field('average_view_time', new lang_string('averageviewtime', 'videotime'), $this, 'vt.id', [
+                    new average_view_time_attribute(),
+                    new time_attribute()
+                ]),
+                new field('percentage_of_video_finished', new lang_string('percentageofvideofinished', 'videotime'), $this, 'vt.id', [
+                    new percentage_of_video_finished_attribute()
+                ]),
+                new field('firstsession', new lang_string('firstsession', 'videotime'), $this, 'vt.id', [
+                    new first_session_attribute(),
+                    new date_attribute()
+                ]),
+                new field('lastsession', new lang_string('lastsession', 'videotime'), $this, 'vt.id', [
+                    new last_session_attribute(),
+                    new date_attribute()
+                ]),
+            ]);
+        }
 
+        if (videotime_has_repository()) {
+            $fields = array_merge($fields, [
+                new field('videocreated', new lang_string('videocreated', 'videotime'), $this, 'vt.id', [
+                    new video_created_attribute(),
+                    new date_attribute()
+                ]),
+                new field('preview_url', new lang_string('preview_picture', 'videotime'), $this, 'vt.id', [
+                    new video_preview_attribute(),
+                    new image_attribute()
+                ]),
+                new field('preview_url_linked', new lang_string('preview_picture', 'videotime'), $this, 'vt.id', [
+                    new video_preview_attribute(),
+                    new image_attribute(),
+                    new linked_data_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])])
+                ]),
+                new field('completion_on_view_time', new lang_string('completion_on_view', 'videotime'), $this, null, [
+                    new bool_attribute()
+                ]),
+                new field('completion_on_view_time_second', new lang_string('completion_on_view_seconds', 'videotime'), $this),
+                new field('completion_on_finish', new lang_string('completion_on_finish', 'videotime'), $this, null, [
+                    new bool_attribute()
+                ]),
+                new field('completion_on_percent', new lang_string('completion_on_percent', 'videotime'), $this, null, [
+                    new bool_attribute()
+                ]),
+                new field('completion_on_percent_value', new lang_string('completion_on_percent_value', 'videotime'), $this, null),
             ]);
         }
 

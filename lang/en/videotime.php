@@ -36,6 +36,7 @@ $string['apply'] = 'Apply';
 $string['authenticated'] = 'Authenticated';
 $string['authenticate_vimeo'] = 'Authenticate with Vimeo';
 $string['authenticate_vimeo_success'] = 'Vimeo authentication successful. You can now use features that rely on the Vimeo API.';
+$string['averageviewtime'] = 'Average view time';
 $string['browsevideos'] = 'Browse videos';
 $string['choose_video'] = 'Choose Video';
 $string['choose_video_confirm'] = 'Are you sure you want to choose the video';
@@ -48,7 +49,9 @@ $string['columns'] = 'Columns';
 $string['columns_help'] = 'Choose the width for this video when displayed in preview mode. The number of columns is how many videos can be displayed in a row.';
 $string['completion_on_finish'] = 'Completion on video finish';
 $string['completion_on_percent'] = 'Completion on watch percentage';
+$string['completion_on_percent_value'] = 'Completion on watch percentage value';
 $string['completion_on_view'] = 'Completion on view time';
+$string['completion_on_view_seconds'] = 'Completion on view time seconds';
 $string['configure_vimeo_first'] = 'You must configure a Vimeo App before authenticating.';
 $string['configure_vimeo_help'] = '<ol><li>Go to <a href="https://developer.vimeo.com/apps/new">https://developer.vimeo.com/apps/new</a> and login with your Vimeo account</li>
 <li>Enter a name and description for your app. Example: Video Time Repository API</li>
@@ -64,6 +67,7 @@ $string['configure_vimeo_help'] = '<ol><li>Go to <a href="https://developer.vime
 <li>Enter Client ID and Client Secret <a href="{$a->configure_url}">here</a></li></ol>';
 $string['confirmation'] = 'Confirmation';
 $string['create_vimeo_app'] = 'Create Vimeo App';
+$string['datasource:videotime_stats_data_source'] = 'Video Time stats';
 $string['default'] = 'Default';
 $string['deletesessiondata'] = 'Delete session data';
 $string['discover_videos'] = 'Discover Vimeo videos';
@@ -74,6 +78,7 @@ $string['duration'] = 'Duration';
 $string['embed_options'] = 'Embed options';
 $string['embed_options_defaults'] = 'Default embed options';
 $string['embeds'] = 'Embeds';
+$string['firstsession'] = 'First session';
 $string['force'] = 'Force setting';
 $string['force_help'] = 'If checked this default will override the instance setting.';
 $string['goback'] = 'Go back';
@@ -81,6 +86,7 @@ $string['gradeitemnotcreatedyet'] = 'A gradebook item does not exist for this ac
 $string['invalid_session_state'] = 'Invalid session state.';
 $string['insert_video_metadata'] = 'Insert metadata from video (may override activity settings)';
 $string['label_mode'] = 'Label mode';
+$string['lastsession'] = 'Last session';
 $string['mode'] = 'Mode';
 $string['mode_help'] = '<b>Normal mode</b>: Displays the standard activity link, no extras on course page.<br>
 <b>Label mode</b>: Embed video on course layout, similar to the Label activity.<br>
@@ -164,6 +170,7 @@ We are constantly improving the plugin, so stay tuned for upcoming versions. You
 Please let us know if you have any feedback for us.
 ';
 }
+$string['percentageofvideofinished'] = 'Percentage of video finished';
 $string['pluginname'] = 'Video Time';
 $string['pluginadministration'] = 'Video Time administration';
 $string['preview_picture'] = 'Preview image';
@@ -206,8 +213,11 @@ $string['store_pictures'] = 'Store thumbnails';
 $string['store_pictures_help'] = 'If enabled, the Vimeo thumbnails will be stored locally. Otherwise the images will be delivered from Vimeo externally.';
 $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
+$string['tablealias_vt'] = 'Video Time';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['todo'] = 'TODO';
+$string['totaluniquevisitors'] = 'Total unique visitors';
+$string['totalviews'] = 'Total views';
 $string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p> 
 <p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p> 
 <p>Otherwise you may have to wait until the scheduled task runs.</p>
@@ -216,18 +226,21 @@ $string['totara_video_discovery_help'] = '<p>You may execute this task manually 
 $string['update_albums'] = 'Update video albums';
 $string['upgrade_vimeo_account'] = 'NOTICE: Consider upgrading your Vimeo account. Your API request limit is too low.';
 $string['use'] = 'Use';
-$string['viewpercentgrade'] = 'Set grade equal to view percentage.';
-$string['viewpercentgrade_help'] = 'Create grade item for this video. Student will receive a grade equal to their view percentage of the video.';
-$string['views'] = 'Views';
-$string['views_help'] = 'Number of times the activity has been viewed.';
-$string['view_report'] = 'View report';
-$string['videotime:view_report'] = 'View report (Pro only)';
 $string['video_description'] = 'Notes';
 $string['video_description_help'] = 'Notes are displayed below the video.';
+$string['videocreated'] = 'Video created';
 $string['videos_discovered'] = 'Videos discovered';
 $string['videos_processed'] = 'Videos processed';
 $string['videotime:addinstance'] = 'Add a new Video Time module';
 $string['videotime:view'] = 'View Video Time video';
+$string['videotime:view_report'] = 'View report (Pro only)';
+$string['videotimelink'] = 'Link';
+$string['videotimeurl'] = 'URL';
+$string['view_report'] = 'View report';
+$string['viewpercentgrade'] = 'Set grade equal to view percentage.';
+$string['viewpercentgrade_help'] = 'Create grade item for this video. Student will receive a grade equal to their view percentage of the video.';
+$string['views'] = 'Views';
+$string['views_help'] = 'Number of times the activity has been viewed.';
 $string['vimeo_url'] = 'Vimeo URL';
 $string['vimeo_url_help'] = 'Full URL of Vimeo video.';
 $string['vimeo_url_invalid'] = 'Vimeo URL is invalid. Copy directly from web browser.';
