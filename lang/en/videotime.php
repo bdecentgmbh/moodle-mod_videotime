@@ -67,6 +67,8 @@ $string['configure_vimeo_help'] = '<ol><li>Go to <a href="https://developer.vime
 <li>Enter Client ID and Client Secret <a href="{$a->configure_url}">here</a></li></ol>';
 $string['confirmation'] = 'Confirmation';
 $string['create_vimeo_app'] = 'Create Vimeo App';
+$string['currentwatchtime'] = 'Current watch time';
+$string['datasource:videotime_sessions_data_source'] = 'Video Time sessions';
 $string['datasource:videotime_stats_data_source'] = 'Video Time stats';
 $string['default'] = 'Default';
 $string['deletesessiondata'] = 'Delete session data';
@@ -215,6 +217,7 @@ $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
 $string['tablealias_vt'] = 'Video Time';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
+$string['timestarted'] = 'Date started';
 $string['todo'] = 'TODO';
 $string['totaluniquevisitors'] = 'Total unique visitors';
 $string['totalviews'] = 'Total views';
