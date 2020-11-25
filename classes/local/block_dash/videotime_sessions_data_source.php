@@ -31,6 +31,7 @@ use block_dash\local\data_grid\filter\current_course_condition;
 use block_dash\local\data_grid\filter\date_filter;
 use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\data_grid\filter\logged_in_user_condition;
 use block_dash\local\data_source\abstract_data_source;
 use context;
 use local_dash\data_grid\filter\category_field_filter;
@@ -38,6 +39,7 @@ use local_dash\data_grid\filter\course_category_condition;
 use local_dash\data_grid\filter\course_field_filter;
 use local_dash\data_grid\filter\customfield_filter;
 use local_dash\data_grid\filter\my_enrolled_courses_condition;
+use local_dash\data_grid\filter\parent_role_condition;
 use local_dash\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_session_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
@@ -171,6 +173,10 @@ class videotime_sessions_data_source extends abstract_data_source {
         $filter_collection->add_filter(new my_enrolled_courses_condition('my_enrolled_courses', 'c.id'));
 
         $filter_collection->add_filter(new course_category_condition('c_course_categories_condition', 'c.category'));
+
+        $filter_collection->add_filter(new parent_role_condition('parentrole', 'u.id'));
+
+        $filter_collection->add_filter(new logged_in_user_condition('logged_in_user', 'u.id'));
 
         return $filter_collection;
     }
