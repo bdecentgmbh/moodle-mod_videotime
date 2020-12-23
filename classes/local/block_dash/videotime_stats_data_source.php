@@ -32,11 +32,14 @@ use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\data_source\abstract_data_source;
 use context;
+use core_question\bank\search\tag_condition;
 use local_dash\data_grid\filter\category_field_filter;
 use local_dash\data_grid\filter\course_category_condition;
 use local_dash\data_grid\filter\course_field_filter;
 use local_dash\data_grid\filter\customfield_filter;
 use local_dash\data_grid\filter\my_enrolled_courses_condition;
+use local_dash\data_grid\filter\tags_condition;
+use local_dash\data_grid\filter\tags_field_filter;
 use local_dash\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
@@ -57,10 +60,15 @@ class videotime_stats_data_source extends abstract_data_source {
      * @return builder
      */
     public function get_query_template(): builder {
+        global $DB;
+
+        $videotimemodule = $DB->get_field('modules', 'id', ['name' => 'videotime']);
+
         $builder = new builder();
         $builder
             ->select('vt.id', 'vt_id')
             ->from('videotime', 'vt')
+            ->join('course_modules', 'cm', 'instance', 'vt.id')->join_condition('cm', 'cm.module = ' . $videotimemodule)
             ->join('course', 'c', 'id', 'vt.course')
             ->join('course_categories', 'cc', 'id', 'c.category');
 
@@ -159,6 +167,9 @@ class videotime_stats_data_source extends abstract_data_source {
         $filter_collection->add_filter(new my_enrolled_courses_condition('my_enrolled_courses', 'c.id'));
 
         $filter_collection->add_filter(new course_category_condition('c_course_categories_condition', 'c.category'));
+
+        $filter_collection->add_filter(new tags_condition('tags', 'cm.id', 'core', 'course_modules',
+            get_string('tags', 'block_dash')));
 
         return $filter_collection;
     }
