@@ -168,7 +168,10 @@ class videotime_stats_data_source extends abstract_data_source {
 
         $filter_collection->add_filter(new course_category_condition('c_course_categories_condition', 'c.category'));
 
-        $filter_collection->add_filter(new tags_condition('tags', 'cm.id', 'core', 'course_modules',
+        $filter_collection->add_filter(new tags_condition('tags_condition', 'cm.id', 'core', 'course_modules',
+            get_string('tags', 'block_dash')));
+
+        $filter_collection->add_filter(new tags_field_filter('tags_filter', 'cm.id', 'core', 'course_modules',
             get_string('tags', 'block_dash')));
 
         return $filter_collection;
