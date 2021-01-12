@@ -134,11 +134,15 @@ class videotime_table extends table {
                     new video_created_attribute(),
                     new date_attribute()
                 ]),
-                new field('preview_url', new lang_string('preview_picture', 'videotime'), $this, 'vt.id', [
+                new field('preview_url', new lang_string('preview_picture_url', 'videotime'), $this, 'vt.id', [
+                    new image_url_attribute(),
+                    new video_preview_attribute()
+                ]),
+                new field('preview_image', new lang_string('preview_picture', 'videotime'), $this, 'vt.id', [
                     new video_preview_attribute(),
                     new image_attribute()
                 ]),
-                new field('preview_url_linked', new lang_string('preview_picture', 'videotime'), $this, 'vt.id', [
+                new field('preview_image_linked', new lang_string('preview_picture_linked', 'videotime'), $this, 'vt.id', [
                     new video_preview_attribute(),
                     new image_attribute(),
                     new linked_data_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])])
