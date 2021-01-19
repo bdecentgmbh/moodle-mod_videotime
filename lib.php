@@ -189,6 +189,13 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
     }
 
+    // Disable custom completion fields when changing completion from automatic to none or manual.
+    if ($moduleinstance->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        $moduleinstance->completion_on_view_time = false;
+        $moduleinstance->completion_on_percent = false;
+        $moduleinstance->completion_on_finish = false;
+    }
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 

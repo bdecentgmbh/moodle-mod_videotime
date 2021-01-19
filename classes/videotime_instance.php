@@ -27,6 +27,8 @@ use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/filelib.php");
+
 /**
  * Represents a single Video Time activity module. Adds more functionality when working with instances.
  *
@@ -243,6 +245,8 @@ class videotime_instance implements \renderable, \templatable {
                 }
             }
         }
+
+        $record->name = format_text($record->name, FORMAT_HTML);
 
         $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
             'mod_videotime', 'intro', null);

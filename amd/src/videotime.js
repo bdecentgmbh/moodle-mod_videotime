@@ -24,6 +24,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.time = 0;
         this.percent = 0;
         this.currentTime = 0;
+        this.playbackRate = 1;
     };
 
     VideoTime.prototype.initialize = function() {
@@ -46,14 +47,19 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         }
 
         // Fire view event in Moodle on first play only.
-        this.player.on('play', function () {
+        this.player.on('play', () => {
             if (!this.played) {
-                // Getting a new session on first play.
-                this.getSession().then(function() {
+                if (this.hasPro) {
+                    // Getting a new session on first play.
+                    this.getSession().then(() => {
+                        this.view();
+                    });
+                } else {
+                    // Free version can still mark completion on video time view.
                     this.view();
-                }.bind(this));
+                }
             }
-        }.bind(this));
+        });
 
         // Features beyond this point are for pro only.
         if (!this.hasPro) {
@@ -100,6 +106,14 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
+        this.player.getPlaybackRate().then(function(playbackRate) {
+            this.playbackRate = playbackRate;
+        }.bind(this));
+
+        this.player.on('playbackratechange', function(event) {
+            this.playbackRate = event.playbackRate;
+        }.bind(this));
+
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
             this.percent = event.percent;
@@ -132,7 +146,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
 
-                        if (data.instance.next_activity_auto) {
+                        if (parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
                                 window.location.href = data.nextcm_url;
                             }
@@ -156,7 +170,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
     VideoTime.prototype.startWatchInterval = function() {
         setInterval(function () {
             if (this.playing) {
-                this.time++;
+                this.time += this.playbackRate;
 
                 this.getSession().then(function(session) {
                     if (this.time % this.interval === 0) {

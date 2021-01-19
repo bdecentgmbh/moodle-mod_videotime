@@ -153,7 +153,7 @@ class next_activity_button implements \templatable, \renderable {
         return [
             'cm' => $this->cm,
             'nextcm_url' => $url,
-            'nextcm_name' => $this->nextcm->name,
+            'nextcm_name' => $this->nextcm->get_formatted_name(),
             'hasnextcm' => !empty($this->nextcm),
             'availability_info' => $this->availability_info,
             'availability_title' => videotime_is_totara() ? strip_tags($this->availability_info) : null,

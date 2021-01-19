@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Search area for mod_videotime activities.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime\search;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.3.4';
-$plugin->version = 2021011901;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+/**
+ * Search area for mod_videotime activities.
+ *
+ * @package     mod_videotime
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class activity extends \core_search\base_activity {
+
+    /**
+     * Returns true if this area uses file indexing.
+     *
+     * @return bool
+     */
+    public function uses_file_indexing() {
+        return true;
+    }
+}

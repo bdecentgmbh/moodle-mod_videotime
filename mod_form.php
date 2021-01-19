@@ -133,31 +133,51 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $group = [];
                 $group[] = $mform->createElement('advcheckbox', 'show_title', '', get_string('show_title', 'videotime'));
                 $mform->setDefault('show_title', 1);
-                $mform->hideIf('show_title', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('show_title', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('show_title', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('show_title', get_config('videotime', 'show_title'));
                 videotime_instance::create_additional_field_form_elements('show_title', $mform, $group);
 
                 $group[] = $mform->createElement('advcheckbox', 'show_description', '', get_string('show_description', 'videotime'));
                 $mform->setDefault('show_description', 1);
-                $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('show_description', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('show_description', get_config('videotime', 'show_description'));
                 videotime_instance::create_additional_field_form_elements('show_description', $mform, $group);
 
                 $group[] = $mform->createElement('advcheckbox', 'show_tags', '', get_string('show_tags', 'videotime'));
                 $mform->setDefault('show_tags', 1);
-                $mform->hideIf('show_tags', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('show_tags', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('show_tags', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('show_tags', get_config('videotime', 'show_tags'));
                 videotime_instance::create_additional_field_form_elements('show_tags', $mform, $group);
 
                 $group[] = $mform->createElement('advcheckbox', 'show_duration', '', get_string('show_duration', 'videotime'));
                 $mform->setDefault('show_duration', 1);
-                $mform->hideIf('show_duration', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('show_duration', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('show_duration', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('show_duration', get_config('videotime', 'show_duration'));
                 videotime_instance::create_additional_field_form_elements('show_duration', $mform, $group);
 
                 $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '', get_string('show_viewed_duration', 'videotime'));
                 $mform->setDefault('show_viewed_duration', 1);
-                $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('show_viewed_duration', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('show_viewed_duration', get_config('videotime', 'show_viewed_duration'));
                 videotime_instance::create_additional_field_form_elements('show_viewed_duration', $mform, $group);
 
@@ -171,10 +191,18 @@ class mod_videotime_mod_form extends moodleform_mod {
                 ]);
                 $mform->setType('columns', PARAM_INT);
                 $mform->addHelpButton('columns', 'columns', 'videotime');
-                $mform->hideIf('columns', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('columns', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('columns', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('columns', get_config('videotime', 'columns'));
                 if (get_config('videotime', 'columns_force')) {
-                    $mform->hideIf('columns_forced', 'label_mode', 'noeq', 2);
+                    if (method_exists($mform, 'hideIf')) {
+                        $mform->hideIf('columns_forced', 'label_mode', 'noeq', 2);
+                    } else {
+                        $mform->disabledIf('columns_forced', 'label_mode', 'noeq', 2);
+                    }
                     $mform->disabledIf('columns', 'disable', 'eq', 1);
                 }
 
@@ -187,10 +215,18 @@ class mod_videotime_mod_form extends moodleform_mod {
                         get_string('with_play_button', 'videotime')
                 ]);
                 $mform->setType('preview_picture', PARAM_INT);
-                $mform->hideIf('preview_picture', 'label_mode', 'noeq', 2);
+                if (method_exists($mform, 'hideIf')) {
+                    $mform->hideIf('preview_picture', 'label_mode', 'noeq', 2);
+                } else {
+                    $mform->disabledIf('preview_picture', 'label_mode', 'noeq', 2);
+                }
                 $mform->setDefault('preview_picture', get_config('videotime', 'preview_picture'));
                 if (get_config('videotime', 'preview_picture_force')) {
-                    $mform->hideIf('preview_picture_forced', 'label_mode', 'noeq', 2);
+                    if (method_exists($mform, 'hideIf')) {
+                        $mform->hideIf('preview_picture_forced', 'label_mode', 'noeq', 2);
+                    } else {
+                        $mform->disabledIf('preview_picture_forced', 'label_mode', 'noeq', 2);
+                    }
                     $mform->disabledIf('preview_picture', 'disable', 'eq', 1);
                 }
             }
@@ -234,12 +270,20 @@ class mod_videotime_mod_form extends moodleform_mod {
 
             $mform->addElement('select', 'next_activity_id', get_string('next_activity', 'videotime'), $modoptions);
             $mform->setType('next_activity_id', PARAM_INT);
-            $mform->hideIf('next_activity_id', 'next_activity_button');
+            if (method_exists($mform, 'hideIf')) {
+                $mform->hideIf('next_activity_id', 'next_activity_button');
+            } else {
+                $mform->disabledIf('next_activity_id', 'next_activity_button');
+            }
 
             $mform->addElement('advcheckbox', 'next_activity_auto', get_string('next_activity_auto', 'videotime'));
             $mform->addHelpButton('next_activity_auto', 'next_activity_auto', 'videotime');
             $mform->setType('next_activity_auto', PARAM_BOOL);
-            $mform->hideIf('next_activity_auto', 'next_activity_button');
+            if (method_exists($mform, 'hideIf')) {
+                $mform->hideIf('next_activity_auto', 'next_activity_button');
+            } else {
+                $mform->disabledIf('next_activity_auto', 'next_activity_button');
+            }
             $mform->setDefault('next_activity_auto', get_config('videotime', 'next_activity_auto'));
             videotime_instance::create_additional_field_form_elements('next_activity_auto', $mform);
         }
@@ -369,7 +413,11 @@ class mod_videotime_mod_form extends moodleform_mod {
                     'courseid' => $COURSE->id))) {
 
                     $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'), null, ['id' => 'id_gradewarning']);
-                    $mform->hideIf('gradewarning', 'viewpercentgrade', 'checked');
+                    if (method_exists($mform, 'hideIf')) {
+                        $mform->hideIf('gradewarning', 'viewpercentgrade', 'checked');
+                    } else {
+                        $mform->disabledIf('gradewarning', 'viewpercentgrade', 'checked');
+                    }
                 }
             }
         }
