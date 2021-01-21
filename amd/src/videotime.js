@@ -39,6 +39,15 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
     };
 
     /**
+     * Get Vimeo player object.
+     *
+     * @returns {Vimeo}
+     */
+    VideoTime.prototype.getPlayer = function() {
+        return this.player;
+    };
+
+    /**
      * Register player events to respond to user interaction and play progress.
      */
     VideoTime.prototype.addListeners = function() {
