@@ -16,7 +16,16 @@
     {{#js}}
         require(['mod_videotime/videotime'], function(VideoTime) {
             let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
-            v.initialize();
+            {{#haspro}}
+                {{! Register pro JS plugins }}
+                require(["videotimeplugin_pro/prevent-fast-forwarding"], function(PreventFastForwarding) {
+                    v.registerPlugin(new PreventFastForwarding);
+                    v.initialize();
+                });
+            {{/haspro}}
+            {{^haspro}}
+                v.initialize();
+            {{/haspro}}
         });
     {{/js}}
 {{/instance}}

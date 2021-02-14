@@ -20,7 +20,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_videotime\external;
+use mod_videotime\external\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -61,14 +61,14 @@ class videotime_external_test extends externallib_advanced_testcase {
         $this->student = null;
     }
 
-    public function test_get_embed_options() {
+    public function test_get_videotime() {
         $this->resetAfterTest();
 
         $this->setUser($this->student);
 
-        $embedoptions = json_decode(external::get_embed_options($this->videotimeinstance->cmid)['options'], true);
-        $this->assertEquals(1, $embedoptions['autoplay']);
-        $this->assertEquals(1, $embedoptions['responsive']);
+        $instance = external::get_videotime($this->videotimeinstance->cmid)['options'], true);
+        $this->assertEquals(1, $instance['autoplay']);
+        $this->assertEquals(1, $instance['responsive']);
     }
 
     public function test_view_videotime() {

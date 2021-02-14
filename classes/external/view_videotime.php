@@ -15,52 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Set VideoTime activity as viewed, trigger view event, etc.
+ *
  * @package     mod_videotime
- * @copyright   2020 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_videotime;
+namespace mod_videotime\external;
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/mod/videotime/lib.php');
+use external_api;
+use mod_videotime\videotime_instance;
 
-class external extends \external_api
-{
-    #region get_embed_options
+require_once($CFG->libdir.'/externallib.php');
+require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
-    public static function get_embed_options_parameters() {
-        return new \external_function_parameters([
-            'cmid' => new \external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED)
-        ]);
-    }
-
-    public static function get_embed_options($cmid) {
-        $params = self::validate_parameters(self::get_embed_options_parameters(), [
-            'cmid' => $cmid
-        ]);
-
-        $context = \context_module::instance($params['cmid']);
-        self::validate_context($context);
-
-        $cm = get_coursemodule_from_id('videotime', $params['cmid'], 0, false, MUST_EXIST);
-
-        $moduleinstance = videotime_instance::instance_by_id($cm->instance);
-
-        return ['options' => json_encode($moduleinstance->to_record())];
-    }
-
-    public static function get_embed_options_returns() {
-        return new \external_single_structure([
-            'options' => new \external_value(PARAM_RAW, 'Embed options')
-        ]);
-    }
-
-    #endregion
-
-    #region view_videotime
+/**
+ * Set VideoTime activity as viewed, trigger view event, etc.
+ */
+trait view_videotime {
 
     public static function view_videotime_parameters() {
         return new \external_function_parameters([
@@ -71,7 +46,7 @@ class external extends \external_api
     public static function view_videotime($cmid) {
         global $DB;
 
-        $params = self::validate_parameters(self::view_videotime_parameters(), [
+        $params = external_api::validate_parameters(self::view_videotime_parameters(), [
             'cmid' => $cmid
         ]);
 
@@ -81,7 +56,7 @@ class external extends \external_api
 
         $course = $DB->get_record('course', ['id' => $cm->course]);
         $context = \context_module::instance($cm->id);
-        self::validate_context($context);
+        external_api::validate_context($context);
 
         require_capability('mod/videotime:view', $context);
 
@@ -94,6 +69,4 @@ class external extends \external_api
     public static function view_videotime_returns() {
         return null;
     }
-
-    #endregion
 }

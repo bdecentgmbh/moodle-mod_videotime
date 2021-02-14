@@ -173,13 +173,15 @@ Please let us know if you have any feedback for us.
 ';
 }
 $string['percentageofvideofinished'] = 'Percentage of video finished';
-$string['pluginname'] = 'Video Time';
 $string['pluginadministration'] = 'Video Time administration';
+$string['pluginname'] = 'Video Time';
+$string['preventfastforwarding'] = 'Prevent fast forwarding';
+$string['preventfastforwarding_help'] = 'Prevent user from seeking the video beyond what they have watched.';
+$string['preview_mode'] = 'Preview image mode';
 $string['preview_picture'] = 'Preview image';
 $string['preview_picture_help'] = 'Image displayed for user.';
 $string['preview_picture_linked'] = 'Preview image linked';
 $string['preview_picture_url'] = 'Preview image URL';
-$string['preview_mode'] = 'Preview image mode';
 $string['privacy:metadata'] = 'The Video Time activity module does not store any personal data.';
 $string['process_videos'] = 'Process videos';
 $string['process_videos_help'] = 'Videos will be processed via scheduled task. For larger Vimeo accounts, it may take time to fully process all videos.';

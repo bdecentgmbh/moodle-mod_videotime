@@ -22,6 +22,7 @@
 
 namespace mod_videotime;
 
+use external_description;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
 
@@ -398,5 +399,55 @@ class videotime_instance implements \renderable, \templatable {
         }
 
         return $context;
+    }
+
+    /**
+     * @return external_description
+     */
+    public static function get_external_description(): external_description {
+        return new \external_single_structure([
+            'id' => new \external_value(PARAM_TEXT),
+            'course' => new \external_value(PARAM_TEXT),
+            'name' => new \external_value(PARAM_TEXT),
+            'intro' => new \external_value(PARAM_TEXT),
+            'introformat' => new \external_value(PARAM_TEXT),
+            'vimeo_url' => new \external_value(PARAM_TEXT),
+            'video_description' => new \external_value(PARAM_TEXT),
+            'video_description_format' => new \external_value(PARAM_TEXT),
+            'timemodified' => new \external_value(PARAM_TEXT),
+            'completion_on_view_time' => new \external_value(PARAM_TEXT),
+            'completion_on_view_time_second' => new \external_value(PARAM_TEXT),
+            'completion_on_finish' => new \external_value(PARAM_TEXT),
+            'completion_on_percent' => new \external_value(PARAM_TEXT),
+            'completion_on_percent_value' => new \external_value(PARAM_TEXT),
+            'autoplay' => new \external_value(PARAM_TEXT),
+            'byline' => new \external_value(PARAM_TEXT),
+            'color' => new \external_value(PARAM_TEXT),
+            'height' => new \external_value(PARAM_TEXT),
+            'maxheight' => new \external_value(PARAM_TEXT),
+            'maxwidth' => new \external_value(PARAM_TEXT),
+            'muted' => new \external_value(PARAM_TEXT),
+            'playsinline' => new \external_value(PARAM_TEXT),
+            'portrait' => new \external_value(PARAM_TEXT),
+            'speed' => new \external_value(PARAM_TEXT),
+            'title' => new \external_value(PARAM_TEXT),
+            'transparent' => new \external_value(PARAM_TEXT),
+            'width' => new \external_value(PARAM_TEXT),
+            'responsive' => new \external_value(PARAM_TEXT),
+            'label_mode' => new \external_value(PARAM_TEXT),
+            'viewpercentgrade' => new \external_value(PARAM_TEXT),
+            'next_activity_button' => new \external_value(PARAM_TEXT),
+            'next_activity_id' => new \external_value(PARAM_TEXT),
+            'next_activity_auto' => new \external_value(PARAM_TEXT),
+            'resume_playback' => new \external_value(PARAM_TEXT),
+            'preview_picture' => new \external_value(PARAM_TEXT),
+            'show_description' => new \external_value(PARAM_TEXT),
+            'show_title' => new \external_value(PARAM_TEXT),
+            'show_tags' => new \external_value(PARAM_TEXT),
+            'show_duration' => new \external_value(PARAM_TEXT),
+            'show_viewed_duration' => new \external_value(PARAM_TEXT),
+            'columns' => new \external_value(PARAM_TEXT),
+            'preventfastforwarding' => new \external_value(PARAM_TEXT),
+        ]);
     }
 }

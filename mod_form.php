@@ -286,6 +286,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
             $mform->setDefault('next_activity_auto', get_config('videotime', 'next_activity_auto'));
             videotime_instance::create_additional_field_form_elements('next_activity_auto', $mform);
+
+            $mform->addElement('advcheckbox', 'preventfastforwarding', get_string('preventfastforwarding', 'videotime'));
+            $mform->addHelpButton('preventfastforwarding', 'preventfastforwarding', 'videotime');
+            $mform->setType('preventfastforwarding', PARAM_BOOL);
         }
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));

@@ -411,5 +411,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019101502, 'videotime');
     }
 
+    if ($oldversion < 2021021300) {
+
+        // Define field preventfastforwarding to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('preventfastforwarding', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'columns');
+
+        // Conditionally launch add field preventfastforwarding.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2021021300, 'videotime');
+    }
+
     return true;
 }
