@@ -88,6 +88,7 @@ class videotime_instance implements \renderable, \templatable {
         'title',
         'transparent',
         'width',
+        'preventfastforwarding'
     ];
 
     /**

@@ -124,6 +124,7 @@ $string['option_playsinline'] = 'Plays inline';
 $string['option_playsinline_help'] = 'Play video inline on mobile devices, to automatically go fullscreen on playback set this parameter to false.';
 $string['option_portrait'] = 'Portrait';
 $string['option_portrait_help'] = 'Show the portrait on the video.';
+$string['option_preventfastforwarding'] = 'Prevent fast forwarding';
 $string['option_responsive'] = 'Responsive';
 $string['option_responsive_help'] = 'If checked video player will be responsive and adapt to page or screen size.';
 $string['option_speed'] = 'Speed';
