@@ -51,10 +51,6 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
     VideoTime.prototype.initialize = function() {
         Log.debug('Initializing Video Time ' + this.elementId);
 
-        if (this.resumeTime) {
-            return Promise.resolve(this.resumeTime);
-        }
-
         this.getInstance().then((instance) => {
             Log.debug('Initializing Vimeo player with options:');
             Log.debug(instance);
@@ -109,12 +105,26 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
 
         // If resume is present force seek the player to that point.
         this.getResumeTime().then((seconds) => {
-            Log.debug('VIDEO_TIME resuming at ' + seconds);
-            if (seconds && seconds > 0) {
-                this.player.on('loaded', () => {
-                    this.player.setCurrentTime(seconds);
-                });
+            if (seconds <= 0) {
+                return;
             }
+
+            this.getPlayer().getDuration().then((duration) => {
+                let resumeTime = seconds;
+                // Duration is often a little greater than a resume time at the end of the video.
+                // A user may have watched 100 seconds when the video ends, but the duration may be
+                // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
+                // video loads, so it may be 101 seconds. Hence the +1 and Math.floor usage.
+                if (seconds + 1 >= Math.floor(duration)) {
+                    Log.debug('VIDEO_TIME video finished, resuming at start of video.');
+                    resumeTime = 0;
+                }
+
+                Log.debug('VIDEO_TIME resuming at ' + resumeTime);
+                this.player.on('loaded', () => {
+                    this.player.setCurrentTime(resumeTime);
+                });
+            });
         });
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
