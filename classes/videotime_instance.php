@@ -29,6 +29,7 @@ use renderer_base;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/filelib.php");
+require_once("$CFG->dirroot/mod/videotime/lib.php");
 
 /**
  * Represents a single Video Time activity module. Adds more functionality when working with instances.
