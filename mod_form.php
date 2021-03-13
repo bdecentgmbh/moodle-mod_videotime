@@ -548,6 +548,16 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
         }
 
+        // Make sure at least
+        if ($data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
+            if (empty($data['completion_on_percent']) &&
+                empty($data['completion_on_view_time']) &&
+                empty($data['completionview']) &&
+                empty($data['completionusegrade']) &&
+                empty($data['completion_on_finish'])) {
+                $errors['completion'] = get_string('nocompletioncriteriaset', 'videotime');
+            }
+        }
         return $errors;
     }
 
