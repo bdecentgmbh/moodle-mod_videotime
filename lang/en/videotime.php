@@ -226,6 +226,7 @@ $string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['timestarted'] = 'Date started';
 $string['todo'] = 'TODO';
 $string['totaluniquevisitors'] = 'Total unique visitors';
+$string['totalvideotime'] = 'Total video time: {$a->time}';
 $string['totalviews'] = 'Total views';
 $string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p> 
 <p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p> 

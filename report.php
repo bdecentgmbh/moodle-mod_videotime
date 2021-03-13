@@ -22,6 +22,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\videotime_instance;
+use videotimeplugin_pro\session;
+
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 
@@ -62,6 +65,8 @@ $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
+$moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
+
 $table = new \videotimeplugin_pro\sessions_report_table($cm->id, $download);
 $table->define_baseurl($PAGE->url);
 $table->is_downloadable(true);
@@ -88,7 +93,15 @@ $table->out($pagesize, true);
 $tablehtml = ob_get_contents();
 ob_end_clean();
 
+$videoduration = null;
+if (videotime_has_repository()) {
+    if ($video = $DB->get_record('videotime_vimeo_video', ['link' => $moduleinstance->vimeo_url])) {
+        $videoduration = $video->duration;
+    }
+}
+
 echo $OUTPUT->header();
+echo '<div class="pull-right">' . get_string('totalvideotime', 'videotime', ['time' => session::format_time($videoduration)]) . '</div>';
 echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 echo $tablehtml;
 $form->display();
