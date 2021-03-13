@@ -101,8 +101,10 @@ if (videotime_has_repository()) {
 }
 
 echo $OUTPUT->header();
-echo '<div class="pull-right">' . get_string('totalvideotime', 'videotime', ['time' => session::format_time($videoduration)]) . '</div>';
-echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
+if (videotime_has_repository()) {
+    echo '<div class="pull-right">' . get_string('totalvideotime', 'videotime', ['time' => session::format_time($videoduration)]) . '</div>';
+}
+echo $OUTPUT->heading(format_string($moduleinstance->name), 2);    
 echo $tablehtml;
 $form->display();
 echo $OUTPUT->footer();
