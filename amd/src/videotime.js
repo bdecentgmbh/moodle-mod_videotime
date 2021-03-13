@@ -90,6 +90,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                     // Getting a new session on first play.
                     this.getSession().then(() => {
                         this.view();
+                        this.startWatchInterval();
                     });
                 } else {
                     // Free version can still mark completion on video time view.
@@ -211,15 +212,17 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                 }.bind(this));
             }.bind(this));
         }.bind(this));
-
-        this.startWatchInterval();
     };
 
     /**
      * Start interval that will periodically record user progress via Ajax.
      */
     VideoTime.prototype.startWatchInterval = function() {
-        setInterval(function () {
+        if (this.watchInterval) {
+            return;
+        }
+
+        this.watchInterval = setInterval(function () {
             if (this.playing) {
                 this.time += this.playbackRate;
 
