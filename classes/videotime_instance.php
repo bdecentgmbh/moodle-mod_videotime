@@ -410,7 +410,7 @@ class videotime_instance implements \renderable, \templatable {
         return new \external_single_structure([
             'id' => new \external_value(PARAM_INT),
             'course' => new \external_value(PARAM_INT),
-            'name' => new \external_value(PARAM_TEXT),
+            'name' => new \external_value(PARAM_RAW),
             'intro' => new \external_value(PARAM_RAW),
             'introformat' => new \external_value(PARAM_INT),
             'vimeo_url' => new \external_value(PARAM_URL),
