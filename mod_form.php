@@ -527,7 +527,8 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function validation($data, $files) {
-        $errors = [];
+        $errors = parent::validation($data, $files);
+
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $errors['vimeo_url'] = get_string('required');
         } else if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
@@ -548,16 +549,6 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
         }
 
-        // Make sure at least
-        if ($data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
-            if (empty($data['completion_on_percent']) &&
-                empty($data['completion_on_view_time']) &&
-                empty($data['completionview']) &&
-                empty($data['completionusegrade']) &&
-                empty($data['completion_on_finish'])) {
-                $errors['completion'] = get_string('nocompletioncriteriaset', 'videotime');
-            }
-        }
         return $errors;
     }
 
