@@ -15,17 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Web service and ajax functions.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime\external;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.4';
-$plugin->version = 2021032200;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+require_once($CFG->libdir.'/externallib.php');
+
+use external_api;
+
+/**
+ * Web service and ajax functions.
+ *
+ * Each external function is implemented in its own trait. This class
+ * aggregates them all.
+ */
+class external extends external_api {
+    use get_videotime;
+    use view_videotime;
+}

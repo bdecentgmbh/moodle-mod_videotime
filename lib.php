@@ -455,6 +455,17 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
             new pix_icon('t/grades', ''));
         $videtimenode->add_node($node, $beforekey);
     }
+
+    // Give subplugins a chance to extend the settings navigation.
+    foreach (core_component::get_plugin_list('videotimeplugin') as $plugin => $directory) {
+        if (file_exists($directory . '/lib.php')) {
+            require_once($directory . '/lib.php');
+            $function = 'videotimeplugin_' . $plugin . '_extend_settings_navigation';
+            if (function_exists($function)) {
+                $function($settings, $videtimenode);
+            }
+        }
+    }
 }
 
 /**

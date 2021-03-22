@@ -22,12 +22,14 @@
 
 namespace mod_videotime;
 
+use external_description;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/filelib.php");
+require_once("$CFG->dirroot/mod/videotime/lib.php");
 
 /**
  * Represents a single Video Time activity module. Adds more functionality when working with instances.
@@ -87,6 +89,7 @@ class videotime_instance implements \renderable, \templatable {
         'title',
         'transparent',
         'width',
+        'preventfastforwarding'
     ];
 
     /**
@@ -398,5 +401,55 @@ class videotime_instance implements \renderable, \templatable {
         }
 
         return $context;
+    }
+
+    /**
+     * @return external_description
+     */
+    public static function get_external_description(): external_description {
+        return new \external_single_structure([
+            'id' => new \external_value(PARAM_INT),
+            'course' => new \external_value(PARAM_INT),
+            'name' => new \external_value(PARAM_RAW),
+            'intro' => new \external_value(PARAM_RAW),
+            'introformat' => new \external_value(PARAM_INT),
+            'vimeo_url' => new \external_value(PARAM_URL),
+            'video_description' => new \external_value(PARAM_RAW),
+            'video_description_format' => new \external_value(PARAM_INT),
+            'timemodified' => new \external_value(PARAM_INT),
+            'completion_on_view_time' => new \external_value(PARAM_BOOL),
+            'completion_on_view_time_second' => new \external_value(PARAM_INT),
+            'completion_on_finish' => new \external_value(PARAM_BOOL),
+            'completion_on_percent' => new \external_value(PARAM_BOOL),
+            'completion_on_percent_value' => new \external_value(PARAM_INT),
+            'autoplay' => new \external_value(PARAM_BOOL),
+            'byline' => new \external_value(PARAM_BOOL),
+            'color' => new \external_value(PARAM_TEXT),
+            'height' => new \external_value(PARAM_TEXT),
+            'maxheight' => new \external_value(PARAM_TEXT),
+            'maxwidth' => new \external_value(PARAM_TEXT),
+            'muted' => new \external_value(PARAM_BOOL),
+            'playsinline' => new \external_value(PARAM_BOOL),
+            'portrait' => new \external_value(PARAM_BOOL),
+            'speed' => new \external_value(PARAM_BOOL),
+            'title' => new \external_value(PARAM_BOOL),
+            'transparent' => new \external_value(PARAM_BOOL),
+            'width' => new \external_value(PARAM_TEXT),
+            'responsive' => new \external_value(PARAM_BOOL),
+            'label_mode' => new \external_value(PARAM_BOOL),
+            'viewpercentgrade' => new \external_value(PARAM_BOOL),
+            'next_activity_button' => new \external_value(PARAM_BOOL),
+            'next_activity_id' => new \external_value(PARAM_INT),
+            'next_activity_auto' => new \external_value(PARAM_BOOL),
+            'resume_playback' => new \external_value(PARAM_BOOL),
+            'preview_picture' => new \external_value(PARAM_INT),
+            'show_description' => new \external_value(PARAM_BOOL),
+            'show_title' => new \external_value(PARAM_BOOL),
+            'show_tags' => new \external_value(PARAM_BOOL),
+            'show_duration' => new \external_value(PARAM_BOOL),
+            'show_viewed_duration' => new \external_value(PARAM_BOOL),
+            'columns' => new \external_value(PARAM_INT),
+            'preventfastforwarding' => new \external_value(PARAM_BOOL),
+        ]);
     }
 }

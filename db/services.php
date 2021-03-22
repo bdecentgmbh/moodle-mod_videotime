@@ -23,18 +23,18 @@
  */
 
 $functions = [
-    'mod_videotime_get_embed_options' => [
+    'mod_videotime_get_videotime' => [
         'classpath'     => '',
-        'classname'     => 'mod_videotime\external',
-        'methodname'    => 'get_embed_options',
-        'description'   => 'Get vimeo embed options for activity.',
+        'classname'     => 'mod_videotime\external\external',
+        'methodname'    => 'get_videotime',
+        'description'   => 'Get VideoTime activity module instance.',
         'type'          => 'read',
         'ajax'          => true,
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
     ],
     'mod_videotime_view_videotime' => [
         'classpath'     => '',
-        'classname'     => 'mod_videotime\external',
+        'classname'     => 'mod_videotime\external\external',
         'methodname'    => 'view_videotime',
         'description'   => 'Log the user viewing a video.',
         'type'          => 'write',

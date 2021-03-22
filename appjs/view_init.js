@@ -41,7 +41,7 @@
         this.percent = 0;
         this.currentTime = 0;
         this.interval = null;
-        this.embedOptions = {};
+        this.instance = {};
 
         this.session = null;
     }
@@ -50,7 +50,7 @@
         if (this.hasPro) {
             this.session = await this.getNewSession();
             this.resumeTime = await this.getResumeTime();
-            this.embedOptions = await this.getEmbedOptions();
+            this.instance = await this.getInstance();
         }
         this.setupPlayer();
     };
@@ -71,8 +71,8 @@
             {cmid: this.element.getAttribute('data-cmid')});
     };
 
-    VimeoVideo.prototype.getEmbedOptions = function() {
-        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('mod_videotime_get_embed_options',
+    VimeoVideo.prototype.getInstance = function() {
+        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('mod_videotime_get_videotime',
             {cmid: this.element.getAttribute('data-cmid')});
     };
 
@@ -83,7 +83,7 @@
             this.player = new Player(this.element.id, {});
             return;
         } else {
-            this.player = new Player(this.element.id, JSON.parse(this.embedOptions.options));
+            this.player = new Player(this.element.id, this.instance);
         }
 
         if (this.resumeTime) {

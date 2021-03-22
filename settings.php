@@ -54,6 +54,13 @@ if ($ADMIN->fulltree) {
     }
 
     if (videotime_has_pro()) {
+        $settings->add(new admin_setting_heading('preventfastforwarding', get_string('default', 'videotime') . ' ' .
+            get_string('preventfastforwarding', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/preventfastforwarding', get_string('preventfastforwarding', 'videotime'),
+            get_string('preventfastforwarding_help', 'videotime'), 0));
+        $settings->add(new admin_setting_configcheckbox('videotime/preventfastforwarding_force', get_string('force', 'videotime'),
+            get_string('force_help', 'videotime'), '0'));
+
         $settings->add(new admin_setting_heading('default_resume_playback', get_string('default', 'videotime') . ' ' .
             get_string('resume_playback', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/resume_playback', get_string('resume_playback', 'videotime'),

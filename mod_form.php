@@ -286,6 +286,12 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
             $mform->setDefault('next_activity_auto', get_config('videotime', 'next_activity_auto'));
             videotime_instance::create_additional_field_form_elements('next_activity_auto', $mform);
+
+            $mform->addElement('advcheckbox', 'preventfastforwarding', get_string('preventfastforwarding', 'videotime'));
+            $mform->addHelpButton('preventfastforwarding', 'preventfastforwarding', 'videotime');
+            $mform->setType('preventfastforwarding', PARAM_BOOL);
+            $mform->setDefault('responsive', get_config('videotime', 'preventfastforwarding'));
+            videotime_instance::create_additional_field_form_elements('preventfastforwarding', $mform);
         }
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
@@ -521,7 +527,8 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function validation($data, $files) {
-        $errors = [];
+        $errors = parent::validation($data, $files);
+
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $errors['vimeo_url'] = get_string('required');
         } else if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {

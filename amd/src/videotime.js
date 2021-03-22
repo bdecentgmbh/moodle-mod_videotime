@@ -7,7 +7,7 @@
 /**
  * @module mod_videotime/videotime
  */
-define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templates'], function($, Vimeo, Ajax, Log, Templates) {
+define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templates', 'core/notification'], function($, Vimeo, Ajax, Log, Templates, Notification) {
 
     let VideoTime = function(elementId, cmId, hasPro, interval) {
         this.elementId = elementId;
@@ -17,6 +17,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.player = null;
         this.resumeTime = null;
         this.session = null;
+        this.instance = null;
 
         this.played = false;
 
@@ -25,17 +26,53 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.percent = 0;
         this.currentTime = 0;
         this.playbackRate = 1;
+
+        this.plugins = [];
+    };
+
+    /**
+     * Get course module ID of this VideoTime instance.
+     *
+     * @return {int}
+     */
+    VideoTime.prototype.getCmId = function() {
+        return this.cmId;
+    };
+
+    /**
+     * Register a plugin to hook into VideoTime functionality.
+     *
+     * @param {VideoTimePlugin} plugin
+     */
+    VideoTime.prototype.registerPlugin = function(plugin) {
+        this.plugins.push(plugin);
     };
 
     VideoTime.prototype.initialize = function() {
         Log.debug('Initializing Video Time ' + this.elementId);
 
-        this.getEmbedOptions().then(function(response) {
+        this.getInstance().then((instance) => {
             Log.debug('Initializing Vimeo player with options:');
-            Log.debug(response);
-            this.player = new Vimeo(this.elementId, JSON.parse(response.options));
+            Log.debug(instance);
+            this.player = new Vimeo(this.elementId, instance);
             this.addListeners();
-        }.bind(this));
+
+            for (let i = 0; i < this.plugins.length; i++) {
+                const plugin = this.plugins[i];
+                plugin.initialize(this, instance);
+            }
+
+            return true;
+        });
+    };
+
+    /**
+     * Get Vimeo player object.
+     *
+     * @returns {Vimeo}
+     */
+    VideoTime.prototype.getPlayer = function() {
+        return this.player;
     };
 
     /**
@@ -53,6 +90,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                     // Getting a new session on first play.
                     this.getSession().then(() => {
                         this.view();
+                        this.startWatchInterval();
                     });
                 } else {
                     // Free version can still mark completion on video time view.
@@ -67,13 +105,27 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         }
 
         // If resume is present force seek the player to that point.
-        this.getResumeTime(this.cmId).then((seconds) => {
-            Log.debug('VIDEO_TIME resuming at ' + seconds);
-            if (seconds && seconds > 0) {
-                this.player.on('loaded', () => {
-                    this.player.setCurrentTime(seconds);
-                });
+        this.getResumeTime().then((seconds) => {
+            if (seconds <= 0) {
+                return;
             }
+
+            this.getPlayer().getDuration().then((duration) => {
+                let resumeTime = seconds;
+                // Duration is often a little greater than a resume time at the end of the video.
+                // A user may have watched 100 seconds when the video ends, but the duration may be
+                // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
+                // video loads, so it may be 101 seconds. Hence the +1 and Math.floor usage.
+                if (seconds + 1 >= Math.floor(duration)) {
+                    Log.debug('VIDEO_TIME video finished, resuming at start of video.');
+                    resumeTime = 0;
+                }
+
+                Log.debug('VIDEO_TIME resuming at ' + resumeTime);
+                this.player.on('loaded', () => {
+                    this.player.setCurrentTime(resumeTime);
+                });
+            });
         });
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
@@ -160,15 +212,17 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                 }.bind(this));
             }.bind(this));
         }.bind(this));
-
-        this.startWatchInterval();
     };
 
     /**
      * Start interval that will periodically record user progress via Ajax.
      */
     VideoTime.prototype.startWatchInterval = function() {
-        setInterval(function () {
+        if (this.watchInterval) {
+            return;
+        }
+
+        this.watchInterval = setInterval(function () {
             if (this.playing) {
                 this.time += this.playbackRate;
 
@@ -254,15 +308,24 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
     };
 
     /**
-     * Get embed options for this course module.
+     * Get VideoTime instance for this course module.
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getEmbedOptions = function() {
-        return Ajax.call([{
-            methodname: 'mod_videotime_get_embed_options',
-            args: { cmid: this.cmId }
-        }])[0];
+    VideoTime.prototype.getInstance = function() {
+        if (this.instance) {
+            return Promise.resolve(this.instance);
+        }
+
+        return new Promise((resolve) => {
+            Ajax.call([{
+                methodname: 'mod_videotime_get_videotime',
+                args: {cmid: this.cmId}
+            }])[0].then((response) => {
+                this.instance = response;
+                resolve(this.instance);
+            }).fail(Notification.exception);
+        });
     };
 
     /**
@@ -270,19 +333,20 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getResumeTime = function(cmId) {
+    VideoTime.prototype.getResumeTime = function() {
         if (this.resumeTime) {
             return Promise.resolve(this.resumeTime);
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             Ajax.call([{
                 methodname: 'videotimeplugin_pro_get_resume_time',
-                args: { cmid: cmId }
-            }])[0].then(function(response) {
+                args: {cmid: this.cmId}
+            }])[0].then((response) => {
                 this.resumeTime = response.seconds;
                 resolve(this.resumeTime);
-            }.bind(this));
+                return true;
+            }).fail(Notification.exception);
         });
     };
 
