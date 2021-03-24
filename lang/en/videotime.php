@@ -225,6 +225,7 @@ $string['store_pictures_help'] = 'If enabled, the Vimeo thumbnails will be store
 $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
 $string['tablealias_vt'] = 'Video Time';
+$string['tabinformation'] = 'Information';
 $string['tabs'] = 'Tabs';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['timestarted'] = 'Date started';

@@ -51,8 +51,10 @@ class tabs implements \templatable, \renderable {
     public function __construct(videotime_instance $instance) {
         $this->instance = $instance;
         $this->tabs[] = new watch_tab($instance);
+        $this->tabs[] = new information_tab($instance);
 
         $this->set_active_tab('watch');
+        $this->get_tab('watch')->set_persistent();
     }
 
     public function set_active_tab(string $tabname): void {
@@ -60,6 +62,14 @@ class tabs implements \templatable, \renderable {
             if ($tab->get_name() == $tabname) {
                 $tab->set_active();
                 break;
+            }
+        }
+    }
+
+    public function get_tab(string $tabname): ?tab {
+        foreach ($this->tabs as $tab) {
+            if ($tab->get_name() == $tabname) {
+                return $tab;
             }
         }
     }

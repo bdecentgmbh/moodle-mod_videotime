@@ -47,6 +47,11 @@ abstract class tab {
      */
     private $active = false;
 
+    /**
+     * @var bool
+     */
+    private $persistent = false;
+
     public function __construct(videotime_instance $instance) {
         $this->instance = $instance;
     }
@@ -63,6 +68,14 @@ abstract class tab {
         return $this->active;
     }
 
+    public function set_persistent(): void {
+        $this->persistent = true;
+    }
+
+    public function get_persistent(): bool {
+        return $this->persistent;
+    }
+
     public abstract function get_name(): string;
 
     public abstract function get_label(): string;
@@ -74,6 +87,7 @@ abstract class tab {
             'name' => $this->get_name(),
             'label' => $this->get_label(),
             'active' => $this->get_active(),
+            'persistent' => $this->get_persistent(),
             'tabcontent' => $this->get_tab_content()
         ];
     }

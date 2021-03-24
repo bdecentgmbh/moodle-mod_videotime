@@ -1,3 +1,10 @@
-<div class="tab-pane fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
-    {{{tabcontent}}}
-</div>
+{{^persistent}}
+    <div class="col tab-pane fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
+        {{{tabcontent}}}
+    </div>
+{{/persistent}}
+{{#persistent}}
+    <div class="col persistent-tab" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
+        {{{tabcontent}}}
+    </div>
+{{/persistent}}

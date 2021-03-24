@@ -1,9 +1,9 @@
-<ul class="nav nav-tabs mb-2" role="tablist">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
     {{#tabs}}
         {{> mod_videotime/tab_nav_item }}
     {{/tabs}}
 </ul>
-<div class="tab-content">
+<div class="tab-content row" id="myTabContent">
     {{#tabs}}
         {{> mod_videotime/tab_pane }}
     {{/tabs}}
