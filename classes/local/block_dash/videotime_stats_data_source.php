@@ -27,6 +27,7 @@ use block_dash\local\dash_framework\query_builder\join;
 use block_dash\local\data_grid\filter\bool_filter;
 use block_dash\local\data_grid\filter\course_condition;
 use block_dash\local\data_grid\filter\current_course_condition;
+use block_dash\local\data_grid\filter\current_course_context_condition;
 use block_dash\local\data_grid\filter\date_filter;
 use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\data_grid\filter\filter_collection_interface;
@@ -70,7 +71,8 @@ class videotime_stats_data_source extends abstract_data_source {
             ->from('videotime', 'vt')
             ->join('course_modules', 'cm', 'instance', 'vt.id')->join_condition('cm', 'cm.module = ' . $videotimemodule)
             ->join('course', 'c', 'id', 'vt.course')
-            ->join('course_categories', 'cc', 'id', 'c.category');
+            ->join('course_categories', 'cc', 'id', 'c.category')
+            ->join('context', 'ctx', 'instanceid', 'c.id')->join_condition('ctx', 'ctx.contextlevel = ' . CONTEXT_COURSE);
 
         $filterpreferences = $this->get_preferences('filters');
 
@@ -160,7 +162,7 @@ class videotime_stats_data_source extends abstract_data_source {
             }
         }
 
-        $filter_collection->add_filter(new current_course_condition('c_current_course', 'c.id'));
+        $filter_collection->add_filter(new current_course_context_condition('c_current_course_context', 'ctx.id'));
 
         $filter_collection->add_filter(new course_condition('c_course', 'c.id'));
 

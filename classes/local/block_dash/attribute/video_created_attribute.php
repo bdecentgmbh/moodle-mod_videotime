@@ -47,9 +47,10 @@ class video_created_attribute extends abstract_field_attribute {
 
         if ($videorecord = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
             $video = \videotimeplugin_repository\video::create($videorecord, $instance->get_context());
-            $createdtime = \DateTime::createFromFormat(\DateTime::ISO8601, $video->get_record()->created_time, new \DateTimeZone('UTC'));
-            $createdtime->setTimezone(\core_date::get_user_timezone_object());
-            return $createdtime->getTimestamp();
+            if ($createdtime = \DateTime::createFromFormat(\DateTime::ISO8601, $video->get_record()->created_time, new \DateTimeZone('UTC'))) {
+                $createdtime->setTimezone(\core_date::get_user_timezone_object());
+                return $createdtime->getTimestamp();
+            }
         }
 
         return null;
