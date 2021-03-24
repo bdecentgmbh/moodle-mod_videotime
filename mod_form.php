@@ -296,6 +296,11 @@ class mod_videotime_mod_form extends moodleform_mod {
             videotime_instance::create_additional_field_form_elements('preventfastforwarding', $mform);
         }
 
+        $mform->addElement('header', 'tabs', get_string('tabs', 'videotime'));
+
+        $mform->addElement('advcheckbox', 'enabletabs', get_string('enabletabs', 'videotime'));
+        $mform->setType('enabletabs', PARAM_BOOL);
+
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 
         // Add hidden 'disable' element used for disabling embed options when they are globally forced.

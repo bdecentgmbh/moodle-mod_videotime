@@ -444,5 +444,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021051906, 'videotime');
     }
 
+    if ($oldversion < 2021081000) {
+
+        // Define field enabletabs to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('enabletabs', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'preventfastforwarding');
+
+        // Conditionally launch add field enabletabs.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2021081000, 'videotime');
+    }
+
     return true;
 }

@@ -15,17 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Tab.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime\local\tabs;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.5';
-$plugin->version = 2021081000;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+require_once("$CFG->dirroot/mod/videotime/lib.php");
+
+/**
+ * Tab.
+ *
+ * @package mod_videotime
+ */
+class watch_tab extends tab {
+
+    public function get_name(): string {
+        return 'watch';
+    }
+
+    public function get_label(): string {
+        return get_string('watch', 'videotime');
+    }
+
+    public function get_tab_content(): string {
+        global $OUTPUT;
+
+        $record = $this->get_instance()->to_record();
+        $record->uniqueid = $this->get_instance()->get_uniqueid();
+
+        return $OUTPUT->render_from_template('mod_videotime/vimeo_embed', $record);
+    }
+}

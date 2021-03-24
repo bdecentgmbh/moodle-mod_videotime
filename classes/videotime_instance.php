@@ -25,6 +25,7 @@
 namespace mod_videotime;
 
 use external_description;
+use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
 
@@ -79,6 +80,11 @@ class videotime_instance implements \renderable, \templatable {
     private $embed = false;
 
     /**
+     * @var string Random, unique element ID.
+     */
+    private $uniqueid;
+
+    /**
      * @var array Vimeo embed option fields.
      */
     private static $optionfields = [
@@ -118,6 +124,7 @@ class videotime_instance implements \renderable, \templatable {
      * @param \stdClass $instancerecord
      */
     protected function __construct(\stdClass $instancerecord) {
+        $this->uniqueid = uniqid();
         $this->record = $instancerecord;
     }
 
@@ -231,6 +238,15 @@ class videotime_instance implements \renderable, \templatable {
             $this->cm = get_coursemodule_from_instance('videotime', $this->id);
         }
         return $this->cm;
+    }
+
+    /**
+     * Get unique element ID.
+     *
+     * @return string
+     */
+    public function get_uniqueid(): string {
+        return $this->uniqueid;
     }
 
     /**
@@ -396,12 +412,17 @@ class videotime_instance implements \renderable, \templatable {
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
             'interval' => 5,
-            'uniqueid' => uniqid()
+            'uniqueid' => $this->get_uniqueid()
         ];
 
         if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
             $renderer = $PAGE->get_renderer('mod_videotime');
             $context['next_activity_button_html'] = $renderer->render($nextactivitybutton);
+        }
+
+        if ($this->enabletabs) {
+            $tabs = new tabs($this);
+            $context['tabshtml'] = $output->render($tabs);
         }
 
         return $context;
