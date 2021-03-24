@@ -436,7 +436,7 @@ class videotime_instance implements \renderable, \templatable {
             'transparent' => new \external_value(PARAM_BOOL),
             'width' => new \external_value(PARAM_TEXT),
             'responsive' => new \external_value(PARAM_BOOL),
-            'label_mode' => new \external_value(PARAM_BOOL),
+            'label_mode' => new \external_value(PARAM_INT),
             'viewpercentgrade' => new \external_value(PARAM_BOOL),
             'next_activity_button' => new \external_value(PARAM_BOOL),
             'next_activity_id' => new \external_value(PARAM_INT),
