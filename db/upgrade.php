@@ -18,7 +18,7 @@
  * Upgrade script for the Video Time.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -455,12 +455,6 @@ function xmldb_videotime_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Videotime savepoint reached.
-        upgrade_mod_savepoint(true, 2021081000, 'videotime');
-    }
-    
-    if ($oldversion < 2021032401) {
-    
         // Define field autopause to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('autopause', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'enabletabs');
@@ -505,10 +499,9 @@ function xmldb_videotime_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
             
         // Videotime savepoint reached.
-        upgrade_mod_savepoint(true, 2021032401, 'videotime');
+        upgrade_mod_savepoint(true, 2021081000, 'videotime');
     }
     
 
