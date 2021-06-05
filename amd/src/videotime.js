@@ -28,6 +28,12 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.playbackRate = 1;
 
         this.plugins = [];
+
+        if (hasPro && $('body').hasClass('path-course-view')  && !$('body').hasClass('vtinit')) {
+            $('body').addClass('vtinit');
+            $(document).on('focus', 'body', this.initializeNewInstances.bind(this));
+        }
+        this.modulecount = $('body .activity.videotime').length;
     };
 
     /**
@@ -200,7 +206,12 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
 
                         if (parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
-                                window.location.href = data.nextcm_url;
+                                let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
+                                if (link) {
+                                    link.click();
+                                } else {
+                                    window.location.href = data.nextcm_url;
+                                }
                             }
                         }
 
@@ -381,6 +392,35 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             methodname: 'mod_videotime_view_videotime',
             args: { cmid: this.cmId }
         }])[0];
+    };
+
+    /**
+     * Initialize new labels and preview when editing
+     */
+    VideoTime.prototype.initializeNewInstances = function() {
+        if (this.modulecount == $('body .activity.videotime').length) {
+            return;
+        }
+        this.modulecount = $('body .activity.videotime').length;
+        $('body .activity.videotime').each(function (index, module) {
+            if (
+                !$(module).find('.instancename').length
+                && $(module).find('.vimeo-embed').length
+                && !$(module).find('.vimeo-embed iframe').length
+            ) {
+                let instance = {
+                    cmid: Number($(module).attr('id').replace('module-', '')),
+                    haspro: true,
+                    interval: this.interval,
+                    uniqueid: $(module).find('.vimeo-embed').first().attr('id').replace('vimeo-embed-', '')
+                };
+                Templates.render('mod_videotime/videotime_instance', {
+                    instance: instance
+                }).then(function (html, js) {
+                    Templates.runTemplateJS(js);
+                }).fail(Notification.exception);
+            }
+        }.bind(this));
     };
 
     return VideoTime;
