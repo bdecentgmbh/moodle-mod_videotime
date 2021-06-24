@@ -7,7 +7,21 @@
 /**
  * @module mod_videotime/videotime
  */
-define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templates', 'core/notification'], function($, Vimeo, Ajax, Log, Templates, Notification) {
+define([
+    'jquery',
+    'mod_videotime/player',
+    'core/ajax',
+    'core/log',
+    'core/templates',
+    'core/notification'
+], function(
+    $,
+    Vimeo,
+    Ajax,
+    Log,
+    Templates,
+    Notification
+) {
 
     let VideoTime = function(elementId, cmId, hasPro, interval) {
         this.elementId = elementId;
@@ -137,7 +151,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
         // Catch all events where video plays.
-        this.player.on('play', function (e) {
+        this.player.on('play', function () {
             this.playing = true;
             Log.debug('VIDEO_TIME play');
         }.bind(this));
@@ -184,7 +198,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             this.playing = false;
             Log.debug('VIDEO_TIME ended');
 
-            new Promise(function(resolve, reject) {
+            new Promise(function(resolve) {
                 this.getSession().then(function(session) {
                     resolve(session);
                 });
@@ -199,7 +213,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                 return session;
             }.bind(this)).catch(function(error) {
                 alert(error);
-            }).finally(function(session) {
+            }).finally(function() {
                 this.getSession().then(function(session) {
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
@@ -216,7 +230,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                         }
 
                         Templates.render('videotime/next_activity_button', JSON.parse(response.data))
-                            .then(function (html, js) {
+                            .then(function (html) {
                                 $('#next-activity-button').html(html);
                             });
                     }.bind(this));
@@ -371,7 +385,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             return Promise.resolve(this.session);
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             Ajax.call([{
                 methodname: 'videotimeplugin_pro_get_new_session',
                 args: { cmid: this.cmId }

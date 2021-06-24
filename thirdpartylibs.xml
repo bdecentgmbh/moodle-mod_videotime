@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src/player.js</location>
+        <name>Vimeo Player API</name>
+        <license>MIT</license>
+        <version>v2.6.3</version>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

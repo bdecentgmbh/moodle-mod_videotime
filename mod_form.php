@@ -392,7 +392,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         if (videotime_has_pro()) {
             // -------------------------------------------------------------------------------
             // Grade settings.
-            $mform->addElement('header', 'modstandardgrade', get_string('grade'));
+            $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
             global $COURSE, $OUTPUT;
 
             $mform->addElement('checkbox', 'viewpercentgrade', get_string('viewpercentgrade', 'videotime'));
