@@ -42,7 +42,7 @@ class videotime_instance_test extends advanced_testcase {
      */
     private $videotimeinstance;
 
-    public function setUp() {
+    public function setUp() : void {
         $this->resetAfterTest();
 
         $this->course = $this->getDataGenerator()->create_course();
@@ -53,15 +53,14 @@ class videotime_instance_test extends advanced_testcase {
         $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
     }
 
-    public function tearDown()
-    {
+    public function tearDown() : void {
         $this->course = null;
         $this->instancerecord = null;
         $this->videotimeinstance = null;
     }
 
     public function test_force_settings() {
-        $this->assertNotEmpty($this->videotimeinstance->get_force_settings());
+        $this->assertIsArray($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));
         $this->assertFalse($this->videotimeinstance->is_field_forced('label_mode'));
 
