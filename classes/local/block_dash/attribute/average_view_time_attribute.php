@@ -46,6 +46,8 @@ class average_view_time_attribute extends abstract_field_attribute {
 
         $instance = videotime_instance::instance_by_id($data);
 
-        return $DB->get_field_sql('SELECT AVG(vts.time) FROM {videotime_session} vts WHERE vts.module_id = ?', [$instance->get_cm()->id]);
+        return $DB->get_field_sql('SELECT AVG(vts.time)
+                                     FROM {videotime_session} vts
+                                    WHERE vts.module_id = ?', [$instance->get_cm()->id]);
     }
 }

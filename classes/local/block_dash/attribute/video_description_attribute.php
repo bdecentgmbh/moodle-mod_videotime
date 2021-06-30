@@ -40,8 +40,7 @@ class video_description_attribute extends abstract_field_attribute
      * @return mixed
      * @throws \moodle_exception
      */
-    public function transform_data($data, \stdClass $record)
-    {
+    public function transform_data($data, \stdClass $record) {
         global $DB;
 
         $summary = '';

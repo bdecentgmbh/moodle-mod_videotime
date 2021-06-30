@@ -35,8 +35,7 @@ use context_module;
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mobile
-{
+class mobile {
     /**
      * Returns the video time course view for the mobile app.
      * @param array $args Arguments from tool_mobile_get_content WS
@@ -47,8 +46,7 @@ class mobile
      * @throws \require_login_exception
      * @throws \moodle_exception
      */
-    public static function mobile_course_view($args)
-    {
+    public static function mobile_course_view($args) {
         global $OUTPUT, $DB, $CFG;
 
         $args = (object)$args;
@@ -88,8 +86,7 @@ class mobile
     /**
      * Return JavaScript needed for viewing videos.
      */
-    public static function view_init(array $args)
-    {
+    public static function view_init(array $args) {
         global $CFG;
 
         return [

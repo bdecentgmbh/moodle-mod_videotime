@@ -46,6 +46,8 @@ class last_session_attribute extends abstract_field_attribute {
 
         $instance = videotime_instance::instance_by_id($data);
 
-        return $DB->get_field_sql('SELECT MAX(vts.timestarted) FROM {videotime_session} vts WHERE vts.module_id = ? AND vts.timestarted > 0', [$instance->get_cm()->id]);
+        return $DB->get_field_sql('SELECT MAX(vts.timestarted)
+                                     FROM {videotime_session} vts
+                                    WHERE vts.module_id = ? AND vts.timestarted > 0', [$instance->get_cm()->id]);
     }
 }

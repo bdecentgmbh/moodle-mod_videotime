@@ -28,19 +28,26 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Return if the plugin supports $feature.
- *http://localhost/moodle35/course/mod.php?sesskey=nzkiyHyS2D&sr=0&update=2
+ * http://localhost/moodle35/course/mod.php?sesskey=nzkiyHyS2D&sr=0&update=2
  * @param string $feature Constant representing the feature.
  * @return true | null True if the feature is supported, null otherwise.
  */
 function videotime_supports($feature) {
     switch ($feature) {
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_COMPLETION_HAS_RULES:    return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_GRADE_OUTCOMES:          return false;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
         default:
             return null;
     }
@@ -54,7 +61,7 @@ function videotime_supports($feature) {
  * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function videotime_grade_item_update($videotime, $grades=NULL) {
+function videotime_grade_item_update($videotime, $grades=null) {
     global $CFG;
 
     require_once($CFG->libdir.'/gradelib.php');
@@ -70,9 +77,9 @@ function videotime_grade_item_update($videotime, $grades=NULL) {
         'grademax' => 100,
         'grademin' => 0];
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
-        $grades = NULL;
+        $grades = null;
     }
 
     return grade_update('mod/videotime', $videotime->course, 'mod', 'videotime', $videotime->id, 0, $grades, $params);
@@ -317,7 +324,9 @@ function videotime_update_completion($cmid) {
 
     $completion = new \completion_info($course);
     // Update completion status only if any extra criteria is set on the activity.
-    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish || $moduleinstance->completion_on_percent)) {
+    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish ||
+        $moduleinstance->completion_on_percent)
+    ) {
         $completion->update_state($cm, COMPLETION_COMPLETE);
     }
 }
@@ -578,10 +587,9 @@ function mod_videotime_get_fontawesome_icon_map() {
  * @param int $max_length
  * @return string
  */
-function videotime_get_excerpt($description, $max_length = 150)
-{
-    if(strlen($description) > $max_length) {
-        $excerpt   = substr($description, 0, $max_length-3);
+function videotime_get_excerpt($description, $max_length = 150) {
+    if (strlen($description) > $max_length) {
+        $excerpt   = substr($description, 0, $max_length - 3);
         $lastSpace = strrpos($excerpt, ' ');
         $excerpt   = substr($excerpt, 0, $lastSpace);
         $excerpt  .= '...';
@@ -599,8 +607,7 @@ function videotime_get_excerpt($description, $max_length = 150)
  * @return bool
  * @throws dml_exception
  */
-function mod_videotime_treat_as_label(cm_info $mod)
-{
+function mod_videotime_treat_as_label(cm_info $mod) {
     global $DB;
 
     if ($mod->modname != 'videotime') {
@@ -620,8 +627,7 @@ function mod_videotime_treat_as_label(cm_info $mod)
  * @param $link
  * @return mixed|null
  */
-function mod_videotime_get_vimeo_id_from_link($link)
-{
+function mod_videotime_get_vimeo_id_from_link($link) {
     $videoid = null;
     if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $output_array)) {
         return $output_array[5];

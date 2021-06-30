@@ -108,8 +108,7 @@ class videotime_instance implements \renderable, \templatable {
     /**
      * @param \stdClass $instancerecord
      */
-    protected function __construct(\stdClass $instancerecord)
-    {
+    protected function __construct(\stdClass $instancerecord) {
         $this->record = $instancerecord;
     }
 
@@ -120,8 +119,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return mixed|null
      * @throws \dml_exception
      */
-    public function __get($name)
-    {
+    public function __get($name) {
         if (isset($this->record->$name)) {
             if ($this->is_field_forced($name)) {
                 return $this->get_forced_value($name);
@@ -139,8 +137,7 @@ class videotime_instance implements \renderable, \templatable {
      * @param $name
      * @param $value
      */
-    public function __set($name, $value)
-    {
+    public function __set($name, $value) {
         $this->record->$name = $value;
     }
 
@@ -150,8 +147,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return \context
      * @throws \coding_exception
      */
-    public function get_context(): \context
-    {
+    public function get_context(): \context {
         return \context_module::instance($this->get_cm()->id);
     }
 
@@ -200,16 +196,14 @@ class videotime_instance implements \renderable, \templatable {
      *
      * @param bool $embed
      */
-    public function set_embed(bool $embed): void
-    {
+    public function set_embed(bool $embed): void {
         $this->embed = $embed;
     }
 
     /**
      * @return bool
      */
-    public function is_embed(): bool
-    {
+    public function is_embed(): bool {
         return $this->embed;
     }
 
@@ -219,8 +213,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return \stdClass
      * @throws \coding_exception
      */
-    public function get_cm()
-    {
+    public function get_cm() {
         if (is_null($this->cm)) {
             $this->cm = get_coursemodule_from_instance('videotime', $this->id);
         }
@@ -337,8 +330,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return next_activity_button|null
      * @throws \coding_exception
      */
-    public function get_next_activity_button()
-    {
+    public function get_next_activity_button() {
         // Next activity button is a pro feature.
         if (videotime_has_pro() && is_null($this->next_activity_button)) {
             $this->next_activity_button = new next_activity_button(\cm_info::create($this->get_cm()));
@@ -355,8 +347,7 @@ class videotime_instance implements \renderable, \templatable {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function get_resume_time($userid): float
-    {
+    public function get_resume_time($userid): float {
         // Resuming is a pro feature.
         if (!videotime_has_pro()) {
             return 0;
@@ -382,8 +373,7 @@ class videotime_instance implements \renderable, \templatable {
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
      * @return \stdClass|array
      */
-    public function export_for_template(renderer_base $output)
-    {
+    public function export_for_template(renderer_base $output) {
         global $PAGE;
         $cm = get_coursemodule_from_instance('videotime', $this->id);
 

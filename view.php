@@ -45,7 +45,7 @@ if ($id) {
     $course         = $DB->get_record('course', ['id' => $moduleinstance->course], '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule', 'mod_videotime');
 }
 
 $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);

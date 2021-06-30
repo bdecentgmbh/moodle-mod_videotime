@@ -68,8 +68,7 @@ class settings_observer {
      * @param string $needle
      * @return bool
      */
-    public static function string_ends_with($haystack, $needle)
-    {
+    public static function string_ends_with($haystack, $needle) {
         $length = strlen($needle);
         if ($length == 0) {
             return true;

@@ -36,6 +36,7 @@ use external_api;
  * Each external function is implemented in its own trait. This class
  * aggregates them all.
  */
+
 class external extends external_api {
     use get_videotime;
     use view_videotime;

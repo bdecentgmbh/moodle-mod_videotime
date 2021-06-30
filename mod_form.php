@@ -141,7 +141,8 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $mform->setDefault('show_title', get_config('videotime', 'show_title'));
                 videotime_instance::create_additional_field_form_elements('show_title', $mform, $group);
 
-                $group[] = $mform->createElement('advcheckbox', 'show_description', '', get_string('show_description', 'videotime'));
+                $group[] = $mform->createElement('advcheckbox', 'show_description', '',
+                    get_string('show_description', 'videotime'));
                 $mform->setDefault('show_description', 1);
                 if (method_exists($mform, 'hideIf')) {
                     $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
@@ -171,7 +172,8 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $mform->setDefault('show_duration', get_config('videotime', 'show_duration'));
                 videotime_instance::create_additional_field_form_elements('show_duration', $mform, $group);
 
-                $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '', get_string('show_viewed_duration', 'videotime'));
+                $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '',
+                    get_string('show_viewed_duration', 'videotime'));
                 $mform->setDefault('show_viewed_duration', 1);
                 if (method_exists($mform, 'hideIf')) {
                     $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
@@ -418,7 +420,9 @@ class mod_videotime_mod_form extends moodleform_mod {
                     'itemnumber' => 0,
                     'courseid' => $COURSE->id))) {
 
-                    $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'), null, ['id' => 'id_gradewarning']);
+                    $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(
+                        get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'
+                    ), null, ['id' => 'id_gradewarning']);
                     if (method_exists($mform, 'hideIf')) {
                         $mform->hideIf('gradewarning', 'viewpercentgrade', 'checked');
                     } else {

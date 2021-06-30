@@ -26,7 +26,5 @@ namespace mod_videotime\plugininfo;
 
 defined('MOODLE_INTERNAL') || die();
 
-class videotimeplugin extends \core\plugininfo\base
-{
-
+class videotimeplugin extends \core\plugininfo\base {
 }

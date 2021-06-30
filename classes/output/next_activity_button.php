@@ -28,6 +28,8 @@ use moodle_exception;
 use moodle_url;
 use renderer_base;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->dirroot/mod/videotime/lib.php");
 
 class next_activity_button implements \templatable, \renderable {
@@ -54,8 +56,7 @@ class next_activity_button implements \templatable, \renderable {
 
     private $moduleinstance = null;
 
-    public function __construct(\cm_info $cm)
-    {
+    public function __construct(\cm_info $cm) {
         $this->cm = $cm;
 
         $this->moduleinstance = videotime_instance::instance_by_id($cm->instance);
@@ -87,7 +88,10 @@ class next_activity_button implements \templatable, \renderable {
 
         if ($this->nextcm) {
             if (!empty($this->nextcm->availableinfo)) {
-                $this->availability_info = \core_availability\info::format_info($this->nextcm->availableinfo, $this->nextcm->course);
+                $this->availability_info = \core_availability\info::format_info(
+                    $this->nextcm->availableinfo,
+                    $this->nextcm->course
+                );
             }
 
             $this->is_restricted = !$this->nextcm->uservisible;
@@ -97,8 +101,7 @@ class next_activity_button implements \templatable, \renderable {
     /**
      * @return \cm_info|mixed
      */
-    public function get_next_cm()
-    {
+    public function get_next_cm() {
         return $this->nextcm;
     }
 
@@ -109,8 +112,7 @@ class next_activity_button implements \templatable, \renderable {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function get_next_cm_url()
-    {
+    public function get_next_cm_url() {
         if (!$this->nextcm) {
             return null;
         }
@@ -130,8 +132,7 @@ class next_activity_button implements \templatable, \renderable {
     /**
      * @return bool
      */
-    public function is_restricted()
-    {
+    public function is_restricted() {
         return $this->is_restricted;
     }
 
@@ -140,8 +141,7 @@ class next_activity_button implements \templatable, \renderable {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function get_data()
-    {
+    public function get_data() {
         if (!$this->nextcm) {
             return [];
         }
@@ -162,8 +162,7 @@ class next_activity_button implements \templatable, \renderable {
         ];
     }
 
-    public function export_for_template(renderer_base $output)
-    {
+    public function export_for_template(renderer_base $output) {
         return $this->get_data();
     }
 
@@ -175,8 +174,7 @@ class next_activity_button implements \templatable, \renderable {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public static function get_available_cms($courseid)
-    {
+    public static function get_available_cms($courseid) {
         $cms = [];
         $modinfo = get_fast_modinfo($courseid);
         foreach ($modinfo->get_cms() as $cm) {

@@ -51,7 +51,7 @@ class videotime_stats_data_source extends abstract_data_source {
      *
      * @param context $context
      */
-    public function __construct(context $context)  {
+    public function __construct(context $context) {
         $this->add_table(new videotime_table());
         $this->add_table(new course_table());
         parent::__construct($context);
@@ -105,8 +105,7 @@ class videotime_stats_data_source extends abstract_data_source {
     /**
      * @return filter_collection_interface
      */
-    public function build_filter_collection()
-    {
+    public function build_filter_collection() {
         $filter_collection = new filter_collection(get_class($this), $this->get_context());
 
         $filter_collection->add_filter(new category_field_filter('cc', 'cc.id', get_string('category')));

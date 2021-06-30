@@ -109,8 +109,7 @@ class videotime_sessions_data_source extends abstract_data_source {
     /**
      * @return filter_collection_interface
      */
-    public function build_filter_collection()
-    {
+    public function build_filter_collection() {
         $filter_collection = new filter_collection(get_class($this), $this->get_context());
 
         $filter_collection->add_filter(new category_field_filter('cc', 'cc.id', get_string('category')));

@@ -45,8 +45,12 @@ class percentage_of_video_finished_attribute extends abstract_field_attribute {
 
         $instance = videotime_instance::instance_by_id($data);
 
-        $total = $DB->get_field_sql('SELECT COUNT(DISTINCT(vts.user_id)) FROM {videotime_session} vts WHERE vts.module_id = ?', [$instance->get_cm()->id]);
-        $finished = $DB->get_field_sql('SELECT COUNT(*) FROM {videotime_session} vts WHERE vts.module_id = ? AND vts.state = 1', [$instance->get_cm()->id]);
+        $total = $DB->get_field_sql('SELECT COUNT(DISTINCT(vts.user_id))
+                                       FROM {videotime_session} vts
+                                      WHERE vts.module_id = ?', [$instance->get_cm()->id]);
+        $finished = $DB->get_field_sql('SELECT COUNT(*)
+                                          FROM {videotime_session} vts
+                                         WHERE vts.module_id = ? AND vts.state = 1', [$instance->get_cm()->id]);
 
         if ($total <= 0) {
             return '0%';

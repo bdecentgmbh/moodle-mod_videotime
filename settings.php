@@ -29,9 +29,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
-$ADMIN->add('modsettings', new admin_category('modvideotimefolder', new lang_string('pluginname', 'videotime'), $module->is_enabled() === false));
+$ADMIN->add('modsettings', new admin_category('modvideotimefolder',
+    new lang_string('pluginname', 'videotime'), $module->is_enabled() === false));
 
-$settings = new admin_settingpage($section, get_string('settings', 'videotime'), 'moodle/site:config', $module->is_enabled() === false);
+$settings = new admin_settingpage($section, get_string('settings', 'videotime'),
+    'moodle/site:config', $module->is_enabled() === false);
 
 if ($ADMIN->fulltree) {
 
@@ -56,8 +58,8 @@ if ($ADMIN->fulltree) {
     if (videotime_has_pro()) {
         $settings->add(new admin_setting_heading('preventfastforwarding', get_string('default', 'videotime') . ' ' .
             get_string('preventfastforwarding', 'videotime'), ''));
-        $settings->add(new admin_setting_configcheckbox('videotime/preventfastforwarding', get_string('preventfastforwarding', 'videotime'),
-            get_string('preventfastforwarding_help', 'videotime'), 0));
+        $settings->add(new admin_setting_configcheckbox('videotime/preventfastforwarding',
+            get_string('preventfastforwarding', 'videotime'), get_string('preventfastforwarding_help', 'videotime'), 0));
         $settings->add(new admin_setting_configcheckbox('videotime/preventfastforwarding_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
@@ -70,14 +72,16 @@ if ($ADMIN->fulltree) {
 
         $settings->add(new admin_setting_heading('default_next_activity_button', get_string('default', 'videotime') . ' ' .
             get_string('next_activity_button', 'videotime'), ''));
-        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button', get_string('next_activity_button', 'videotime'),
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button',
+            get_string('next_activity_button', 'videotime'),
             get_string('next_activity_button_help', 'videotime'), 0));
-        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button_force', get_string('force', 'videotime'),
-            get_string('force_help', 'videotime'), '0'));
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_button_force',
+            get_string('force', 'videotime'), get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('default_next_activity_auto', get_string('default', 'videotime') . ' ' .
             get_string('next_activity_auto', 'videotime'), ''));
-        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_auto', get_string('next_activity_auto', 'videotime'),
+        $settings->add(new admin_setting_configcheckbox('videotime/next_activity_auto',
+            get_string('next_activity_auto', 'videotime'),
             get_string('next_activity_auto_help', 'videotime'), 0));
         $settings->add(new admin_setting_configcheckbox('videotime/next_activity_auto_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
@@ -197,8 +201,8 @@ if ($ADMIN->fulltree) {
 
             $settings->add(new admin_setting_heading('show_description', get_string('default') . ' ' .
                 get_string('show_description', 'videotime'), ''));
-            $settings->add(new admin_setting_configcheckbox('videotime/show_description', get_string('show_description', 'videotime'),
-                '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_description',
+                get_string('show_description', 'videotime'), '', '1'));
             $settings->add(new admin_setting_configcheckbox('videotime/show_description_force', get_string('force', 'videotime'),
                 get_string('force_help', 'videotime'), '0'));
 
@@ -211,17 +215,17 @@ if ($ADMIN->fulltree) {
 
             $settings->add(new admin_setting_heading('show_duration', get_string('default') . ' ' .
                 get_string('show_duration', 'videotime'), ''));
-            $settings->add(new admin_setting_configcheckbox('videotime/show_duration', get_string('show_duration', 'videotime'),
-                '', '1'));
-            $settings->add(new admin_setting_configcheckbox('videotime/show_duration_force', get_string('force', 'videotime'),
-                get_string('force_help', 'videotime'), '0'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_duration',
+                get_string('show_duration', 'videotime'), '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_duration_force',
+                get_string('force', 'videotime'), get_string('force_help', 'videotime'), '0'));
 
             $settings->add(new admin_setting_heading('show_viewed_duration', get_string('default') . ' ' .
                 get_string('show_viewed_duration', 'videotime'), ''));
-            $settings->add(new admin_setting_configcheckbox('videotime/show_viewed_duration', get_string('show_viewed_duration', 'videotime'),
-                '', '1'));
-            $settings->add(new admin_setting_configcheckbox('videotime/show_viewed_duration_force', get_string('force', 'videotime'),
-                get_string('force_help', 'videotime'), '0'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_viewed_duration',
+                get_string('show_viewed_duration', 'videotime'), '', '1'));
+            $settings->add(new admin_setting_configcheckbox('videotime/show_viewed_duration_force',
+                get_string('force', 'videotime'), get_string('force_help', 'videotime'), '0'));
 
             $settings->add(new admin_setting_heading('columns', get_string('default') . ' ' .
                 get_string('columns', 'videotime'), ''));
