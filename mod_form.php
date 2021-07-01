@@ -57,24 +57,24 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         if (videotime_has_pro() && videotime_has_repository()) {
 
-            $needs_setup = false;
+            $needssetup = false;
             try {
                 $api = new \videotimeplugin_repository\api();
             } catch (\videotimeplugin_repository\exception\api_not_configured $e) {
-                $needs_setup = true;
+                $needssetup = true;
             } catch (\videotimeplugin_repository\exception\api_not_authenticated $e) {
-                $needs_setup = true;
+                $needssetup = true;
             }
 
             $group = [];
             $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
-            if (!$needs_setup) {
+            if (!$needssetup) {
                 $group[] = $mform->createElement('button', 'pull_from_vimeo', get_string('pull_from_vimeo', 'videotime'));
             }
             $mform->addGroup($group, '', get_string('vimeo_url', 'videotime'));
 
             $group = [];
-            if (!$needs_setup) {
+            if (!$needssetup) {
                 $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
                 $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
             } else if (is_siteadmin()) {

@@ -548,21 +548,21 @@ function videotime_cm_info_view(cm_info $cm) {
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
-            $column_class = 'col-sm-12';
+            $columnclass = 'col-sm-12';
             if ($instance->columns == 2) {
-                $column_class = 'col-sm-6';
+                $columnclass = 'col-sm-6';
             } else if ($instance->columns == 3) {
-                $column_class = 'col-sm-4';
+                $columnclass = 'col-sm-4';
             } else if ($instance->columns == 4) {
-                $column_class = 'col-sm-3';
+                $columnclass = 'col-sm-3';
             }
 
-            $cm->set_extra_classes('preview_mode ' . $column_class);
+            $cm->set_extra_classes('preview_mode ' . $columnclass);
         } else {
             // Normal mode, do not set any additional content.
             $content = null;
         }
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
     }
 
@@ -584,14 +584,14 @@ function mod_videotime_get_fontawesome_icon_map() {
  * Get shortened version of description for display.
  *
  * @param string $description
- * @param int $max_length
+ * @param int $maxlength
  * @return string
  */
-function videotime_get_excerpt($description, $max_length = 150) {
-    if (strlen($description) > $max_length) {
-        $excerpt   = substr($description, 0, $max_length - 3);
-        $lastSpace = strrpos($excerpt, ' ');
-        $excerpt   = substr($excerpt, 0, $lastSpace);
+function videotime_get_excerpt($description, $maxlength = 150) {
+    if (strlen($description) > $maxlength) {
+        $excerpt   = substr($description, 0, $maxlength - 3);
+        $lastspace = strrpos($excerpt, ' ');
+        $excerpt   = substr($excerpt, 0, $lastspace);
         $excerpt  .= '...';
     } else {
         $excerpt = $description;
@@ -629,8 +629,8 @@ function mod_videotime_treat_as_label(cm_info $mod) {
  */
 function mod_videotime_get_vimeo_id_from_link($link) {
     $videoid = null;
-    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $output_array)) {
-        return $output_array[5];
+    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $outputarray)) {
+        return $outputarray[5];
     }
 
     return null;

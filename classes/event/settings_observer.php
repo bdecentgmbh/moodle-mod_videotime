@@ -38,26 +38,26 @@ class settings_observer {
             return;
         }
 
-        $force_fields = [];
+        $forcefields = [];
 
-        foreach ($event->other['olddata'] as $full_name => $value) {
-            if (strpos($full_name, 'videotime') !== false && self::string_ends_with($full_name, '_force')) {
-                $force_name = str_replace('s_videotime_', '', $full_name);
+        foreach ($event->other['olddata'] as $fullname => $value) {
+            if (strpos($fullname, 'videotime') !== false && self::string_ends_with($fullname, '_force')) {
+                $forcename = str_replace('s_videotime_', '', $fullname);
 
-                if (get_config('videotime', $force_name)) {
-                    $name = str_replace('s_videotime_', '', $full_name);
+                if (get_config('videotime', $forcename)) {
+                    $name = str_replace('s_videotime_', '', $fullname);
                     $name = str_replace('_force', '', $name);
-                    $force_fields[$name] = get_config('videotime', $name);
+                    $forcefields[$name] = get_config('videotime', $name);
                 }
             }
         }
 
-        if (count($force_fields) > 0) {
+        if (count($forcefields) > 0) {
             $sets = [];
-            foreach ($force_fields as $name => $value) {
+            foreach ($forcefields as $name => $value) {
                 $sets[] = $name . ' = :' . $name;
             }
-            $DB->execute('UPDATE {videotime} SET ' . implode(', ', $sets), $force_fields);
+            $DB->execute('UPDATE {videotime} SET ' . implode(', ', $sets), $forcefields);
         }
     }
 

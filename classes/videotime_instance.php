@@ -64,7 +64,7 @@ class videotime_instance implements \renderable, \templatable {
      *
      * @var next_activity_button
      */
-    private $next_activity_button = null;
+    private $nextactivitybutton = null;
 
     /**
      * @var bool
@@ -332,11 +332,11 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function get_next_activity_button() {
         // Next activity button is a pro feature.
-        if (videotime_has_pro() && is_null($this->next_activity_button)) {
-            $this->next_activity_button = new next_activity_button(\cm_info::create($this->get_cm()));
+        if (videotime_has_pro() && is_null($this->nextactivitybutton)) {
+            $this->nextactivitybutton = new next_activity_button(\cm_info::create($this->get_cm()));
         }
 
-        return $this->next_activity_button;
+        return $this->nextactivitybutton;
     }
 
     /**
@@ -385,9 +385,9 @@ class videotime_instance implements \renderable, \templatable {
             'uniqueid' => uniqid()
         ];
 
-        if (videotime_has_pro() && !$this->is_embed() && $next_activity_button = $this->get_next_activity_button()) {
+        if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
             $renderer = $PAGE->get_renderer('mod_videotime');
-            $context['next_activity_button_html'] = $renderer->render($next_activity_button);
+            $context['next_activity_button_html'] = $renderer->render($nextactivitybutton);
         }
 
         return $context;

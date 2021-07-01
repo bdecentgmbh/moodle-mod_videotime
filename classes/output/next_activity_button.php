@@ -47,12 +47,12 @@ class next_activity_button implements \templatable, \renderable {
     /**
      * @var string
      */
-    private $availability_info = '';
+    private $availabilityinfo = '';
 
     /**
      * @var bool
      */
-    private $is_restricted = false;
+    private $isrestricted = false;
 
     private $moduleinstance = null;
 
@@ -88,13 +88,13 @@ class next_activity_button implements \templatable, \renderable {
 
         if ($this->nextcm) {
             if (!empty($this->nextcm->availableinfo)) {
-                $this->availability_info = \core_availability\info::format_info(
+                $this->availabilityinfo = \core_availability\info::format_info(
                     $this->nextcm->availableinfo,
                     $this->nextcm->course
                 );
             }
 
-            $this->is_restricted = !$this->nextcm->uservisible;
+            $this->isrestricted = !$this->nextcm->uservisible;
         }
     }
 
@@ -133,7 +133,7 @@ class next_activity_button implements \templatable, \renderable {
      * @return bool
      */
     public function is_restricted() {
-        return $this->is_restricted;
+        return $this->isrestricted;
     }
 
     /**
@@ -155,9 +155,9 @@ class next_activity_button implements \templatable, \renderable {
             'nextcm_url' => $url,
             'nextcm_name' => $this->nextcm->get_formatted_name(),
             'hasnextcm' => !empty($this->nextcm),
-            'availability_info' => $this->availability_info,
-            'availability_title' => videotime_is_totara() ? strip_tags($this->availability_info) : null,
-            'is_restricted' => $this->is_restricted,
+            'availability_info' => $this->availabilityinfo,
+            'availability_title' => videotime_is_totara() ? strip_tags($this->availabilityinfo) : null,
+            'is_restricted' => $this->isrestricted,
             'instance' => $this->moduleinstance->to_record()
         ];
     }
