@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Represents a single Video Time activity module. Adds more functionality when working with instances.
+ *
  * @package     mod_videotime
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,8 +40,13 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  */
 class videotime_instance implements \renderable, \templatable {
 
+    /** const int */
     const NORMAL_MODE = 0;
+
+    /** const int */
     const LABEL_MODE = 1;
+
+    /** const int */
     const PREVIEW_MODE = 2;
 
     /**
@@ -106,6 +113,8 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
+     * Constructor
+     *
      * @param \stdClass $instancerecord
      */
     protected function __construct(\stdClass $instancerecord) {
@@ -134,8 +143,8 @@ class videotime_instance implements \renderable, \templatable {
     /**
      * This is for backwards compatibility. Some code may still treat the instance as a stdClass.
      *
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value) {
         $this->record->$name = $value;
@@ -183,7 +192,9 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
-     * @param $fieldname
+     * Get forced value of field from config
+     *
+     * @param string $fieldname
      * @return mixed
      * @throws \dml_exception
      */
@@ -201,6 +212,8 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
+     * Whether instance is embedded
+     *
      * @return bool
      */
     public function is_embed(): bool {
@@ -263,6 +276,7 @@ class videotime_instance implements \renderable, \templatable {
      *
      * @param string $fieldname
      * @param \MoodleQuickForm $mform
+     * @param array $group
      * @throws \coding_exception
      * @throws \dml_exception
      */
@@ -342,7 +356,7 @@ class videotime_instance implements \renderable, \templatable {
     /**
      * Get the current time the user has watched or paused at. Used for resuming playback.
      *
-     * @param $userid
+     * @param int $userid
      * @return float
      * @throws \coding_exception
      * @throws \dml_exception
@@ -394,6 +408,8 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
+     * Returns external description
+     *
      * @return external_description
      */
     public static function get_external_description(): external_description {

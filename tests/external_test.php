@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class external_test
+ *
  * @package     mod_videotime
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,8 +38,13 @@ require_once("$CFG->dirroot/webservice/tests/helpers.php");
  */
 class videotime_external_test extends externallib_advanced_testcase {
 
+    /** @var stdClass */
     private $course;
+
+    /** @var stdClass */
     private $videotimeinstance;
+
+    /** @var stdClass */
     private $student;
 
     public function setUp(): void {

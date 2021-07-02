@@ -78,6 +78,8 @@ class videotime_session_table extends table {
     }
 
     /**
+     * Get fields
+     *
      * @return field_interface[]
      */
     public function get_fields(): array {

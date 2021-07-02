@@ -517,6 +517,12 @@ class mod_videotime_mod_form extends moodleform_mod {
         return [];
     }
 
+    /**
+     * Called during validation to see whether some module-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules is enabled, false if none are.
+     */
     public function completion_rule_enabled($data) {
         return (
             (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second'] != 0)) ||
@@ -525,10 +531,11 @@ class mod_videotime_mod_form extends moodleform_mod {
     }
 
     /**
-     * @param $data
-     * @param $files
-     * @return array
-     * @throws coding_exception
+     * Validates the form input
+     *
+     * @param array $data submitted data
+     * @param array $files submitted files
+     * @return array eventual errors indexed by the field name
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
@@ -556,6 +563,11 @@ class mod_videotime_mod_form extends moodleform_mod {
         return $errors;
     }
 
+    /**
+     * Prepares the form before data are set
+     *
+     * @param  array $defaultvalues
+     */
     public function data_preprocessing(&$defaultvalues) {
         // Editing existing instance.
         if ($this->current->instance) {

@@ -37,12 +37,23 @@ require_once($CFG->dirroot.'/mod/videotime/lib.php');
  */
 trait view_videotime {
 
+    /**
+     * Describes the parameters for view_videotime.
+     *
+     * @return external_function_parameters
+     */
     public static function view_videotime_parameters() {
         return new \external_function_parameters([
             'cmid' => new \external_value(PARAM_INT, 'Course module ID.')
         ]);
     }
 
+    /**
+     * Record video time view event
+     *
+     * @param  int $cmid The videotime course module id
+     * @return stdClass module instance
+     */
     public static function view_videotime($cmid) {
         global $DB;
 
@@ -66,6 +77,11 @@ trait view_videotime {
         return null;
     }
 
+    /**
+     * Describes the view_videotime return value.
+     *
+     * @return external_single_structure|null
+     */
     public static function view_videotime_returns() {
         return null;
     }

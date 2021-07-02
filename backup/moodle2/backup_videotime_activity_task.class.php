@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/backup_videotime_stepslib.php');
 
 /**
+ * Defines backup_videotime_activity_task class
+ *
  * Provides the steps to perform one complete backup of the Label instance
  */
 class backup_videotime_activity_task extends backup_activity_task {

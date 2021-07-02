@@ -26,5 +26,11 @@ namespace mod_videotime\plugininfo;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Plugin version and other meta-data are defined here.
+ *
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class videotimeplugin extends \core\plugininfo\base {
 }

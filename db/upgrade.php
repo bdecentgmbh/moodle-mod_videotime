@@ -25,6 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Uggrede plugin
+ *
  * @param string $oldversion the version we are upgrading from.
  */
 function xmldb_videotime_upgrade($oldversion) {

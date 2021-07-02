@@ -26,9 +26,17 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Define the complete videotime structure for backup, with file and id annotations
+ *
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_videotime_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Defines the structure of the 'videotime' element inside the xml file
+     *
+     * @return backup_nested_element
+     */
     protected function define_structure() {
         global $CFG;
 

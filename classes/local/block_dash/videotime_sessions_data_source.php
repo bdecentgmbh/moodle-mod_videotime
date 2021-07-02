@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Sessions data source
+ *
  * @package    mod_videotime
  * @copyright  2020 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,6 +46,12 @@ use local_dash\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_session_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
+/**
+ * Sessions data source
+ *
+ * @copyright  2020 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class videotime_sessions_data_source extends abstract_data_source {
 
     /**
@@ -60,6 +68,8 @@ class videotime_sessions_data_source extends abstract_data_source {
     }
 
     /**
+     * Get query template
+     *
      * @return builder
      */
     public function get_query_template(): builder {
@@ -107,6 +117,8 @@ class videotime_sessions_data_source extends abstract_data_source {
     }
 
     /**
+     * Build filter collection
+     *
      * @return filter_collection_interface
      */
     public function build_filter_collection() {

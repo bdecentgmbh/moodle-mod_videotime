@@ -17,7 +17,7 @@
 /**
  * Video Time instance tests.
  *
- * @package   videotime
+ * @package   mod_videotime
  * @copyright 2020 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class videotime_instance_test extends advanced_testcase {
 
+    /**
+     * @var stdClass $course
+     */
     private $course;
+    /**
+     * @var stdClass $instancerecord
+     */
     private $instancerecord;
 
     /**
@@ -42,6 +48,9 @@ class videotime_instance_test extends advanced_testcase {
      */
     private $videotimeinstance;
 
+    /**
+     * Set up
+     */
     public function setUp() : void {
         $this->resetAfterTest();
 
@@ -53,12 +62,18 @@ class videotime_instance_test extends advanced_testcase {
         $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
     }
 
+    /**
+     * Tear down data
+     */
     public function tearDown() : void {
         $this->course = null;
         $this->instancerecord = null;
         $this->videotimeinstance = null;
     }
 
+    /**
+     * Force setting test
+     */
     public function test_force_settings() {
         $this->assertIsArray($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));

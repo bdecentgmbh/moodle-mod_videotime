@@ -17,7 +17,7 @@
 /**
  * Video Time next instance button tests.
  *
- * @package   videotime
+ * @package   mod_videotime
  * @copyright 2020 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -46,6 +46,11 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
+    /**
+     * Map objectid for backup
+     *
+     * return array
+     */
     public static function get_objectid_mapping() {
         return array('db' => 'videotime', 'restore' => 'videotime');
     }

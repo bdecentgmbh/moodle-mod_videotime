@@ -27,6 +27,8 @@ use mod_videotime\videotime_instance;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Checks if Videotime supports a specific feature.
+ *
  * Return if the plugin supports $feature.
  * http://localhost/moodle35/course/mod.php?sesskey=nzkiyHyS2D&sr=0&update=2
  * @param string $feature Constant representing the feature.
@@ -57,7 +59,7 @@ function videotime_supports($feature) {
  * Update/create grade item for given data
  *
  * @category grade
- * @param stdClass $data A videotime instance with extra cmidnumber property
+ * @param stdClass $videotime A videotime instance with extra cmidnumber property
  * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
@@ -226,7 +228,9 @@ function videotime_delete_instance($id) {
 }
 
 /**
- * @param $moduleinstance
+ * Process data submitted for videotime instance
+ *
+ * @param videotime_instance $moduleinstance
  * @return mixed
  */
 function videotime_process_video_description($moduleinstance) {
@@ -308,7 +312,9 @@ function videotime_get_completion_state($course, $cm, $userid, $type) {
 }
 
 /**
- * @param $cmid
+ *  Update completion info
+ *
+ * @param int $cmid
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -624,7 +630,7 @@ function mod_videotime_treat_as_label(cm_info $mod) {
 /**
  * Parse Vimeo link/URL and return video ID.
  *
- * @param $link
+ * @param string $link
  * @return mixed|null
  */
 function mod_videotime_get_vimeo_id_from_link($link) {

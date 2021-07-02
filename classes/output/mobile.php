@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mobile output class for Video Time.
+ *
  * @package     mod_videotime
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -85,6 +87,8 @@ class mobile {
 
     /**
      * Return JavaScript needed for viewing videos.
+     *
+     * @param array $args
      */
     public static function view_init(array $args) {
         global $CFG;

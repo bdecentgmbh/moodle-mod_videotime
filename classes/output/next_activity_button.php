@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Next activity button helper class
+ *
  * @package     mod_videotime
  * @copyright   2019 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,6 +34,12 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
 
+/**
+ * Next activity button helper class
+ *
+ * @copyright   2019 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class next_activity_button implements \templatable, \renderable {
 
     /**
@@ -54,8 +62,16 @@ class next_activity_button implements \templatable, \renderable {
      */
     private $isrestricted = false;
 
+    /**
+     * @var stdClass
+     */
     private $moduleinstance = null;
 
+    /**
+     * Constructor
+     *
+     * @param \cm_info $cm course module info
+     */
     public function __construct(\cm_info $cm) {
         $this->cm = $cm;
 
@@ -99,6 +115,8 @@ class next_activity_button implements \templatable, \renderable {
     }
 
     /**
+     * Return next course module
+     *
      * @return \cm_info|mixed
      */
     public function get_next_cm() {
@@ -130,6 +148,8 @@ class next_activity_button implements \templatable, \renderable {
     }
 
     /**
+     * Whether next activity is unavailable
+     *
      * @return bool
      */
     public function is_restricted() {
@@ -137,6 +157,8 @@ class next_activity_button implements \templatable, \renderable {
     }
 
     /**
+     * Return data for next course module
+     *
      * @return array
      * @throws dml_exception
      * @throws moodle_exception
@@ -162,6 +184,12 @@ class next_activity_button implements \templatable, \renderable {
         ];
     }
 
+    /**
+     * Export data for template
+     *
+     * @param renderer_base $output
+     * @return stdClass
+     */
     public function export_for_template(renderer_base $output) {
         return $this->get_data();
     }
@@ -169,7 +197,7 @@ class next_activity_button implements \templatable, \renderable {
     /**
      * Get activities that can be used as the "next activity".
      *
-     * @param $courseid
+     * @param int $courseid course id
      * @return array
      * @throws dml_exception
      * @throws moodle_exception

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Settings observer event
+ *
  * @package     mod_videotime
  * @copyright   2019 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,9 +28,17 @@ use core\event\admin_settings_changed;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Settings observer event
+ *
+ * @copyright   2019 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class settings_observer {
 
     /**
+     * Change setting
+     *
      * @param admin_settings_changed $event
      */
     public static function changed(admin_settings_changed $event) {

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Structure step to restore one videotime activity
+ *
  * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,9 +26,17 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Structure step to restore one videotime activity
+ *
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_videotime_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * Defines the structure to be restored.
+     *
+     * @return restore_path_element[].
+     */
     protected function define_structure() {
         global $CFG;
 
@@ -44,6 +54,11 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Processes the videotim restore data.
+     *
+     * @param array $data Parsed element data.
+     */
     protected function process_videotime($data) {
         global $DB;
 
@@ -60,6 +75,11 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Process session data
+     *
+     * @param array $data data
+     */
     protected function process_videotime_session($data) {
         global $DB;
 
@@ -72,6 +92,9 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $this->set_mapping('videotime_session', $oldid, $newitemid);
     }
 
+    /**
+     * Defines post-execution actions to dd files
+     */
     protected function after_execute() {
         // Add videotime related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_videotime', 'intro', null);
