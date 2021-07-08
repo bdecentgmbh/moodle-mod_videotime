@@ -221,7 +221,7 @@ define([
                         if (parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
                                 let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
-                                if (link) {
+                                if ($('.path-course-view').length && link) {
                                     link.click();
                                 } else {
                                     window.location.href = data.nextcm_url;
