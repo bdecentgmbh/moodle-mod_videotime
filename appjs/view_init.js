@@ -33,7 +33,7 @@
         this.element = element;
         this.angularComponent = angularComponent;
         this.cmid = element.getAttribute('data-session');
-        this.hasPro = element.getAttribute('data-has-pro');
+        this.hasPro = element.getAttribute('data-has-pro') && element.getAttribute('data-has-pro') !== '0';
         this.resumeTime = element.getAttribute('data-resume-time');
         this.player = null;
         this.playing = false;
