@@ -601,9 +601,13 @@ function videotime_get_coursemodule_info($coursemodule) {
         if ($instance->completion_hide_detail) {
             $result->customdata['customcompletionrules']['completion_hide_detail'] = $instance->completion_hide_detail;
         } else {
-            $result->customdata['customcompletionrules']['completion_on_view_time_second']
-                = $instance->completion_on_view_time_second;
-            $result->customdata['customcompletionrules']['completion_on_percent_value'] = $instance->completion_on_percent_value;
+            if ($instance->completion_on_view_time) {
+                $result->customdata['customcompletionrules']['completion_on_view_time_second']
+                    = $instance->completion_on_view_time_second;
+            }
+            if ($instance->completion_on_percent) {
+                $result->customdata['customcompletionrules']['completion_on_percent_value'] = $instance->completion_on_percent_value;
+            }
             $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
         }
     }
