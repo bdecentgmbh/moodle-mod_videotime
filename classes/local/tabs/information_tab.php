@@ -35,14 +35,29 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  */
 class information_tab extends tab {
 
+    /**
+     * Get tab name for ids
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'information';
     }
 
+    /**
+     * Get label for tab
+     *
+     * @return string
+     */
     public function get_label(): string {
         return get_string('tabinformation', 'videotime');
     }
 
+    /**
+     * Get tab panel content
+     *
+     * @return string
+     */
     public function get_tab_content(): string {
         return 'This is some information';
     }

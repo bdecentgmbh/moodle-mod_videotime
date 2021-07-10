@@ -189,36 +189,36 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configcheckbox('videotime/dnt', get_string('option_dnt', 'videotime'),
         get_string('option_dnt_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/dnt_force', get_string('force', 'videotime'),
-        get_string('force_help', 'videotime'), '0'));            
+        get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('option_autopause', get_string('default') . ' ' .
         get_string('option_autopause', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/autopause', get_string('option_autopause', 'videotime'),
         get_string('option_autopause_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/autopause_force', get_string('force', 'videotime'),
-        get_string('force_help', 'videotime'), '0'));            
+        get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('option_background', get_string('default') . ' ' .
         get_string('option_background', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/background', get_string('option_background', 'videotime'),
         get_string('option_background_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/background_force', get_string('force', 'videotime'),
-        get_string('force_help', 'videotime'), '0'));            
+        get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('option_controls', get_string('default') . ' ' .
         get_string('option_controls', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/controls', get_string('option_controls', 'videotime'),
         get_string('option_controls_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/controls_force', get_string('force', 'videotime'),
-        get_string('force_help', 'videotime'), '0'));      
-        
+        get_string('force_help', 'videotime'), '0'));
+
         $settings->add(new admin_setting_heading('option_pip', get_string('default') . ' ' .
         get_string('option_pip', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/pip', get_string('option_pip', 'videotime'),
         get_string('option_pip_help', 'videotime'), '1'));
         $settings->add(new admin_setting_configcheckbox('videotime/pip_force', get_string('force', 'videotime'),
-        get_string('force_help', 'videotime'), '0'));      
-        
+        get_string('force_help', 'videotime'), '0'));
+
         if (videotime_has_repository()) {
             $settings->add(new admin_setting_heading('label_mode', get_string('default') . ' ' .
                 get_string('mode', 'videotime'), ''));

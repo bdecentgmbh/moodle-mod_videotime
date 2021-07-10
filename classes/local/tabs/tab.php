@@ -52,36 +52,84 @@ abstract class tab {
      */
     private $persistent = false;
 
+    /**
+     * Constructor
+     *
+     * @param videotime_instance $instance
+     */
     public function __construct(videotime_instance $instance) {
         $this->instance = $instance;
     }
 
+    /**
+     * Get video time instance
+     *
+     * @return videotime_instance
+     */
     public function get_instance(): videotime_instance {
         return $this->instance;
     }
 
+    /**
+     * Set active
+     *
+     */
     public function set_active(): void {
         $this->active = true;
     }
 
+    /**
+     * Get active state
+     *
+     * @return bool
+     */
     public function get_active(): bool {
         return $this->active;
     }
 
+    /**
+     * Set persistent
+     *
+     */
     public function set_persistent(): void {
         $this->persistent = true;
     }
 
+    /**
+     * Get persistent state
+     *
+     * @return bool
+     */
     public function get_persistent(): bool {
         return $this->persistent;
     }
 
-    public abstract function get_name(): string;
+    /**
+     * Get tab name for ids
+     *
+     * @return string
+     */
+    abstract public function get_name(): string;
 
-    public abstract function get_label(): string;
+    /**
+     * Get label for tab
+     *
+     * @return string
+     */
+    abstract public function get_label(): string;
 
-    public abstract function get_tab_content(): string;
+    /**
+     * Get tab panel content
+     *
+     * @return string
+     */
+    abstract public function get_tab_content(): string;
 
+    /**
+     * Get data
+     *
+     * @return array
+     */
     public function get_data(): array {
         return [
             'name' => $this->get_name(),

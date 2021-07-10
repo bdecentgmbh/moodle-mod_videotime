@@ -48,6 +48,11 @@ class tabs implements \templatable, \renderable {
      */
     private $instance;
 
+    /**
+     * Constructory
+     *
+     * @param videotime_instance $instance
+     */
     public function __construct(videotime_instance $instance) {
         $this->instance = $instance;
         $this->tabs[] = new watch_tab($instance);
@@ -57,6 +62,11 @@ class tabs implements \templatable, \renderable {
         $this->get_tab('watch')->set_persistent();
     }
 
+    /**
+     * Get active tab
+     *
+     * @param string $tabname
+     */
     public function set_active_tab(string $tabname): void {
         foreach ($this->tabs as $tab) {
             if ($tab->get_name() == $tabname) {
@@ -66,6 +76,12 @@ class tabs implements \templatable, \renderable {
         }
     }
 
+    /**
+     * Get active tab
+     *
+     * @param string $tabname
+     * @return null|tab
+     */
     public function get_tab(string $tabname): ?tab {
         foreach ($this->tabs as $tab) {
             if ($tab->get_name() == $tabname) {
@@ -74,6 +90,12 @@ class tabs implements \templatable, \renderable {
         }
     }
 
+    /**
+     * Export template data
+     *
+     * @param renderer_base $output
+     * @return array
+     */
     public function export_for_template(renderer_base $output) {
         $tabs = [];
 
