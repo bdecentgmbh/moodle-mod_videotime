@@ -60,6 +60,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'completion_on_finish',
             'completion_on_percent',
             'completion_on_percent_value',
+            'completion_hide_detail',
             'autoplay',
             'byline',
             'color',

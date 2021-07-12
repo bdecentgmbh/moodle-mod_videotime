@@ -578,6 +578,49 @@ function videotime_cm_info_view(cm_info $cm) {
 }
 
 /**
+ * Add a get_coursemodule_info function in case any forum type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function videotime_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $instance = videotime_instance::instance_by_id($coursemodule->instance);
+
+    $result = new cached_cm_info();
+    $result->name = $instance->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('forum', $instance, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        if ($instance->completion_hide_detail) {
+            $result->customdata['customcompletionrules']['completion_hide_detail'] = $instance->completion_hide_detail;
+        } else {
+            if ($instance->completion_on_view_time) {
+                $result->customdata['customcompletionrules']['completion_on_view_time_second']
+                    = $instance->completion_on_view_time_second;
+            }
+            if ($instance->completion_on_percent) {
+                $result->customdata['customcompletionrules']['completion_on_percent_value'] = $instance->completion_on_percent_value;
+            }
+            $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
+        }
+    }
+
+    return $result;
+}
+
+/**
  * Get icon mapping for font-awesome.
  */
 function mod_videotime_get_fontawesome_icon_map() {

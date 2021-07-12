@@ -81,6 +81,14 @@ echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
+    // Render the activity information.
+    if (class_exists('\\core_completion\\activity_custom_completion')) {
+        $cminfo = cm_info::create($cm);
+        $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+        $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
+        echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+    }
+
     echo $renderer->render($moduleinstance);
 }
 echo $OUTPUT->footer();

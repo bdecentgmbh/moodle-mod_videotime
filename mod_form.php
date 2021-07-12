@@ -508,7 +508,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addElement('advcheckbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));
             $mform->setType('completion_on_finish', PARAM_BOOL);
 
-            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish'];
+            $mform->addElement('advcheckbox', 'completion_hide_detail', '', get_string('completion_hide_detail', 'videotime'));
+            $mform->setType('completion_hide_detail', PARAM_BOOL);
+
+            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish', 'completion_hide_detail'];
         } else {
             // Remove completion on grade since grade settings are not displayed for free version.
             $mform->removeElement('completionusegrade');
