@@ -573,7 +573,7 @@ function videotime_cm_info_view(cm_info $cm) {
     }
 
     if ($content) {
-        $cm->set_content($content, true);
+        $cm->set_content($content, false);
     }
 }
 
