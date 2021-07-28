@@ -35,6 +35,9 @@ use external_api;
  *
  * Each external function is implemented in its own trait. This class
  * aggregates them all.
+ *
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class external extends external_api {
     use get_videotime;

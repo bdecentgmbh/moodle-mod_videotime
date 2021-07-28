@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Video time stats data source
+ *
  * @package    mod_videotime
  * @copyright  2020 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,6 +46,13 @@ use local_dash\data_grid\filter\tags_field_filter;
 use local_dash\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
+/**
+ * Video time stats data source
+ *
+ * @package    mod_videotime
+ * @copyright  2020 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class videotime_stats_data_source extends abstract_data_source {
 
     /**
@@ -51,13 +60,15 @@ class videotime_stats_data_source extends abstract_data_source {
      *
      * @param context $context
      */
-    public function __construct(context $context)  {
+    public function __construct(context $context) {
         $this->add_table(new videotime_table());
         $this->add_table(new course_table());
         parent::__construct($context);
     }
 
     /**
+     * Get template
+     *
      * @return builder
      */
     public function get_query_template(): builder {
@@ -103,15 +114,16 @@ class videotime_stats_data_source extends abstract_data_source {
     }
 
     /**
+     * Build filter collection
+     *
      * @return filter_collection_interface
      */
-    public function build_filter_collection()
-    {
-        $filter_collection = new filter_collection(get_class($this), $this->get_context());
+    public function build_filter_collection() {
+        $filtercollection = new filter_collection(get_class($this), $this->get_context());
 
-        $filter_collection->add_filter(new category_field_filter('cc', 'cc.id', get_string('category')));
+        $filtercollection->add_filter(new category_field_filter('cc', 'cc.id', get_string('category')));
 
-        $filter_collection->add_filter(new course_field_filter('c', 'c.id', get_string('course')));
+        $filtercollection->add_filter(new course_field_filter('c', 'c.id', get_string('course')));
 
         if (class_exists('\core_course\customfield\course_handler')) {
             $handler = \core_course\customfield\course_handler::create();
@@ -125,13 +137,13 @@ class videotime_stats_data_source extends abstract_data_source {
                         $definitions[] = new bool_filter($alias, $select, $field->get_formatted_name());
                         break;
                     case 'date':
-                        $filter_collection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
+                        $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
                             $field->get_formatted_name()));
                         break;
                     case 'textarea':
                         break;
                     default:
-                        $filter_collection->add_filter(new customfield_filter($alias, $select, $field,
+                        $filtercollection->add_filter(new customfield_filter($alias, $select, $field,
                             $field->get_formatted_name()));
                         break;
                 }
@@ -149,33 +161,33 @@ class videotime_stats_data_source extends abstract_data_source {
                         $definitions[] = new bool_filter($alias, $select, $field->fullname);
                         break;
                     case 'date':
-                        $filter_collection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
+                        $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
                             $field->fullname));
                         break;
                     case 'textarea':
                         break;
                     default:
-                        $filter_collection->add_filter(new customfield_filter($alias, $select, $field,
+                        $filtercollection->add_filter(new customfield_filter($alias, $select, $field,
                             $field->fullname));
                         break;
                 }
             }
         }
 
-        $filter_collection->add_filter(new current_course_context_condition('c_current_course_context', 'ctx.id'));
+        $filtercollection->add_filter(new current_course_context_condition('c_current_course_context', 'ctx.id'));
 
-        $filter_collection->add_filter(new course_condition('c_course', 'c.id'));
+        $filtercollection->add_filter(new course_condition('c_course', 'c.id'));
 
-        $filter_collection->add_filter(new my_enrolled_courses_condition('my_enrolled_courses', 'c.id'));
+        $filtercollection->add_filter(new my_enrolled_courses_condition('my_enrolled_courses', 'c.id'));
 
-        $filter_collection->add_filter(new course_category_condition('c_course_categories_condition', 'c.category'));
+        $filtercollection->add_filter(new course_category_condition('c_course_categories_condition', 'c.category'));
 
-        $filter_collection->add_filter(new tags_condition('tags_condition', 'cm.id', 'core', 'course_modules',
+        $filtercollection->add_filter(new tags_condition('tags_condition', 'cm.id', 'core', 'course_modules',
             get_string('tags', 'block_dash')));
 
-        $filter_collection->add_filter(new tags_field_filter('tags_filter', 'cm.id', 'core', 'course_modules',
+        $filtercollection->add_filter(new tags_field_filter('tags_filter', 'cm.id', 'core', 'course_modules',
             get_string('tags', 'block_dash')));
 
-        return $filter_collection;
+        return $filtercollection;
     }
 }

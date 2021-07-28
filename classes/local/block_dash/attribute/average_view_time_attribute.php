@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Transforms data to average view time.
+ *
  * @package     mod_videotime
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,6 +31,8 @@ use mod_videotime\videotime_instance;
  * Transforms data to average view time.
  *
  * @package mod_videotime
+ * @copyright   2020 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class average_view_time_attribute extends abstract_field_attribute {
 
@@ -36,7 +40,7 @@ class average_view_time_attribute extends abstract_field_attribute {
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
      *
-     * @param $data
+     * @param int $data
      * @param \stdClass $record Entire row
      * @return mixed
      * @throws \moodle_exception
@@ -46,6 +50,8 @@ class average_view_time_attribute extends abstract_field_attribute {
 
         $instance = videotime_instance::instance_by_id($data);
 
-        return $DB->get_field_sql('SELECT AVG(vts.time) FROM {videotime_session} vts WHERE vts.module_id = ?', [$instance->get_cm()->id]);
+        return $DB->get_field_sql('SELECT AVG(vts.time)
+                                     FROM {videotime_session} vts
+                                    WHERE vts.module_id = ?', [$instance->get_cm()->id]);
     }
 }

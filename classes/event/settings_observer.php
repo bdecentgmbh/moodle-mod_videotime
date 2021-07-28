@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Settings observer event
+ *
  * @package     mod_videotime
  * @copyright   2019 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,9 +28,17 @@ use core\event\admin_settings_changed;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Settings observer event
+ *
+ * @copyright   2019 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class settings_observer {
 
     /**
+     * Change setting
+     *
      * @param admin_settings_changed $event
      */
     public static function changed(admin_settings_changed $event) {
@@ -38,26 +48,26 @@ class settings_observer {
             return;
         }
 
-        $force_fields = [];
+        $forcefields = [];
 
-        foreach ($event->other['olddata'] as $full_name => $value) {
-            if (strpos($full_name, 'videotime') !== false && self::string_ends_with($full_name, '_force')) {
-                $force_name = str_replace('s_videotime_', '', $full_name);
+        foreach ($event->other['olddata'] as $fullname => $value) {
+            if (strpos($fullname, 'videotime') !== false && self::string_ends_with($fullname, '_force')) {
+                $forcename = str_replace('s_videotime_', '', $fullname);
 
-                if (get_config('videotime', $force_name)) {
-                    $name = str_replace('s_videotime_', '', $full_name);
+                if (get_config('videotime', $forcename)) {
+                    $name = str_replace('s_videotime_', '', $fullname);
                     $name = str_replace('_force', '', $name);
-                    $force_fields[$name] = get_config('videotime', $name);
+                    $forcefields[$name] = get_config('videotime', $name);
                 }
             }
         }
 
-        if (count($force_fields) > 0) {
+        if (count($forcefields) > 0) {
             $sets = [];
-            foreach ($force_fields as $name => $value) {
+            foreach ($forcefields as $name => $value) {
                 $sets[] = $name . ' = :' . $name;
             }
-            $DB->execute('UPDATE {videotime} SET ' . implode(', ', $sets), $force_fields);
+            $DB->execute('UPDATE {videotime} SET ' . implode(', ', $sets), $forcefields);
         }
     }
 
@@ -68,8 +78,7 @@ class settings_observer {
      * @param string $needle
      * @return bool
      */
-    public static function string_ends_with($haystack, $needle)
-    {
+    public static function string_ends_with($haystack, $needle) {
         $length = strlen($needle);
         if ($length == 0) {
             return true;

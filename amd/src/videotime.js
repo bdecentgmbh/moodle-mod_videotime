@@ -7,7 +7,21 @@
 /**
  * @module mod_videotime/videotime
  */
-define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templates', 'core/notification'], function($, Vimeo, Ajax, Log, Templates, Notification) {
+define([
+    'jquery',
+    'mod_videotime/player',
+    'core/ajax',
+    'core/log',
+    'core/templates',
+    'core/notification'
+], function(
+    $,
+    Vimeo,
+    Ajax,
+    Log,
+    Templates,
+    Notification
+) {
 
     let VideoTime = function(elementId, cmId, hasPro, interval) {
         this.elementId = elementId;
@@ -28,6 +42,12 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         this.playbackRate = 1;
 
         this.plugins = [];
+
+        if (hasPro && $('body').hasClass('path-course-view')  && !$('body').hasClass('vtinit')) {
+            $('body').addClass('vtinit');
+            $(document).on('focus', 'body', this.initializeNewInstances.bind(this));
+        }
+        this.modulecount = $('body .activity.videotime').length;
     };
 
     /**
@@ -131,7 +151,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
         // Catch all events where video plays.
-        this.player.on('play', function (e) {
+        this.player.on('play', function () {
             this.playing = true;
             Log.debug('VIDEO_TIME play');
         }.bind(this));
@@ -178,7 +198,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             this.playing = false;
             Log.debug('VIDEO_TIME ended');
 
-            new Promise(function(resolve, reject) {
+            new Promise(function(resolve) {
                 this.getSession().then(function(session) {
                     resolve(session);
                 });
@@ -193,19 +213,24 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
                 return session;
             }.bind(this)).catch(function(error) {
                 alert(error);
-            }).finally(function(session) {
+            }).finally(function() {
                 this.getSession().then(function(session) {
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
 
                         if (parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
-                                window.location.href = data.nextcm_url;
+                                let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
+                                if ($('.path-course-view').length && link) {
+                                    link.click();
+                                } else {
+                                    window.location.href = data.nextcm_url;
+                                }
                             }
                         }
 
                         Templates.render('videotime/next_activity_button', JSON.parse(response.data))
-                            .then(function (html, js) {
+                            .then(function (html) {
                                 $('#next-activity-button').html(html);
                             });
                     }.bind(this));
@@ -360,7 +385,7 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             return Promise.resolve(this.session);
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             Ajax.call([{
                 methodname: 'videotimeplugin_pro_get_new_session',
                 args: { cmid: this.cmId }
@@ -381,6 +406,35 @@ define(['jquery', 'mod_videotime/player', 'core/ajax', 'core/log', 'core/templat
             methodname: 'mod_videotime_view_videotime',
             args: { cmid: this.cmId }
         }])[0];
+    };
+
+    /**
+     * Initialize new labels and preview when editing
+     */
+    VideoTime.prototype.initializeNewInstances = function() {
+        if (this.modulecount == $('body .activity.videotime').length) {
+            return;
+        }
+        this.modulecount = $('body .activity.videotime').length;
+        $('body .activity.videotime').each(function (index, module) {
+            if (
+                !$(module).find('.instancename').length
+                && $(module).find('.vimeo-embed').length
+                && !$(module).find('.vimeo-embed iframe').length
+            ) {
+                let instance = {
+                    cmid: Number($(module).attr('id').replace('module-', '')),
+                    haspro: true,
+                    interval: this.interval,
+                    uniqueid: $(module).find('.vimeo-embed').first().attr('id').replace('vimeo-embed-', '')
+                };
+                Templates.render('mod_videotime/videotime_instance', {
+                    instance: instance
+                }).then(function (html, js) {
+                    Templates.runTemplateJS(js);
+                }).fail(Notification.exception);
+            }
+        }.bind(this));
     };
 
     return VideoTime;

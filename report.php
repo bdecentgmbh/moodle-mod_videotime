@@ -47,7 +47,7 @@ if ($id) {
     $course         = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule', 'mod_videotime');
 }
 
 require_login($course, true, $cm);
@@ -102,9 +102,11 @@ if (videotime_has_repository()) {
 
 echo $OUTPUT->header();
 if (videotime_has_repository()) {
-    echo '<div class="pull-right">' . get_string('totalvideotime', 'videotime', ['time' => session::format_time($videoduration)]) . '</div>';
+    echo '<div class="pull-right">' . get_string('totalvideotime', 'videotime', [
+        'time' => session::format_time($videoduration)
+    ]) . '</div>';
 }
-echo $OUTPUT->heading(format_string($moduleinstance->name), 2);    
+echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 echo $tablehtml;
 $form->display();
 echo $OUTPUT->footer();

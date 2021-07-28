@@ -57,24 +57,24 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         if (videotime_has_pro() && videotime_has_repository()) {
 
-            $needs_setup = false;
+            $needssetup = false;
             try {
                 $api = new \videotimeplugin_repository\api();
             } catch (\videotimeplugin_repository\exception\api_not_configured $e) {
-                $needs_setup = true;
+                $needssetup = true;
             } catch (\videotimeplugin_repository\exception\api_not_authenticated $e) {
-                $needs_setup = true;
+                $needssetup = true;
             }
 
             $group = [];
             $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
-            if (!$needs_setup) {
+            if (!$needssetup) {
                 $group[] = $mform->createElement('button', 'pull_from_vimeo', get_string('pull_from_vimeo', 'videotime'));
             }
             $mform->addGroup($group, '', get_string('vimeo_url', 'videotime'));
 
             $group = [];
-            if (!$needs_setup) {
+            if (!$needssetup) {
                 $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
                 $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
             } else if (is_siteadmin()) {
@@ -141,7 +141,8 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $mform->setDefault('show_title', get_config('videotime', 'show_title'));
                 videotime_instance::create_additional_field_form_elements('show_title', $mform, $group);
 
-                $group[] = $mform->createElement('advcheckbox', 'show_description', '', get_string('show_description', 'videotime'));
+                $group[] = $mform->createElement('advcheckbox', 'show_description', '',
+                    get_string('show_description', 'videotime'));
                 $mform->setDefault('show_description', 1);
                 if (method_exists($mform, 'hideIf')) {
                     $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
@@ -171,7 +172,8 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $mform->setDefault('show_duration', get_config('videotime', 'show_duration'));
                 videotime_instance::create_additional_field_form_elements('show_duration', $mform, $group);
 
-                $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '', get_string('show_viewed_duration', 'videotime'));
+                $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '',
+                    get_string('show_viewed_duration', 'videotime'));
                 $mform->setDefault('show_viewed_duration', 1);
                 if (method_exists($mform, 'hideIf')) {
                     $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
@@ -392,7 +394,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         if (videotime_has_pro()) {
             // -------------------------------------------------------------------------------
             // Grade settings.
-            $mform->addElement('header', 'modstandardgrade', get_string('grade'));
+            $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
             global $COURSE, $OUTPUT;
 
             $mform->addElement('checkbox', 'viewpercentgrade', get_string('viewpercentgrade', 'videotime'));
@@ -418,7 +420,9 @@ class mod_videotime_mod_form extends moodleform_mod {
                     'itemnumber' => 0,
                     'courseid' => $COURSE->id))) {
 
-                    $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'), null, ['id' => 'id_gradewarning']);
+                    $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(
+                        get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'
+                    ), null, ['id' => 'id_gradewarning']);
                     if (method_exists($mform, 'hideIf')) {
                         $mform->hideIf('gradewarning', 'viewpercentgrade', 'checked');
                     } else {
@@ -504,7 +508,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addElement('advcheckbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));
             $mform->setType('completion_on_finish', PARAM_BOOL);
 
-            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish'];
+            $mform->addElement('advcheckbox', 'completion_hide_detail', '', get_string('completion_hide_detail', 'videotime'));
+            $mform->setType('completion_hide_detail', PARAM_BOOL);
+
+            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish', 'completion_hide_detail'];
         } else {
             // Remove completion on grade since grade settings are not displayed for free version.
             $mform->removeElement('completionusegrade');
@@ -513,6 +520,12 @@ class mod_videotime_mod_form extends moodleform_mod {
         return [];
     }
 
+    /**
+     * Called during validation to see whether some module-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules is enabled, false if none are.
+     */
     public function completion_rule_enabled($data) {
         return (
             (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second'] != 0)) ||
@@ -521,10 +534,11 @@ class mod_videotime_mod_form extends moodleform_mod {
     }
 
     /**
-     * @param $data
-     * @param $files
-     * @return array
-     * @throws coding_exception
+     * Validates the form input
+     *
+     * @param array $data submitted data
+     * @param array $files submitted files
+     * @return array eventual errors indexed by the field name
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
@@ -552,6 +566,11 @@ class mod_videotime_mod_form extends moodleform_mod {
         return $errors;
     }
 
+    /**
+     * Prepares the form before data are set
+     *
+     * @param  array $defaultvalues
+     */
     public function data_preprocessing(&$defaultvalues) {
         // Editing existing instance.
         if ($this->current->instance) {

@@ -17,7 +17,7 @@
 /**
  * Video Time next instance button tests.
  *
- * @package   videotime
+ * @package   mod_videotime
  * @copyright 2020 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,10 +64,15 @@ class next_activity_button_test extends advanced_testcase {
             $forum->cmid
         ], array_keys($availablecms));
 
-        $nextactivitybutton = new \mod_videotime\output\next_activity_button(cm_info::create(get_coursemodule_from_id(null, $videotime1->cmid)));
+        $nextactivitybutton = new \mod_videotime\output\next_activity_button(
+            cm_info::create(get_coursemodule_from_id(null, $videotime1->cmid))
+        );
         $this->assertNull($nextactivitybutton->get_next_cm_url());
 
-        $nextactivitybutton = new \mod_videotime\output\next_activity_button(cm_info::create(get_coursemodule_from_id(null, $videotime3->cmid)));
-        $this->assertEquals((new moodle_url('/mod/videotime/view.php', ['id' => $videotime1->cmid]))->out(false), $nextactivitybutton->get_next_cm_url()->out(false));
+        $nextactivitybutton = new \mod_videotime\output\next_activity_button(
+            cm_info::create(get_coursemodule_from_id(null, $videotime3->cmid))
+        );
+        $this->assertEquals((new moodle_url('/mod/videotime/view.php', ['id' => $videotime1->cmid]))->out(false),
+            $nextactivitybutton->get_next_cm_url()->out(false));
     }
 }

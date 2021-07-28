@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Next activity button helper class
+ *
  * @package     mod_videotime
  * @copyright   2019 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,8 +30,16 @@ use moodle_exception;
 use moodle_url;
 use renderer_base;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->dirroot/mod/videotime/lib.php");
 
+/**
+ * Next activity button helper class
+ *
+ * @copyright   2019 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class next_activity_button implements \templatable, \renderable {
 
     /**
@@ -45,17 +55,24 @@ class next_activity_button implements \templatable, \renderable {
     /**
      * @var string
      */
-    private $availability_info = '';
+    private $availabilityinfo = '';
 
     /**
      * @var bool
      */
-    private $is_restricted = false;
+    private $isrestricted = false;
 
+    /**
+     * @var stdClass
+     */
     private $moduleinstance = null;
 
-    public function __construct(\cm_info $cm)
-    {
+    /**
+     * Constructor
+     *
+     * @param \cm_info $cm course module info
+     */
+    public function __construct(\cm_info $cm) {
         $this->cm = $cm;
 
         $this->moduleinstance = videotime_instance::instance_by_id($cm->instance);
@@ -87,18 +104,22 @@ class next_activity_button implements \templatable, \renderable {
 
         if ($this->nextcm) {
             if (!empty($this->nextcm->availableinfo)) {
-                $this->availability_info = \core_availability\info::format_info($this->nextcm->availableinfo, $this->nextcm->course);
+                $this->availabilityinfo = \core_availability\info::format_info(
+                    $this->nextcm->availableinfo,
+                    $this->nextcm->course
+                );
             }
 
-            $this->is_restricted = !$this->nextcm->uservisible;
+            $this->isrestricted = !$this->nextcm->uservisible;
         }
     }
 
     /**
+     * Return next course module
+     *
      * @return \cm_info|mixed
      */
-    public function get_next_cm()
-    {
+    public function get_next_cm() {
         return $this->nextcm;
     }
 
@@ -109,8 +130,7 @@ class next_activity_button implements \templatable, \renderable {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function get_next_cm_url()
-    {
+    public function get_next_cm_url() {
         if (!$this->nextcm) {
             return null;
         }
@@ -128,20 +148,22 @@ class next_activity_button implements \templatable, \renderable {
     }
 
     /**
+     * Whether next activity is unavailable
+     *
      * @return bool
      */
-    public function is_restricted()
-    {
-        return $this->is_restricted;
+    public function is_restricted() {
+        return $this->isrestricted;
     }
 
     /**
+     * Return data for next course module
+     *
      * @return array
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function get_data()
-    {
+    public function get_data() {
         if (!$this->nextcm) {
             return [];
         }
@@ -155,28 +177,32 @@ class next_activity_button implements \templatable, \renderable {
             'nextcm_url' => $url,
             'nextcm_name' => $this->nextcm->get_formatted_name(),
             'hasnextcm' => !empty($this->nextcm),
-            'availability_info' => $this->availability_info,
-            'availability_title' => videotime_is_totara() ? strip_tags($this->availability_info) : null,
-            'is_restricted' => $this->is_restricted,
+            'availability_info' => $this->availabilityinfo,
+            'availability_title' => videotime_is_totara() ? strip_tags($this->availabilityinfo) : null,
+            'is_restricted' => $this->isrestricted,
             'instance' => $this->moduleinstance->to_record()
         ];
     }
 
-    public function export_for_template(renderer_base $output)
-    {
+    /**
+     * Export data for template
+     *
+     * @param renderer_base $output
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
         return $this->get_data();
     }
 
     /**
      * Get activities that can be used as the "next activity".
      *
-     * @param $courseid
+     * @param int $courseid course id
      * @return array
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public static function get_available_cms($courseid)
-    {
+    public static function get_available_cms($courseid) {
         $cms = [];
         $modinfo = get_fast_modinfo($courseid);
         foreach ($modinfo->get_cms() as $cm) {

@@ -46,8 +46,9 @@ if ($id) {
     $course         = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule', 'mod_videotime');
 }
+require_login($course, true, $cm);
 
 if (!is_siteadmin()) {
     throw new coding_exception('Only admins can view this page.');

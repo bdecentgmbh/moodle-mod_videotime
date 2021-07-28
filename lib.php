@@ -27,20 +27,29 @@ use mod_videotime\videotime_instance;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Checks if Videotime supports a specific feature.
+ *
  * Return if the plugin supports $feature.
- *http://localhost/moodle35/course/mod.php?sesskey=nzkiyHyS2D&sr=0&update=2
+ * http://localhost/moodle35/course/mod.php?sesskey=nzkiyHyS2D&sr=0&update=2
  * @param string $feature Constant representing the feature.
  * @return true | null True if the feature is supported, null otherwise.
  */
 function videotime_supports($feature) {
     switch ($feature) {
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_COMPLETION_HAS_RULES:    return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_GRADE_OUTCOMES:          return false;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
         default:
             return null;
     }
@@ -50,11 +59,11 @@ function videotime_supports($feature) {
  * Update/create grade item for given data
  *
  * @category grade
- * @param stdClass $data A videotime instance with extra cmidnumber property
+ * @param stdClass $videotime A videotime instance with extra cmidnumber property
  * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function videotime_grade_item_update($videotime, $grades=NULL) {
+function videotime_grade_item_update($videotime, $grades=null) {
     global $CFG;
 
     require_once($CFG->libdir.'/gradelib.php');
@@ -70,9 +79,9 @@ function videotime_grade_item_update($videotime, $grades=NULL) {
         'grademax' => 100,
         'grademin' => 0];
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
-        $grades = NULL;
+        $grades = null;
     }
 
     return grade_update('mod/videotime', $videotime->course, 'mod', 'videotime', $videotime->id, 0, $grades, $params);
@@ -219,7 +228,9 @@ function videotime_delete_instance($id) {
 }
 
 /**
- * @param $moduleinstance
+ * Process data submitted for videotime instance
+ *
+ * @param videotime_instance $moduleinstance
  * @return mixed
  */
 function videotime_process_video_description($moduleinstance) {
@@ -301,7 +312,9 @@ function videotime_get_completion_state($course, $cm, $userid, $type) {
 }
 
 /**
- * @param $cmid
+ *  Update completion info
+ *
+ * @param int $cmid
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -317,7 +330,9 @@ function videotime_update_completion($cmid) {
 
     $completion = new \completion_info($course);
     // Update completion status only if any extra criteria is set on the activity.
-    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish || $moduleinstance->completion_on_percent)) {
+    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish ||
+        $moduleinstance->completion_on_percent)
+    ) {
         $completion->update_state($cm, COMPLETION_COMPLETE);
     }
 }
@@ -517,22 +532,12 @@ function videotime_cm_info_view(cm_info $cm) {
 
         $instance = videotime_instance::instance_by_id($cm->instance);
 
-        // Check if activity in preview mode is being duplicated.
-        // Unfortunately, there is no easy way to handle duplication. The page context is module level which has caused
-        // issues in the past. For now tell user to simply refresh their page.
-        if ($instance->label_mode == videotime_instance::PREVIEW_MODE && AJAX_SCRIPT) {
-            $cm->set_content($OUTPUT->render_from_template('mod_videotime/refresh_warning', []));
-            return;
-        }
-
-        if (WS_SERVER || AJAX_SCRIPT) {
-            return;
-        }
-
         // Ensure we are on the course view page. This was throwing an error when viewing the module
         // because OUTPUT was being used.
         if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
-            return;
+            if (!WS_SERVER && !AJAX_SCRIPT) {
+                return;
+            }
         }
 
         if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
@@ -549,27 +554,71 @@ function videotime_cm_info_view(cm_info $cm) {
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
-            $column_class = 'col-sm-12';
+            $columnclass = 'col-sm-12';
             if ($instance->columns == 2) {
-                $column_class = 'col-sm-6';
+                $columnclass = 'col-sm-6';
             } else if ($instance->columns == 3) {
-                $column_class = 'col-sm-4';
+                $columnclass = 'col-sm-4';
             } else if ($instance->columns == 4) {
-                $column_class = 'col-sm-3';
+                $columnclass = 'col-sm-3';
             }
 
-            $cm->set_extra_classes('preview_mode ' . $column_class);
+            $cm->set_extra_classes('preview_mode ' . $columnclass);
         } else {
             // Normal mode, do not set any additional content.
             $content = null;
         }
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
         $content = $OUTPUT->notification(get_string('vimeo_video_not_found', 'videotime') . $e->getMessage());
     }
 
     if ($content) {
-        $cm->set_content($content, true);
+        $cm->set_content($content, false);
     }
+}
+
+/**
+ * Add a get_coursemodule_info function in case any forum type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function videotime_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $instance = videotime_instance::instance_by_id($coursemodule->instance);
+
+    $result = new cached_cm_info();
+    $result->name = $instance->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('forum', $instance, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        if ($instance->completion_hide_detail) {
+            $result->customdata['customcompletionrules']['completion_hide_detail'] = $instance->completion_hide_detail;
+        } else {
+            if ($instance->completion_on_view_time) {
+                $result->customdata['customcompletionrules']['completion_on_view_time_second']
+                    = $instance->completion_on_view_time_second;
+            }
+            if ($instance->completion_on_percent) {
+                $result->customdata['customcompletionrules']['completion_on_percent_value']
+                    = $instance->completion_on_percent_value;
+            }
+            $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
+        }
+    }
+
+    return $result;
 }
 
 /**
@@ -585,15 +634,14 @@ function mod_videotime_get_fontawesome_icon_map() {
  * Get shortened version of description for display.
  *
  * @param string $description
- * @param int $max_length
+ * @param int $maxlength
  * @return string
  */
-function videotime_get_excerpt($description, $max_length = 150)
-{
-    if(strlen($description) > $max_length) {
-        $excerpt   = substr($description, 0, $max_length-3);
-        $lastSpace = strrpos($excerpt, ' ');
-        $excerpt   = substr($excerpt, 0, $lastSpace);
+function videotime_get_excerpt($description, $maxlength = 150) {
+    if (strlen($description) > $maxlength) {
+        $excerpt   = substr($description, 0, $maxlength - 3);
+        $lastspace = strrpos($excerpt, ' ');
+        $excerpt   = substr($excerpt, 0, $lastspace);
         $excerpt  .= '...';
     } else {
         $excerpt = $description;
@@ -609,8 +657,7 @@ function videotime_get_excerpt($description, $max_length = 150)
  * @return bool
  * @throws dml_exception
  */
-function mod_videotime_treat_as_label(cm_info $mod)
-{
+function mod_videotime_treat_as_label(cm_info $mod) {
     global $DB;
 
     if ($mod->modname != 'videotime') {
@@ -627,14 +674,13 @@ function mod_videotime_treat_as_label(cm_info $mod)
 /**
  * Parse Vimeo link/URL and return video ID.
  *
- * @param $link
+ * @param string $link
  * @return mixed|null
  */
-function mod_videotime_get_vimeo_id_from_link($link)
-{
+function mod_videotime_get_vimeo_id_from_link($link) {
     $videoid = null;
-    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $output_array)) {
-        return $output_array[5];
+    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $outputarray)) {
+        return $outputarray[5];
     }
 
     return null;

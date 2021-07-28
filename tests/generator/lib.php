@@ -34,6 +34,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_videotime_generator extends testing_module_generator {
 
+    /**
+     * Create instance
+     *
+     * @param stdClass $record
+     * @param array $options
+     */
     public function create_instance($record = null, array $options = null) {
         global $CFG;
         require_once($CFG->dirroot . '/lib/resourcelib.php');

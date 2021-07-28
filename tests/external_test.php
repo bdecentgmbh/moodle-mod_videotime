@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class external_test
+ *
  * @package     mod_videotime
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,12 +38,16 @@ require_once("$CFG->dirroot/webservice/tests/helpers.php");
  */
 class videotime_external_test extends externallib_advanced_testcase {
 
+    /** @var stdClass */
     private $course;
+
+    /** @var stdClass */
     private $videotimeinstance;
+
+    /** @var stdClass */
     private $student;
 
-    public function setUp()
-    {
+    public function setUp(): void {
         $this->course = $this->getDataGenerator()->create_course();
         $this->videotimeinstance = $this->getDataGenerator()->create_module('videotime', [
             'course' => $this->course->id,
@@ -54,8 +60,7 @@ class videotime_external_test extends externallib_advanced_testcase {
         parent::setUp();
     }
 
-    public function tearDown()
-    {
+    public function tearDown() : void {
         $this->course = null;
         $this->videotimeinstance = null;
         $this->student = null;
@@ -66,9 +71,9 @@ class videotime_external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
 
-        $instance = external::get_videotime($this->videotimeinstance->cmid)['options'], true);
-        $this->assertEquals(1, $instance['autoplay']);
-        $this->assertEquals(1, $instance['responsive']);
+        $instance = external::get_videotime($this->videotimeinstance->cmid);
+        $this->assertEquals(1, $instance->autoplay);
+        $this->assertEquals(1, $instance->responsive);
     }
 
     public function test_view_videotime() {

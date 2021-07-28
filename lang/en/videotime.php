@@ -47,6 +47,7 @@ $string['client_secret'] = 'Vimeo Client Secret';
 $string['client_secret_help'] = 'Client Secret is generated when you create an "App" under your Vimeo account. Go to https://developer.vimeo.com/apps/new to start this process.';
 $string['columns'] = 'Columns';
 $string['columns_help'] = 'Choose the width for this video when displayed in preview mode. The number of columns is how many videos can be displayed in a row.';
+$string['completion_hide_detail'] = 'Hide completion details';
 $string['completion_on_finish'] = 'Completion on video finish';
 $string['completion_on_percent'] = 'Completion on watch percentage';
 $string['completion_on_percent_value'] = 'Completion on watch percentage value';
@@ -229,8 +230,8 @@ $string['todo'] = 'TODO';
 $string['totaluniquevisitors'] = 'Total unique visitors';
 $string['totalvideotime'] = 'Total video time: {$a->time}';
 $string['totalviews'] = 'Total views';
-$string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p> 
-<p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p> 
+$string['totara_video_discovery_help'] = '<p>You may execute this task manually by running a CLI command:</p>
+<p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\discover_videos</b></p>
 <p>Otherwise you may have to wait until the scheduled task runs.</p>
 <p>You can also run the command to pull in album information manually (instead of waiting):</p>
 <p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\update_albums</b></p>';
@@ -264,3 +265,6 @@ $string['watch_percent'] = 'Watch percent';
 $string['watch_percent_help'] = 'The furthest moment in the video the student has watched.';
 $string['with_play_button'] = 'with play button';
 $string['vimeo_overview'] = 'Overview and setup';
+$string['completiondetail:_on_view_time'] = 'View for time {$a}';
+$string['completiondetail:_on_finish'] = 'Finish video';
+$string['completiondetail:_on_percent'] = 'Finish watching {$a} percent';

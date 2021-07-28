@@ -15,6 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * videotime restore task
+ *
+ * provides all the settings and steps to perform one * complete restore of the activity
+ *
  * @package     mod_videotime
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,8 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_stepslib.php'); // Because it exists (must).
 
 /**
- * videotime restore task that provides all the settings and steps to perform one
- * complete restore of the activity
+ * videotime restore task
+ *
+ * provides all the settings and steps to perform one * complete restore of the activity
  */
 class restore_videotime_activity_task extends restore_activity_task {
 
@@ -49,7 +54,7 @@ class restore_videotime_activity_task extends restore_activity_task {
      * Define the contents in the activity that must be
      * processed by the link decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         $contents = array();
 
         $contents[] = new restore_decode_content('videotime', array('intro'), 'videotime');
@@ -62,17 +67,15 @@ class restore_videotime_activity_task extends restore_activity_task {
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         return array();
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@link restore_logs_processor} when restoring
-     * videotime logs. It must return one array
-     * of {@link restore_log_rule} objects
+     * Define the restore log rules that will be applied by the link restore_logs_processor when restoring
+     * videotime logs. It must return one array of restore_log_rule objects
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         $rules = array();
 
         $rules[] = new restore_log_rule('videotime', 'add', 'view.php?id={course_module}', '{videotime}');
@@ -83,16 +86,13 @@ class restore_videotime_activity_task extends restore_activity_task {
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@link restore_logs_processor} when restoring
-     * course logs. It must return one array
-     * of {@link restore_log_rule} objects
+     * Define the restore log rules that will be applied by the restore_logs_processor when restoring
+     * course logs. It must return one array of restore_log_rule objects
      *
-     * Note this rules are applied when restoring course logs
-     * by the restore final task, but are defined here at
+     * Note this rules are applied when restoring course logs by the restore final task, but are defined here at
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      */
-    static public function define_restore_log_rules_for_course() {
+    public static function define_restore_log_rules_for_course() {
         $rules = array();
 
         $rules[] = new restore_log_rule('videotime', 'view all', 'index.php?id={course}', null);

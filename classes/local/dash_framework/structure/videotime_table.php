@@ -77,6 +77,8 @@ class videotime_table extends table {
     }
 
     /**
+     * Get fields
+     *
      * @return field_interface[]
      */
     public function get_fields(): array {
@@ -95,7 +97,7 @@ class videotime_table extends table {
             ]),
             new field('video_description', new lang_string('video_description', 'videotime'), $this, 'vt.id', [
                 new notes_attribute()
-            ]), // Notes
+            ]),
             new field('intro', new lang_string('moduleintro'), $this, 'vt.id', [
                 new intro_attribute()
             ]),
@@ -114,9 +116,11 @@ class videotime_table extends table {
                     new average_view_time_attribute(),
                     new time_attribute()
                 ]),
-                new field('percentage_of_video_finished', new lang_string('percentageofvideofinished', 'videotime'), $this, 'vt.id', [
-                    new percentage_of_video_finished_attribute()
-                ]),
+                new field('percentage_of_video_finished', new lang_string(
+                    'percentageofvideofinished', 'videotime'), $this, 'vt.id', [
+                        new percentage_of_video_finished_attribute()
+                    ]
+                ),
                 new field('firstsession', new lang_string('firstsession', 'videotime'), $this, 'vt.id', [
                     new first_session_attribute(),
                     new date_attribute()

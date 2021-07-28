@@ -37,12 +37,23 @@ require_once($CFG->dirroot.'/mod/videotime/lib.php');
  */
 trait get_videotime {
 
+    /**
+     * Describes the parameters for get_videotime.
+     *
+     * @return external_function_parameters
+     */
     public static function get_videotime_parameters() {
         return new \external_function_parameters([
             'cmid' => new \external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED)
         ]);
     }
 
+    /**
+     * Return videotime instance
+     *
+     * @param  int $cmid The videotime course module id
+     * @return stdClass module instance
+     */
     public static function get_videotime($cmid) {
         $params = external_api::validate_parameters(self::get_videotime_parameters(), [
             'cmid' => $cmid
@@ -58,6 +69,11 @@ trait get_videotime {
         return $moduleinstance->to_record();
     }
 
+    /**
+     * Describes the get_videotime return value.
+     *
+     * @return external_single_structure
+     */
     public static function get_videotime_returns() {
         return videotime_instance::get_external_description();
     }
