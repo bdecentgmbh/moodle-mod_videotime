@@ -1,9 +1,8 @@
-// @codingStandardsIgnoreStart
-/*! @vimeo/player v2.6.3 | (c) 2018 Vimeo | MIT License | https://github.com/vimeo/player.js */
+/*! @vimeo/player v2.16.0 | (c) 2021 Vimeo | MIT License | https://github.com/vimeo/player.js */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Vimeo = global.Vimeo || {}, global.Vimeo.Player = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, (global.Vimeo = global.Vimeo || {}, global.Vimeo.Player = factory()));
 }(this, (function () { 'use strict';
 
   function _classCallCheck(instance, Constructor) {
@@ -62,7 +61,7 @@
    */
 
   function isDomElement(element) {
-    return element instanceof window.HTMLElement;
+    return Boolean(element && element.nodeType === 1 && 'nodeName' in element && element.ownerDocument && element.ownerDocument.defaultView);
   }
   /**
    * Check to see whether the value is a number.
@@ -85,7 +84,7 @@
    */
 
   function isVimeoUrl(url) {
-    return /^(https?:)?\/\/((player|www).)?vimeo.com(?=$|\/)/.test(url);
+    return /^(https?:)?\/\/((player|www)\.)?vimeo\.com(?=$|\/)/.test(url);
   }
   /**
    * Get the Vimeo URL from an element.
@@ -127,16 +126,16 @@
     throw new Error('Sorry, the Vimeo Player API is not available in this browser.');
   }
 
-  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
   }
 
   /*!
-   * weakmap-polyfill v2.0.0 - ECMAScript6 WeakMap polyfill
+   * weakmap-polyfill v2.0.1 - ECMAScript6 WeakMap polyfill
    * https://github.com/polygonplanet/weakmap-polyfill
-   * Copyright (c) 2015-2016 polygon planet <polygon.planet.aqua@gmail.com>
+   * Copyright (c) 2015-2020 Polygon Planet <polygon.planet.aqua@gmail.com>
    * @license MIT
    */
   (function (self) {
@@ -274,12 +273,8 @@
     // special form of UMD for polyfilling across evironments
     context[name] = context[name] || definition();
 
-    if (module.exports) {
+    if ( module.exports) {
       module.exports = context[name];
-    } else if (typeof undefined == "function" && undefined.amd) {
-      undefined(function $AMD$() {
-        return context[name];
-      });
     }
   })("Promise", typeof commonjsGlobal != "undefined" ? commonjsGlobal : commonjsGlobal, function DEF() {
 
@@ -728,7 +723,7 @@
   /**
    * @module lib/embed
    */
-  var oEmbedParameters = ['autopause', 'autoplay', 'background', 'byline', 'color', 'height', 'id', 'loop', 'maxheight', 'maxwidth', 'muted', 'playsinline', 'portrait', 'responsive', 'speed', 'title', 'transparent', 'autopause', 'background', 'controls', 'pip', 'dnt', 'url', 'width'];
+  var oEmbedParameters = ['autopause', 'autoplay', 'background', 'byline', 'color', 'controls', 'dnt', 'height', 'id', 'keyboard', 'loop', 'maxheight', 'maxwidth', 'muted', 'playsinline', 'portrait', 'responsive', 'speed', 'texttrack', 'title', 'transparent', 'url', 'width'];
   /**
    * Get the 'data-vimeo'-prefixed attributes from an element as an object.
    *
@@ -791,7 +786,7 @@
         throw new TypeError("\u201C".concat(videoUrl, "\u201D is not a vimeo.com url."));
       }
 
-      var url = "https://vimeo.com/api/oembed.json?url=".concat(encodeURIComponent(videoUrl), "&domain=").concat(window.location.hostname);
+      var url = "https://vimeo.com/api/oembed.json?url=".concat(encodeURIComponent(videoUrl));
 
       for (var param in params) {
         if (params.hasOwnProperty(param)) {
@@ -881,6 +876,13 @@
   function resizeEmbeds() {
     var parent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
 
+    // Prevent execution if users include the player.js script multiple times.
+    if (window.VimeoPlayerResizeEmbeds_) {
+      return;
+    }
+
+    window.VimeoPlayerResizeEmbeds_ = true;
+
     var onMessage = function onMessage(event) {
       if (!isVimeoUrl(event.origin)) {
         return;
@@ -906,11 +908,7 @@
       }
     };
 
-    if (window.addEventListener) {
-      window.addEventListener('message', onMessage, false);
-    } else if (window.attachEvent) {
-      window.attachEvent('onmessage', onMessage);
-    }
+    window.addEventListener('message', onMessage);
   }
 
   /**
@@ -925,7 +923,13 @@
 
   function parseMessageData(data) {
     if (typeof data === 'string') {
-      data = JSON.parse(data);
+      try {
+        data = JSON.parse(data);
+      } catch (error) {
+        // If the message cannot be parsed, throw the error as a warning
+        console.warn(error);
+        return {};
+      }
     }
 
     return data;
@@ -1009,12 +1013,125 @@
     });
   }
 
+  /* MIT License
+
+  Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  Terms */
+  function initializeScreenfull() {
+    var fn = function () {
+      var val;
+      var fnMap = [['requestFullscreen', 'exitFullscreen', 'fullscreenElement', 'fullscreenEnabled', 'fullscreenchange', 'fullscreenerror'], // New WebKit
+      ['webkitRequestFullscreen', 'webkitExitFullscreen', 'webkitFullscreenElement', 'webkitFullscreenEnabled', 'webkitfullscreenchange', 'webkitfullscreenerror'], // Old WebKit
+      ['webkitRequestFullScreen', 'webkitCancelFullScreen', 'webkitCurrentFullScreenElement', 'webkitCancelFullScreen', 'webkitfullscreenchange', 'webkitfullscreenerror'], ['mozRequestFullScreen', 'mozCancelFullScreen', 'mozFullScreenElement', 'mozFullScreenEnabled', 'mozfullscreenchange', 'mozfullscreenerror'], ['msRequestFullscreen', 'msExitFullscreen', 'msFullscreenElement', 'msFullscreenEnabled', 'MSFullscreenChange', 'MSFullscreenError']];
+      var i = 0;
+      var l = fnMap.length;
+      var ret = {};
+
+      for (; i < l; i++) {
+        val = fnMap[i];
+
+        if (val && val[1] in document) {
+          for (i = 0; i < val.length; i++) {
+            ret[fnMap[0][i]] = val[i];
+          }
+
+          return ret;
+        }
+      }
+
+      return false;
+    }();
+
+    var eventNameMap = {
+      fullscreenchange: fn.fullscreenchange,
+      fullscreenerror: fn.fullscreenerror
+    };
+    var screenfull = {
+      request: function request(element) {
+        return new Promise(function (resolve, reject) {
+          var onFullScreenEntered = function onFullScreenEntered() {
+            screenfull.off('fullscreenchange', onFullScreenEntered);
+            resolve();
+          };
+
+          screenfull.on('fullscreenchange', onFullScreenEntered);
+          element = element || document.documentElement;
+          var returnPromise = element[fn.requestFullscreen]();
+
+          if (returnPromise instanceof Promise) {
+            returnPromise.then(onFullScreenEntered).catch(reject);
+          }
+        });
+      },
+      exit: function exit() {
+        return new Promise(function (resolve, reject) {
+          if (!screenfull.isFullscreen) {
+            resolve();
+            return;
+          }
+
+          var onFullScreenExit = function onFullScreenExit() {
+            screenfull.off('fullscreenchange', onFullScreenExit);
+            resolve();
+          };
+
+          screenfull.on('fullscreenchange', onFullScreenExit);
+          var returnPromise = document[fn.exitFullscreen]();
+
+          if (returnPromise instanceof Promise) {
+            returnPromise.then(onFullScreenExit).catch(reject);
+          }
+        });
+      },
+      on: function on(event, callback) {
+        var eventName = eventNameMap[event];
+
+        if (eventName) {
+          document.addEventListener(eventName, callback);
+        }
+      },
+      off: function off(event, callback) {
+        var eventName = eventNameMap[event];
+
+        if (eventName) {
+          document.removeEventListener(eventName, callback);
+        }
+      }
+    };
+    Object.defineProperties(screenfull, {
+      isFullscreen: {
+        get: function get() {
+          return Boolean(document[fn.fullscreenElement]);
+        }
+      },
+      element: {
+        enumerable: true,
+        get: function get() {
+          return document[fn.fullscreenElement];
+        }
+      },
+      isEnabled: {
+        enumerable: true,
+        get: function get() {
+          // Coerce to boolean in case of old WebKit
+          return Boolean(document[fn.fullscreenEnabled]);
+        }
+      }
+    });
+    return screenfull;
+  }
+
   var playerMap = new WeakMap();
   var readyMap = new WeakMap();
+  var screenfull = {};
 
-  var Player =
-  /*#__PURE__*/
-  function () {
+  var Player = /*#__PURE__*/function () {
     /**
      * Create a Player.
      *
@@ -1068,10 +1185,11 @@
         return playerMap.get(element);
       }
 
+      this._window = element.ownerDocument.defaultView;
       this.element = element;
       this.origin = '*';
       var readyPromise = new npo_src(function (resolve, reject) {
-        var onMessage = function onMessage(event) {
+        _this._onMessage = function (event) {
           if (!isVimeoUrl(event.origin) || _this.element.contentWindow !== event.source) {
             return;
           }
@@ -1081,8 +1199,18 @@
           }
 
           var data = parseMessageData(event.data);
-          var isReadyEvent = 'event' in data && data.event === 'ready';
-          var isPingResponse = 'method' in data && data.method === 'ping';
+          var isError = data && data.event === 'error';
+          var isReadyError = isError && data.data && data.data.method === 'ready';
+
+          if (isReadyError) {
+            var error = new Error(data.data.message);
+            error.name = data.data.name;
+            reject(error);
+            return;
+          }
+
+          var isReadyEvent = data && data.event === 'ready';
+          var isPingResponse = data && data.method === 'ping';
 
           if (isReadyEvent || isPingResponse) {
             _this.element.setAttribute('data-ready', 'true');
@@ -1094,11 +1222,7 @@
           processData(_this, data);
         };
 
-        if (window.addEventListener) {
-          window.addEventListener('message', onMessage, false);
-        } else if (window.attachEvent) {
-          window.attachEvent('onmessage', onMessage);
-        }
+        _this._window.addEventListener('message', _this._onMessage);
 
         if (_this.element.nodeName !== 'IFRAME') {
           var params = getOEmbedParameters(element, options);
@@ -1112,9 +1236,7 @@
             swapCallbacks(element, iframe);
             playerMap.set(_this.element, _this);
             return data;
-          }).catch(function (error) {
-            return reject(error);
-          });
+          }).catch(reject);
         }
       }); // Store a copy of this Player in the map
 
@@ -1124,6 +1246,25 @@
 
       if (this.element.nodeName === 'IFRAME') {
         postMessage(this, 'ping');
+      }
+
+      if (screenfull.isEnabled) {
+        var exitFullscreen = function exitFullscreen() {
+          return screenfull.exit();
+        };
+
+        screenfull.on('fullscreenchange', function () {
+          if (screenfull.isFullscreen) {
+            storeCallback(_this, 'event:exitFullscreen', exitFullscreen);
+          } else {
+            removeCallback(_this, 'event:exitFullscreen', exitFullscreen);
+          } // eslint-disable-next-line
+
+
+          _this.ready().then(function () {
+            postMessage(_this, 'fullscreenchange', screenfull.isFullscreen);
+          });
+        });
       }
 
       return this;
@@ -1153,9 +1294,7 @@
               reject: reject
             });
             postMessage(_this2, name, args);
-          }).catch(function (error) {
-            reject(error);
-          });
+          }).catch(reject);
         });
       }
       /**
@@ -1181,7 +1320,7 @@
               reject: reject
             });
             postMessage(_this3, name);
-          });
+          }).catch(reject);
         });
       }
       /**
@@ -1197,22 +1336,23 @@
       value: function set(name, value) {
         var _this4 = this;
 
-        return npo_src.resolve(value).then(function (val) {
+        return new npo_src(function (resolve, reject) {
           name = getMethodName(name, 'set');
 
-          if (val === undefined || val === null) {
+          if (value === undefined || value === null) {
             throw new TypeError('There must be a value to set.');
-          }
+          } // We are storing the resolve/reject handlers to call later, so we
+          // can’t return here.
+          // eslint-disable-next-line promise/always-return
+
 
           return _this4.ready().then(function () {
-            return new npo_src(function (resolve, reject) {
-              storeCallback(_this4, name, {
-                resolve: resolve,
-                reject: reject
-              });
-              postMessage(_this4, name, val);
+            storeCallback(_this4, name, {
+              resolve: resolve,
+              reject: reject
             });
-          });
+            postMessage(_this4, name, value);
+          }).catch(reject);
         });
       }
       /**
@@ -1292,14 +1432,14 @@
        * the video is successfully loaded, or it will be rejected if it could
        * not be loaded.
        *
-       * @param {number} id The id of the video.
+       * @param {number|object} options The id of the video or an object with embed options.
        * @return {LoadVideoPromise}
        */
 
     }, {
       key: "loadVideo",
-      value: function loadVideo(id) {
-        return this.callMethod('loadVideo', id);
+      value: function loadVideo(options) {
+        return this.callMethod('loadVideo', options);
       }
       /**
        * A promise to perform an action when the Player is ready.
@@ -1478,6 +1618,78 @@
         return this.callMethod('play');
       }
       /**
+       * Request that the player enters fullscreen.
+       * @return {Promise}
+       */
+
+    }, {
+      key: "requestFullscreen",
+      value: function requestFullscreen() {
+        if (screenfull.isEnabled) {
+          return screenfull.request(this.element);
+        }
+
+        return this.callMethod('requestFullscreen');
+      }
+      /**
+       * Request that the player exits fullscreen.
+       * @return {Promise}
+       */
+
+    }, {
+      key: "exitFullscreen",
+      value: function exitFullscreen() {
+        if (screenfull.isEnabled) {
+          return screenfull.exit();
+        }
+
+        return this.callMethod('exitFullscreen');
+      }
+      /**
+       * Returns true if the player is currently fullscreen.
+       * @return {Promise}
+       */
+
+    }, {
+      key: "getFullscreen",
+      value: function getFullscreen() {
+        if (screenfull.isEnabled) {
+          return npo_src.resolve(screenfull.isFullscreen);
+        }
+
+        return this.get('fullscreen');
+      }
+      /**
+       * Request that the player enters picture-in-picture.
+       * @return {Promise}
+       */
+
+    }, {
+      key: "requestPictureInPicture",
+      value: function requestPictureInPicture() {
+        return this.callMethod('requestPictureInPicture');
+      }
+      /**
+       * Request that the player exits picture-in-picture.
+       * @return {Promise}
+       */
+
+    }, {
+      key: "exitPictureInPicture",
+      value: function exitPictureInPicture() {
+        return this.callMethod('exitPictureInPicture');
+      }
+      /**
+       * Returns true if the player is currently picture-in-picture.
+       * @return {Promise}
+       */
+
+    }, {
+      key: "getPictureInPicture",
+      value: function getPictureInPicture() {
+        return this.get('pictureInPicture');
+      }
+      /**
        * A promise to unload the video.
        *
        * @promise UnloadPromise
@@ -1519,9 +1731,35 @@
             _this5._originalElement.removeAttribute('data-vimeo-initialized');
           }
 
-          if (_this5.element && _this5.element.nodeName === 'IFRAME') {
-            _this5.element.remove();
+          if (_this5.element && _this5.element.nodeName === 'IFRAME' && _this5.element.parentNode) {
+            // If we've added an additional wrapper div, remove that from the DOM.
+            // If not, just remove the iframe element.
+            if (_this5.element.parentNode.parentNode && _this5._originalElement && _this5._originalElement !== _this5.element.parentNode) {
+              _this5.element.parentNode.parentNode.removeChild(_this5.element.parentNode);
+            } else {
+              _this5.element.parentNode.removeChild(_this5.element);
+            }
+          } // If the clip is private there is a case where the element stays the
+          // div element. Destroy should reset the div and remove the iframe child.
+
+
+          if (_this5.element && _this5.element.nodeName === 'DIV' && _this5.element.parentNode) {
+            _this5.element.removeAttribute('data-vimeo-initialized');
+
+            var iframe = _this5.element.querySelector('iframe');
+
+            if (iframe && iframe.parentNode) {
+              // If we've added an additional wrapper div, remove that from the DOM.
+              // If not, just remove the iframe element.
+              if (iframe.parentNode.parentNode && _this5._originalElement && _this5._originalElement !== iframe.parentNode) {
+                iframe.parentNode.parentNode.removeChild(iframe.parentNode);
+              } else {
+                iframe.parentNode.removeChild(iframe);
+              }
+            }
           }
+
+          _this5._window.removeEventListener('message', _this5._onMessage);
 
           resolve();
         });
@@ -1571,6 +1809,115 @@
       key: "setAutopause",
       value: function setAutopause(autopause) {
         return this.set('autopause', autopause);
+      }
+      /**
+       * A promise to get the buffered property of the video.
+       *
+       * @promise GetBufferedPromise
+       * @fulfill {Array} Buffered Timeranges converted to an Array.
+       */
+
+      /**
+       * Get the buffered property of the video.
+       *
+       * @return {GetBufferedPromise}
+       */
+
+    }, {
+      key: "getBuffered",
+      value: function getBuffered() {
+        return this.get('buffered');
+      }
+      /**
+       * @typedef {Object} CameraProperties
+       * @prop {number} props.yaw - Number between 0 and 360.
+       * @prop {number} props.pitch - Number between -90 and 90.
+       * @prop {number} props.roll - Number between -180 and 180.
+       * @prop {number} props.fov - The field of view in degrees.
+       */
+
+      /**
+       * A promise to get the camera properties of the player.
+       *
+       * @promise GetCameraPromise
+       * @fulfill {CameraProperties} The camera properties.
+       */
+
+      /**
+       * For 360° videos get the camera properties for this player.
+       *
+       * @return {GetCameraPromise}
+       */
+
+    }, {
+      key: "getCameraProps",
+      value: function getCameraProps() {
+        return this.get('cameraProps');
+      }
+      /**
+       * A promise to set the camera properties of the player.
+       *
+       * @promise SetCameraPromise
+       * @fulfill {Object} The camera was successfully set.
+       * @reject {RangeError} The range was out of bounds.
+       */
+
+      /**
+       * For 360° videos set the camera properties for this player.
+       *
+       * @param {CameraProperties} camera The camera properties
+       * @return {SetCameraPromise}
+       */
+
+    }, {
+      key: "setCameraProps",
+      value: function setCameraProps(camera) {
+        return this.set('cameraProps', camera);
+      }
+      /**
+       * A representation of a chapter.
+       *
+       * @typedef {Object} VimeoChapter
+       * @property {number} startTime The start time of the chapter.
+       * @property {object} title The title of the chapter.
+       * @property {number} index The place in the order of Chapters. Starts at 1.
+       */
+
+      /**
+       * A promise to get chapters for the video.
+       *
+       * @promise GetChaptersPromise
+       * @fulfill {VimeoChapter[]} The chapters for the video.
+       */
+
+      /**
+       * Get an array of all the chapters for the video.
+       *
+       * @return {GetChaptersPromise}
+       */
+
+    }, {
+      key: "getChapters",
+      value: function getChapters() {
+        return this.get('chapters');
+      }
+      /**
+       * A promise to get the currently active chapter.
+       *
+       * @promise GetCurrentChaptersPromise
+       * @fulfill {VimeoChapter|undefined} The current chapter for the video.
+       */
+
+      /**
+       * Get the currently active chapter for the video.
+       *
+       * @return {GetCurrentChaptersPromise}
+       */
+
+    }, {
+      key: "getCurrentChapter",
+      value: function getCurrentChapter() {
+        return this.get('currentChapter');
       }
       /**
        * A promise to get the color of the player.
@@ -1768,6 +2115,44 @@
         return this.set('loop', loop);
       }
       /**
+       * A promise to set the muted state of the player.
+       *
+       * @promise SetMutedPromise
+       * @fulfill {boolean} The muted state that was set.
+       */
+
+      /**
+       * Set the muted state of the player. When set to `true`, the player
+       * volume will be muted.
+       *
+       * @param {boolean} muted
+       * @return {SetMutedPromise}
+       */
+
+    }, {
+      key: "setMuted",
+      value: function setMuted(muted) {
+        return this.set('muted', muted);
+      }
+      /**
+       * A promise to get the muted state of the player.
+       *
+       * @promise GetMutedPromise
+       * @fulfill {boolean} Whether or not the player is muted.
+       */
+
+      /**
+       * Get the muted state of the player.
+       *
+       * @return {GetMutedPromise}
+       */
+
+    }, {
+      key: "getMuted",
+      value: function getMuted() {
+        return this.get('muted');
+      }
+      /**
        * A promise to get the paused state of the player.
        *
        * @promise GetLoopPromise
@@ -1824,6 +2209,116 @@
       key: "setPlaybackRate",
       value: function setPlaybackRate(playbackRate) {
         return this.set('playbackRate', playbackRate);
+      }
+      /**
+       * A promise to get the played property of the video.
+       *
+       * @promise GetPlayedPromise
+       * @fulfill {Array} Played Timeranges converted to an Array.
+       */
+
+      /**
+       * Get the played property of the video.
+       *
+       * @return {GetPlayedPromise}
+       */
+
+    }, {
+      key: "getPlayed",
+      value: function getPlayed() {
+        return this.get('played');
+      }
+      /**
+       * A promise to get the qualities available of the current video.
+       *
+       * @promise GetQualitiesPromise
+       * @fulfill {Array} The qualities of the video.
+       */
+
+      /**
+       * Get the qualities of the current video.
+       *
+       * @return {GetQualitiesPromise}
+       */
+
+    }, {
+      key: "getQualities",
+      value: function getQualities() {
+        return this.get('qualities');
+      }
+      /**
+       * A promise to get the current set quality of the video.
+       *
+       * @promise GetQualityPromise
+       * @fulfill {string} The current set quality.
+       */
+
+      /**
+       * Get the current set quality of the video.
+       *
+       * @return {GetQualityPromise}
+       */
+
+    }, {
+      key: "getQuality",
+      value: function getQuality() {
+        return this.get('quality');
+      }
+      /**
+       * A promise to set the video quality.
+       *
+       * @promise SetQualityPromise
+       * @fulfill {number} The quality was set.
+       * @reject {RangeError} The quality is not available.
+       */
+
+      /**
+       * Set a video quality.
+       *
+       * @param {string} quality
+       * @return {SetQualityPromise}
+       */
+
+    }, {
+      key: "setQuality",
+      value: function setQuality(quality) {
+        return this.set('quality', quality);
+      }
+      /**
+       * A promise to get the seekable property of the video.
+       *
+       * @promise GetSeekablePromise
+       * @fulfill {Array} Seekable Timeranges converted to an Array.
+       */
+
+      /**
+       * Get the seekable property of the video.
+       *
+       * @return {GetSeekablePromise}
+       */
+
+    }, {
+      key: "getSeekable",
+      value: function getSeekable() {
+        return this.get('seekable');
+      }
+      /**
+       * A promise to get the seeking property of the player.
+       *
+       * @promise GetSeekingPromise
+       * @fulfill {boolean} Whether or not the player is currently seeking.
+       */
+
+      /**
+       * Get if the player is currently seeking.
+       *
+       * @return {GetSeekingPromise}
+       */
+
+    }, {
+      key: "getSeeking",
+      value: function getSeeking() {
+        return this.get('seeking');
       }
       /**
        * A promise to get the text tracks of a video.
@@ -2004,10 +2499,10 @@
 
     return Player;
   }(); // Setup embed only if this is not a node environment
-  // and if there is no existing Vimeo Player object
 
 
-  if (!isNode && window.Vimeo && !window.Vimeo.Player) {
+  if (!isNode) {
+    screenfull = initializeScreenfull();
     initializeEmbeds();
     resizeEmbeds();
   }
