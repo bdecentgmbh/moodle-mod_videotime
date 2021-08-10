@@ -43,7 +43,7 @@ define([
 
         this.plugins = [];
 
-        if (hasPro && $('body').hasClass('path-course-view')  && !$('body').hasClass('vtinit')) {
+        if (hasPro && $('body').hasClass('path-course-view') && !$('body').hasClass('vtinit')) {
             $('body').addClass('vtinit');
             $(document).on('focus', 'body', this.initializeNewInstances.bind(this));
         }
@@ -83,7 +83,7 @@ define([
             }
 
             return true;
-        });
+        }).fail(Notification.exeption);
     };
 
     /**
@@ -100,7 +100,7 @@ define([
      */
     VideoTime.prototype.addListeners = function() {
         if (!this.player) {
-            Log.debug('Player was not properly initialized for course module ' . this.cmId);
+            Log.debug('Player was not properly initialized for course module ' + this.cmId);
         }
 
         // Fire view event in Moodle on first play only.
@@ -111,12 +111,14 @@ define([
                     this.getSession().then(() => {
                         this.view();
                         this.startWatchInterval();
-                    });
+                        return true;
+                    }).fail(Notification.exception);
                 } else {
                     // Free version can still mark completion on video time view.
                     this.view();
                 }
             }
+            return true;
         });
 
         // Features beyond this point are for pro only.
@@ -127,7 +129,7 @@ define([
         // If resume is present force seek the player to that point.
         this.getResumeTime().then((seconds) => {
             if (seconds <= 0) {
-                return;
+                return true;
             }
 
             this.getPlayer().getDuration().then((duration) => {
@@ -145,63 +147,67 @@ define([
                 this.player.on('loaded', () => {
                     this.player.setCurrentTime(resumeTime);
                 });
-            });
-        });
+                return true;
+            }).fail(Notification.exception);
+
+            return true;
+        }).fail(Notification.exception);
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
         // Catch all events where video plays.
-        this.player.on('play', function () {
+        this.player.on('play', function() {
             this.playing = true;
             Log.debug('VIDEO_TIME play');
         }.bind(this));
-        this.player.on('playing', function () {
+        this.player.on('playing', function() {
             this.playing = true;
             Log.debug('VIDEO_TIME playing');
         }.bind(this));
 
         // Catch all events where video stops.
-        this.player.on('pause', function () {
+        this.player.on('pause', function() {
             this.playing = false;
             Log.debug('VIDEO_TIME pause');
         }.bind(this));
-        this.player.on('stalled', function () {
+        this.player.on('stalled', function() {
             this.playing = false;
             Log.debug('VIDEO_TIME stalled');
         }.bind(this));
-        this.player.on('suspend', function () {
+        this.player.on('suspend', function() {
             this.playing = false;
             Log.debug('VIDEO_TIME suspend');
         }.bind(this));
-        this.player.on('abort', function () {
+        this.player.on('abort', function() {
             this.playing = false;
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
         this.player.getPlaybackRate().then(function(playbackRate) {
             this.playbackRate = playbackRate;
-        }.bind(this));
+        }.bind(this)).fail(Notification.exception);
 
         this.player.on('playbackratechange', function(event) {
             this.playbackRate = event.playbackRate;
-        }.bind(this));
+        }.bind(this)).fail(Notification.exception);
 
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
             this.percent = event.percent;
             this.currentTime = event.seconds;
             Log.debug('VIDEO_TIME timeupdate. Percent: ' + this.percent + '. Current time: ' + this.currentTime);
-        }.bind(this));
+        }.bind(this)).fail(Notification.exception);
 
         // Initiate video finish procedure.
-        this.player.on('ended', function () {
+        this.player.on('ended', function() {
             this.playing = false;
             Log.debug('VIDEO_TIME ended');
 
             new Promise(function(resolve) {
                 this.getSession().then(function(session) {
                     resolve(session);
-                });
+                    return true;
+                }).fail(Notification.exception);
             }.bind(this)).then(function(session) {
                 this.setSessionState(session.id, 1);
                 return session;
@@ -211,9 +217,7 @@ define([
             }.bind(this)).then(function(session) {
                 this.setCurrentTime(session.id, this.currentTime);
                 return session;
-            }.bind(this)).catch(function(error) {
-                alert(error);
-            }).finally(function() {
+            }.bind(this)).catch(Notification.exception).finally(function() {
                 this.getSession().then(function(session) {
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
@@ -230,13 +234,15 @@ define([
                         }
 
                         Templates.render('videotime/next_activity_button', JSON.parse(response.data))
-                            .then(function (html) {
+                            .then(function(html) {
                                 $('#next-activity-button').html(html);
-                            });
-                    }.bind(this));
-                }.bind(this));
-            }.bind(this));
-        }.bind(this));
+                                return true;
+                            }).fail(Notification.exception);
+                        return true;
+                    }).fail(Notification.exception);
+                }.bind(this)).fail(Notification.exception);
+            }.bind(this)).fail(Notification.exception);
+        }.bind(this)).fail(Notification.exception);
     };
 
     /**
@@ -247,7 +253,7 @@ define([
             return;
         }
 
-        this.watchInterval = setInterval(function () {
+        this.watchInterval = setInterval(function() {
             if (this.playing) {
                 this.time += this.playbackRate;
 
@@ -258,7 +264,8 @@ define([
                         this.setPercent(session.id, this.percent);
                         this.setCurrentTime(session.id, this.currentTime);
                     }
-                }.bind(this));
+                    return true;
+                }.bind(this)).fail(Notification.exception);
             }
         }.bind(this), 1000);
     };
@@ -266,14 +273,14 @@ define([
     /**
      * Set state on session.
      *
-     * @param sessionId
-     * @param state
+     * @param {int} sessionId
+     * @param {int} state
      * @returns {Promise}
      */
     VideoTime.prototype.setSessionState = function(sessionId, state) {
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_session_state',
-            args: {session_id: sessionId, state: state}
+            args: {"session_id": sessionId, state: state}
         }])[0];
     };
 
@@ -287,7 +294,7 @@ define([
     VideoTime.prototype.setCurrentTime = function(sessionId, currentTime) {
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_session_current_time',
-            args: {session_id: sessionId, current_time: currentTime}
+            args: {"session_id": sessionId, "current_time": currentTime}
         }])[0];
     };
 
@@ -301,7 +308,7 @@ define([
     VideoTime.prototype.setPercent = function(sessionId, percent) {
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_percent',
-            args: {session_id: sessionId, percent: percent}
+            args: {"session_id": sessionId, percent: percent}
         }])[0];
     };
 
@@ -315,7 +322,7 @@ define([
     VideoTime.prototype.recordWatchTime = function(sessionId, time) {
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_record_watch_time',
-            args: {session_id: sessionId, time: time}
+            args: {"session_id": sessionId, time: time}
         }])[0];
     };
 
@@ -328,7 +335,7 @@ define([
     VideoTime.prototype.getNextActivityButtonData = function(sessionId) {
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_get_next_activity_button_data',
-            args: { session_id: sessionId }
+            args: {"session_id": sessionId}
         }])[0];
     };
 
@@ -349,6 +356,7 @@ define([
             }])[0].then((response) => {
                 this.instance = response;
                 resolve(this.instance);
+                return true;
             }).fail(Notification.exception);
         });
     };
@@ -388,11 +396,12 @@ define([
         return new Promise((resolve) => {
             Ajax.call([{
                 methodname: 'videotimeplugin_pro_get_new_session',
-                args: { cmid: this.cmId }
+                args: {cmid: this.cmId}
             }])[0].then(function(response) {
                 this.session = response;
                 resolve(response);
-            }.bind(this));
+                return true;
+            }.bind(this)).fail(Notification.exception);
         });
     };
 
@@ -404,7 +413,7 @@ define([
     VideoTime.prototype.view = function() {
         return Ajax.call([{
             methodname: 'mod_videotime_view_videotime',
-            args: { cmid: this.cmId }
+            args: {cmid: this.cmId}
         }])[0];
     };
 
@@ -416,7 +425,7 @@ define([
             return;
         }
         this.modulecount = $('body .activity.videotime').length;
-        $('body .activity.videotime').each(function (index, module) {
+        $('body .activity.videotime').each(function(index, module) {
             if (
                 !$(module).find('.instancename').length
                 && $(module).find('.vimeo-embed').length
@@ -430,8 +439,9 @@ define([
                 };
                 Templates.render('mod_videotime/videotime_instance', {
                     instance: instance
-                }).then(function (html, js) {
+                }).then(function(html, js) {
                     Templates.runTemplateJS(js);
+                    return true;
                 }).fail(Notification.exception);
             }
         }.bind(this));
