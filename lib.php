@@ -175,6 +175,14 @@ function videotime_add_instance($moduleinstance, $mform = null) {
         \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
     }
 
+    $completiontimeexpected = $moduleinstance->completionexpected ?? null;
+    \core_completion\api::update_completion_date_event(
+        $moduleinstance->coursemodule,
+        'videotime',
+        $moduleinstance->id,
+        $completiontimeexpected
+    );
+
     return $moduleinstance->id;
 }
 
@@ -212,6 +220,14 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->completion_on_finish = false;
     }
 
+    $completiontimeexpected = $moduleinstance->completionexpected ?? null;
+    \core_completion\api::update_completion_date_event(
+        $moduleinstance->coursemodule,
+        'videotime',
+        $moduleinstance->id,
+        $completiontimeexpected
+    );
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
@@ -228,6 +244,9 @@ function videotime_delete_instance($id) {
     if (!$exists) {
         return false;
     }
+
+    $cm = get_coursemodule_from_instance('videotime', $id);
+    \core_completion\api::update_completion_date_event($cm->id, 'videotime', $id, null);
 
     $DB->delete_records('videotime', array('id' => $id));
 
@@ -691,4 +710,53 @@ function mod_videotime_get_vimeo_id_from_link($link) {
     }
 
     return null;
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
+                                                     \core_calendar\action_factory $factory,
+                                                     int $userid = 0) {
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['videotime'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
+    $context = context_module::instance($cm->id);
+
+    if (!has_capability('mod/videotime:view', $context, $userid)) {
+        return null;
+    }
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/videotime/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }
