@@ -75,9 +75,16 @@ function videotime_grade_item_update($videotime, $grades=null) {
     $params = [
         'itemname' => $videotime->name,
         'idnumber' => $videotime->cmidnumber,
-        'gradetype' => GRADE_TYPE_VALUE,
-        'grademax' => 100,
-        'grademin' => 0];
+        'gradetype' => GRADE_TYPE_NONE,
+    ];
+
+    if (!empty($videotime->viewpercentgrade)) {
+        $params = [
+            'gradetype' => GRADE_TYPE_VALUE,
+            'grademax' => 100,
+            'grademin' => 0,
+        ] + $params;
+    }
 
     if ($grades === 'reset') {
         $params['reset'] = true;
