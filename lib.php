@@ -123,6 +123,7 @@ function videotime_get_user_grades($videotime, $userid = 0) {
     }
 
     $cm = get_coursemodule_from_instance('videotime', $videotime->id);
+    $videotime->cmidnumber = $cm->id;
 
     $params = ['cmid' => $cm->id];
     $where = 'WHERE module_id = :cmid';
