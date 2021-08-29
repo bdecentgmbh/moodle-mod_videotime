@@ -120,7 +120,7 @@ var Player;
             this.player = new Player(this.element.id, {});
             return;
         } else {
-            this.player = new Vimeo(this.element.id, {
+            this.player = new Player(this.element.id, {
                 autoplay: this.instance.autoplay,
                 byline: this.instance.byline,
                 color: this.instance.color,
