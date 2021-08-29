@@ -83,7 +83,7 @@ define([
             }
 
             return true;
-        }).fail(Notification.exeption);
+        }).catch(Notification.exeption);
     };
 
     /**
@@ -112,7 +112,7 @@ define([
                         this.view();
                         this.startWatchInterval();
                         return true;
-                    }).fail(Notification.exception);
+                    }).catch(Notification.exception);
                 } else {
                     // Free version can still mark completion on video time view.
                     this.view();
@@ -148,10 +148,10 @@ define([
                     this.player.setCurrentTime(resumeTime);
                 });
                 return true;
-            }).fail(Notification.exception);
+            }).catch(Notification.exception);
 
             return true;
-        }).fail(Notification.exception);
+        }).catch(Notification.exception);
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
@@ -185,18 +185,18 @@ define([
 
         this.player.getPlaybackRate().then(function(playbackRate) {
             this.playbackRate = playbackRate;
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this)).catch(Notification.exception);
 
         this.player.on('playbackratechange', function(event) {
             this.playbackRate = event.playbackRate;
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this));
 
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
             this.percent = event.percent;
             this.currentTime = event.seconds;
             Log.debug('VIDEO_TIME timeupdate. Percent: ' + this.percent + '. Current time: ' + this.currentTime);
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this));
 
         // Initiate video finish procedure.
         this.player.on('ended', function() {
@@ -207,7 +207,7 @@ define([
                 this.getSession().then(function(session) {
                     resolve(session);
                     return true;
-                }).fail(Notification.exception);
+                }).catch(Notification.exception);
             }.bind(this)).then(function(session) {
                 this.setSessionState(session.id, 1);
                 return session;
@@ -240,9 +240,9 @@ define([
                             }).fail(Notification.exception);
                         return true;
                     }).fail(Notification.exception);
-                }.bind(this)).fail(Notification.exception);
+                }.bind(this)).catch(Notification.exception);
             }.bind(this)).fail(Notification.exception);
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this));
     };
 
     /**
@@ -265,7 +265,7 @@ define([
                         this.setCurrentTime(session.id, this.currentTime);
                     }
                     return true;
-                }.bind(this)).fail(Notification.exception);
+                }.bind(this)).catch(Notification.exception);
             }
         }.bind(this), 1000);
     };
