@@ -1,6 +1,6 @@
+var Player;
 (function(t) {
     t.CoreUtilsProvider.videoTimeUtils = {
-
         players: [],
 
         /**
@@ -11,14 +11,14 @@
         pageInit: function(page) {
             var self = this;
 
-            for (let i = 0; i < this.players.length; i++) {
+            for (var i = 0; i < this.players.length; i++) {
                 this.players[i].destroy();
             }
 
             window.setTimeout(function() {
-                let embeds = document.getElementsByClassName('vimeo-embed');
+                var embeds = document.getElementsByClassName('vimeo-embed');
 
-                for (let i = 0; i < embeds.length; i++) {
+                for (var i = 0; i < embeds.length; i++) {
                     if (embeds.hasOwnProperty(i)) {
                         var v = new VimeoVideo(embeds[i], page);
                         v.init();
@@ -29,6 +29,13 @@
         }
     };
 
+    /**
+     *
+     * VimeoVideo constructor
+     *
+     * @param {int} element
+     * @param {angularComponent} angularComponent
+     */
     function VimeoVideo(element, angularComponent) {
         this.element = element;
         this.angularComponent = angularComponent;
@@ -46,11 +53,29 @@
         this.session = null;
     }
 
-    VimeoVideo.prototype.init = async function() {
+    VimeoVideo.prototype.init = function() {
         if (this.hasPro) {
-            this.session = await this.getNewSession();
-            this.resumeTime = await this.getResumeTime();
-            this.instance = await this.getInstance();
+            this.getNewSession()
+                .then(
+                    function(session) {
+                        this.session = session;
+                    }.bind(this)
+                )
+                .catch();
+            this.getResumeTime()
+                .then(
+                    function(resumetime) {
+                        this.resumeTime = resumetime;
+                    }.bind(this)
+                )
+                .catch();
+            this.getInstance()
+                .then(
+                    function(instance) {
+                        this.instance = instance;
+                    }.bind(this)
+                )
+                .catch();
         }
         this.setupPlayer();
     };
@@ -61,23 +86,35 @@
         }
     };
 
-    VimeoVideo.prototype.getNewSession = function () {
-        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_get_new_session',
-            {cmid: this.element.getAttribute('data-cmid')});
+    VimeoVideo.prototype.getNewSession = function() {
+        return this.angularComponent.CoreSitesProvider.getCurrentSite().write(
+            'videotimeplugin_pro_get_new_session',
+            {
+                cmid: this.element.getAttribute('data-cmid')
+            }
+        );
     };
 
     VimeoVideo.prototype.getResumeTime = function() {
-        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_get_resume_time',
-            {cmid: this.element.getAttribute('data-cmid')});
+        return this.angularComponent.CoreSitesProvider.getCurrentSite().write(
+            'videotimeplugin_pro_get_resume_time',
+            {
+                cmid: this.element.getAttribute('data-cmid')
+            }
+        );
     };
 
     VimeoVideo.prototype.getInstance = function() {
-        return this.angularComponent.CoreSitesProvider.getCurrentSite().write('mod_videotime_get_videotime',
-            {cmid: this.element.getAttribute('data-cmid')});
+        return this.angularComponent.CoreSitesProvider.getCurrentSite().write(
+            'mod_videotime_get_videotime',
+            {
+                cmid: this.element.getAttribute('data-cmid')
+            }
+        );
     };
 
-    VimeoVideo.prototype.setupPlayer = function () {
-        const self = this;
+    VimeoVideo.prototype.setupPlayer = function() {
+        var self = this;
 
         if (!this.hasPro) {
             this.player = new Player(this.element.id, {});
@@ -92,49 +129,59 @@
             });
         }
 
-        this.player.on('play', function () {
+        this.player.on('play', function() {
             self.playing = true;
-            console.log('VIDEO_TIME play');
         });
-        this.player.on('playing', function () {
+        this.player.on('playing', function() {
             self.playing = true;
-            console.log('VIDEO_TIME playing');
         });
-        this.player.on('pause', function () {
+        this.player.on('pause', function() {
             self.playing = false;
-            console.log('VIDEO_TIME pause');
         });
-        this.player.on('stalled', function () {
+        this.player.on('stalled', function() {
             self.playing = false;
-            console.log('VIDEO_TIME stalled');
         });
-        this.player.on('suspend', function () {
+        this.player.on('suspend', function() {
             self.playing = false;
-            console.log('VIDEO_TIME suspend');
         });
-        this.player.on('abort', function () {
+        this.player.on('abort', function() {
             self.playing = false;
-            console.log('VIDEO_TIME abort');
         });
 
-        this.player.on('timeupdate', function (event) {
+        this.player.on('timeupdate', function(event) {
             self.percent = event.percent;
             self.currentTime = event.seconds;
-            console.log('VIDEO_TIME timeupdate. Percent: ' + self.percent + '. Current time: ' + self.currentTime);
         });
 
-        this.interval = setInterval(function () {
+        this.interval = setInterval(function() {
             if (self.playing) {
                 self.time++;
                 if (self.time % 5 === 0) {
-                    self.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_record_watch_time',
-                        {session_id: self.session.id, time: self.time}).then(function() {
-                        self.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_set_percent',
-                            {session_id: self.session.id, percent: self.percent}).then(function() {
-                            self.angularComponent.CoreSitesProvider.getCurrentSite().write('videotimeplugin_pro_set_session_current_time',
-                                {session_id: self.session.id, current_time: self.currentTime});
-                        });
-                    });
+                    self.angularComponent.CoreSitesProvider.getCurrentSite()
+                        .write('videotimeplugin_pro_record_watch_time', {
+                            "session_id": self.session.id,
+                            time: self.time
+                        })
+                        .then(function() {
+                            self.angularComponent.CoreSitesProvider.getCurrentSite()
+                                .write('videotimeplugin_pro_set_percent', {
+                                    "session_id": self.session.id,
+                                    percent: self.percent
+                                })
+                                .then(function() {
+                                    self.angularComponent.CoreSitesProvider.getCurrentSite().write(
+                                        'videotimeplugin_pro_set_session_current_time',
+                                        {
+                                            "session_id": self.session.id,
+                                            "current_time": self.currentTime
+                                        }
+                                    );
+                                    return true;
+                                })
+                                .catch();
+                            return true;
+                        })
+                        .catch();
                 }
             }
         }, 1000);
