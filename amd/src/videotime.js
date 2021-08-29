@@ -126,7 +126,7 @@ define([
                         this.view();
                         this.startWatchInterval();
                         return true;
-                    }).fail(Notification.exception);
+                    }).catch(Notification.exception);
                 } else {
                     // Free version can still mark completion on video time view.
                     this.view();
@@ -221,7 +221,7 @@ define([
                 this.getSession().then(function(session) {
                     resolve(session);
                     return true;
-                }).fail(Notification.exception);
+                }).catch(Notification.exception);
             }.bind(this)).then(function(session) {
                 this.setSessionState(session.id, 1);
                 return session;
@@ -254,7 +254,7 @@ define([
                             }).fail(Notification.exception);
                         return true;
                     }).fail(Notification.exception);
-                }.bind(this)).fail(Notification.exception);
+                }.bind(this)).catch(Notification.exception);
             }.bind(this)).fail(Notification.exception);
         }.bind(this));
     };
@@ -279,7 +279,7 @@ define([
                         this.setCurrentTime(session.id, this.currentTime);
                     }
                     return true;
-                }.bind(this)).fail(Notification.exception);
+                }.bind(this)).catch(Notification.exception);
             }
         }.bind(this), 1000);
     };

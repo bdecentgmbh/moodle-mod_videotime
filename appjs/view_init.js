@@ -83,7 +83,21 @@
             this.player = new Player(this.element.id, {});
             return;
         } else {
-            this.player = new Player(this.element.id, this.instance);
+            this.player = new Vimeo(this.element.id, {
+                autoplay: this.instance.autoplay,
+                byline: this.instance.byline,
+                color: this.instance.color,
+                maxheight: this.instance.maxheight,
+                maxwidth: this.instance.maxwidth,
+                muted: this.instance.muted,
+                playsinline: this.instance.playsinline,
+                responsive: this.instance.responsive,
+                speed: this.instance.speed,
+                title: this.instance.title,
+                transparent: this.instance.transparent,
+                url: this.instance.url,
+                width: this.instance.width
+            });
         }
 
         if (this.resumeTime) {

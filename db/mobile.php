@@ -29,7 +29,7 @@ $addons = [
         'handlers' => [
             'videotime' => [
                 'displaydata' => [
-                    'icon' => $CFG->wwwroot . '/mod/videotime/pix/icon.png',
+                    'icon' => $CFG->wwwroot . '/mod/videotime/pix/icon.svg',
                     'class' => '',
                 ],
 
