@@ -236,7 +236,7 @@ define([
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
 
-                        if (parseInt(data.instance.next_activity_auto)) {
+                        if (data.instance && parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
                                 let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
                                 if ($('.path-course-view').length && link) {
