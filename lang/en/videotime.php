@@ -216,6 +216,7 @@ $string['resume_playback_help'] = 'Automatically resume video when user returns 
 $string['run_discovery_task'] = 'Run this "Discover Vimeo videos" task to begin pulling in your video data. Otherwise you can wait until it runs automatically.';
 $string['estimated_request_time'] = 'Estimated time remaining';
 $string['search:activity'] = 'VideoTime - activity information';
+$string['search:texttrack'] = 'VideoTime - text track information';
 $string['search_help'] = 'Search name, description, albums, tags...';
 $string['seconds'] = 'Seconds';
 $string['session_not_found'] = 'User session not found.';
