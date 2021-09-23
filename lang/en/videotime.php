@@ -242,6 +242,7 @@ $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
 $string['tablealias_vt'] = 'Video Time';
 $string['tabinformation'] = 'Information';
+$string['tabtranscript'] = 'Transcript';
 $string['tabs'] = 'Tabs';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['timestarted'] = 'Date started';

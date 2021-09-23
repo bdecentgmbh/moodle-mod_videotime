@@ -83,7 +83,7 @@ define([
             }
 
             return true;
-        }).fail(Notification.exeption);
+        }).catch(Notification.exeption);
     };
 
     /**
@@ -101,6 +101,7 @@ define([
     VideoTime.prototype.addListeners = function() {
         if (!this.player) {
             Log.debug('Player was not properly initialized for course module ' + this.cmId);
+            return;
         }
 
         // Fire view event in Moodle on first play only.
@@ -112,7 +113,7 @@ define([
                         this.view();
                         this.startWatchInterval();
                         return true;
-                    }).fail(Notification.exception);
+                    }).catch(Notification.exception);
                 } else {
                     // Free version can still mark completion on video time view.
                     this.view();
@@ -148,10 +149,10 @@ define([
                     this.player.setCurrentTime(resumeTime);
                 });
                 return true;
-            }).fail(Notification.exception);
+            }).catch(Notification.exception);
 
             return true;
-        }).fail(Notification.exception);
+        }).catch(Notification.exception);
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
@@ -185,18 +186,18 @@ define([
 
         this.player.getPlaybackRate().then(function(playbackRate) {
             this.playbackRate = playbackRate;
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this)).catch(Notification.exception);
 
         this.player.on('playbackratechange', function(event) {
             this.playbackRate = event.playbackRate;
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this));
 
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
             this.percent = event.percent;
             this.currentTime = event.seconds;
             Log.debug('VIDEO_TIME timeupdate. Percent: ' + this.percent + '. Current time: ' + this.currentTime);
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this));
 
         // Initiate video finish procedure.
         this.player.on('ended', function() {
@@ -207,7 +208,7 @@ define([
                 this.getSession().then(function(session) {
                     resolve(session);
                     return true;
-                }).fail(Notification.exception);
+                }).catch(Notification.exception);
             }.bind(this)).then(function(session) {
                 this.setSessionState(session.id, 1);
                 return session;
@@ -222,7 +223,7 @@ define([
                     this.getNextActivityButtonData(session.id).then(function(response) {
                         let data = JSON.parse(response.data);
 
-                        if (parseInt(data.instance.next_activity_auto)) {
+                        if (data.instance && parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
                                 let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
                                 if ($('.path-course-view').length && link) {
@@ -240,9 +241,31 @@ define([
                             }).fail(Notification.exception);
                         return true;
                     }).fail(Notification.exception);
-                }.bind(this)).fail(Notification.exception);
+                }.bind(this)).catch(Notification.exception);
             }.bind(this)).fail(Notification.exception);
-        }.bind(this)).fail(Notification.exception);
+        }.bind(this));
+
+        $(document).on('click', '[data-action="cue"]', function(event) {
+            let starttime = event.target.closest('a').getAttribute('data-start'),
+                timeseconds = parseInt(starttime) * 60 + Number(starttime.replace(/.*:/, ''));
+            event.preventDefault();
+            event.stopPropagation();
+            this.player.setCurrentTime(timeseconds);
+        }.bind(this));
+
+        $('[data-action="cue"]').each(function(index, anchor) {
+            let starttime = anchor.getAttribute('data-start'),
+                timeseconds = parseInt(starttime) * 60 + Number(starttime.replace(/.*:/, ''));
+            this.player.addCuePoint(timeseconds, {
+                starttime: starttime
+            }).catch(Notification.exeception);
+        }.bind(this));
+
+        this.player.on('cuepoint', function(event) {
+            if (event.data.starttime) {
+                $('[data-action="cue"][data-start="' + event.data.starttime + '"]').focus();
+            }
+        });
     };
 
     /**
@@ -265,7 +288,7 @@ define([
                         this.setCurrentTime(session.id, this.currentTime);
                     }
                     return true;
-                }.bind(this)).fail(Notification.exception);
+                }.bind(this)).catch(Notification.exception);
             }
         }.bind(this), 1000);
     };

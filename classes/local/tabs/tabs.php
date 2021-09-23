@@ -57,6 +57,9 @@ class tabs implements \templatable, \renderable {
         $this->instance = $instance;
         $this->tabs[] = new watch_tab($instance);
         $this->tabs[] = new information_tab($instance);
+        if (videotime_has_repository()) {
+            $this->tabs[] = new text_tab($instance);
+        }
 
         $this->set_active_tab('watch');
         $this->get_tab('watch')->set_persistent();

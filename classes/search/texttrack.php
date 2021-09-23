@@ -78,12 +78,13 @@ class texttrack extends \core_search\base_mod {
             $context = \context_module::instance($cm->id);
         } catch (\dml_missing_record_exception $ex) {
             // Notify it as we run here as admin, we should see everything.
-            debugging('Error retrieving ' . $this->areaid . ' ' . $record->moduleinstanceid . ' document, not all required data is available: ' .
-                $ex->getMessage(), DEBUG_DEVELOPER);
+            debugging('Error retrieving ' . $this->areaid . ' ' . $record->moduleinstanceid .
+                ' document, not all required data is available: ' .  $ex->getMessage(), DEBUG_DEVELOPER);
             return false;
         } catch (\dml_exception $ex) {
             // Notify it as we run here as admin, we should see everything.
-            debugging('Error retrieving ' . $this->areaid . ' ' . $record->moduleinstanceid . ' document: ' . $ex->getMessage(), DEBUG_DEVELOPER);
+            debugging('Error retrieving ' . $this->areaid . ' ' . $record->moduleinstanceid .
+                ' document: ' . $ex->getMessage(), DEBUG_DEVELOPER);
             return false;
         }
 
