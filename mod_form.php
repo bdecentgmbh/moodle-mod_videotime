@@ -301,6 +301,11 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'enabletabs', get_string('enabletabs', 'videotime'));
         $mform->setType('enabletabs', PARAM_BOOL);
 
+        foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+            $classname = "\\videotimetab_$name\\tab";
+            $classname::add_form_fields($mform);
+        }
+
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 
         // Add hidden 'disable' element used for disabling embed options when they are globally forced.
@@ -617,6 +622,11 @@ class mod_videotime_mod_form extends moodleform_mod {
             $defaultvalues['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id,
                 'mod_videotime', 'video_description', 0, [], $videodescription);
             $defaultvalues['video_description']['itemid'] = $draftitemid;
+
+            foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+                $classname = "\\videotimetab_$name\\tab";
+                $classname::data_preprocessing($defaultvalues, $this->current->instance);
+            }
         }
     }
 }

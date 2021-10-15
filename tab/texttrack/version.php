@@ -15,13 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin definitions for the Video Time module.
+ * Plugin version and other meta-data are defined here.
  *
- * @package     mod_videotime
- * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @package     videotimetab_texttrack
+ * @copyright   2021 gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = (array) json_decode(file_get_contents(__DIR__ . "/subplugins.json"))->plugintypes;
+$plugin->component = 'videotimetab_texttrack';
+$plugin->release = '1.4';
+$plugin->version = 2021051900;
+$plugin->requires = 2015111610;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->dependencies = [
+    'videotime' => 2021032200
+];

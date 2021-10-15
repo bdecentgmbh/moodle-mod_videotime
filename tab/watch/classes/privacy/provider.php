@@ -15,13 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin definitions for the Video Time module.
+ * Plugin version and other meta-data are defined here.
  *
- * @package     mod_videotime
+ * @package     videotimetab_watch
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace videotimetab_watch\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = (array) json_decode(file_get_contents(__DIR__ . "/subplugins.json"))->plugintypes;
+/**
+ * The videotimetab_watch module does not store any data.
+ *
+ * @package     videotimetab_watch
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}

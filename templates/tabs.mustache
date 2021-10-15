@@ -39,6 +39,7 @@
     }
 
 }}
+{{ intro }}
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     {{#tabs}}
         <li class="nav-item">
@@ -46,17 +47,41 @@
         </li>
     {{/tabs}}
 </ul>
-<div class="tab-content row" id="myTabContent">
+<div class="tab-content" id="myTabContent">
     {{#tabs}}
         {{^persistent}}
-            <div class="col tab-pane fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
-                {{{tabcontent}}}
+            <div class="tab-pane fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
+                <div class="container">
+                    <div class="" style="display: flex">
+                        <div class="" style="resize: horizontal; overflow: auto; width: 50%">
+                            {{{tabcontent}}}
+                        </div>
+                        <div class="instance-container" style="flex-grow: 1"></div>
+                    </div>
+                </div>
             </div>
         {{/persistent}}
         {{#persistent}}
-            <div class="col persistent-tab" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
-                {{{tabcontent}}}
+            <div class="tab-pane fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
+                <div class="container">
+                    <div class="row">
+                        <div class="instance-container col-12"></div>
+                        <div class="col-12">
+                            {{{tabcontent}}}
+                        </div>
+                    </div>
+                </div>
             </div>
         {{/persistent}}
     {{/tabs}}
+    {{# instance }}
+        <div class="videotime-tab-instance" style="position: absolute; ">
+            {{> mod_videotime/vimeo_embed }}
+        </div>
+    {{/ instance }}
+{{# js }}
+    require(['mod_videotime/resize_tab_player'], function(TabResizer) {
+        TabResizer.initialize();
+    });
+{{/ js }}
 </div>

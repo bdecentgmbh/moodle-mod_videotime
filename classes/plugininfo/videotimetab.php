@@ -15,50 +15,49 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tab.
+ * Plugin version and other meta-data are defined here.
  *
  * @package     mod_videotime
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_videotime\local\tabs;
+namespace mod_videotime\plugininfo;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/mod/videotime/lib.php");
+use moodle_url;
 
 /**
- * Tab.
+ * Plugin version and other meta-data are defined here.
  *
- * @package mod_videotime
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class information_tab extends tab {
-
+class videotimetab extends \core\plugininfo\base {
     /**
-     * Get tab name for ids
-     *
-     * @return string
+     * Return URL used for management of plugins of this type.
+     * @return moodle_url
      */
-    public function get_name(): string {
-        return 'information';
+    public static function get_manage_url() {
+        return new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'));
     }
 
     /**
-     * Get label for tab
+     * Get name to identify section
      *
      * @return string
      */
-    public function get_label(): string {
-        return get_string('tabinformation', 'videotime');
+    public function get_settings_section_name() {
+        return $this->type . '_' . $this->name;
     }
 
     /**
-     * Get tab panel content
+     * Allow uninstall
      *
-     * @return string
+     * @return bool
      */
-    public function get_tab_content(): string {
-        return 'This is some information';
+    public function is_uninstall_allowed() {
+        return true;
     }
 }

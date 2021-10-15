@@ -15,13 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin definitions for the Video Time module.
+ * Plugin strings are defined here.
  *
- * @package     mod_videotime
+ * @package     videotimetab_information
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = (array) json_decode(file_get_contents(__DIR__ . "/subplugins.json"))->plugintypes;
+$string['pluginname'] = 'Video Time Information tab';
+$string['information'] = 'Information';
+$string['privacy:metadata'] = 'The Video Time Information tab plugin does not store any personal data.';

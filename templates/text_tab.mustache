@@ -32,7 +32,9 @@
                 "captions": [
                      {
                           "starttime": "00:05.00",
-                          "text": "Hello world"
+                          "lines": [
+                              {"text": "Hello world"}
+                          ]
                      }
                 ]
             }
@@ -43,8 +45,15 @@
 {{# texttracks }}
 <div data-lang="{{ language }}">
     {{# captions }}
-    <div>
-        <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttime}}</a><pre>{{ text }}</pre>
+    <div class="row">
+        <div class="col-3" style="max-width: 100px;">
+            <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttime}}</a>
+        </div>
+        <div class="col-9">
+            {{# lines }}
+            <div>{{ text }}</div>
+            {{/ lines }}
+        </div>
     </div>
     {{/ captions }}
 </div>

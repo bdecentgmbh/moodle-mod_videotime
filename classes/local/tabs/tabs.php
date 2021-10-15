@@ -26,6 +26,7 @@ namespace mod_videotime\local\tabs;
 
 use mod_videotime\videotime_instance;
 use renderer_base;
+use mod_videotime\plugin_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -55,14 +56,18 @@ class tabs implements \templatable, \renderable {
      */
     public function __construct(videotime_instance $instance) {
         $this->instance = $instance;
-        $this->tabs[] = new watch_tab($instance);
-        $this->tabs[] = new information_tab($instance);
-        if (videotime_has_repository()) {
-            $this->tabs[] = new text_tab($instance);
+        $pluginmanager = new plugin_manager('videotimetab');
+        foreach ($pluginmanager->get_sorted_plugins_list() as $subplugin) {
+            $classname = "\\videotimetab_$subplugin\\tab";
+            if (empty(get_config("videotimetab_$subplugin", 'disabled'))) {
+                $this->tabs[] = new $classname($instance);
+            }
         }
 
-        $this->set_active_tab('watch');
-        $this->get_tab('watch')->set_persistent();
+        if (empty(get_config("videotimetab_watch", 'disabled'))) {
+            $this->set_active_tab('watch');
+            $this->get_tab('watch')->set_persistent();
+        }
     }
 
     /**
@@ -100,14 +105,30 @@ class tabs implements \templatable, \renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
+        global $OUTPUT;
+
+        $record = $this->get_instance()->to_record();
+        $record->uniqueid = $this->get_instance()->get_uniqueid();
         $tabs = [];
 
         foreach ($this->tabs as $tab) {
             $tabs[] = $tab->get_data();
         }
 
+        $record->intro = '';
+        $record->video_description = '';
         return [
+            'instance' => [$record],
             'tabs' => $tabs
         ];
+    }
+
+    /**
+     * Get video time instance
+     *
+     * @return videotime_instance
+     */
+    public function get_instance(): videotime_instance {
+        return $this->instance;
     }
 }

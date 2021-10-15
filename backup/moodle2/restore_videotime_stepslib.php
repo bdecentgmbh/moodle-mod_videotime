@@ -45,7 +45,12 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
-        $paths[] = new restore_path_element('videotime', '/activity/videotime');
+        $videotime = new restore_path_element('videotime', '/activity/videotime');
+        $paths[] = $videotime;
+
+        // A chance for tab subplugins to set up their data.
+        $this->add_subplugin_structure('videotimetab', $videotime);
+
         if ($userinfo && videotime_has_pro()) {
             $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
         }
@@ -100,5 +105,4 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $this->add_related_files('mod_videotime', 'intro', null);
         $this->add_related_files('mod_videotime', 'video_description', null);
     }
-
 }

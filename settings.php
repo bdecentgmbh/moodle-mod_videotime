@@ -313,4 +313,9 @@ if (videotime_has_pro() && videotime_has_repository()) {
         'overview',
         get_string('vimeo_overview', 'videotime'),
         new moodle_url('/mod/videotime/plugin/repository/overview.php')));
+    $ADMIN->add('modvideotimefolder', new admin_category('videotimetabplugins',
+        new lang_string('videotimetabplugins', 'videotime'), !$module->is_enabled()));
+    $ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplugins',
+        get_string('managevideotimetabplugins', 'videotime'),
+        new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'))));
 }

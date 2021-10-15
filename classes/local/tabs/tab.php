@@ -25,6 +25,8 @@
 namespace mod_videotime\local\tabs;
 
 use mod_videotime\videotime_instance;
+use moodle_form;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -138,5 +140,47 @@ abstract class tab {
             'persistent' => $this->get_persistent(),
             'tabcontent' => $this->get_tab_content()
         ];
+    }
+
+    /**
+     * Defines the additional form fields.
+     *
+     * @param moodle_form $mform form to modify
+     */
+    public static function add_form_fields($mform) {
+    }
+
+    /**
+     * Saves current settings in database if necessary
+     *
+     * @param stdClass $data Form data with values to save
+     */
+    public static function save_settings(stdClass $data) {
+    }
+
+    /**
+     * Delete settings in database
+     *
+     * @param  int $id
+     */
+    public static function delete_settings(int $id) {
+    }
+
+    /**
+     * Prepares the form before data are set
+     *
+     * @param  array $defaultvalues
+     * @param  int $instance
+     */
+    public static function data_preprocessing(array &$defaultvalues, int $instance) {
+    }
+
+    /**
+     * Report file areas for backup
+     *
+     * @return array
+     */
+    public static function get_config_file_areas(): array {
+        return array();
     }
 }

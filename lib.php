@@ -166,6 +166,11 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     videotime_grade_item_update($moduleinstance);
 
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::save_settings($moduleinstance);
+    }
+
     if (videotime_has_repository()) {
         \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
     }
@@ -207,6 +212,11 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->completion_on_finish = false;
     }
 
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::save_settings($moduleinstance);
+    }
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
@@ -222,6 +232,11 @@ function videotime_delete_instance($id) {
     $exists = $DB->get_record('videotime', array('id' => $id));
     if (!$exists) {
         return false;
+    }
+
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::delete_settings($id);
     }
 
     $DB->delete_records('videotime', array('id' => $id));

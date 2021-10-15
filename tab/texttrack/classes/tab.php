@@ -17,12 +17,12 @@
 /**
  * Tab.
  *
- * @package     mod_videotime
+ * @package     videotimetab_texttrack
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_videotime\local\tabs;
+namespace videotimetab_texttrack;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,9 +31,9 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
 /**
  * Tab.
  *
- * @package mod_videotime
+ * @package videotimetab_texttrack
  */
-class text_tab extends tab {
+class tab extends \mod_videotime\local\tabs\tab {
 
     /**
      * Get tab name for ids
@@ -80,7 +80,9 @@ class text_tab extends tab {
             return array(
                 'starttime' => $starttime,
                 'endtime' => $endtime,
-                'text' => $text,
+                'lines' => array_map(function($text) {
+                    return array('text' => $text);
+                }, explode("\n", $text)),
             );
         }, $matches[1], $matches[2], $matches[3]);
     }

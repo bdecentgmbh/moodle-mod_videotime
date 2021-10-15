@@ -15,55 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tab.
+ * Plugin version and other meta-data are defined here.
  *
- * @package     mod_videotime
+ * @package     videotimetab_information
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_videotime\local\tabs;
+namespace videotimetab_information\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/mod/videotime/lib.php");
-
 /**
- * Tab.
+ * The videotimetab_information module does not store any data.
  *
- * @package mod_videotime
+ * @package     videotimetab_information
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class watch_tab extends tab {
-
+class provider implements \core_privacy\local\metadata\null_provider {
     /**
-     * Get tab name for ids
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
      *
-     * @return string
+     * @return  string
      */
-    public function get_name(): string {
-        return 'watch';
-    }
-
-    /**
-     * Get label for tab
-     *
-     * @return string
-     */
-    public function get_label(): string {
-        return get_string('watch', 'videotime');
-    }
-
-    /**
-     * Get tab panel content
-     *
-     * @return string
-     */
-    public function get_tab_content(): string {
-        global $OUTPUT;
-
-        $record = $this->get_instance()->to_record();
-        $record->uniqueid = $this->get_instance()->get_uniqueid();
-
-        return $OUTPUT->render_from_template('mod_videotime/vimeo_embed', $record);
+    public static function get_reason() : string {
+        return 'privacy:metadata';
     }
 }
