@@ -72,6 +72,8 @@ $string['currentwatchtime'] = 'Current watch time';
 $string['datasource:videotime_sessions_data_source'] = 'Video Time sessions';
 $string['datasource:videotime_stats_data_source'] = 'Video Time stats';
 $string['default'] = 'Default';
+$string['defaulttabsize'] = 'Default tab size';
+$string['defaulttabsize_help'] = 'Set the size that will be used to determine initial relative width of tab sections';
 $string['deletesessiondata'] = 'Delete session data';
 $string['discover_videos'] = 'Discover Vimeo videos';
 $string['discovering_videos'] = 'Discovering {$a->count} videos';
@@ -193,6 +195,9 @@ We are constantly improving the plugin, so stay tuned for upcoming versions. You
 Please let us know if you have any feedback for us.
 ';
 }
+$string['panelwidthlarge'] = 'Large panel width';
+$string['panelwidthmedium'] = 'Medium panel width';
+$string['panelwidthsmall'] = 'Small panel width';
 $string['percentageofvideofinished'] = 'Percentage of video finished';
 $string['pluginadministration'] = 'Video Time administration';
 $string['pluginname'] = 'Video Time';
@@ -249,6 +254,7 @@ $string['tablealias_vt'] = 'Video Time';
 $string['tabinformation'] = 'Information';
 $string['tabtranscript'] = 'Transcript';
 $string['tabs'] = 'Tabs';
+$string['tabsettings'] = 'Tab settings';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['timestarted'] = 'Date started';
 $string['todo'] = 'TODO';

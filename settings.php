@@ -291,8 +291,8 @@ if ($ADMIN->fulltree) {
     }
 
     $settings->add(new admin_setting_heading('tabsettings', get_string('tabsettings', 'videotime'), ''));
-    $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaultabsize', 'videotime'),
-                get_string('defaultabsize_help', 'videotime'), 'videotimesize-6', array(
+    $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaulttabsize', 'videotime'),
+                get_string('defaulttabsize_help', 'videotime'), 'videotimesize-6', array(
             'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
             'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
             'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
