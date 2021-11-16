@@ -1,5 +1,18 @@
-.vimeo-container {
-    display: flex;
+.videotime-size-3,
+.videotime-size-6,
+.videotime-size-9 {
+    resize: horizontal;
+    overflow: auto;
+}
+
+.videotime-size-3 {
+    width: 25%;
+}
+.videotime-size-6 {
+    width: 50%;
+}
+.videotime-size-9 {
+    width: 75%;
 }
 
 .modtype_videotime.label_mode,

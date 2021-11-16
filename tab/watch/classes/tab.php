@@ -38,24 +38,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
 class tab extends \mod_videotime\local\tabs\tab {
 
     /**
-     * Get tab name for ids
-     *
-     * @return string
-     */
-    public function get_name(): string {
-        return 'watch';
-    }
-
-    /**
-     * Get label for tab
-     *
-     * @return string
-     */
-    public function get_label(): string {
-        return get_string('watch', 'videotime');
-    }
-
-    /**
      * Get tab panel content
      *
      * @return string
@@ -73,5 +55,13 @@ class tab extends \mod_videotime\local\tabs\tab {
             $context->id, 'mod_videotime', 'video_description', 0);
         $record->video_description = format_text($record->video_description, $record->video_description_format);
         return $record->video_description;
+    }
+
+    /**
+     * Defines the additional form fields.
+     *
+     * @param moodle_form $mform form to modify
+     */
+    public static function add_form_fields($mform) {
     }
 }

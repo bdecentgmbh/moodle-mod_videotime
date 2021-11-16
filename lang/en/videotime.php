@@ -225,6 +225,7 @@ $string['session_not_found'] = 'User session not found.';
 $string['set_client_id_and_secret'] = 'Set Client ID and Secret';
 $string['settings'] = 'Video Time settings';
 $string['setup_repository'] = 'Setup repository';
+$string['showtab'] = 'Show tab';
 $string['show_title'] = 'Show title';
 $string['show_description'] = 'Show description';
 $string['show_tags'] = 'Show tags';

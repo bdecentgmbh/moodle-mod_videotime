@@ -29,7 +29,8 @@ define([
             $('.vimeo-embed iframe').attr('width', $(container));
             $('.vimeo-embed iframe').each(function() {
                 this.width = container.offsetWidth - 10;
-                $(container).css('height', this.offsetHeight + 20 + 'px');
+                $(container).css('height', this.parentNode.offsetHeight + 20 + 'px');
+                $('.tab-pane').css('min-height', this.parentNode.parentNode.offsetHeight + 20 + 'px');
                 $(this).closest('.videotime-tab-instance').css('top', $(container).position().top + 'px');
                 $(this).closest('.videotime-tab-instance').css('left', $(container).position().left + 'px');
             });

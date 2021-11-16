@@ -290,6 +290,14 @@ if ($ADMIN->fulltree) {
         }
     }
 
+    $settings->add(new admin_setting_heading('tabsettings', get_string('tabsettings', 'videotime'), ''));
+    $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaultabsize', 'videotime'),
+                get_string('defaultabsize_help', 'videotime'), 'videotimesize-6', array(
+            'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
+            'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
+            'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
+    )));
+
     if (!videotime_has_pro()) {
         $settings->add(new admin_setting_heading('pro2', '',
             html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),
@@ -318,4 +326,8 @@ if (videotime_has_pro() && videotime_has_repository()) {
     $ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplugins',
         get_string('managevideotimetabplugins', 'videotime'),
         new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'))));
+
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimetab') as $plugin) {
+        $plugin->load_settings($ADMIN, 'videotimetabplugins', $hassiteconfig);
+    }
 }

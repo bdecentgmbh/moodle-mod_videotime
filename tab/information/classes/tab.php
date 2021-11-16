@@ -39,24 +39,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
 class tab extends \mod_videotime\local\tabs\tab {
 
     /**
-     * Get tab name for ids
-     *
-     * @return string
-     */
-    public function get_name(): string {
-        return 'information';
-    }
-
-    /**
-     * Get label for tab
-     *
-     * @return string
-     */
-    public function get_label(): string {
-        return get_string('tabinformation', 'videotime');
-    }
-
-    /**
      * Get tab panel content
      *
      * @return string
@@ -87,6 +69,11 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @param moodle_form $mform form to modify
      */
     public static function add_form_fields($mform) {
+        $mform->addElement('advcheckbox', 'enable_information', get_string('pluginname', 'videotimetab_information'),
+            get_string('showtab', 'videotime'));
+        $mform->setDefault('enable_information', get_config('videotimetab_information', 'default'));
+        $mform->disabledIf('enable_information', 'enabletabs');
+
         $mform->addElement(
             'editor',
             'information',
@@ -99,7 +86,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             )
         );
         $mform->setType('information', PARAM_RAW);
-        $mform->disabledIf('information', 'enabletabs');
+        $mform->disabledIf('information', 'enable_information');
     }
 
     /**
@@ -110,7 +97,7 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function save_settings(stdClass $data) {
         global $DB;
 
-        if (empty($data->information['text'])) {
+        if (empty($data->enable_information)) {
             $DB->delete_records('videotimetab_information', array(
                 'videotime' => $data->id,
             ));
@@ -161,7 +148,10 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function data_preprocessing(array &$defaultvalues, int $instance) {
         global $COURSE, $DB;
 
-        if ($record = $DB->get_record('videotimetab_information', array('videotime' => $instance))) {
+        if (empty($instance)) {
+            $defaultvalues['enable_information'] = get_config('videotimetab_information', 'default');
+        } else if ($record = $DB->get_record('videotimetab_information', array('videotime' => $instance))) {
+            $defaultvalues['enable_information'] = 1;
             $cm = get_coursemodule_from_instance('videotime', $record->videotime, $COURSE->id);
             $context = context_module::instance($cm->id);
             $draftitemid = file_get_submitted_draft_itemid('information');
@@ -181,5 +171,19 @@ class tab extends \mod_videotime\local\tabs\tab {
      */
     public static function get_config_file_areas(): array {
         return array('text');
+    }
+
+    /**
+     * Whether tab is enabled and visible
+     *
+     * @return bool
+     */
+    public function is_visible(): bool {
+        global $DB;
+
+        $record = $this->get_instance()->to_record();
+        return $this->is_enabled() && $DB->record_exists('videotimetab_information', array(
+            'videotime' => $record->id
+        ));
     }
 }

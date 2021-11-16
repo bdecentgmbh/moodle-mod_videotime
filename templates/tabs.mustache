@@ -51,13 +51,11 @@
     {{#tabs}}
         {{^persistent}}
             <div class="tab-pane fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
-                <div class="container">
-                    <div class="" style="display: flex">
-                        <div class="" style="resize: horizontal; overflow: auto; width: 50%">
-                            {{{tabcontent}}}
-                        </div>
-                        <div class="instance-container" style="flex-grow: 1"></div>
+                <div class="" style="display: flex">
+                    <div class="{{ panelclass }}">
+                        {{{tabcontent}}}
                     </div>
+                    <div class="instance-container" style="flex-grow: 1"></div>
                 </div>
             </div>
         {{/persistent}}

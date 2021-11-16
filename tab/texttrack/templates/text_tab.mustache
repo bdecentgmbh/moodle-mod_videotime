@@ -26,8 +26,9 @@
     {
         "texttracks": [
             {
-                "language": "en",
+                "lang": "en",
                 "kind": "captions",
+                "show": true,
                 "label": "Information",
                 "captions": [
                      {
@@ -43,9 +44,8 @@
 
 }}
 {{# texttracks }}
-<div data-lang="{{ language }}">
     {{# captions }}
-    <div class="row">
+    <div class="row"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
         <div class="col-3" style="max-width: 100px;">
             <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttime}}</a>
         </div>
@@ -56,5 +56,4 @@
         </div>
     </div>
     {{/ captions }}
-</div>
 {{/ texttracks }}

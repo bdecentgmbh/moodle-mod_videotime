@@ -55,6 +55,11 @@ abstract class tab {
     private $persistent = false;
 
     /**
+     * @var stdClass
+     */
+    private $record = null;
+
+    /**
      * Constructor
      *
      * @param videotime_instance $instance
@@ -111,14 +116,18 @@ abstract class tab {
      *
      * @return string
      */
-    abstract public function get_name(): string;
+    public function get_name(): string {
+        return preg_replace('/videotimetab_(.*)\\\\tab/', '$1', get_called_class());
+    }
 
     /**
      * Get label for tab
      *
      * @return string
      */
-    abstract public function get_label(): string;
+    public function get_label(): string {
+        return get_string('label', 'videotimetab_' . $this->get_name());
+    }
 
     /**
      * Get tab panel content
@@ -148,6 +157,15 @@ abstract class tab {
      * @param moodle_form $mform form to modify
      */
     public static function add_form_fields($mform) {
+        $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
+        if (!empty(get_config("videotimetab_$name", 'disabled'))) {
+            return;
+        }
+
+        $mform->addElement('advcheckbox', "enable_$name", get_string('pluginname', "videotimetab_$name"),
+            get_string('showtab', 'videotime'));
+        $mform->setDefault("enable_$name", get_config("videotimetab_$name", 'default'));
+        $mform->disabledIf("enable_$name", 'enabletabs');
     }
 
     /**
@@ -182,5 +200,37 @@ abstract class tab {
      */
     public static function get_config_file_areas(): array {
         return array();
+    }
+
+    /**
+     * Whether tab is enabled
+     *
+     * @return bool
+     */
+    public function is_enabled(): bool {
+        $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
+        return empty(get_config("videotimetab_$name", 'disabled'));
+    }
+
+    /**
+     * Whether tab is enabled and visible
+     *
+     * @return bool
+     */
+    public function is_visible(): bool {
+        return $this->is_enabled();
+    }
+
+    /**
+     * Whether tab is enabled and visible
+     *
+     * @return bool
+     */
+    protected function get_record(): bool {
+        $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
+        if (is_null($this->record)) {
+            $this->record = $DB->get_record("videotimetab_$name", array('videotime' => $instance->id));
+        }
+        return $this->record;
     }
 }

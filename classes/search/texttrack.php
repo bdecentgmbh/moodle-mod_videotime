@@ -26,6 +26,8 @@ namespace mod_videotime\search;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_component;
+
 /**
  * Search area for mod_videotime activities.
  *
@@ -45,18 +47,23 @@ class texttrack extends \core_search\base_mod {
     public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
         global $DB;
 
-        if (!videotime_has_repository()) {
-            return null;
-        }
-
         list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
                 $context, 'videotime', 'v');
         if ($contextjoin === null) {
             return null;
         }
 
-        $sql = "SELECT vv.*, v.timemodified, v.course, v.id AS moduleinstanceid FROM {videotime_vimeo_video} vv
-                  JOIN {videotime} v ON v.vimeo_url = vv.link
+        if (
+            !videotime_has_repository()
+            || !key_exists('texttrack', core_component::get_plugin_list('videotimetab'))
+        ) {
+            return null;
+        }
+
+        $sql = "SELECT te.id, te.text, tr.lang, te.starttime, v.name, v.timemodified, v.course, v.id AS moduleinstanceid
+                  FROM {videotime} v
+                  JOIN {videotimetab_texttrack_track} tr ON v.id = tr.videotime
+                  JOIN {videotimetab_texttrack_text} te ON tr.id = te.track
           $contextjoin
                  WHERE v.timemodified >= ? ORDER BY v.timemodified ASC";
         return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
@@ -88,18 +95,11 @@ class texttrack extends \core_search\base_mod {
             return false;
         }
 
-        $api = new \videotimeplugin_repository\api();
-        $endpoint = '/videos/' . mod_videotime_get_vimeo_id_from_link($record->link) . '/texttracks';
-        $texttracks = $api->request($endpoint);
-        if ($texttracks['status'] == 200) {
-            $link = reset($texttracks['body']['data'])['link'];
-            $texttrack = file_get_contents($link);
-        }
-
         // Prepare associative array with data from DB.
-        $doc = \core_search\document_factory::instance($record->moduleinstanceid, $this->componentname, $this->areaname);
+        $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
         $doc->set('title', content_to_text($record->name, false));
-        $doc->set('content', $texttrack);
+        $doc->set('content', $record->text);
+        $doc->set('description1', $record->starttime);
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $record->course);
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
@@ -124,8 +124,24 @@ class texttrack extends \core_search\base_mod {
      * @return \moodle_url
      */
     public function get_context_url(\core_search\document $doc) {
+        global $DB;
+
         $contextmodule = \context::instance_by_id($doc->get('contextid'));
-        return new \moodle_url('/mod/videotime/view.php', array('id' => $contextmodule->instanceid));
+        $itemid = $doc->get('itemid');
+        $record = $DB->get_record_sql('SELECT te.*, tr.lang
+                                         FROM {videotimetab_texttrack_text} te
+                                         JOIN {videotimetab_texttrack_track} tr ON te.track = tr.id
+                                        WHERE te.id = :itemid', array('itemid' => $itemid));
+
+        $url = new \moodle_url('/mod/videotime/view.php', array(
+            'id' => $contextmodule->instanceid,
+            'q' => optional_param('q', '', PARAM_TEXT),
+            'time' => $record->starttime,
+            'lang' => $record->lang,
+        ));
+
+        $url->set_anchor('texttrack');
+        return $url;
     }
 
     /**

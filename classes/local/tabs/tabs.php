@@ -59,8 +59,9 @@ class tabs implements \templatable, \renderable {
         $pluginmanager = new plugin_manager('videotimetab');
         foreach ($pluginmanager->get_sorted_plugins_list() as $subplugin) {
             $classname = "\\videotimetab_$subplugin\\tab";
-            if (empty(get_config("videotimetab_$subplugin", 'disabled'))) {
-                $this->tabs[] = new $classname($instance);
+            $tab = new $classname($instance);
+            if ($tab->is_visible()) {
+                $this->tabs[] = $tab;
             }
         }
 
@@ -96,6 +97,7 @@ class tabs implements \templatable, \renderable {
                 return $tab;
             }
         }
+        return null;
     }
 
     /**
@@ -116,9 +118,9 @@ class tabs implements \templatable, \renderable {
         }
 
         $record->intro = '';
-        $record->video_description = '';
         return [
             'instance' => [$record],
+            'panelclass' => get_config('videotime', 'defaulttabsize'),
             'tabs' => $tabs
         ];
     }

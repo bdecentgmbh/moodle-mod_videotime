@@ -82,6 +82,32 @@ define([
                 plugin.initialize(this, instance);
             }
 
+            let url = new URL(window.location.href),
+                lang = url.searchParams.get('lang'),
+                q = url.searchParams.get('q'),
+                starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
+            if (starttime) {
+                this.setStartTime(starttime[0]).then(function() {
+                    if (q && window.find) {
+                        window.find(q);
+                    }
+                });
+            } else if (q && window.find) {
+                window.find(q);
+            }
+
+            if (lang) {
+                this.player.enableTextTrack(lang);
+            }
+            this.player.getTextTracks().then(function(tracks) {
+                tracks.forEach(function(track) {
+                    if (track.mode == 'showing') {
+                        $('[data-lang]').hide();
+                        $('[data-lang="' + track.language + '"]').show();
+                    }
+                });
+            });
+
             return true;
         }).catch(Notification.exeption);
     };
@@ -246,25 +272,34 @@ define([
         }.bind(this));
 
         $(document).on('click', '[data-action="cue"]', function(event) {
-            let starttime = event.target.closest('a').getAttribute('data-start'),
-                timeseconds = parseInt(starttime) * 60 + Number(starttime.replace(/.*:/, ''));
+            let starttime = event.target.closest('a').getAttribute('data-start');
             event.preventDefault();
             event.stopPropagation();
-            this.player.setCurrentTime(timeseconds);
+            this.setStartTime(starttime);
         }.bind(this));
 
         $('[data-action="cue"]').each(function(index, anchor) {
             let starttime = anchor.getAttribute('data-start'),
-                timeseconds = parseInt(starttime) * 60 + Number(starttime.replace(/.*:/, ''));
-            this.player.addCuePoint(timeseconds, {
-                starttime: starttime
-            }).catch(Notification.exeception);
+                time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+            if (time) {
+                this.player.addCuePoint(
+                    3600 * (time[3] || 0) + 60 * (time[5] || 0) + time[6],
+                    {
+                        starttime: starttime
+                    }
+                ).catch(Notification.exeception);
+            }
         }.bind(this));
 
         this.player.on('cuepoint', function(event) {
             if (event.data.starttime) {
                 $('[data-action="cue"][data-start="' + event.data.starttime + '"]').focus();
             }
+        });
+
+        this.player.on('texttrackchange', function(event) {
+            $('[data-lang]').hide();
+            $('[data-lang="' + event.language + '"]').show();
         });
     };
 
@@ -426,6 +461,20 @@ define([
                 return true;
             }.bind(this)).fail(Notification.exception);
         });
+    };
+
+    /**
+     * Parse start time and set player
+     *
+     * @param {string} starttime
+     * @returns {Promise}
+     */
+    VideoTime.prototype.setStartTime = function(starttime) {
+        let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+        if (time) {
+            return this.player.setCurrentTime(3600 * (time[3] || 0) + 60 * (time[5] || 0) + time[6]);
+        }
+        return this.player.getCurrentTime();
     };
 
     /**

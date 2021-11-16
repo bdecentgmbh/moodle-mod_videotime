@@ -25,4 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Video Time Watch tab';
+$string['label'] = 'Watch';
 $string['privacy:metadata'] = 'The Video Time Watch tab plugin does not store any personal data.';

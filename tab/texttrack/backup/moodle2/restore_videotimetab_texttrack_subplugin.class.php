@@ -19,7 +19,7 @@
  *
  * provides all the settings and steps to perform one * complete restore of the activity
  *
- * @package     videotimetab_information
+ * @package     videotimetab_texttrack
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,9 +32,9 @@ require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_st
  * Define restore step for videotime tab plugin
  *
  * restore subplugin class that provides the data
- * needed to restore one videotimetab_information subplugin.
+ * needed to restore one videotimetab_texttrack subplugin.
  */
-class restore_videotimetab_information_subplugin extends restore_subplugin {
+class restore_videotimetab_texttrack_subplugin extends restore_subplugin {
 
     /**
      * Define subplugin structure
@@ -45,29 +45,23 @@ class restore_videotimetab_information_subplugin extends restore_subplugin {
         $paths = array();
 
         $elename = $this->get_namefor('');
-        $elepath = $this->get_pathfor('/videotimetab_information');
+        $elepath = $this->get_pathfor('/videotimetab_texttrack');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths;
     }
 
     /**
-     * Processes the videotimetab_information element, if it is in the file.
+     * Processes the videotimetab_texttrack element, if it is in the file.
      * @param array $data the data read from the XML file.
      */
-    public function process_videotimetab_information($data) {
+    public function process_videotimetab_texttrack($data) {
         global $DB;
 
         $data = (object)$data;
         $oldvideotime = $data->videotime;
         $data->videotime = $this->get_new_parentid('videotime');
-        $DB->insert_record('videotimetab_information', $data);
+        $DB->insert_record('videotimetab_texttrack', $data);
 
-        // Add files match context. No need to map id.
-        $this->add_related_files(
-            'videotimetab_information',
-            'text',
-            null
-        );
     }
 }

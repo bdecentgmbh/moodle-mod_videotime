@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin administration pages are defined here.
  *
- * @package     mod_videotime
+ * @package     videotimetab_information
+ * @category    admin
  * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_videotime\videotime_instance;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.5';
-$plugin->version = 2021081002;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+require_once($CFG->dirroot.'/mod/videotime/lib.php');
+
+$setting = new admin_setting_configcheckbox('videotimetab_information/default',
+                   new lang_string('default', 'videotimetab_information'),
+                   new lang_string('default_help', 'videotimetab_information'), 1);
+
+$settings->add($setting);
