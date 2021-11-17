@@ -91,7 +91,8 @@ define([
                     if (q && window.find) {
                         window.find(q);
                     }
-                });
+                    return true;
+                }).fail(Notification.exception);
             } else if (q && window.find) {
                 window.find(q);
             }
@@ -106,7 +107,8 @@ define([
                         $('[data-lang="' + track.language + '"]').show();
                     }
                 });
-            });
+                return true;
+            }).fail(Notification.exception);
 
             return true;
         }).catch(Notification.exeption);
@@ -283,7 +285,7 @@ define([
                 time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
             if (time) {
                 this.player.addCuePoint(
-                    3600 * (time[3] || 0) + 60 * (time[5] || 0) + time[6],
+                    3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]),
                     {
                         starttime: starttime
                     }
@@ -472,7 +474,9 @@ define([
     VideoTime.prototype.setStartTime = function(starttime) {
         let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
-            return this.player.setCurrentTime(3600 * (time[3] || 0) + 60 * (time[5] || 0) + time[6]);
+            return this.player.setCurrentTime(
+                3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6])
+            );
         }
         return this.player.getCurrentTime();
     };

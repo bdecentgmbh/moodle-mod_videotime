@@ -26,6 +26,8 @@ namespace mod_videotime\search;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
+
 use core_component;
 
 /**

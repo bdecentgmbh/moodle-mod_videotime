@@ -58,7 +58,7 @@ class tab extends \mod_videotime\local\tabs\tab {
      */
     public function parse_texttrack(string $track): array {
         $matches = array();
-        preg_match_all('/([.:0-9]+)  *-->  *([.:0-9]+)(.*?)^$/ms', $track, $matches);
+        preg_match_all('/([.:0-9]+)  *-->  *([.:0-9]+)(.*?)^$/ms', $track . '\n', $matches);
 
         return array_map(function($starttime, $endtime, $text) {
             return array(

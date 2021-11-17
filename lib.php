@@ -156,8 +156,6 @@ function videotime_get_user_grades($videotime, $userid = 0) {
 function videotime_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
-    $context = context_module::instance($moduleinstance->coursemodule);
-
     $moduleinstance->timecreated = time();
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
@@ -166,6 +164,9 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     videotime_grade_item_update($moduleinstance);
 
+    // Plugins may need to use context now, so we need to make sure all needed info is already in db.
+    $cmid = $moduleinstance->coursemodule;
+    $DB->set_field('course_modules', 'instance', $moduleinstance->id, array('id' => $cmid));
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
         $classname = "\\videotimetab_$name\\tab";
         $classname::save_settings($moduleinstance);
