@@ -43,18 +43,7 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @return string
      */
     public function get_tab_content(): string {
-        global $OUTPUT;
-
-        $record = $this->get_instance()->to_record();
-        $record->uniqueid = $this->get_instance()->get_uniqueid();
-
-        $instance = $this->get_instance();
-        $cm = get_coursemodule_from_instance('videotime', $instance->id, $instance->course);
-        $context = context_module::instance($cm->id);
-        $record->video_description = file_rewrite_pluginfile_urls($record->video_description, 'pluginfile.php',
-            $context->id, 'mod_videotime', 'video_description', 0);
-        $record->video_description = format_text($record->video_description, $record->video_description_format);
-        return $record->video_description;
+        return '';
     }
 
     /**
