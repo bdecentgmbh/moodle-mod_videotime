@@ -302,8 +302,10 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setType('enabletabs', PARAM_BOOL);
 
         foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
-            $classname = "\\videotimetab_$name\\tab";
-            $classname::add_form_fields($mform);
+            if (!empty(get_config('videotimetab_' . $name, 'enabled'))) {
+                $classname = "\\videotimetab_$name\\tab";
+                $classname::add_form_fields($mform);
+            }
         }
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
