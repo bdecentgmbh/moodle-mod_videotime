@@ -148,7 +148,7 @@ class plugin_manager {
             $row[] = get_string('pluginname', $this->subtype . '_' . $plugin);
             $row[] = get_config($this->subtype . '_' . $plugin, 'version');
 
-            $visible = !get_config($this->subtype . '_' . $plugin, 'disabled');
+            $visible = !!get_config($this->subtype . '_' . $plugin, 'enabled');
 
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
@@ -227,7 +227,7 @@ class plugin_manager {
      * @return string The next page to display
      */
     public function hide_plugin($plugin) {
-        set_config('disabled', 1, $this->subtype . '_' . $plugin);
+        set_config('enabled', 0, $this->subtype . '_' . $plugin);
         core_plugin_manager::reset_caches();
         return 'view';
     }
@@ -286,7 +286,7 @@ class plugin_manager {
      * @return string The next page to display
      */
     public function show_plugin($plugin) {
-        set_config('disabled', 0, $this->subtype . '_' . $plugin);
+        set_config('enabled', 1, $this->subtype . '_' . $plugin);
         core_plugin_manager::reset_caches();
         return 'view';
     }

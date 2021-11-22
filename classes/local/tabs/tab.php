@@ -158,7 +158,7 @@ abstract class tab {
      */
     public static function add_form_fields($mform) {
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
-        if (!empty(get_config("videotimetab_$name", 'disabled'))) {
+        if (empty(get_config("videotimetab_$name", 'enabled'))) {
             return;
         }
 
@@ -209,7 +209,7 @@ abstract class tab {
      */
     public function is_enabled(): bool {
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
-        return empty(get_config("videotimetab_$name", 'disabled'));
+        return !empty(get_config("videotimetab_$name", 'enabled'));
     }
 
     /**
