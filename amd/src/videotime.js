@@ -74,6 +74,7 @@ define([
         this.getInstance().then((instance) => {
             Log.debug('Initializing Vimeo player with options:');
             Log.debug(instance);
+            instance.url = instance.vimeo_url;
             this.player = new Vimeo(this.elementId, instance);
             this.addListeners();
 
@@ -92,7 +93,7 @@ define([
                         window.find(q);
                     }
                     return true;
-                }).fail(Notification.exception);
+                }).catch(Notification.exception);
             } else if (q && window.find) {
                 window.find(q);
             }
@@ -108,7 +109,7 @@ define([
                     }
                 });
                 return true;
-            }).fail(Notification.exception);
+            }).catch(Notification.exception);
 
             return true;
         }).catch(Notification.exeption);
