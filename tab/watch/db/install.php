@@ -35,7 +35,7 @@ function xmldb_videotimetab_watch_install() {
     $manager->show_plugin('watch');
 
     while (
-        ($plugins = $manager->get_sorted_plugins_list()) 
+        ($plugins = $manager->get_sorted_plugins_list())
         && reset($plugins) != 'watch'
     ) {
         $manager->move_plugin('watch', 'up');

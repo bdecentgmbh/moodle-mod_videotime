@@ -71,20 +71,25 @@ class plugin_manager {
         $names = core_component::get_plugin_list($this->subtype);
 
         $result = array();
+        $disabled = array();
 
         foreach ($names as $name => $path) {
-            $idx = get_config($this->subtype . '_' . $name, 'sortorder');
-            if (!$idx) {
-                $idx = 0;
+            if (!empty(get_config($this->subtype . '_' . $name, 'enabled'))) {
+                $idx = get_config($this->subtype . '_' . $name, 'sortorder');
+                if (!$idx) {
+                    $idx = 0;
+                }
+                while (array_key_exists($idx, $result)) {
+                    $idx += 1;
+                }
+                $result[$idx] = $name;
+            } else {
+                $disabled[] = $name;
             }
-            while (array_key_exists($idx, $result)) {
-                $idx += 1;
-            }
-            $result[$idx] = $name;
         }
         ksort($result);
 
-        return $result;
+        return array_merge($result, $disabled);
     }
 
 
