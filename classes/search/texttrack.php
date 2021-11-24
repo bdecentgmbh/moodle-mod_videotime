@@ -138,9 +138,12 @@ class texttrack extends \core_search\base_mod {
         $url = new \moodle_url('/mod/videotime/view.php', array(
             'id' => $contextmodule->instanceid,
             'q' => optional_param('q', '', PARAM_TEXT),
-            'time' => $record->starttime,
-            'lang' => $record->lang,
         ));
+
+        if (!empty($record)) {
+            $url->param('time', $record->starttime);
+            $url->param('lang', $record->lang);
+        }
 
         $url->set_anchor('texttrack');
         return $url;
