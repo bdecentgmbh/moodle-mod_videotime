@@ -278,7 +278,7 @@ define([
             let starttime = event.target.closest('a').getAttribute('data-start');
             event.preventDefault();
             event.stopPropagation();
-            this.setStartTime(starttime);
+            this.setStartTime(starttime).then(this.player.play.bind(this.player)).catch(Notification.exception);
         }.bind(this));
 
         $('[data-action="cue"]').each(function(index, anchor) {
