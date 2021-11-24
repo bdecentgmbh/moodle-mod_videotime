@@ -1,8 +1,15 @@
+.videotime-highlight {
+    font-weight: bold;
+}
+
 .videotime-size-3,
 .videotime-size-6,
 .videotime-size-9 {
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
     resize: horizontal;
-    overflow: auto;
 }
 
 .videotime-size-3 {

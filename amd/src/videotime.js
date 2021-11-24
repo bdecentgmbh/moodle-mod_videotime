@@ -296,7 +296,19 @@ define([
 
         this.player.on('cuepoint', function(event) {
             if (event.data.starttime) {
-                $('[data-action="cue"][data-start="' + event.data.starttime + '"]').focus();
+                $('.videotime-highlight').removeClass('videotime-highlight');
+                $('[data-action="cue"][data-start="' + event.data.starttime + '"]')
+                    .closest('.row')
+                    .addClass('videotime-highlight');
+                $('.videotime-highlight').each(function() {
+                    if (this.offsetTop) {
+                        this.parentNode.scrollTo({
+                            top: this.offsetTop - 50,
+                            left: 0,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             }
         });
 
