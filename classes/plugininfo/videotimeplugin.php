@@ -26,6 +26,8 @@ namespace mod_videotime\plugininfo;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\update\info;
+
 /**
  * Plugin version and other meta-data are defined here.
  *
@@ -33,4 +35,42 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class videotimeplugin extends \core\plugininfo\base {
+    /**
+     * If there are updates for this plugin available, returns them.
+     *
+     * Returns array of {@link \core\update\info} objects, if some update
+     * is available. Returns null if there is no update available or if the update
+     * availability is unknown.
+     *
+     * Populates the property {@link $availableupdates} on first call (lazy
+     * loading).
+     *
+     * @return array|null
+     */
+    public function available_updates() {
+
+        $updates = parent::available_updates();
+
+        switch ($this->name) {
+            case 'pro':
+                $info = array(
+                    'maturity' => MATURITY_STABLE,
+                    'release' => '1.5',
+                    'version' => 2021112900,
+                );
+                break;
+            case 'repository':
+                $info = array(
+                    'maturity' => MATURITY_STABLE,
+                    'release' => '1.5',
+                    'version' => 2021112900,
+                );
+                break;
+        }
+        if (!empty($info) && $this->versiondb < $info['version']) {
+            $updates['videotimeplugin_' . $this->name] = new info('videotimeplugin_' . $this->name, $info);
+        }
+
+        return $updates;
+    }
 }
