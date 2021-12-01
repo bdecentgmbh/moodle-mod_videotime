@@ -33,6 +33,7 @@ define([
                 $('.tab-pane').css('min-height', this.parentNode.parentNode.offsetHeight + 20 + 'px');
                 $(this).closest('.videotime-tab-instance').css('top', $(container).position().top + 'px');
                 $(this).closest('.videotime-tab-instance').css('left', $(container).position().left + 'px');
+                $(this).closest('.videotime-tab-instance').css('width', container.offsetWidth + 'px');
             });
         });
     };
