@@ -15,6 +15,10 @@
     width: 75%;
 }
 
+.videotime-tab-instance {
+    width: 100%;
+}
+
 .modtype_videotime.label_mode,
 .modtype_videotime.label_mode .mod-indent-outer,
 .modtype_videotime.label_mode .contentwithoutlink {
