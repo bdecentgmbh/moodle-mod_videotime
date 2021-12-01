@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Video Time Text track tab';
-$string['label'] = 'Text track';
-$string['privacy:metadata'] = 'The Video Time Text track tab plugin does not store any personal data.';
+$string['pluginname'] = 'Video Time Transcript tab';
+$string['label'] = 'Transcript';
+$string['privacy:metadata'] = 'The Video Time Transcript tab plugin does not store any personal data.';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
