@@ -38,12 +38,11 @@ class videotimeplugin extends \core\plugininfo\base {
     /**
      * If there are updates for this plugin available, returns them.
      *
-     * Returns array of {@link \core\update\info} objects, if some update
+     * Returns array of \core\update\info objects, if some update
      * is available. Returns null if there is no update available or if the update
      * availability is unknown.
      *
-     * Populates the property {@link $availableupdates} on first call (lazy
-     * loading).
+     * Populates the property $availableupdates on first call (lazy loading).
      *
      * @return array|null
      */
