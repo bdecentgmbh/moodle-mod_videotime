@@ -51,6 +51,17 @@ class tab extends \mod_videotime\local\tabs\tab {
     }
 
     /**
+     * Defines the additional form fields.
+     *
+     * @param moodle_form $mform form to modify
+     */
+    public static function add_form_fields($mform) {
+        if (videotime_has_repository()) {
+            parent::add_form_fields($mform);
+        }
+    }
+
+    /**
      * Parse track file to array of cues
      *
      * @param string $track Text track file contents
@@ -112,6 +123,10 @@ class tab extends \mod_videotime\local\tabs\tab {
      */
     public function update_tracks() {
         global $DB;
+
+        if (!videotime_has_repository()) {
+            return;
+        }
 
         $api = new \videotimeplugin_repository\api();
         $record = $this->get_instance()->to_record();
@@ -209,7 +224,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         $record = $this->get_instance()->to_record();
-        return $this->is_enabled() && $DB->record_exists('videotimetab_texttrack', array(
+        return videotime_has_repository() && $this->is_enabled() && $DB->record_exists('videotimetab_texttrack', array(
             'videotime' => $record->id
         ));
     }
