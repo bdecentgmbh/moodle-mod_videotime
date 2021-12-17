@@ -1,5 +1,29 @@
-.vimeo-container {
-    display: flex;
+.videotime-highlight {
+    font-weight: bold;
+}
+
+.videotime-size-3,
+.videotime-size-6,
+.videotime-size-9 {
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    resize: horizontal;
+}
+
+.videotime-size-3 {
+    width: 25%;
+}
+.videotime-size-6 {
+    width: 50%;
+}
+.videotime-size-9 {
+    width: 75%;
+}
+
+.videotime-tab-instance {
+    width: 100%;
 }
 
 .modtype_videotime.label_mode,

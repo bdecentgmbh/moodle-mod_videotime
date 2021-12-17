@@ -18,7 +18,7 @@
  * Define all the backup steps that will be used by the backup_videotime_activity_task
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,6 +31,25 @@ defined('MOODLE_INTERNAL') || die;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_videotime_activity_structure_step extends backup_activity_structure_step {
+
+    /**
+     * Annotate files from plugin configuration
+     * @param backup_nested_element $videotime the backup structure of the activity
+     * @param string $subtype the plugin type to handle
+     * @return void
+     */
+    protected function annotate_plugin_config_files(backup_nested_element $videotime, $subtype) {
+        $pluginmanager = new \mod_videotime\plugin_manager($subtype);
+        $plugins = $pluginmanager->get_sorted_plugins_list();
+        foreach ($plugins as $plugin) {
+            $component = $subtype . '_' . $plugin;
+            $classname = '\\' . $subtype . '_' . $plugin . '\\tab';
+            $areas = $classname::get_config_file_areas();
+            foreach ($areas as $area) {
+                $videotime->annotate_files($component, $area, null);
+            }
+        }
+    }
 
     /**
      * Defines the structure of the 'videotime' element inside the xml file
@@ -73,6 +92,11 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'speed',
             'title',
             'transparent',
+            'dnt',
+            'autopause',
+            'background',
+            'controls',
+            'pip',
             'width',
             'responsive',
             'label_mode',
@@ -88,7 +112,8 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'show_duration',
             'show_viewed_duration',
             'columns',
-            'preventfastforwarding'
+            'preventfastforwarding',
+            'enabletabs'
         ]);
 
         if (videotime_has_pro()) {
@@ -109,6 +134,9 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             $sessions->add_child($session);
         }
 
+        // Define elements for tab subplugin settings.
+        $this->add_subplugin_structure('videotimetab', $module, true);
+
         // Define sources.
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
 
@@ -126,6 +154,8 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.
+
+        $this->annotate_plugin_config_files($module, 'videotimetab');
 
         // Return the root element (videotime), wrapped into standard activity structure.
         return $this->prepare_activity_structure($module);

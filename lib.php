@@ -18,7 +18,7 @@
  * Library of interface functions and constants.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,6 +37,8 @@ defined('MOODLE_INTERNAL') || die();
 function videotime_supports($feature) {
     switch ($feature) {
         case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GROUPS:
             return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return true;
@@ -162,8 +164,6 @@ function videotime_get_user_grades($videotime, $userid = 0) {
 function videotime_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
-    $context = context_module::instance($moduleinstance->coursemodule);
-
     $moduleinstance->timecreated = time();
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
@@ -171,6 +171,14 @@ function videotime_add_instance($moduleinstance, $mform = null) {
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
     videotime_grade_item_update($moduleinstance);
+
+    // Plugins may need to use context now, so we need to make sure all needed info is already in db.
+    $cmid = $moduleinstance->coursemodule;
+    $DB->set_field('course_modules', 'instance', $moduleinstance->id, array('id' => $cmid));
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::save_settings($moduleinstance);
+    }
 
     if (videotime_has_repository()) {
         \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
@@ -229,6 +237,11 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $completiontimeexpected
     );
 
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::save_settings($moduleinstance);
+    }
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
@@ -248,6 +261,11 @@ function videotime_delete_instance($id) {
 
     $cm = get_coursemodule_from_instance('videotime', $id);
     \core_completion\api::update_completion_date_event($cm->id, 'videotime', $id, null);
+
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::delete_settings($id);
+    }
 
     $DB->delete_records('videotime', array('id' => $id));
 

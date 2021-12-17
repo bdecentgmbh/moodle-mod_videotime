@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * VideoTime module data generator class
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_videotime_generator extends testing_module_generator {
@@ -66,6 +66,11 @@ class mod_videotime_generator extends testing_module_generator {
             'speed' => 0,
             'title' => 0,
             'transparent' => 0,
+            'autopause' => 0,
+            'background' => 0,
+            'controls' => 0,
+            'pip' => 0,
+            'dnt' => 0,
             'width' => 0,
             'responsive' => 0,
             'label_mode' => 0,

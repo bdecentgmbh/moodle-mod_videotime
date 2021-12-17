@@ -1,6 +1,6 @@
 /*
  * @package    mod_videotime
- * @copyright  2018 bdecent gmbh <https://bdecent.de>
+ * @copyright  2021 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -86,15 +86,44 @@ define([
                 speed: instance.speed,
                 title: instance.title,
                 transparent: instance.transparent,
-                url: instance.url,
+                url: instance.vimeo_url,
                 width: instance.width
             });
+            this.player = new Vimeo(this.elementId, instance);
             this.addListeners();
 
             for (let i = 0; i < this.plugins.length; i++) {
                 const plugin = this.plugins[i];
                 plugin.initialize(this, instance);
             }
+
+            let url = new URL(window.location.href),
+                lang = url.searchParams.get('lang'),
+                q = url.searchParams.get('q'),
+                starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
+            if (starttime) {
+                this.setStartTime(starttime[0]).then(function() {
+                    if (q && window.find) {
+                        window.find(q);
+                    }
+                    return true;
+                }).catch(Notification.exception);
+            } else if (q && window.find) {
+                window.find(q);
+            }
+
+            if (lang) {
+                this.player.enableTextTrack(lang);
+            }
+            this.player.getTextTracks().then(function(tracks) {
+                tracks.forEach(function(track) {
+                    if (track.mode == 'showing') {
+                        $('[data-lang]').hide();
+                        $('[data-lang="' + track.language + '"]').show();
+                    }
+                });
+                return true;
+            }).catch(Notification.exception);
 
             return true;
         }).catch(Notification.exeption);
@@ -115,6 +144,7 @@ define([
     VideoTime.prototype.addListeners = function() {
         if (!this.player) {
             Log.debug('Player was not properly initialized for course module ' + this.cmId);
+            return;
         }
 
         // Fire view event in Moodle on first play only.
@@ -257,6 +287,49 @@ define([
                 }.bind(this)).catch(Notification.exception);
             }.bind(this)).fail(Notification.exception);
         }.bind(this));
+
+        $(document).on('click', '[data-action="cue"]', function(event) {
+            let starttime = event.target.closest('a').getAttribute('data-start');
+            event.preventDefault();
+            event.stopPropagation();
+            this.setStartTime(starttime).then(this.player.play.bind(this.player)).catch(Notification.exception);
+        }.bind(this));
+
+        $('[data-action="cue"]').each(function(index, anchor) {
+            let starttime = anchor.getAttribute('data-start'),
+                time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+            if (time) {
+                this.player.addCuePoint(
+                    3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]),
+                    {
+                        starttime: starttime
+                    }
+                ).catch(Notification.exeception);
+            }
+        }.bind(this));
+
+        this.player.on('cuepoint', function(event) {
+            if (event.data.starttime) {
+                $('.videotime-highlight').removeClass('videotime-highlight');
+                $('[data-action="cue"][data-start="' + event.data.starttime + '"]')
+                    .closest('.row')
+                    .addClass('videotime-highlight');
+                $('.videotime-highlight').each(function() {
+                    if (this.offsetTop) {
+                        this.parentNode.scrollTo({
+                            top: this.offsetTop - 50,
+                            left: 0,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            }
+        });
+
+        this.player.on('texttrackchange', function(event) {
+            $('[data-lang]').hide();
+            $('[data-lang="' + event.language + '"]').show();
+        });
     };
 
     /**
@@ -417,6 +490,22 @@ define([
                 return true;
             }.bind(this)).fail(Notification.exception);
         });
+    };
+
+    /**
+     * Parse start time and set player
+     *
+     * @param {string} starttime
+     * @returns {Promise}
+     */
+    VideoTime.prototype.setStartTime = function(starttime) {
+        let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+        if (time) {
+            return this.player.setCurrentTime(
+                3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6])
+            );
+        }
+        return this.player.getCurrentTime();
     };
 
     /**

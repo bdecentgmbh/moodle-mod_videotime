@@ -18,7 +18,7 @@
  * Upgrade script for the Video Time.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -442,6 +442,66 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Videotime savepoint reached.
         upgrade_mod_savepoint(true, 2021051906, 'videotime');
+    }
+
+    if ($oldversion < 2021081000) {
+
+        // Define field enabletabs to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('enabletabs', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'preventfastforwarding');
+
+        // Conditionally launch add field enabletabs.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field autopause to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('autopause', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'enabletabs');
+
+        // Conditionally launch add field autopause.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field background to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('background', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'autopause');
+
+        // Conditionally launch add field background.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field controls to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('controls', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'background');
+
+        // Conditionally launch add field controls.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field pip to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('pip', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'controls');
+
+        // Conditionally launch add field pip.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field dnt to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('dnt', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'pip');
+
+        // Conditionally launch add field dnt.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2021081000, 'videotime');
     }
 
     return true;

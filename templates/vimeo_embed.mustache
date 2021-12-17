@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_videotime/vimeo_embed
+
+    This template will render the video time activity and load player in tab
+
+    Variables required for this template:
+    * uniqueid - Unique id of player on page
+    * vimeo_url - vimeo url
+
+    Variables optional for this template:
+    * responsive - markup for next activity button
+    * video_description - vimeo video descript
+
+    Example context (json):
+    {
+        "responsive": true,
+        "uniqueid": "60dccff8871f6",
+        "video_description": "UX design tips",
+        "vimeo_url": "https://vimeo.com/323424"
+    }
+
+}}
+<div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}}>
+    <div class="vimeo-intro">
+        {{{intro}}}
+    </div>
+    <div class="vimeo-embed" id="vimeo-embed-{{uniqueid}}"></div>
+    <div class="vimeo-video-description">
+        {{{video_description}}}
+    </div>
+</div>

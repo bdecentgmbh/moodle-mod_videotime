@@ -37,6 +37,7 @@
         "interval": 5,
         "intro": "Watch this",
         "uniqueid": "60dccff8871f6",
+        "next_activity_button_html": "<button>Next</button>",
         "video_description": "UX design tips"
     }
 
@@ -46,15 +47,13 @@
         {{{next_activity_button_html}}}
     </div>
 
-    <div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}}>
-        <div class="vimeo-intro">
-            {{{intro}}}
-        </div>
-        <div class="vimeo-embed" data-vimeo-url="{{vimeo_url}}" id="vimeo-embed-{{uniqueid}}"></div>
-        <div class="vimeo-video-description">
-            {{{video_description}}}
-        </div>
-    </div>
+    {{^tabshtml}}
+        {{> mod_videotime/vimeo_embed }}
+    {{/tabshtml}}
+    {{#tabshtml}}
+        {{{ intro }}}
+        {{{tabshtml}}}
+    {{/tabshtml}}
 
     {{#js}}
         require(['mod_videotime/videotime'], function(VideoTime) {

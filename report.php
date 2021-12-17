@@ -18,7 +18,7 @@
  * Prints Video Time report.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -67,6 +67,18 @@ $PAGE->set_context($modulecontext);
 
 $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 
+// Check to see if groups are being used in this activity.
+$groupmode = groups_get_activity_groupmode($cm);
+if ($groupmode) {
+    ob_start();
+    groups_get_activity_group($cm, true);
+    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/videotime/report.php?id='.$id);
+    $groupselector = ob_get_contents();
+    ob_end_clean();
+} else {
+    $groupselector = '';
+}
+
 $table = new \videotimeplugin_pro\sessions_report_table($cm->id, $download);
 $table->define_baseurl($PAGE->url);
 $table->is_downloadable(true);
@@ -107,6 +119,9 @@ if (videotime_has_repository()) {
     ]) . '</div>';
 }
 echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
+
+echo $groupselector;
+
 echo $tablehtml;
 $form->display();
 echo $OUTPUT->footer();

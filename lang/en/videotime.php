@@ -19,7 +19,7 @@
  *
  * @package     mod_videotime
  * @category    string
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -72,24 +72,44 @@ $string['currentwatchtime'] = 'Current watch time';
 $string['datasource:videotime_sessions_data_source'] = 'Video Time sessions';
 $string['datasource:videotime_stats_data_source'] = 'Video Time stats';
 $string['default'] = 'Default';
+$string['defaulttabsize'] = 'Default tab size';
+$string['defaulttabsize_help'] = 'Set the size that will be used to determine initial relative width of tab sections';
 $string['deletesessiondata'] = 'Delete session data';
 $string['discover_videos'] = 'Discover Vimeo videos';
 $string['discovering_videos'] = 'Discovering {$a->count} videos';
 $string['display_options'] = 'Display options';
 $string['done'] = 'Done';
+$string['dnt'] = 'Do not track';
+$string['option_dnt'] = 'Do not track';
+$string['option_dnt_help'] = 'Whether to prevent the player from tracking session data, including cookies. Keep in mind that setting this argument to true also blocks video stats.';
+$string['autopause'] = 'Autopause';
+$string['option_autopause'] = 'Autopause';
+$string['option_autopause_help'] = 'Whether to pause the current video when another Vimeo video on the same page starts to play. Set this value to false to permit simultaneous playback of all the videos on the page. This option has no effect if youve disabled cookies in your browser, either through browser settings or with an extension or plugin.';
+$string['background'] = 'Background';
+$string['option_background'] = 'Background';
+$string['option_background_help'] = 'Whether the player is in background mode, which hides the playback controls, enables autoplay, and loops the video.';
+$string['controls'] = 'Controls';
+$string['option_controls'] = 'Controls';
+$string['option_controls_help'] = 'This parameter will hide all elements in the player (play bar, sharing buttons, etc) for a chromeless experience. Warnings: When using this parameter, the play/pause button will be hidden. To start playback for your viewers, youll need to either enable autoplay, use keyboard controls, or implement our player SDK to start and control playback. Note that setting this parameter will not disable keyboard controls.';
+$string['pip'] = 'Picture-in-picture';
+$string['option_pip'] = 'Picture-in-picture';
+$string['option_pip_help'] = 'Whether to include the picture-in-picture button among the player controls and enable the picture-in-picture API.';
 $string['duration'] = 'Duration';
 $string['embed_options'] = 'Embed options';
 $string['embed_options_defaults'] = 'Default embed options';
 $string['embeds'] = 'Embeds';
+$string['enabletabs'] = 'Enable tabs';
 $string['firstsession'] = 'First session';
 $string['force'] = 'Force setting';
 $string['force_help'] = 'If checked this default will override the instance setting.';
 $string['goback'] = 'Go back';
 $string['gradeitemnotcreatedyet'] = 'A gradebook item does not exist for this activity. Check <b>Set grade equal to view percentage</b> above, save, and edit this activity again to set grade category and passing grade.';
+$string['hideshow'] = 'Hide/Show';
 $string['invalid_session_state'] = 'Invalid session state.';
 $string['insert_video_metadata'] = 'Insert metadata from video (may override activity settings)';
 $string['label_mode'] = 'Label mode';
 $string['lastsession'] = 'Last session';
+$string['managevideotimetabplugins'] = 'Manage Video Time tab plugins';
 $string['mode'] = 'Mode';
 $string['mode_help'] = '<b>Normal mode</b>: Displays the standard activity link, no extras on course page.<br>
 <b>Label mode</b>: Embed video on course layout, similar to the Label activity.<br>
@@ -175,6 +195,9 @@ We are constantly improving the plugin, so stay tuned for upcoming versions. You
 Please let us know if you have any feedback for us.
 ';
 }
+$string['panelwidthlarge'] = 'Large panel width';
+$string['panelwidthmedium'] = 'Medium panel width';
+$string['panelwidthsmall'] = 'Small panel width';
 $string['percentageofvideofinished'] = 'Percentage of video finished';
 $string['pluginadministration'] = 'Video Time administration';
 $string['pluginname'] = 'Video Time';
@@ -200,12 +223,14 @@ $string['resume_playback_help'] = 'Automatically resume video when user returns 
 $string['run_discovery_task'] = 'Run this "Discover Vimeo videos" task to begin pulling in your video data. Otherwise you can wait until it runs automatically.';
 $string['estimated_request_time'] = 'Estimated time remaining';
 $string['search:activity'] = 'VideoTime - activity information';
+$string['search:texttrack'] = 'VideoTime - text track information';
 $string['search_help'] = 'Search name, description, albums, tags...';
 $string['seconds'] = 'Seconds';
 $string['session_not_found'] = 'User session not found.';
 $string['set_client_id_and_secret'] = 'Set Client ID and Secret';
 $string['settings'] = 'Video Time settings';
 $string['setup_repository'] = 'Setup repository';
+$string['showtab'] = 'Show tab';
 $string['show_title'] = 'Show title';
 $string['show_description'] = 'Show description';
 $string['show_tags'] = 'Show tags';
@@ -223,7 +248,13 @@ $string['store_pictures'] = 'Store thumbnails';
 $string['store_pictures_help'] = 'If enabled, the Vimeo thumbnails will be stored locally. Otherwise the images will be delivered from Vimeo externally.';
 $string['subplugintype_videotimeplugin'] = 'Video Time Plugin';
 $string['subplugintype_videotimeplugin_plural'] = 'Video Time Plugins';
+$string['subplugintype_videotimetab'] = 'Video Time Tab';
+$string['subplugintype_videotimetab_plural'] = 'Video Time Tabs';
 $string['tablealias_vt'] = 'Video Time';
+$string['tabinformation'] = 'Information';
+$string['tabtranscript'] = 'Transcript';
+$string['tabs'] = 'Tabs';
+$string['tabsettings'] = 'Tab settings';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
 $string['timestarted'] = 'Date started';
 $string['todo'] = 'TODO';
@@ -247,6 +278,8 @@ $string['videotime:addinstance'] = 'Add a new Video Time module';
 $string['videotime:view'] = 'View Video Time video';
 $string['videotime:view_report'] = 'View report (Pro only)';
 $string['videotimelink'] = 'Link';
+$string['videotimetabpluginname'] = 'Video Time tab name';
+$string['videotimetabplugins'] = 'Video Time tab plugins';
 $string['videotimeurl'] = 'URL';
 $string['view_report'] = 'View report';
 $string['viewpercentgrade'] = 'Set grade equal to view percentage.';
@@ -259,6 +292,7 @@ $string['vimeo_url_invalid'] = 'Vimeo URL is invalid. Copy directly from web bro
 $string['vimeo_url_missing'] = 'Vimeo URL is not set.';
 $string['vimeo_video_not_found'] = 'Video does not exist in database.';
 $string['vimeo_video_not_processed'] = 'Video has not been fully processed yet. Please check back later.';
+$string['watch'] = 'Watch';
 $string['watch_time'] = 'Watch time';
 $string['watch_time_help'] = 'How long the student has watched the video in total (in 5s steps).';
 $string['watch_percent'] = 'Watch percent';

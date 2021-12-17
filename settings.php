@@ -19,7 +19,7 @@
  *
  * @package     mod_videotime
  * @category    admin
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -184,6 +184,41 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configcheckbox('videotime/transparent_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
+        $settings->add(new admin_setting_heading('option_dnt', get_string('default') . ' ' .
+        get_string('option_dnt', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/dnt', get_string('option_dnt', 'videotime'),
+        get_string('option_dnt_help', 'videotime'), '1'));
+        $settings->add(new admin_setting_configcheckbox('videotime/dnt_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+        $settings->add(new admin_setting_heading('option_autopause', get_string('default') . ' ' .
+        get_string('option_autopause', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/autopause', get_string('option_autopause', 'videotime'),
+        get_string('option_autopause_help', 'videotime'), '1'));
+        $settings->add(new admin_setting_configcheckbox('videotime/autopause_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+        $settings->add(new admin_setting_heading('option_background', get_string('default') . ' ' .
+        get_string('option_background', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/background', get_string('option_background', 'videotime'),
+        get_string('option_background_help', 'videotime'), '1'));
+        $settings->add(new admin_setting_configcheckbox('videotime/background_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+        $settings->add(new admin_setting_heading('option_controls', get_string('default') . ' ' .
+        get_string('option_controls', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/controls', get_string('option_controls', 'videotime'),
+        get_string('option_controls_help', 'videotime'), '1'));
+        $settings->add(new admin_setting_configcheckbox('videotime/controls_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+        $settings->add(new admin_setting_heading('option_pip', get_string('default') . ' ' .
+        get_string('option_pip', 'videotime'), ''));
+        $settings->add(new admin_setting_configcheckbox('videotime/pip', get_string('option_pip', 'videotime'),
+        get_string('option_pip_help', 'videotime'), '1'));
+        $settings->add(new admin_setting_configcheckbox('videotime/pip_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
         if (videotime_has_repository()) {
             $settings->add(new admin_setting_heading('label_mode', get_string('default') . ' ' .
                 get_string('mode', 'videotime'), ''));
@@ -255,6 +290,14 @@ if ($ADMIN->fulltree) {
         }
     }
 
+    $settings->add(new admin_setting_heading('tabsettings', get_string('tabsettings', 'videotime'), ''));
+    $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaulttabsize', 'videotime'),
+                get_string('defaulttabsize_help', 'videotime'), 'videotimesize-6', array(
+            'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
+            'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
+            'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
+    )));
+
     if (!videotime_has_pro()) {
         $settings->add(new admin_setting_heading('pro2', '',
             html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),
@@ -278,4 +321,13 @@ if (videotime_has_pro() && videotime_has_repository()) {
         'overview',
         get_string('vimeo_overview', 'videotime'),
         new moodle_url('/mod/videotime/plugin/repository/overview.php')));
+}
+$ADMIN->add('modvideotimefolder', new admin_category('videotimetabplugins',
+    new lang_string('videotimetabplugins', 'videotime'), !$module->is_enabled()));
+$ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplugins',
+    get_string('managevideotimetabplugins', 'videotime'),
+    new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'))));
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimetab') as $plugin) {
+    $plugin->load_settings($ADMIN, 'videotimetabplugins', $hassiteconfig);
 }

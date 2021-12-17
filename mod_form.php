@@ -18,7 +18,7 @@
  * The main mod_videotime configuration form.
  *
  * @package     mod_videotime
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
  * Module instance settings form.
  *
  * @package    mod_videotime
- * @copyright  2018 bdecent gmbh <https://bdecent.de>
+ * @copyright  2021 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_videotime_mod_form extends moodleform_mod {
@@ -296,6 +296,18 @@ class mod_videotime_mod_form extends moodleform_mod {
             videotime_instance::create_additional_field_form_elements('preventfastforwarding', $mform);
         }
 
+        $mform->addElement('header', 'tabs', get_string('tabs', 'videotime'));
+
+        $mform->addElement('advcheckbox', 'enabletabs', get_string('enabletabs', 'videotime'));
+        $mform->setType('enabletabs', PARAM_BOOL);
+
+        foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+            if (!empty(get_config('videotimetab_' . $name, 'enabled'))) {
+                $classname = "\\videotimetab_$name\\tab";
+                $classname::add_form_fields($mform);
+            }
+        }
+
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
 
         // Add hidden 'disable' element used for disabling embed options when they are globally forced.
@@ -390,6 +402,36 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addHelpButton('transparent', 'option_transparent', 'videotime');
         $mform->setDefault('transparent', get_config('videotime', 'transparent'));
         videotime_instance::create_additional_field_form_elements('transparent', $mform);
+
+        $mform->addElement('advcheckbox', 'dnt', get_string('option_dnt', 'videotime'));
+        $mform->setType('dnt', PARAM_BOOL);
+        $mform->addHelpButton('dnt', 'option_dnt', 'videotime');
+        $mform->setDefault('dnt', get_config('videotime', 'dnt'));
+        videotime_instance::create_additional_field_form_elements('dnt', $mform);
+
+        $mform->addElement('advcheckbox', 'autopause', get_string('option_autopause', 'videotime'));
+        $mform->setType('autopause', PARAM_BOOL);
+        $mform->addHelpButton('autopause', 'option_autopause', 'videotime');
+        $mform->setDefault('autopause', get_config('videotime', 'autopause'));
+        videotime_instance::create_additional_field_form_elements('autopause', $mform);
+
+        $mform->addElement('advcheckbox', 'background', get_string('option_background', 'videotime'));
+        $mform->setType('background', PARAM_BOOL);
+        $mform->addHelpButton('background', 'option_background', 'videotime');
+        $mform->setDefault('background', get_config('videotime', 'background'));
+        videotime_instance::create_additional_field_form_elements('background', $mform);
+
+        $mform->addElement('advcheckbox', 'controls', get_string('option_controls', 'videotime'));
+        $mform->setType('controls', PARAM_BOOL);
+        $mform->addHelpButton('controls', 'option_controls', 'videotime');
+        $mform->setDefault('controls', get_config('videotime', 'controls'));
+        videotime_instance::create_additional_field_form_elements('controls', $mform);
+
+        $mform->addElement('advcheckbox', 'pip', get_string('option_pip', 'videotime'));
+        $mform->setType('pip', PARAM_BOOL);
+        $mform->addHelpButton('pip', 'option_pip', 'videotime');
+        $mform->setDefault('pip', get_config('videotime', 'pip'));
+        videotime_instance::create_additional_field_form_elements('pip', $mform);
 
         if (videotime_has_pro()) {
             // -------------------------------------------------------------------------------
@@ -582,6 +624,11 @@ class mod_videotime_mod_form extends moodleform_mod {
             $defaultvalues['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id,
                 'mod_videotime', 'video_description', 0, [], $videodescription);
             $defaultvalues['video_description']['itemid'] = $draftitemid;
+
+            foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+                $classname = "\\videotimetab_$name\\tab";
+                $classname::data_preprocessing($defaultvalues, $this->current->instance);
+            }
         }
     }
 }
