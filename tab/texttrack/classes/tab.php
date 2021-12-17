@@ -105,6 +105,7 @@ class tab extends \mod_videotime\local\tabs\tab {
                 $caption->lines = array_map(function($text) {
                     return array('text' => $text);
                 }, explode("\n", $caption->text));
+                $caption->starttimedisplay = preg_replace('/\\..*/', '', $caption->starttime);
                 $caption = (array) $captions;
             }
             $track->captions = array_values($captions);
