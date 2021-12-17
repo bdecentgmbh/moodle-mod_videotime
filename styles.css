@@ -1,8 +1,23 @@
+.videotimetab-resize-handle {
+    width: 2px;
+    cursor: w-resize;
+}
+.videotimetab-resize-handle:hover {
+    background: grey;
+    width: 5px;
+}
+
+.videotime-highlight {
+    font-weight: bold;
+}
+
 .videotime-size-3,
 .videotime-size-6,
 .videotime-size-9 {
-    resize: horizontal;
-    overflow: auto;
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
 }
 
 .videotime-size-3 {

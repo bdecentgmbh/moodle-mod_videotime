@@ -51,9 +51,10 @@
         {{^persistent}}
             <div class="tab-pane fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
                 <div class="" style="display: flex">
-                    <div class="{{ panelclass }}">
+                    <div class="videotimetab-resize {{ panelclass }}">
                         {{{tabcontent}}}
                     </div>
+                    <div class="videotimetab-resize-handle" draggable="true"></div>
                     <div class="instance-container" style="flex-grow: 1"></div>
                 </div>
             </div>
@@ -72,7 +73,7 @@
         {{/persistent}}
     {{/tabs}}
     {{# instance }}
-        <div class="videotime-tab-instance" style="position: absolute; ">
+        <div class="videotime-tab-instance">
             {{> mod_videotime/vimeo_embed }}
         </div>
     {{/ instance }}
