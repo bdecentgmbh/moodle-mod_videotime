@@ -33,6 +33,7 @@
                 "captions": [
                      {
                           "starttime": "00:05.00",
+                          "starttimedisplay": "00:05",
                           "lines": [
                               {"text": "Hello world"}
                           ]
@@ -47,7 +48,7 @@
     {{# captions }}
     <div class="row"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
         <div class="col-3" style="max-width: 100px;">
-            <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttime}}</a>
+            <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttimedisplay}}</a>
         </div>
         <div class="col-9">
             {{# lines }}
