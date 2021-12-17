@@ -22,8 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime;
 
 defined('MOODLE_INTERNAL') || die();
+
+use advanced_testcase;
+use calendar_event;
+use completion_info;
+use stdClass;
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/videotime/lib.php');
@@ -35,7 +41,7 @@ require_once($CFG->dirroot . '/mod/videotime/lib.php');
  * @copyright  2021 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_videotime_lib_testcase extends advanced_testcase {
+class lib_test extends advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
