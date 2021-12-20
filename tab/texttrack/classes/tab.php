@@ -146,22 +146,29 @@ class tab extends \mod_videotime\local\tabs\tab {
             $DB->delete_records('videotimetab_texttrack_track', array('videotime' => $record->id));
         }
 
-        foreach ($request['body']['data'] as $texttrack) {
-            if ($texttrack['active']) {
-                $trackid = $DB->insert_record('videotimetab_texttrack_track', array(
-                    'videotime' => $record->id,
-                    'lang' => $texttrack['language'],
-                    'uri' => $texttrack['uri'],
-                    'type' => $texttrack['type'],
-                    $texttrack['link'])
-                );
-                foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
-                    $text['track'] = $trackid;
-                    $DB->insert_record('videotimetab_texttrack_text', $text);
+        try {
+            $transaction = $DB->start_delegated_transaction();
+
+            foreach ($request['body']['data'] as $texttrack) {
+                if ($texttrack['active']) {
+                    $trackid = $DB->insert_record('videotimetab_texttrack_track', array(
+                        'videotime' => $record->id,
+                        'lang' => $texttrack['language'],
+                        'uri' => $texttrack['uri'],
+                        'type' => $texttrack['type'],
+                        $texttrack['link'])
+                    );
+                    foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
+                        $text['track'] = $trackid;
+                        $DB->insert_record('videotimetab_texttrack_text', $text);
+                    }
                 }
             }
+            $DB->set_field('videotimetab_texttrack', 'lastupdate', time(), array('videotime' => $record->id));
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-        $DB->set_field('videotimetab_texttrack', 'lastupdate', time(), array('videotime' => $record->id));
     }
 
     /**
