@@ -22,7 +22,10 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime;
+
 use mod_videotime\external\external;
+use advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +39,7 @@ require_once("$CFG->dirroot/webservice/tests/helpers.php");
  * @group videotime
  * @group mod_videotime_external_test
  */
-class videotime_external_test extends externallib_advanced_testcase {
+class external_test extends advanced_testcase {
 
     /** @var stdClass */
     private $course;
