@@ -93,7 +93,11 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $record = $this->get_instance()->to_record();
 
-        if ($DB->get_field('videotimetab_texttrack', 'lastupdate', array('videotime' => $record->id)) < $record->timemodified) {
+        $lastupdate = $DB->get_field('videotimetab_texttrack', 'lastupdate', array('videotime' => $record->id));
+        if (
+            ($lastupdate < $record->timemodified)
+            || $lastupdate < $DB->get_field('videotime_vimeo_video', 'modified_time', array('link' => $record->vimeo_url))
+        ) {
             $this->update_tracks();
         }
 
@@ -137,27 +141,34 @@ class tab extends \mod_videotime\local\tabs\tab {
             return;
         }
 
-        $DB->set_field('videotimetab_texttrack', 'lastupdate', time(), array('videotime' => $record->id));
         if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id',  'videotime = ?', array($record->id))) {
             list($sql, $params) = $DB->get_in_or_equal($trackids);
             $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
             $DB->delete_records('videotimetab_texttrack_track', array('videotime' => $record->id));
         }
 
-        foreach ($request['body']['data'] as $texttrack) {
-            if ($texttrack['active']) {
-                $trackid = $DB->insert_record('videotimetab_texttrack_track', array(
-                    'videotime' => $record->id,
-                    'lang' => $texttrack['language'],
-                    'uri' => $texttrack['uri'],
-                    'type' => $texttrack['type'],
-                    $texttrack['link'])
-                );
-                foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
-                    $text['track'] = $trackid;
-                    $DB->insert_record('videotimetab_texttrack_text', $text);
+        try {
+            $transaction = $DB->start_delegated_transaction();
+
+            foreach ($request['body']['data'] as $texttrack) {
+                if ($texttrack['active']) {
+                    $trackid = $DB->insert_record('videotimetab_texttrack_track', array(
+                        'videotime' => $record->id,
+                        'lang' => $texttrack['language'],
+                        'uri' => $texttrack['uri'],
+                        'type' => $texttrack['type'],
+                        $texttrack['link'])
+                    );
+                    foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
+                        $text['track'] = $trackid;
+                        $DB->insert_record('videotimetab_texttrack_text', $text);
+                    }
                 }
             }
+            $DB->set_field('videotimetab_texttrack', 'lastupdate', time(), array('videotime' => $record->id));
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
     }
 

@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_videotime;
+
+use advanced_testcase;
 use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
