@@ -43,7 +43,25 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @return string
      */
     public function get_tab_content(): string {
-        return '';
+        global $OUTPUT;
+
+        $data = $this->export_for_template();
+
+        return $OUTPUT->render_from_template('videotimetab_watch/tab', $data);
+    }
+
+    /**
+     * Get data for template
+     *
+     * @return array
+     */
+    public function export_for_template(): array {
+        global $DB;
+
+        $record = $this->get_instance()->to_record();
+        $instance = videotime_process_video_description($record);
+
+        return (array)$instance;
     }
 
     /**

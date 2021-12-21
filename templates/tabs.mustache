@@ -39,6 +39,7 @@
     }
 
 }}
+<div class="instance-container videotime-small-view"></div>
 <ul class="nav nav-tabs nav-pills nav-justified" id="myTab" role="tablist">
     {{#tabs}}
         <li class="nav-item">
@@ -46,7 +47,7 @@
         </li>
     {{/tabs}}
 </ul>
-<div class="tab-content" id="myTabContent">
+<div class="tab-content">
     {{#tabs}}
         {{^persistent}}
             <div class="tab-pane mt-3 fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
@@ -55,7 +56,7 @@
                         {{{tabcontent}}}
                     </div>
                     <div class="videotimetab-resize-handle" draggable="true"></div>
-                    <div class="instance-container" style="flex-grow: 1"></div>
+                    <div class="instance-container videotime-large-view" style="flex-grow: 1"></div>
                 </div>
             </div>
         {{/persistent}}
@@ -63,7 +64,7 @@
             <div class="tab-pane mt-3 fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
                 <div class="container">
                     <div class="row">
-                        <div class="instance-container col-12"></div>
+                        <div class="instance-container col-12 videotime-large-view"></div>
                         <div class="col-12">
                             {{{tabcontent}}}
                         </div>
@@ -76,6 +77,7 @@
         <div class="videotime-tab-instance">
             {{> mod_videotime/vimeo_embed }}
         </div>
+        <div class="videotime-tab-instance-cover"></div>
     {{/ instance }}
 {{# js }}
     require(['mod_videotime/resize_tab_player'], function(TabResizer) {

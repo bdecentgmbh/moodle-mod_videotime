@@ -12,7 +12,7 @@
  */
 export const initialize = () => {
     var observer = new ResizeObserver(resize);
-    document.querySelectorAll('.tab-pane .instance-container, div.videotime-tab-instance').forEach(function (container) {
+    document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach(function (container) {
         observer.observe(container);
     }.bind(this));
     resize();
@@ -34,18 +34,27 @@ export const initialize = () => {
  * Adjust player position when the page configuration is changed
  */
 const resize = () => {
-    document.querySelectorAll('.tab-pane.active .instance-container').forEach((container) => {
-        document.querySelectorAll('.vimeo-embed iframe').forEach((iframe) => {
-            iframe.width = container.offsetWidth - 10;
-            document.querySelectorAll('.tab-pane').forEach((pane) => {
-                pane.style.minHeight =  iframe.parentNode.parentNode.offsetHeight + 20 + 'px';
-            });
-            Object.assign(iframe.closest('.videotime-tab-instance').style, {
+    document.querySelectorAll('.instance-container').forEach((container) => {
+        if (!container.offsetWidth) {
+            // Ignore if it is not visible.
+            return;
+        }
+        document.querySelectorAll('.videotime-tab-instance .vimeo-embed iframe').forEach((iframe) => {
+            let instance = iframe.closest('.videotime-tab-instance');
+            Object.assign(instance.style, {
                 top: container.offsetTop + 'px',
                 left: container.offsetLeft + 'px',
                 width: container.offsetWidth + 'px'
             });
             container.style.minHeight = iframe.closest('.videotime-tab-instance').offsetHeight + 'px';
+            document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+                Object.assign(cover.style, {
+                    top: instance.style.top,
+                    left: instance.style.left,
+                    width: instance.style.width,
+                    height: instance.offsetWidth + 'px'
+                });
+            });
         });
     });
 };
@@ -57,10 +66,13 @@ const dragendHandler = () => {
     document.querySelectorAll('.videotimetab-resize-handle').forEach((h) => {
         h.style.position = 'relative';
     });
+    document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+        cover.style.display = 'none';
+    });
 };
 
 /**
- * Prepare to drag border
+ * Prepare to drag divider
  *
  * @param {event} e mouse event
  */
@@ -69,6 +81,9 @@ const dragstartHandler = (e) => {
         e.stopPropagation();
         e.preventDefault();
         e.target.style.position = 'absolute';
+        document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+            cover.style.display = 'block';
+        });
     }
 };
 
