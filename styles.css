@@ -1,3 +1,21 @@
+.videotime-small-view {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .videotime-small-view {
+        display: block;
+    }
+    .videotimetab-resize-handle,
+    .vimeo-video-description,
+    .videotime-large-view {
+        display: none;
+    }
+    div.videotimetab-resize {
+        width: 100%;
+    }
+}
+
 .videotimetab-resize-handle {
     width: 2px;
     cursor: w-resize;
@@ -5,6 +23,10 @@
 .videotimetab-resize-handle:hover {
     background: grey;
     width: 5px;
+}
+.videotime-tab-instance-cover {
+    position: absolute;
+    display: none;
 }
 
 .videotime-highlight {
