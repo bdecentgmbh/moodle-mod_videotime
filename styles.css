@@ -17,12 +17,11 @@
 }
 
 .videotimetab-resize-handle {
-    width: 2px;
+    width: 5px;
     cursor: w-resize;
 }
 .videotimetab-resize-handle:hover {
     background: grey;
-    width: 5px;
 }
 .videotime-tab-instance-cover {
     position: absolute;

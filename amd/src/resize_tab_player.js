@@ -63,9 +63,6 @@ const resize = () => {
  * Reset handle when drag ends
  */
 const dragendHandler = () => {
-    document.querySelectorAll('.videotimetab-resize-handle').forEach((h) => {
-        h.style.position = 'relative';
-    });
     document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
         cover.style.display = 'none';
     });
@@ -80,7 +77,6 @@ const dragstartHandler = (e) => {
     if (e.target.classList.contains('videotimetab-resize-handle')) {
         e.stopPropagation();
         e.preventDefault();
-        e.target.style.position = 'absolute';
         document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
             cover.style.display = 'block';
         });
@@ -94,7 +90,7 @@ const dragstartHandler = (e) => {
  */
 const mousemoveHandler = (e) => {
     document.querySelectorAll('.videotimetab-resize-handle').forEach((h) => {
-        if (h.style.position === 'absolute') {
+        if (h.closest('.tab-pane') && document.querySelector('.videotime-tab-instance-cover').style.display == 'block') {
             let column = h.closest('.tab-pane').querySelector('.videotimetab-resize');
             column.style.width = e.pageX - column.getBoundingClientRect().left + 'px';
         }
