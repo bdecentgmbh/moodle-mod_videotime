@@ -89,7 +89,7 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @return array
      */
     public function export_for_template(): array {
-        global $DB;
+        global $DB, $OUTPUT;
 
         $record = $this->get_instance()->to_record();
 
@@ -114,12 +114,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             }
             $track->captions = array_values($captions);
             $track->show = $show;
+            $track->langname = $this->get_language_name($track->lang);
             $show = false;
             $texttracks[] = $track;
         }
 
         return array(
             'texttracks' => $texttracks,
+            'showselector' => count($texttracks) > 1,
         );
     }
 
@@ -239,5 +241,19 @@ class tab extends \mod_videotime\local\tabs\tab {
         return videotime_has_repository() && $this->is_enabled() && $DB->record_exists('videotimetab_texttrack', array(
             'videotime' => $record->id
         ));
+    }
+
+    /**
+     * Convert language code to string
+     *
+     * @param string $code
+     * @return string
+     */
+    protected function get_language_name(string $code): string {
+        $languages = get_string_manager()->get_list_of_languages();
+        if (key_exists($code, $languages)) {
+            return $languages[$code];
+        }
+        return $code;
     }
 }

@@ -98,7 +98,6 @@ define([
             }
 
             let url = new URL(window.location.href),
-                lang = url.searchParams.get('lang'),
                 q = url.searchParams.get('q'),
                 starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
             if (starttime) {
@@ -111,19 +110,6 @@ define([
             } else if (q && window.find) {
                 window.find(q);
             }
-
-            if (lang) {
-                this.player.enableTextTrack(lang);
-            }
-            this.player.getTextTracks().then(function(tracks) {
-                tracks.forEach(function(track) {
-                    if (track.mode == 'showing') {
-                        $('[data-lang]').hide();
-                        $('[data-lang="' + track.language + '"]').show();
-                    }
-                });
-                return true;
-            }).catch(Notification.exception);
 
             return true;
         }).catch(Notification.exeption);
@@ -324,11 +310,6 @@ define([
                     }
                 });
             }
-        });
-
-        this.player.on('texttrackchange', function(event) {
-            $('[data-lang]').hide();
-            $('[data-lang="' + event.language + '"]').show();
         });
     };
 

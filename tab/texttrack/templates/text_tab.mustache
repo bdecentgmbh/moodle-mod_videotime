@@ -21,12 +21,15 @@
 
     Variables optional for this template:
     * textracks - array of available tracks
+    * showselect - boolean whether to show language selector
 
     Example context (json):
     {
+        "showselector": true,
         "texttracks": [
             {
                 "lang": "en",
+                "langname": "English",
                 "kind": "captions",
                 "show": true,
                 "label": "Information",
@@ -44,17 +47,38 @@
     }
 
 }}
-{{# texttracks }}
-    {{# captions }}
-    <div class="row"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
-        <div class="col-3" style="max-width: 100px;">
-            <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttimedisplay}}</a>
+<div class="videotimetab_textrack_content">
+    {{# showselector }}
+    <form class="videotimetab_texttrack_selectlang">
+    <label>
+    {{# str }} language, core {{/ str }}
+        <select name="lang" class="custom-select text-track-lang">
+        {{# texttracks }}
+            <option value="{{ lang }}">{{ langname }}</option>
+        {{/ texttracks }}
+        </select>
+    </label>
+    </form>
+    {{/ showselector }}
+    <div class="texttracks">
+    {{# texttracks }}
+        {{# captions }}
+        <div class="row texttracks"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
+            <div class="col-3" style="max-width: 100px;">
+                <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttimedisplay}}</a>
+            </div>
+            <div class="col-9">
+                {{# lines }}
+                <div>{{ text }}</div>
+                {{/ lines }}
+            </div>
         </div>
-        <div class="col-9">
-            {{# lines }}
-            <div>{{ text }}</div>
-            {{/ lines }}
-        </div>
+        {{/ captions }}
+    {{/ texttracks }}
     </div>
-    {{/ captions }}
-{{/ texttracks }}
+</div>
+{{# js }}
+    require(['videotimetab_texttrack/selecttrack'], function(SelectTrack) {
+        SelectTrack.initialize();
+    });
+{{/ js }}
