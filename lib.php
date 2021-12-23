@@ -618,7 +618,7 @@ function videotime_cm_info_view(cm_info $cm) {
     }
 
     if ($content) {
-        $cm->set_content($content, false);
+        $cm->set_content($content, true);
     }
 }
 
