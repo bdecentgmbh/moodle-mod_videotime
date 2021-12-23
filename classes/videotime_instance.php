@@ -276,7 +276,7 @@ class videotime_instance implements \renderable, \templatable {
             }
         }
 
-        $record->name = format_text($record->name, FORMAT_HTML);
+        $record->name = format_string($record->name, FORMAT_HTML);
 
         $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
             'mod_videotime', 'intro', null);
