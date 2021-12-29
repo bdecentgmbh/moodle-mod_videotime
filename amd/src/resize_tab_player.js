@@ -7,14 +7,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Player from "mod_videotime/player";
+import Notification from "core/notification";
+
+let column;
+
 /**
  * Intialize listener
  */
 export const initialize = () => {
     var observer = new ResizeObserver(resize);
-    document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach(function (container) {
+    document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach((container) => {
         observer.observe(container);
-    }.bind(this));
+    });
     resize();
     document.querySelectorAll('.videotime-tab-instance').forEach((instance) => {
         instance.style.position = 'absolute';
@@ -28,6 +33,9 @@ export const initialize = () => {
 
     window.removeEventListener('mouseup', dragendHandler);
     window.addEventListener('mouseup', dragendHandler);
+
+    window.removeEventListener('click', cueVideo);
+    window.addEventListener('click', cueVideo);
 };
 
 /**
@@ -39,7 +47,7 @@ const resize = () => {
             // Ignore if it is not visible.
             return;
         }
-        document.querySelectorAll('.videotime-tab-instance .vimeo-embed iframe').forEach((iframe) => {
+        container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance .vimeo-embed iframe').forEach((iframe) => {
             let instance = iframe.closest('.videotime-tab-instance');
             Object.assign(instance.style, {
                 top: container.offsetTop + 'px',
@@ -52,7 +60,7 @@ const resize = () => {
                     top: instance.style.top,
                     left: instance.style.left,
                     width: instance.style.width,
-                    height: instance.offsetWidth + 'px'
+                    height: instance.offsetHeight + 'px'
                 });
             });
         });
@@ -75,6 +83,7 @@ const dragendHandler = () => {
  */
 const dragstartHandler = (e) => {
     if (e.target.classList.contains('videotimetab-resize-handle')) {
+        column = e.target.closest('.tab-pane').querySelector('.videotimetab-resize');
         e.stopPropagation();
         e.preventDefault();
         document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
@@ -91,8 +100,29 @@ const dragstartHandler = (e) => {
 const mousemoveHandler = (e) => {
     document.querySelectorAll('.videotimetab-resize-handle').forEach((h) => {
         if (h.closest('.tab-pane') && document.querySelector('.videotime-tab-instance-cover').style.display == 'block') {
-            let column = h.closest('.tab-pane').querySelector('.videotimetab-resize');
             column.style.width = e.pageX - column.getBoundingClientRect().left + 'px';
         }
     });
+};
+
+/**
+ * Move video to new time when link clicked
+ *
+ * @param {event} e mouse event
+ */
+const cueVideo = (e) => {
+    if (e.target.matches('[data-action="cue"]')) {
+        let starttime = e.target.closest('a').getAttribute('data-start'),
+            time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/),
+            iframe = e.target.closest('.videotimetabs').querySelector('.vimeo-embed iframe'),
+            player = new Player(iframe);
+        e.preventDefault();
+        e.stopPropagation();
+        if (time) {
+            player.setCurrentTime(
+                3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6])
+            ).then(player.play.bind(player)
+            ).catch(Notification.exception);
+        }
+    }
 };

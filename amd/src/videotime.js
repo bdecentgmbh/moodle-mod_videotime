@@ -274,43 +274,39 @@ define([
             }.bind(this)).fail(Notification.exception);
         }.bind(this));
 
-        $(document).on('click', '[data-action="cue"]', function(event) {
-            let starttime = event.target.closest('a').getAttribute('data-start');
-            event.preventDefault();
-            event.stopPropagation();
-            this.setStartTime(starttime).then(this.player.play.bind(this.player)).catch(Notification.exception);
-        }.bind(this));
+        // If this is a tab play set time cues and listener.
+        $($('#' + this.elementId).closest('.videotimetabs')).each(function(i, tabs) {
+           $(tabs).find('[data-action="cue"]').each(function(index, anchor) {
+                let starttime = anchor.getAttribute('data-start'),
+                    time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+                if (time) {
+                    this.player.addCuePoint(
+                        3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]),
+                        {
+                            starttime: starttime
+                        }
+                    ).catch(Notification.exeception);
+                }
+            }.bind(this));
 
-        $('[data-action="cue"]').each(function(index, anchor) {
-            let starttime = anchor.getAttribute('data-start'),
-                time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
-            if (time) {
-                this.player.addCuePoint(
-                    3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]),
-                    {
-                        starttime: starttime
-                    }
-                ).catch(Notification.exeception);
-            }
+            this.player.on('cuepoint', function(event) {
+                if (event.data.starttime) {
+                    $(tabs).find('.videotime-highlight').removeClass('videotime-highlight');
+                    $(tabs).find('[data-action="cue"][data-start="' + event.data.starttime + '"]')
+                        .closest('.row')
+                        .addClass('videotime-highlight');
+                    $('.videotime-highlight').each(function() {
+                        if (this.offsetTop) {
+                            this.parentNode.scrollTo({
+                                top: this.offsetTop - 50,
+                                left: 0,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                }
+            });
         }.bind(this));
-
-        this.player.on('cuepoint', function(event) {
-            if (event.data.starttime) {
-                $('.videotime-highlight').removeClass('videotime-highlight');
-                $('[data-action="cue"][data-start="' + event.data.starttime + '"]')
-                    .closest('.row')
-                    .addClass('videotime-highlight');
-                $('.videotime-highlight').each(function() {
-                    if (this.offsetTop) {
-                        this.parentNode.scrollTo({
-                            top: this.offsetTop - 50,
-                            left: 0,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            }
-        });
     };
 
     /**
