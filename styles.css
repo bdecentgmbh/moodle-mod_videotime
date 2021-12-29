@@ -6,6 +6,11 @@
     display: none;
 }
 
+div.videotimetab-resize {
+    min-width: 16.6667%;
+    max-width: 87.3333%;
+}
+
 @media (max-width: 768px) {
     .videotime-small-view {
         display: block;
