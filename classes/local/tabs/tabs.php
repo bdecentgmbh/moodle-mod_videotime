@@ -121,7 +121,8 @@ class tabs implements \templatable, \renderable {
         return [
             'instance' => [$record],
             'panelclass' => get_config('videotime', 'defaulttabsize'),
-            'tabs' => $tabs
+            'tabs' => $tabs,
+            'uniqueid' => $record->uniqueid,
         ];
     }
 

@@ -39,49 +39,51 @@
     }
 
 }}
-<div class="instance-container videotime-small-view mb-2"></div>
-<ul class="nav nav-tabs nav-pills nav-justified" id="myTab" role="tablist">
-    {{#tabs}}
-        <li class="nav-item">
-            <a class="nav-link {{#active}}active{{/active}}" id="{{name}}-tab" data-toggle="tab" href="#{{name}}" role="tab" aria-controls="{{name}}" aria-selected="true">{{{label}}}</a>
-        </li>
-    {{/tabs}}
-</ul>
-<div class="tab-content">
-    {{#tabs}}
-        {{^persistent}}
-            <div class="tab-pane mt-3 fade {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
-                <div class="" style="display: flex">
-                    <div class="videotimetab-resize {{ panelclass }}">
-                        {{{tabcontent}}}
-                    </div>
-                    <div class="videotimetab-resize-handle" draggable="true"></div>
-                    <div class="instance-container videotime-large-view" style="flex-grow: 1"></div>
-                </div>
-            </div>
-        {{/persistent}}
-        {{#persistent}}
-            <div class="tab-pane mt-3 fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}" role="tabpanel" aria-labelledby="{{name}}-tab">
-                <div class="container">
-                    <div class="row">
-                        <div class="instance-container col-12 videotime-large-view"></div>
-                        <div class="col-12">
+<div class="videotimetabs">
+    <div class="instance-container videotime-small-view mb-2"></div>
+    <ul class="nav nav-tabs nav-pills nav-justified" id="videotimetabs-{{ uniqueid }}" role="tablist">
+        {{#tabs}}
+            <li class="nav-item">
+                <a class="nav-link {{#active}}active{{/active}}" id="{{name}}-{{uniqueid}}-tab" data-toggle="tab" href="#{{name}}-{{uniqueid}}" role="tab" aria-controls="{{name}}-{{uniqueid}}" aria-selected="true">{{{label}}}</a>
+            </li>
+        {{/tabs}}
+    </ul>
+    <div class="tab-content">
+        {{#tabs}}
+            {{^persistent}}
+                <div class="tab-pane mt-3 fade {{#active}}show active{{/active}}" id="{{name}}-{{uniqueid}}" role="tabpanel" aria-labelledby="{{name}}-{{uniqueid}}-tab">
+                    <div class="" style="display: flex">
+                        <div class="videotimetab-resize {{ panelclass }}">
                             {{{tabcontent}}}
+                        </div>
+                        <div class="videotimetab-resize-handle" draggable="true"></div>
+                        <div class="instance-container videotime-large-view" style="flex-grow: 1"></div>
+                    </div>
+                </div>
+            {{/persistent}}
+            {{#persistent}}
+                <div class="tab-pane mt-3 fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}-{{uniqueid}}" role="tabpanel" aria-labelledby="{{name}}-{{uniqueid}}-tab">
+                    <div class="container">
+                        <div class="row">
+                            <div class="instance-container col-12 videotime-large-view"></div>
+                            <div class="col-12">
+                                {{{tabcontent}}}
+                            </div>
                         </div>
                     </div>
                 </div>
+            {{/persistent}}
+        {{/tabs}}
+        {{# instance }}
+            <div class="videotime-tab-instance">
+                {{> mod_videotime/vimeo_embed }}
             </div>
-        {{/persistent}}
-    {{/tabs}}
-    {{# instance }}
-        <div class="videotime-tab-instance">
-            {{> mod_videotime/vimeo_embed }}
-        </div>
-        <div class="videotime-tab-instance-cover"></div>
-    {{/ instance }}
+            <div class="videotime-tab-instance-cover"></div>
+        {{/ instance }}
+    </div>
+</div>
 {{# js }}
     require(['mod_videotime/resize_tab_player'], function(TabResizer) {
         TabResizer.initialize();
     });
 {{/ js }}
-</div>

@@ -1,3 +1,7 @@
+.course-content li.section li.activity.videotime ul.nav.nav-tabs {
+    list-style: none;
+}
+
 .videotime-small-view {
     display: none;
 }
