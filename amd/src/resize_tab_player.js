@@ -16,7 +16,9 @@ let column;
  * Intialize listener
  */
 export const initialize = () => {
-    var observer = new ResizeObserver(resize);
+    let observer = new ResizeObserver(resize),
+        mutationobserver = new MutationObserver(resize);
+    mutationobserver.observe(document.querySelector('#page-content'), {subtree: true, childList: true});
     document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach((container) => {
         observer.observe(container);
     });

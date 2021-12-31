@@ -90,12 +90,6 @@ define([
                 width: instance.width
             });
             this.player = new Vimeo(this.elementId, instance);
-            this.addListeners();
-
-            for (let i = 0; i < this.plugins.length; i++) {
-                const plugin = this.plugins[i];
-                plugin.initialize(this, instance);
-            }
 
             let url = new URL(window.location.href),
                 q = url.searchParams.get('q'),
@@ -109,6 +103,13 @@ define([
                 }).catch(Notification.exception);
             } else if (q && window.find) {
                 window.find(q);
+            }
+
+            this.addListeners();
+
+            for (let i = 0; i < this.plugins.length; i++) {
+                const plugin = this.plugins[i];
+                plugin.initialize(this, instance);
             }
 
             return true;
@@ -478,9 +479,8 @@ define([
     VideoTime.prototype.setStartTime = function(starttime) {
         let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
-            return this.player.setCurrentTime(
-                3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6])
-            );
+            this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
+            return this.player.setCurrentTime(this.resumeTime);
         }
         return this.player.getCurrentTime();
     };
