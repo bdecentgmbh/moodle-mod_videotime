@@ -130,7 +130,7 @@ class texttrack extends \core_search\base_mod {
 
         $contextmodule = \context::instance_by_id($doc->get('contextid'));
         $itemid = $doc->get('itemid');
-        $record = $DB->get_record_sql('SELECT te.*, tr.lang
+        $record = $DB->get_record_sql('SELECT te.*, tr.lang, tr.videotime
                                          FROM {videotimetab_texttrack_text} te
                                          JOIN {videotimetab_texttrack_track} tr ON te.track = tr.id
                                         WHERE te.id = :itemid', array('itemid' => $itemid));
@@ -145,7 +145,7 @@ class texttrack extends \core_search\base_mod {
             $url->param('lang', $record->lang);
         }
 
-        $url->set_anchor('texttrack');
+        $url->set_anchor('texttrack-' . $record->videotime);
         return $url;
     }
 

@@ -107,10 +107,7 @@ class tabs implements \templatable, \renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $OUTPUT;
-
         $record = $this->get_instance()->to_record();
-        $record->uniqueid = $this->get_instance()->get_uniqueid();
         $tabs = [];
 
         foreach ($this->tabs as $tab) {
@@ -119,10 +116,10 @@ class tabs implements \templatable, \renderable {
 
         $record->intro = '';
         return [
+            'id' => $record->id,
             'instance' => [$record],
             'panelclass' => get_config('videotime', 'defaulttabsize'),
             'tabs' => $tabs,
-            'uniqueid' => $record->uniqueid,
         ];
     }
 
