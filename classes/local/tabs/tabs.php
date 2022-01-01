@@ -108,6 +108,7 @@ class tabs implements \templatable, \renderable {
      */
     public function export_for_template(renderer_base $output) {
         $record = $this->get_instance()->to_record();
+        $record->uniqueid = $this->get_instance()->get_uniqueid();
         $tabs = [];
 
         foreach ($this->tabs as $tab) {
