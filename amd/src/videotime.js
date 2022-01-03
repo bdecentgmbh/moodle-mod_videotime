@@ -75,12 +75,19 @@ define([
             Log.debug('Initializing Vimeo player with options:');
             Log.debug(instance);
             this.player = new Vimeo(this.elementId, {
+                autopause: instance.autopause,
                 autoplay: instance.autoplay,
+                background: instance.background,
                 byline: instance.byline,
                 color: instance.color,
+                controls: instance.controls,
+                dnt: instance.dnt,
+                height: instance.height,
                 maxheight: instance.maxheight,
                 maxwidth: instance.maxwidth,
                 muted: instance.muted,
+                portrait: instance.portrait,
+                pip: instance.pip,
                 playsinline: instance.playsinline,
                 responsive: instance.responsive,
                 speed: instance.speed,
