@@ -63,13 +63,9 @@
             {{/persistent}}
             {{#persistent}}
                 <div class="tab-pane mt-3 fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
-                    <div class="container">
-                        <div class="row">
-                            <div class="instance-container col-12 videotime-large-view"></div>
-                            <div class="col-12">
-                                {{{tabcontent}}}
-                            </div>
-                        </div>
+                    <div class="instance-container videotime-large-view"></div>
+                    <div class="">
+                        {{{tabcontent}}}
                     </div>
                 </div>
             {{/persistent}}
