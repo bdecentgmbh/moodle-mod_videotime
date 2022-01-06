@@ -219,14 +219,16 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configcheckbox('videotime/pip_force', get_string('force', 'videotime'),
         get_string('force_help', 'videotime'), '0'));
 
-        if (videotime_has_repository()) {
+        if (videotime_has_pro()) {
             $settings->add(new admin_setting_heading('label_mode', get_string('default') . ' ' .
                 get_string('mode', 'videotime'), ''));
             $settings->add(new admin_setting_configselect('videotime/label_mode', get_string('mode', 'videotime'),
                 get_string('mode_help', 'videotime'), videotime_instance::NORMAL_MODE, videotime_instance::get_mode_options()));
             $settings->add(new admin_setting_configcheckbox('videotime/label_mode_force', get_string('force', 'videotime'),
                 get_string('force_help', 'videotime'), '0'));
+        }
 
+        if (videotime_has_repository()) {
             $settings->add(new admin_setting_heading('show_title', get_string('default') . ' ' .
                 get_string('show_title', 'videotime'), ''));
             $settings->add(new admin_setting_configcheckbox('videotime/show_title', get_string('show_title', 'videotime'),
