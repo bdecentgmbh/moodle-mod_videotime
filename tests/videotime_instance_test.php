@@ -27,8 +27,6 @@ namespace mod_videotime;
 use advanced_testcase;
 use mod_videotime\videotime_instance;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class videotime_instance_test
  *

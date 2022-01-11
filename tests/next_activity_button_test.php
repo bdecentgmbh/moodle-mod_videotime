@@ -29,8 +29,6 @@ use advanced_testcase;
 use moodle_url;
 use mod_videotime\videotime_instance;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class next_activity_button_test
  *

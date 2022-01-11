@@ -24,8 +24,6 @@
 
 namespace videotimetab_information\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The videotimetab_information module does not store any data.
  *

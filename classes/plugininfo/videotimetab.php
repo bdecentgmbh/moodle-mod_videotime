@@ -24,8 +24,6 @@
 
 namespace mod_videotime\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
 use moodle_url;
 
 /**

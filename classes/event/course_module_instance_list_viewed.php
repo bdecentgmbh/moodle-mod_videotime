@@ -24,8 +24,6 @@
 
 namespace mod_videotime\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_videotime course module list viewed event class.
  *

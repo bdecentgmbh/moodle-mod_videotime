@@ -24,8 +24,6 @@
 
 namespace videotimetab_texttrack\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The videotimetab_texttrack module does not store any data.
  *

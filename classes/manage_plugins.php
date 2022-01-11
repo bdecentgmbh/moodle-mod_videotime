@@ -24,8 +24,6 @@
 
 namespace mod_videotime;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_component;
 use core_text;
 use moodle_url;
