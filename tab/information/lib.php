@@ -24,8 +24,6 @@
 
 use mod_videotime\videotime_instance;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * File serving callback
  *

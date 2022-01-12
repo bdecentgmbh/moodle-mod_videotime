@@ -33,8 +33,7 @@ use block_dash\local\data_grid\field\attribute\abstract_field_attribute;
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class video_description_attribute extends abstract_field_attribute
-{
+class video_description_attribute extends abstract_field_attribute {
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format

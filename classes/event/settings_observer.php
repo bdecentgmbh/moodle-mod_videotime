@@ -26,8 +26,6 @@ namespace mod_videotime\event;
 
 use core\event\admin_settings_changed;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Settings observer event
  *

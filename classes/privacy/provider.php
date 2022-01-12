@@ -24,8 +24,6 @@
 
 namespace mod_videotime\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_videotime module does not store any data.
  *
