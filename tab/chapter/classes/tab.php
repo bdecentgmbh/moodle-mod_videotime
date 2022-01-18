@@ -32,7 +32,6 @@ use stdClass;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
-require_once($CFG->dirroot . '/mod/poster/renderer.php');
 
 /**
  * Tab.
