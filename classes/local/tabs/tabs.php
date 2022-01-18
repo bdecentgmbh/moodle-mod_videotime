@@ -60,9 +60,7 @@ class tabs implements \templatable, \renderable {
         foreach ($pluginmanager->get_sorted_plugins_list() as $subplugin) {
             $classname = "\\videotimetab_$subplugin\\tab";
             $tab = new $classname($instance);
-            if ($tab->is_visible()) {
-                $this->tabs[] = $tab;
-            }
+            $this->tabs[] = $tab;
         }
 
         if (!empty(get_config("videotimetab_watch", 'enabled'))) {
@@ -112,7 +110,9 @@ class tabs implements \templatable, \renderable {
         $tabs = [];
 
         foreach ($this->tabs as $tab) {
-            $tabs[] = $tab->get_data();
+            if ($tab->is_visible()) {
+                $tabs[] = $tab->get_data();
+            }
         }
 
         $record->intro = '';
@@ -131,5 +131,14 @@ class tabs implements \templatable, \renderable {
      */
     public function get_instance(): videotime_instance {
         return $this->instance;
+    }
+
+    /**
+     * Call plugins hook to setup page
+     */
+    public function setup_page() {
+        foreach ($this->tabs as $tab) {
+            $tab->setup_page();
+        }
     }
 }

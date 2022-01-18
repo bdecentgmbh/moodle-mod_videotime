@@ -297,6 +297,14 @@ class plugin_manager {
      * @return string The next page to display
      */
     public function show_plugin($plugin) {
+        $sortorder = 0;
+        foreach (array_keys(core_component::get_plugin_list($this->subtype)) as $name) {
+            if (get_config($this->subtype . '_' . $name, 'enabled')) {
+                set_config('sortorder', $sortorder, $this->subtype . '_' . $name);
+                $sortorder++;
+            }
+        }
+        set_config('sortorder', $sortorder, $this->subtype . '_' . $plugin);
         set_config('enabled', 1, $this->subtype . '_' . $plugin);
         core_plugin_manager::reset_caches();
         return 'view';

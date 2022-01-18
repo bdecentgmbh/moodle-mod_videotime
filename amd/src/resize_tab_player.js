@@ -22,10 +22,10 @@ export const initialize = () => {
     document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach((container) => {
         observer.observe(container);
     });
-    resize();
     document.querySelectorAll('.videotime-tab-instance').forEach((instance) => {
         instance.style.position = 'absolute';
     });
+    resize();
 
     window.removeEventListener('mousemove', mousemoveHandler);
     window.addEventListener('mousemove', mousemoveHandler);
@@ -115,7 +115,7 @@ const mousemoveHandler = (e) => {
 const cueVideo = (e) => {
     if (e.target.matches('[data-action="cue"]')) {
         let starttime = e.target.closest('a').getAttribute('data-start'),
-            time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/),
+            time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+)?)/),
             iframe = e.target.closest('.videotimetabs').querySelector('.vimeo-embed iframe'),
             player = new Player(iframe);
         e.preventDefault();

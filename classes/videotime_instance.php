@@ -80,6 +80,11 @@ class videotime_instance implements \renderable, \templatable {
     private $embed = false;
 
     /**
+     * @var tabs
+     */
+    private $tabs = null;
+
+    /**
      * @var string Random, unique element ID.
      */
     private $uniqueid;
@@ -120,7 +125,11 @@ class videotime_instance implements \renderable, \templatable {
     public static function instance_by_id($id) : videotime_instance {
         global $DB;
 
-        return new videotime_instance($DB->get_record('videotime', ['id' => $id], '*', MUST_EXIST));
+        $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], '*', MUST_EXIST));
+        if ($instance->enabletabs) {
+            $instance->tabs = new tabs($instance);
+        }
+        return $instance;
     }
 
     /**
@@ -428,8 +437,7 @@ class videotime_instance implements \renderable, \templatable {
         }
 
         if ($this->enabletabs) {
-            $tabs = new tabs($this);
-            $context['tabshtml'] = $output->render($tabs);
+            $context['tabshtml'] = $output->render($this->tabs);
         }
 
         return $context;
@@ -491,4 +499,12 @@ class videotime_instance implements \renderable, \templatable {
             'preventfastforwarding' => new \external_value(PARAM_BOOL),
         ]);
     }
+
+    /**
+     * Call plugins hook to setup page
+     */
+    public function setup_page() {
+        $this->tabs->setup_page();
+    }
+
 }

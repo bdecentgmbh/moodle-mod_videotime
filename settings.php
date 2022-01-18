@@ -331,5 +331,5 @@ $ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplu
     new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'))));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimetab') as $plugin) {
-    $plugin->load_settings($ADMIN, 'videotimetabplugins', $hassiteconfig);
+        $plugin->load_settings($ADMIN, 'videotimetabplugins', $hassiteconfig);
 }

@@ -48,19 +48,21 @@ if ($id) {
     throw new moodle_exception('invalidcoursemodule', 'mod_videotime');
 }
 
-$moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
-
-$PAGE->set_context($moduleinstance->get_context());
+$context = context_module::instance($cm->id);
+$PAGE->set_context($context);
 
 require_login($course, true, $cm);
 
-require_capability('mod/videotime:view', $moduleinstance->get_context());
-
-videotime_view($moduleinstance, $course, $cm, $moduleinstance->get_context());
+require_capability('mod/videotime:view', $context);
 
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
+
+$moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
+$moduleinstance->setup_page();
+
+videotime_view($moduleinstance, $course, $cm, $moduleinstance->get_context());
 
 $renderer = $PAGE->get_renderer('mod_videotime');
 
