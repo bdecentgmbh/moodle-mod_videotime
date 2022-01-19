@@ -504,7 +504,9 @@ class videotime_instance implements \renderable, \templatable {
      * Call plugins hook to setup page
      */
     public function setup_page() {
-        $this->tabs->setup_page();
+        if ($this->enabletabs) {
+            $this->tabs->setup_page();
+        }
     }
 
 }

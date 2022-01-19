@@ -22,16 +22,21 @@
     Variables required for this template:
 
     Variables optional for this template:
+    * haspre - whether pre area has any blocks to show
+    * haspost - whether post area has any blocks to show
     * pre - block area html content
     * post - block area html content
 
     Example context (json):
     {
+        "haspre": true,
+        "haspost": true,
         "pre": "<div>...</div>",
         "post": "<div>...</div>"
     }
 
 }}
-<div>{{{ pre }}}</div>
-<div>{{{ post }}}</div>
+<div class="row videotimetab_block">
+    <div class="col-12{{# haspost }} col-md-6{{/ haspost }}">{{{ pre }}}</div>
+    <div class="col-12{{# haspre }} col-md-6{{/ haspre }}">{{{ post }}}</div>
 </div>

@@ -50,10 +50,20 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $instance = $this->get_instance();
 
+        if ($PAGE->user_can_edit_blocks() && $PAGE->user_is_editing()) {
+            $haspre = true;
+            $haspost = true;
+        } else {
+            $haspre = $PAGE->blocks->region_has_content('mod_poster-pre', $this);
+            $haspost = $PAGE->blocks->region_has_content('mod_poster-post', $this);
+        }
+
         if (!empty($PAGE->cm)) {
             return  $OUTPUT->render_from_template('videotimetab_block/tab', [
-                'pre' => $OUTPUT->custom_block_region('mod_poster-pre'),
+                'haspost' => $haspost,
+                'haspre' => $haspre,
                 'post' => $OUTPUT->custom_block_region('mod_poster-post'),
+                'pre' => $OUTPUT->custom_block_region('mod_poster-pre'),
             ]);
         }
 
@@ -74,6 +84,8 @@ class tab extends \mod_videotime\local\tabs\tab {
         $head = $output->header();
 
         return  $output->render_from_template('videotimetab_block/tab', [
+            'haspost' => $haspost,
+            'haspre' => $haspre,
             'pre' => $output->custom_block_region('mod_poster-pre'),
             'post' => $output->custom_block_region('mod_poster-post'),
         ]);
