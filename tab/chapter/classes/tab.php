@@ -27,6 +27,7 @@ namespace videotimetab_chapter;
 use context_module;
 use mod_videotime\output\renderer;
 use mod_videotime\videotime_instance;
+use videotimeplugin_repository\video;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -46,16 +47,18 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @return string
      */
     public function get_tab_content(): string {
-        global $OUTPUT, $PAGE, $USER;
+        global $DB, $OUTPUT, $PAGE, $USER;
 
         $instance = $this->get_instance();
         $data = [
             'id' => $instance->id,
+            'title' => $instance->name,
         ];
         if (videotime_has_repository()) {
-            $renderer = $PAGE->get_renderer('mod_videotime');
-            $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
-            $data['preview'] = $renderer->render($preview);
+            if ($videorecord = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
+                $video = video::create($videorecord, $instance->get_context());
+                $data['imageurl'] = $video->get_thumbnail_url();
+            }
         }
         return $OUTPUT->render_from_template(
             'videotimetab_chapter/tab',

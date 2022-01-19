@@ -113,7 +113,7 @@ const mousemoveHandler = (e) => {
  * @param {event} e mouse event
  */
 const cueVideo = (e) => {
-    if (e.target.matches('[data-action="cue"]')) {
+    if (e.target.closest('[data-action="cue"]')) {
         let starttime = e.target.closest('a').getAttribute('data-start'),
             time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+)?)/),
             iframe = e.target.closest('.videotimetabs').querySelector('.vimeo-embed iframe'),
