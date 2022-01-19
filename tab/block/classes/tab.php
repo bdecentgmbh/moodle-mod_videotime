@@ -54,16 +54,16 @@ class tab extends \mod_videotime\local\tabs\tab {
             $haspre = true;
             $haspost = true;
         } else {
-            $haspre = $PAGE->blocks->region_has_content('mod_poster-pre', $this);
-            $haspost = $PAGE->blocks->region_has_content('mod_poster-post', $this);
+            $haspre = $PAGE->blocks->region_has_content('videotime-pre', $this);
+            $haspost = $PAGE->blocks->region_has_content('videotime-post', $this);
         }
 
-        if (!empty($PAGE->cm)) {
+        if ($PAGE->cm) {
             return  $OUTPUT->render_from_template('videotimetab_block/tab', [
                 'haspost' => $haspost,
                 'haspre' => $haspre,
-                'post' => $OUTPUT->custom_block_region('mod_poster-post'),
-                'pre' => $OUTPUT->custom_block_region('mod_poster-pre'),
+                'post' => $OUTPUT->custom_block_region('videotime-post'),
+                'pre' => $OUTPUT->custom_block_region('videotime-pre'),
             ]);
         }
 
@@ -77,8 +77,8 @@ class tab extends \mod_videotime\local\tabs\tab {
         $page->set_activity_record($instance->to_record());
         // Define the custom block regions we want to use at the poster view page.
         // Region names are limited to 16 characters.
-        $page->blocks->add_region('mod_poster-pre', true);
-        $page->blocks->add_region('mod_poster-post', true);
+        $page->blocks->add_region('videotime-pre', true);
+        $page->blocks->add_region('videotime-post', true);
 
         $output = new renderer($page, RENDERER_TARGET_GENERAL);
         $head = $output->header();
@@ -86,26 +86,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         return  $output->render_from_template('videotimetab_block/tab', [
             'haspost' => $haspost,
             'haspre' => $haspre,
-            'pre' => $output->custom_block_region('mod_poster-pre'),
-            'post' => $output->custom_block_region('mod_poster-post'),
+            'pre' => $output->custom_block_region('videotime-pre'),
+            'post' => $output->custom_block_region('videotime-post'),
         ]);
-        return 'block content';
-
-        $instance = $this->get_instance();
-        if ($record = $this->get_record()) {
-            $cm = get_coursemodule_from_instance('videotime', $instance->id, $instance->course);
-            $context = context_module::instance($cm->id);
-            return format_text(file_rewrite_pluginfile_urls(
-                $record->text,
-                'pluginfile.php',
-                $context->id,
-                'videotimetab_block',
-                'text',
-                0
-            ), $record->format);
-        } else {
-            return '';
-        }
     }
 
     /**
@@ -193,8 +176,8 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $PAGE;
 
         if ($PAGE->cm && $this->is_visible()) {
-            $PAGE->blocks->add_region('mod_poster-pre', true);
-            $PAGE->blocks->add_region('mod_poster-post', true);
+            $PAGE->blocks->add_region('videotime-pre', true);
+            $PAGE->blocks->add_region('videotime-post', true);
         }
     }
 }
