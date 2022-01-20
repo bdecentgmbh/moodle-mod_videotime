@@ -27,5 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Video Time Block tab';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
+$string['editlabelbutton'] = 'Go to view page';
+$string['editlabelmessage'] = 'These blocks should be edited on Video Time view page';
 $string['label'] = 'Blocks';
 $string['privacy:metadata'] = 'The Video Time Block tab plugin does not store any personal data.';

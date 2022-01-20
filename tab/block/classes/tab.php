@@ -27,6 +27,7 @@ namespace videotimetab_block;
 use context_module;
 use mod_videotime\output\renderer;
 use mod_videotime\videotime_instance;
+use moodle_url;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -67,6 +68,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             ]);
         }
 
+        // We do not want to try editing or the course page.
+        if ($PAGE->user_is_editing()) {
+            $url = new moodle_url('/mod/videotime/view.php', array('id' => $instance->get_cm()->id));
+            return  $OUTPUT->render_from_template('videotimetab_block/edit_label', [
+                'id' => $instance->id,
+                'url' => $url->out(),
+            ]);
+        }
         // Need to add block areas, but can not do it on existing page.
         $page = new \moodle_page();
         $page->set_cm($instance->get_cm());
