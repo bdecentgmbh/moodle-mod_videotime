@@ -80,8 +80,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         $page->blocks->add_region('videotime-pre', true);
         $page->blocks->add_region('videotime-post', true);
 
+        $page->blocks->load_blocks();
+
         $output = new renderer($page, RENDERER_TARGET_GENERAL);
-        $head = $output->header();
 
         return  $output->render_from_template('videotimetab_block/tab', [
             'haspost' => $haspost,
@@ -173,11 +174,16 @@ class tab extends \mod_videotime\local\tabs\tab {
      * Hook to set up page by adding blocks etc.
      */
     public function setup_page() {
-        global $PAGE;
+        global $OUTPUT, $PAGE;
 
         if ($PAGE->cm && $this->is_visible()) {
             $PAGE->blocks->add_region('videotime-pre', true);
             $PAGE->blocks->add_region('videotime-post', true);
+            if ($PAGE->user_allowed_editing()) {
+                $PAGE->set_button($OUTPUT->edit_button($PAGE->url));
+                $PAGE->blocks->set_default_region('videotime-pre');
+                $PAGE->theme->addblockposition = BLOCK_ADDBLOCK_POSITION_DEFAULT;
+            }
         }
     }
 }

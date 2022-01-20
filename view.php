@@ -59,6 +59,12 @@ $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 
+$edit = optional_param('edit', null, PARAM_BOOL);
+if ($edit !== null and confirm_sesskey() and $PAGE->user_allowed_editing()) {
+    $USER->editing = $edit;
+    redirect($PAGE->url);
+}
+
 $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 $moduleinstance->setup_page();
 
