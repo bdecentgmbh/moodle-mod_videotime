@@ -158,7 +158,7 @@ abstract class tab {
      */
     public static function add_form_fields($mform) {
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
-        if (empty(get_config("videotimetab_$name", 'enabled'))) {
+        if (empty(get_config("videotimetab_$name", 'enabled')) || !empty(self::get_dependences())) {
             return;
         }
 
@@ -209,7 +209,7 @@ abstract class tab {
      */
     public function is_enabled(): bool {
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
-        return !empty(get_config("videotimetab_$name", 'enabled'));
+        return !empty(get_config("videotimetab_$name", 'enabled')) && empty(self::added_dependencies());
     }
 
     /**
@@ -232,5 +232,18 @@ abstract class tab {
             $this->record = $DB->get_record("videotimetab_$name", array('videotime' => $instance->id));
         }
         return $this->record;
+    }
+
+    /**
+     * Hook to set up page by adding blocks etc.
+     */
+    public function setup_page() {
+    }
+
+    /**
+     * List of missing dependencies needed for plugin to be enabled
+     */
+    public static function added_dependencies() {
+        return '';
     }
 }

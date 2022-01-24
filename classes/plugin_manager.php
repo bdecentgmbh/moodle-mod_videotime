@@ -53,7 +53,7 @@ class plugin_manager {
     private $subtype = '';
 
     /**
-     * Constructor for this videotimement plugin manager
+     * Constructor for this videotime plugin manager
      * @param string $subtype - only videotimetab implemented
      */
     public function __construct($subtype) {
@@ -74,7 +74,8 @@ class plugin_manager {
         $disabled = array();
 
         foreach ($names as $name => $path) {
-            if (!empty(get_config($this->subtype . '_' . $name, 'enabled'))) {
+            $classname = '\\' . $this->subtype . '_' . $name . '\\tab';
+            if (!empty(get_config($this->subtype . '_' . $name, 'enabled')) && empty($classname::added_dependencies())) {
                 $idx = get_config($this->subtype . '_' . $name, 'sortorder');
                 if (!$idx) {
                     $idx = 0;
@@ -135,10 +136,10 @@ class plugin_manager {
         $table = new flexible_table($this->subtype . 'pluginsadminttable');
         $table->define_baseurl($this->pageurl);
         $table->define_columns(array('pluginname', 'version', 'hideshow', 'order',
-                'settings', 'uninstall'));
+                'settings', 'status', 'uninstall'));
         $table->define_headers(array(get_string($this->subtype . 'pluginname', 'videotime'),
                 get_string('version'), get_string('hideshow', 'videotime'),
-                get_string('order'), get_string('settings'), get_string('uninstallplugin', 'core_admin')));
+                get_string('order'), get_string('settings'), get_string('status'), get_string('uninstallplugin', 'core_admin')));
         $table->set_attribute('id', $this->subtype . 'plugins');
         $table->set_attribute('class', 'admintable generaltable');
         $table->setup();
@@ -153,10 +154,13 @@ class plugin_manager {
             $row[] = get_string('pluginname', $this->subtype . '_' . $plugin);
             $row[] = get_config($this->subtype . '_' . $plugin, 'version');
 
-            $visible = !!get_config($this->subtype . '_' . $plugin, 'enabled');
+            $classname = '\\' . $this->subtype . '_' . $plugin . '\\tab';
+            $visible = !empty(get_config($this->subtype . '_' .$plugin, 'enabled')) && empty($classname::added_dependencies());
 
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
+            } else if ($classname::added_dependencies()) {
+                $row[] = '';
             } else {
                 $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
                 $class = 'dimmed_text';
@@ -180,6 +184,8 @@ class plugin_manager {
             } else {
                 $row[] = '&nbsp;';
             }
+
+            $row[] = $classname::added_dependencies();
 
             $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('uninstallplugin', 'core_admin'));
 

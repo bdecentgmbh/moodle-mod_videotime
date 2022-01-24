@@ -256,4 +256,15 @@ class tab extends \mod_videotime\local\tabs\tab {
         }
         return $code;
     }
+
+    /**
+     * List of missing dependencies needed for plugin to be enabled
+     */
+    public static function added_dependencies() {
+        global $OUTPUT;
+        if (videotime_has_repository()) {
+            return '';
+        }
+        return $OUTPUT->render_from_template('videotimetab_texttrack/upgrade', []);
+    }
 }
