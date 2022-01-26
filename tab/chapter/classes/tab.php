@@ -143,4 +143,15 @@ class tab extends \mod_videotime\local\tabs\tab {
             $defaultvalues['enable_chapter'] = 0;
         }
     }
+
+    /**
+     * List of missing dependencies needed for plugin to be enabled
+     */
+    public static function added_dependencies() {
+        global $OUTPUT;
+        if (videotime_has_pro()) {
+            return '';
+        }
+        return $OUTPUT->render_from_template('videotimetab_chapter/upgrade', []);
+    }
 }
