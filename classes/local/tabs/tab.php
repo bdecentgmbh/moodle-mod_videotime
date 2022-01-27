@@ -158,7 +158,7 @@ abstract class tab {
      */
     public static function add_form_fields($mform) {
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
-        if (empty(get_config("videotimetab_$name", 'enabled')) || !empty(self::get_dependences())) {
+        if (empty(get_config("videotimetab_$name", 'enabled')) || !empty(self::added_dependencies())) {
             return;
         }
 
@@ -226,10 +226,12 @@ abstract class tab {
      *
      * @return bool
      */
-    protected function get_record(): bool {
+    protected function get_record(): stdClass {
+        global $DB;
+
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
         if (is_null($this->record)) {
-            $this->record = $DB->get_record("videotimetab_$name", array('videotime' => $instance->id));
+            $this->record = $DB->get_record("videotimetab_$name", array('videotime' => $this->get_instance()->id));
         }
         return $this->record;
     }
