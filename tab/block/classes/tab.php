@@ -111,6 +111,9 @@ class tab extends \mod_videotime\local\tabs\tab {
             get_string('showtab', 'videotime'));
         $mform->setDefault('enable_block', get_config('videotimetab_block', 'default'));
         $mform->disabledIf('enable_block', 'enabletabs');
+
+        $mform->addElement('text', 'blocktab_name', get_string('blocktab_name', 'videotimetab_block'));
+        $mform->setType('blocktab_name', PARAM_TEXT);
     }
 
     /**
@@ -139,12 +142,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             $DB->delete_records('videotimetab_block', array(
                 'videotime' => $data->id,
             ));
+        } else if ($record = $DB->get_record('videotimetab_block', array('videotime' => $data->id))) {
+            $record->name = $data->blocktab_name;
+            $DB->update_record('videotimetab_block', $record);
         } else {
-            if (!$record = $DB->get_record('videotimetab_block', array('videotime' => $data->id))) {
-                $DB->insert_record('videotimetab_block', array(
-                    'videotime' => $data->id,
-                ));
-            }
+            $DB->insert_record('videotimetab_block', array(
+                'videotime' => $data->id,
+                'name' => $data->blocktab_name,
+            ));
         }
     }
 
@@ -174,6 +179,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             $defaultvalues['enable_block'] = get_config('videotimetab_block', 'default');
         } else if ($record = $DB->get_record('videotimetab_block', array('videotime' => $instance))) {
             $defaultvalues['enable_block'] = 1;
+            $defaultvalues['blocktab_name'] = $record->name;
         } else {
             $defaultvalues['enable_block'] = 0;
         }
@@ -194,5 +200,18 @@ class tab extends \mod_videotime\local\tabs\tab {
                 $PAGE->theme->addblockposition = BLOCK_ADDBLOCK_POSITION_DEFAULT;
             }
         }
+    }
+
+    /**
+     * Get label for tab
+     *
+     * @return string
+     */
+    public function get_label(): string {
+        if ($label = $this->get_record()->name) {
+            return $label;
+        }
+
+        return parent::get_label();
     }
 }
