@@ -22,19 +22,17 @@
     Variables required for this template:
 
     Variables optional for this template:
-    * video_description - The teacher note for video
+    * title - The video title
 
     Example context (json):
     {
-        "title": "Poodles",
-        "imageurl": "https://school.edu/pluginfile.php/99/videotimeplugin_repository/thumbnail/8/image.png"
+        "title": "Poodles"
     }
 
 }}
 <div class="videotimetab_chapter">
     <div class="col-12">
         <h5>{{ title }}</h5>
-        <img src="{{ imageurl }}" class="img-fluid" alt="{{ title }}">
     </div>
     <div class="videotimetabs_chapters"></div>
 </div>

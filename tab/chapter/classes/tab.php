@@ -54,12 +54,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             'id' => $instance->id,
             'title' => $instance->name,
         ];
-        if (videotime_has_repository()) {
-            if ($videorecord = $DB->get_record('videotime_vimeo_video', ['link' => $instance->vimeo_url])) {
-                $video = video::create($videorecord, $instance->get_context());
-                $data['imageurl'] = $video->get_thumbnail_url();
-            }
-        }
+
         return $OUTPUT->render_from_template(
             'videotimetab_chapter/tab',
             $data
