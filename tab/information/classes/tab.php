@@ -87,6 +87,10 @@ class tab extends \mod_videotime\local\tabs\tab {
         );
         $mform->setType('information', PARAM_RAW);
         $mform->disabledIf('information', 'enable_information');
+
+        $mform->addElement('text', 'informationtab_name', get_string('informationtab_name', 'videotimetab_information'));
+        $mform->setType('informationtab_name', PARAM_TEXT);
+        $mform->disabledIf('informationtab_name', 'enable_information');
     }
 
     /**
@@ -115,12 +119,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             if ($record = $DB->get_record('videotimetab_information', array('videotime' => $data->id))) {
                 $record->text = $text;
                 $record->format = $data->information['format'];
+                $record->name = $data->informationtab_name;
                 $DB->update_record('videotimetab_information', $record);
             } else {
                 $DB->insert_record('videotimetab_information', array(
                     'videotime' => $data->id,
                     'text' => $text,
                     'format' => $data->information['format'],
+                    'name' => $data->informationtab_name,
                 ));
             }
         }
@@ -161,6 +167,9 @@ class tab extends \mod_videotime\local\tabs\tab {
                 'format' => $record->format,
                 'itemid' => $draftitemid,
             );
+            $defaultvalues['blocktab_name'] = $record->name;
+        } else {
+            $defaultvalues['enable_information'] = 0;
         }
     }
 
@@ -185,5 +194,18 @@ class tab extends \mod_videotime\local\tabs\tab {
         return $this->is_enabled() && $DB->record_exists('videotimetab_information', array(
             'videotime' => $record->id
         ));
+    }
+
+    /**
+     * Get label for tab
+     *
+     * @return string
+     */
+    public function get_label(): string {
+        if ($label = $this->get_record()->name) {
+            return $label;
+        }
+
+        return parent::get_label();
     }
 }
