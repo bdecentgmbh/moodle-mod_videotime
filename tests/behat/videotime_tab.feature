@@ -16,17 +16,14 @@ Feature: Configure videotime tabs
       | user    | course | role           |
       | teacher | C1     | editingteacher |
       | student | C1     | student        |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
-    And I add a "Video Time" to section "1" and I fill the form with:
-      | Activity name              | Video Time with information |
-      | Vimeo URL                  | https://vimeo.com/253989945 |
-      | Description                | This video has information  |
-      | Enable tab                 | 1                           |
+    And the following "activities" exist:
+      | activity  | name                        | intro                      | course | vimeo_url                   | label_mode | section | enabletabs |
+      | videotime | Video Time with information | This video has information | C1     | https://vimeo.com/253989945 | 0          | 1       | 1          |
+    And I am on the "Video Time with information" "videotime activity editing" page logged in as "teacher"
+    And I set the following fields to these values:
       | Video Time Information tab | 1                           |
       | Information tab content    | A big rabbit                |
-    And I turn editing mode off
+    And I press "Save and display"
 
   @javascript
   Scenario: See information on information tab
