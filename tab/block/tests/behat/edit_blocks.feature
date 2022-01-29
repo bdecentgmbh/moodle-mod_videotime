@@ -33,9 +33,11 @@ Feature: Configure videotime block tab
       | Video Time Block tab  | 1   |
     And I press "Save and display"
     When I follow "Blocks"
-    Then I should see "Add a block" in the "region-main" "region"
+    And I set the field "Add a block" to "Comments"
+    And I follow "Blocks"
+    Then I should see "Comments" in the "region-main" "region"
     When I follow "Watch"
-    Then I should not see "Add a block" in the "region-main" "region"
+    Then I should not see "Comments" in the "region-main" "region"
 
   @javascript
   Scenario: Disable block tab
