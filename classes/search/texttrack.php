@@ -63,12 +63,17 @@ class texttrack extends \core_search\base_mod {
             return $DB->get_recordset('videotime', ['id' => 0]);
         }
 
-        $sql = "SELECT te.id, te.text, tr.lang, te.starttime, v.name, v.timemodified, v.course, v.id AS moduleinstanceid
+        $sql = "SELECT te.id, te.text, tr.lang, te.starttime, v.name,
+                           CASE WHEN v.timemodified > vv.modified_time THEN v.timemodified
+                                ELSE vv.modified_time
+                            END AS timemodified,
+                           v.course, v.id AS moduleinstanceid
                   FROM {videotime} v
                   JOIN {videotimetab_texttrack_track} tr ON v.id = tr.videotime
                   JOIN {videotimetab_texttrack_text} te ON tr.id = te.track
+             LEFT JOIN {videotime_vimeo_video} vv ON v.vimeo_url = vv.link
           $contextjoin
-                 WHERE v.timemodified >= ? ORDER BY v.timemodified ASC";
+                 WHERE timemodified >= ? ORDER BY timemodified ASC";
         return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
     }
 
