@@ -409,7 +409,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return \stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        global $PAGE;
+        global $CFG, $PAGE;
         $cm = get_coursemodule_from_instance('videotime', $this->id);
 
         $context = [
@@ -417,7 +417,9 @@ class videotime_instance implements \renderable, \templatable {
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
             'interval' => 5,
-            'uniqueid' => $this->get_uniqueid()
+            'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
+            'uniqueid' => $this->get_uniqueid(),
+            'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
         ];
 
         if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
