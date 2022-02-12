@@ -566,5 +566,27 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022022802, 'videotime');
     }
 
+    if ($oldversion < 2022030104) {
+        // Assign view_report to editing teacher if assigned to non editing teacher.
+        $context = context_system::instance();
+        $roles = $DB->get_records_menu('role', array(), '', 'shortname, id');
+        $capabilities = $DB->get_records_menu('role_capabilities', array(
+            'contextid' => $context->id,
+            'capability' => 'mod/videotime:view_report'
+        ), '', 'roleid, permission');
+        if (
+            key_exists('editingteacher', $roles)
+            && !key_exists($roles['editingteacher'], $capabilities)
+            && key_exists('teacher', $roles)
+            && $capabilities[$roles['teacher']] === (string)CAP_ALLOW
+        ) {
+            assign_capability('mod/videotime:view_report', CAP_ALLOW,
+                    $roles['editingteacher'], $context->id, true);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2022030104, 'videotime');
+    }
+
     return true;
 }
