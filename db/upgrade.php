@@ -502,5 +502,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021081000, 'videotime');
     }
 
+    if ($oldversion < 2022022100) {
+
+        // Changing the default of field controls on table videotime to 1.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('controls', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'background');
+
+        // Launch change of default for field controls.
+        $dbman->change_field_default($table, $field);
+
+        $DB->set_field('videotime', 'controls', 1, array('controls' => 1));
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2022022100, 'videotime');
+    }
+
     return true;
 }
