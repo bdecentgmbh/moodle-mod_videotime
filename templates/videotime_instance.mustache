@@ -60,10 +60,19 @@
             let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
             {{#haspro}}
                 {{! Register pro JS plugins }}
-                require(["videotimeplugin_pro/prevent-fast-forwarding"], function(PreventFastForwarding) {
-                    v.registerPlugin(new PreventFastForwarding);
-                    v.initialize();
-                });
+                {{# plugins }}
+                   {{> videotimeplugin_pro/plugins }}
+                {{/ plugins }}
+                {{^ plugins }}
+                    require([
+                        "videotimeplugin_pro/prevent-fast-forwarding"
+                    ], function(
+                        PreventFastForwarding
+                    ) {
+                        v.registerPlugin(new PreventFastForwarding);
+                        v.initialize();
+                    });
+                {{/ plugins }}
             {{/haspro}}
             {{^haspro}}
                 v.initialize();
