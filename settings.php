@@ -201,7 +201,7 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_heading('option_background', get_string('default') . ' ' .
         get_string('option_background', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/background', get_string('option_background', 'videotime'),
-        get_string('option_background_help', 'videotime'), '1'));
+        get_string('option_background_help', 'videotime'), '0'));
         $settings->add(new admin_setting_configcheckbox('videotime/background_force', get_string('force', 'videotime'),
         get_string('force_help', 'videotime'), '0'));
 
