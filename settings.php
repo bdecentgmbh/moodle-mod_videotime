@@ -96,28 +96,28 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_heading('option_height', get_string('default', 'videotime') . ' ' .
             get_string('option_height', 'videotime'), ''));
         $settings->add(new admin_setting_configtext('videotime/height', get_string('option_height', 'videotime'),
-            get_string('option_height_help', 'videotime'), null, PARAM_INT));
+            get_string('option_height_help', 'videotime'), '', PARAM_INT));
         $settings->add(new admin_setting_configcheckbox('videotime/height_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('option_width', get_string('default') . ' ' .
             get_string('option_width', 'videotime'), ''));
         $settings->add(new admin_setting_configtext('videotime/width', get_string('option_width', 'videotime'),
-            get_string('option_width_help', 'videotime'), null, PARAM_INT));
+            get_string('option_width_help', 'videotime'), '', PARAM_INT));
         $settings->add(new admin_setting_configcheckbox('videotime/width_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('option_maxheight', get_string('default') . ' ' .
             get_string('option_maxheight', 'videotime'), ''));
         $settings->add(new admin_setting_configtext('videotime/maxheight', get_string('option_maxheight', 'videotime'),
-            get_string('option_maxheight_help', 'videotime'), null, PARAM_INT));
+            get_string('option_maxheight_help', 'videotime'), '', PARAM_INT));
         $settings->add(new admin_setting_configcheckbox('videotime/maxheight_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
         $settings->add(new admin_setting_heading('option_maxwidth', get_string('default') . ' ' .
             get_string('option_maxwidth', 'videotime'), ''));
         $settings->add(new admin_setting_configtext('videotime/maxwidth', get_string('option_maxwidth', 'videotime'),
-            get_string('option_maxwidth_help', 'videotime'), null, PARAM_INT));
+            get_string('option_maxwidth_help', 'videotime'), '', PARAM_INT));
         $settings->add(new admin_setting_configcheckbox('videotime/maxwidth_force', get_string('force', 'videotime'),
             get_string('force_help', 'videotime'), '0'));
 
@@ -267,7 +267,7 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_heading('columns', get_string('default') . ' ' .
                 get_string('columns', 'videotime'), ''));
             $settings->add(new admin_setting_configselect('videotime/columns', get_string('columns', 'videotime'),
-                get_string('columns_help', 'videotime'), 0, [
+                get_string('columns_help', 'videotime'), 1, [
                     1 => '1 (100% width)',
                     2 => '2 (50% width)',
                     3 => '3 (33% width)',
@@ -279,7 +279,7 @@ if ($ADMIN->fulltree) {
             $settings->add(new admin_setting_heading('preview_picture', get_string('default') . ' ' .
                 get_string('preview_picture', 'videotime'), ''));
             $settings->add(new admin_setting_configselect('videotime/preview_picture', get_string('preview_picture', 'videotime'),
-                get_string('preview_picture_help', 'videotime'), 0, [
+                get_string('preview_picture_help', 'videotime'), \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG, [
                     \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG => '1920 x 1200',
                     \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM => '640 x 400',
                     \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG_WITH_PLAY => '1920 x 1200 ' .
@@ -294,7 +294,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_heading('tabsettings', get_string('tabsettings', 'videotime'), ''));
     $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaulttabsize', 'videotime'),
-                get_string('defaulttabsize_help', 'videotime'), 'videotimesize-6', array(
+                get_string('defaulttabsize_help', 'videotime'), 'videotime-size-6', array(
             'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
             'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
             'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
