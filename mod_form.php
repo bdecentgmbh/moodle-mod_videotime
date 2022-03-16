@@ -403,37 +403,37 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setDefault('transparent', get_config('videotime', 'transparent'));
         videotime_instance::create_additional_field_form_elements('transparent', $mform);
 
-        $mform->addElement('advcheckbox', 'dnt', get_string('option_dnt', 'videotime'));
-        $mform->setType('dnt', PARAM_BOOL);
-        $mform->addHelpButton('dnt', 'option_dnt', 'videotime');
-        $mform->setDefault('dnt', get_config('videotime', 'dnt'));
-        videotime_instance::create_additional_field_form_elements('dnt', $mform);
-
-        $mform->addElement('advcheckbox', 'autopause', get_string('option_autopause', 'videotime'));
-        $mform->setType('autopause', PARAM_BOOL);
-        $mform->addHelpButton('autopause', 'option_autopause', 'videotime');
-        $mform->setDefault('autopause', get_config('videotime', 'autopause'));
-        videotime_instance::create_additional_field_form_elements('autopause', $mform);
-
-        $mform->addElement('advcheckbox', 'background', get_string('option_background', 'videotime'));
-        $mform->setType('background', PARAM_BOOL);
-        $mform->addHelpButton('background', 'option_background', 'videotime');
-        $mform->setDefault('background', get_config('videotime', 'background'));
-        videotime_instance::create_additional_field_form_elements('background', $mform);
-
-        $mform->addElement('advcheckbox', 'controls', get_string('option_controls', 'videotime'));
-        $mform->setType('controls', PARAM_BOOL);
-        $mform->addHelpButton('controls', 'option_controls', 'videotime');
-        $mform->setDefault('controls', get_config('videotime', 'controls'));
-        videotime_instance::create_additional_field_form_elements('controls', $mform);
-
-        $mform->addElement('advcheckbox', 'pip', get_string('option_pip', 'videotime'));
-        $mform->setType('pip', PARAM_BOOL);
-        $mform->addHelpButton('pip', 'option_pip', 'videotime');
-        $mform->setDefault('pip', get_config('videotime', 'pip'));
-        videotime_instance::create_additional_field_form_elements('pip', $mform);
-
         if (videotime_has_pro()) {
+            $mform->addElement('advcheckbox', 'dnt', get_string('option_dnt', 'videotime'));
+            $mform->setType('dnt', PARAM_BOOL);
+            $mform->addHelpButton('dnt', 'option_dnt', 'videotime');
+            $mform->setDefault('dnt', get_config('videotime', 'dnt'));
+            videotime_instance::create_additional_field_form_elements('dnt', $mform);
+
+            $mform->addElement('advcheckbox', 'autopause', get_string('option_autopause', 'videotime'));
+            $mform->setType('autopause', PARAM_BOOL);
+            $mform->addHelpButton('autopause', 'option_autopause', 'videotime');
+            $mform->setDefault('autopause', get_config('videotime', 'autopause'));
+            videotime_instance::create_additional_field_form_elements('autopause', $mform);
+
+            $mform->addElement('advcheckbox', 'background', get_string('option_background', 'videotime'));
+            $mform->setType('background', PARAM_BOOL);
+            $mform->addHelpButton('background', 'option_background', 'videotime');
+            $mform->setDefault('background', get_config('videotime', 'background'));
+            videotime_instance::create_additional_field_form_elements('background', $mform);
+
+            $mform->addElement('advcheckbox', 'controls', get_string('option_controls', 'videotime'));
+            $mform->setType('controls', PARAM_BOOL);
+            $mform->addHelpButton('controls', 'option_controls', 'videotime');
+            $mform->setDefault('controls', get_config('videotime', 'controls'));
+            videotime_instance::create_additional_field_form_elements('controls', $mform);
+
+            $mform->addElement('advcheckbox', 'pip', get_string('option_pip', 'videotime'));
+            $mform->setType('pip', PARAM_BOOL);
+            $mform->addHelpButton('pip', 'option_pip', 'videotime');
+            $mform->setDefault('pip', get_config('videotime', 'pip'));
+            videotime_instance::create_additional_field_form_elements('pip', $mform);
+
             // -------------------------------------------------------------------------------
             // Grade settings.
             $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
