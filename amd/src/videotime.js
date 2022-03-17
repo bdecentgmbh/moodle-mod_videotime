@@ -96,7 +96,6 @@ define([
                 url: instance.vimeo_url,
                 width: instance.width
             });
-            this.player = new Vimeo(this.elementId, instance);
 
             let url = new URL(window.location.href),
                 q = url.searchParams.get('q'),
