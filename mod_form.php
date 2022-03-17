@@ -144,10 +144,15 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $group[] = $mform->createElement('advcheckbox', 'show_description', '',
                     get_string('show_description', 'videotime'));
                 $mform->setDefault('show_description', 1);
+                $group[] = $mform->createElement('advcheckbox', 'show_description_in_player', '',
+                    get_string('show_description_in_player', 'videotime'));
+                $mform->setDefault('show_description_in_player', 1);
                 if (method_exists($mform, 'hideIf')) {
                     $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
+                    $mform->hideIf('show_description_in_player', 'label_mode', 'eq', 2);
                 } else {
                     $mform->disabledIf('show_description', 'label_mode', 'noeq', 2);
+                    $mform->disabledIf('show_description_in_player', 'label_mode', 'eq', 2);
                 }
                 $mform->setDefault('show_description', get_config('videotime', 'show_description'));
                 videotime_instance::create_additional_field_form_elements('show_description', $mform, $group);

@@ -588,5 +588,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022030104, 'videotime');
     }
 
+    if ($oldversion < 2022031601) {
+
+        // Define field show_description_in_player to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_description_in_player', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'show_description');
+
+        // Conditionally launch add field show_description_in_player.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2022031601, 'videotime');
+    }
+
     return true;
 }
