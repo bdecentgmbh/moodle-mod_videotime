@@ -58,6 +58,7 @@ require_capability('mod/videotime:view', $context);
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
+$PAGE->add_body_class('limitedwidth');
 
 $edit = optional_param('edit', null, PARAM_BOOL);
 if ($edit !== null and confirm_sesskey() and $PAGE->user_allowed_editing()) {
@@ -90,7 +91,7 @@ if (!$moduleinstance->vimeo_url) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
     // Render the activity information.
-    if (class_exists('\\core_completion\\activity_custom_completion')) {
+    if (class_exists('\\core_completion\\activity_custom_completion') && get_config('core', 'version') < 2022030000) {
         $cminfo = cm_info::create($cm);
         $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
         $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);

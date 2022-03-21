@@ -47,6 +47,7 @@
         {{{next_activity_button_html}}}
     </div>
 
+    <div class="container-fluid">
     {{^tabshtml}}
         {{> mod_videotime/vimeo_embed }}
     {{/tabshtml}}
@@ -54,6 +55,7 @@
         {{{ intro }}}
         {{{tabshtml}}}
     {{/tabshtml}}
+    </div>
 
     {{#js}}
         require(['mod_videotime/videotime'], function(VideoTime) {
