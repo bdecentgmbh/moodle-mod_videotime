@@ -57,7 +57,9 @@ class tab extends \mod_videotime\local\tabs\tab {
                 'videotimetab_information',
                 'text',
                 0
-            ), $record->format);
+            ), $record->format, [
+                'noclean' => true,
+            ]);
         } else {
             return '';
         }

@@ -289,11 +289,15 @@ class videotime_instance implements \renderable, \templatable {
 
         $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
             'mod_videotime', 'intro', null);
-        $record->intro = format_text($record->intro, $record->introformat);
+        $record->intro = format_text($record->intro, $record->introformat, [
+            'noclean' => true,
+        ]);
 
         $record->video_description = file_rewrite_pluginfile_urls($record->video_description, 'pluginfile.php',
             $this->get_context()->id, 'mod_videotime', 'video_description', 0);
-        $record->video_description = format_text($record->video_description, $record->video_description_format);
+        $record->video_description = format_text($record->video_description, $record->video_description_format, [
+            'noclean' => true,
+        ]);
 
         $record->intro_excerpt = videotime_get_excerpt($record->intro);
         $record->show_more_link = strlen(strip_tags($record->intro_excerpt)) < strlen(strip_tags($record->intro));
