@@ -145,6 +145,11 @@ body.editing .activity.videotime.preview_mode .actions {
     float: left;
 }
 
+
+.path-course-view li.activity.videotime.preview_mode.previewfull {
+    float: none;
+}
+
 body.editing.path-course-view li.activity.videotime.preview_mode {
     width: 100%;
 }
