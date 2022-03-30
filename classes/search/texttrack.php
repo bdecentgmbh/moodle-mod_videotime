@@ -59,7 +59,8 @@ class texttrack extends \core_search\base_mod {
             !videotime_has_repository()
             || !key_exists('texttrack', core_component::get_plugin_list('videotimetab'))
         ) {
-            return null;
+            // This is a hack because returning null does not work.
+            return $DB->get_recordset('videotime', ['id' => 0]);
         }
 
         $sql = "SELECT te.id, te.text, tr.lang, te.starttime, v.name, v.timemodified, v.course, v.id AS moduleinstanceid
