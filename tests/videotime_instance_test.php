@@ -32,6 +32,7 @@ use mod_videotime\videotime_instance;
  *
  * @group videotime
  * @group videotime_instance_test
+ * @covers \mod_videotime\videotime_instance
  */
 class videotime_instance_test extends advanced_testcase {
 

@@ -38,6 +38,7 @@ require_once("$CFG->dirroot/webservice/tests/helpers.php");
  *
  * @group videotime
  * @group mod_videotime_external_test
+ * @covers \mod_videotime\external\external
  */
 class external_test extends advanced_testcase {
 

@@ -34,6 +34,7 @@ use mod_videotime\videotime_instance;
  *
  * @group videotime
  * @group next_activity_button_test
+ * @covers \mod_videotime\output\next_activity_button
  */
 class next_activity_button_test extends advanced_testcase {
 
