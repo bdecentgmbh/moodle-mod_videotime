@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_videotime/text_tab
+
+    This template for text track tab
+
+    Variables optional for this template:
+    * relateds - array of available tracks
+    * showselect - boolean whether to show language selector
+
+    Example context (json):
+    {
+        "showselector": true,
+        "texttracks": [
+            {
+                "lang": "en",
+                "langname": "English",
+                "kind": "captions",
+                "show": true,
+                "label": "Information",
+                "captions": [
+                     {
+                          "starttime": "00:05.00",
+                          "starttimedisplay": "00:05",
+                          "lines": [
+                              {"text": "Hello world"}
+                          ]
+                     }
+                ]
+            }
+        ]
+    }
+
+}}
+<div class="videotimetab_related_content">
+    <div class="videotimetab_related_text">
+        <p>{{{ text }}}</p>
+    </div>
+    <div class="p-2">
+        {{# related }}
+            <div class="card{{# current}} bg-light{{/ current }}">
+                <div class="card-body">
+                    <div class="float-left mr-2">
+                        <img src="{{ iconurl }}" class="iconlarge activityicon" alt="" role="presentation" aria-hidden="true">
+                    </div>
+                    {{ name }}
+                    <div class="float-right">
+                        <a class="btn btn-secondary" href="{{ url }}">
+                            {{# str }} open, videotimetab_related {{/ str }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {{/ related }}
+    </div>
+</div>
