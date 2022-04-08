@@ -588,7 +588,7 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022030104, 'videotime');
     }
 
-    if ($oldversion < 2022031601) {
+    if ($oldversion < 2022040801) {
 
         // Define field show_description_in_player to be added to videotime.
         $table = new xmldb_table('videotime');
@@ -600,7 +600,7 @@ function xmldb_videotime_upgrade($oldversion) {
         }
 
         // Videotime savepoint reached.
-        upgrade_mod_savepoint(true, 2022031601, 'videotime');
+        upgrade_mod_savepoint(true, 2022040801, 'videotime');
     }
 
     return true;
