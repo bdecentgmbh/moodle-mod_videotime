@@ -69,7 +69,7 @@
                     ], function(
                         PreventFastForwarding
                     ) {
-                        v.registerPlugin(new PreventFastForwarding);
+                        v.registerPlugin(PreventFastForwarding.init());
                         v.initialize();
                     });
                 {{/ plugins }}

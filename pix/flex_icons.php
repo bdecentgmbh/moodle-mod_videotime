@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Developer documentation is in /pix/flex_icons.php file.
  *
  * @package     mod_videotime
- * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @copyright   2021 gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.5.1';
-$plugin->version = 2022041100;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
+$icons = array(
+    'mod_videotime|icon' =>
+        array(
+            'data' =>
+                array(
+                    'classes' => 'fa fa-youtube-play'
+                ),
+        ),
+);

@@ -51,7 +51,7 @@
     <div class="tab-content">
         {{#tabs}}
             {{^persistent}}
-                <div class="tab-pane mt-3 fade {{#active}}show active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
+                <div class="tab-pane mt-3 fade {{#active}}active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
                     <div class="" style="display: flex">
                         <div class="videotimetab-resize {{ panelclass }}">
                             {{{tabcontent}}}
@@ -62,7 +62,7 @@
                 </div>
             {{/persistent}}
             {{#persistent}}
-                <div class="tab-pane mt-3 fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
+                <div class="tab-pane mt-3 fade persistent-tab {{#active}}active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
                     <div class="instance-container videotime-large-view"></div>
                     <div class="">
                         {{{tabcontent}}}
@@ -80,6 +80,7 @@
 </div>
 {{# js }}
     require(['mod_videotime/resize_tab_player'], function(TabResizer) {
-        TabResizer.initialize();
+
+        TabResizer.init();
     });
 {{/ js }}

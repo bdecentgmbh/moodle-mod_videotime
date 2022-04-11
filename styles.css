@@ -791,3 +791,18 @@ body.ie .video-image-preview .img-responsive {
 .select2-container--classic.select2-container--open .select2-dropdown {
     border-color: #5897fb;
 }
+
+.videotimetabs .nav-tabs .nav-item.active .nav-link{
+    color: var(--color-primary);
+}
+
+.pagelayout-course #page #region-main,
+.pagelayout-incourse #page #region-main {
+    overflow: auto;
+}
+
+@media (min-width: 992px) {
+    #region-main {
+        overflow: auto;
+    }
+}
