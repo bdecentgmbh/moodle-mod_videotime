@@ -287,7 +287,10 @@ class videotime_instance implements \renderable, \templatable {
 
         $record->name = format_string($record->name, FORMAT_HTML);
 
-        if (!empty($record->show_description_in_player)) {
+        if (
+            !empty($record->show_description_in_player)
+            && !class_exists('core\\output\\activity_header')
+        ) {
             $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
                 'mod_videotime', 'intro', null);
             $record->intro = format_text($record->intro, $record->introformat, [

@@ -62,6 +62,9 @@ require_capability('mod/videotime:view_report', $modulecontext);
 
 $PAGE->set_url('/mod/videotime/report.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
+if (class_exists('core\\output\\activity_header')) {
+    $PAGE->activityheader->disable();
+}
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
@@ -118,7 +121,9 @@ if (videotime_has_repository()) {
         'time' => session::format_time($videoduration)
     ]) . '</div>';
 }
-echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
+if (!class_exists('core\\output\\activity_header')) {
+    echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
+}
 
 echo $groupselector;
 
