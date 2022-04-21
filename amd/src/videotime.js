@@ -181,9 +181,8 @@ define([
                 }
 
                 Log.debug('VIDEO_TIME resuming at ' + resumeTime);
-                this.player.on('loaded', () => {
-                    this.player.setCurrentTime(resumeTime);
-                });
+                this.player.setCurrentTime(resumeTime);
+
                 return true;
             }).catch(Notification.exception);
 
