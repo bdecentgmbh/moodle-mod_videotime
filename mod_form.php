@@ -290,7 +290,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             videotime_instance::create_additional_field_form_elements('next_activity_auto', $mform);
             $mform->addElement('advcheckbox', 'preventfastforwarding', get_string('preventfastforwarding', 'videotime'));
             $mform->addHelpButton('preventfastforwarding', 'preventfastforwarding', 'videotime');
-            $mform->setType('preventfastforwarding', PARAM_BOOL); // Nithyanandan.
+            $mform->setType('preventfastforwarding', PARAM_BOOL); // Lmsace.
             $mform->setDefault('preventfastforwarding', get_config('videotime', 'preventfastforwarding'));
             videotime_instance::create_additional_field_form_elements('preventfastforwarding', $mform);
         }

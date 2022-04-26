@@ -32,17 +32,18 @@
      * Intialize listener and show current track
      */
     selectTrack.prototype.initialize = function() {
+        var self = this;
         let url = new URL(window.location.href),
         lang = url.searchParams.get('lang');
 
-        window.removeEventListener('change', this.handleChange);
+        window.removeEventListener('change', self.handleChange.bind(this));
         document.querySelectorAll('form.videotimetab_texttrack_selectlang').forEach((form) => {
             if (lang) {
                 form.querySelector('select option[value="' + lang + '"]').setAttribute('selected', true);
             }
-            this.setLanguage(form);
+            self.setLanguage(form);
         });
-        window.addEventListener('change', this.handleChange);
+        window.addEventListener('change', self.handleChange.bind(this));
     };
 
     /**
@@ -50,12 +51,13 @@
      *
      * @param {event} e mouse event
      */
-    selectTrack.prototype.handleChange = function(e) {
-        let form = e.target.closest('form.videotimetab_texttrack_selectlang');
+    selectTrack.prototype.handleChange = function(event) {
+        var self = this;
+        let form = event.target.closest('form.videotimetab_texttrack_selectlang');
         if (form) {
-            e.stopPropagation();
-            e.preventDefault();
-            this.setLanguage(form);
+            event.stopPropagation();
+            event.preventDefault();
+            self.setLanguage(form);
         }
     };
 

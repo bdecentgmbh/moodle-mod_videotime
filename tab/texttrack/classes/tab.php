@@ -130,7 +130,6 @@ class tab extends \mod_videotime\local\tabs\tab {
      */
     public function update_tracks() {
         global $DB;
-
         if (!videotime_has_repository()) {
             return;
         }
@@ -148,7 +147,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
             $DB->delete_records('videotimetab_texttrack_track', array('videotime' => $record->id));
         }
-
+        $fs = get_file_storage();
         try {
             $transaction = $DB->start_delegated_transaction();
 
@@ -161,7 +160,17 @@ class tab extends \mod_videotime\local\tabs\tab {
                         'type' => $texttrack['type'],
                         $texttrack['link'])
                     );
-                    foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
+
+                    $fileinfo = [
+                        'contextid' => \context_system::instance()->id,
+                        'component' => 'videotimetab_texttrac',
+                        'filearea' => 'subtitlecaption',
+                        'itemid' => 0,
+                        'filepath' => '/',
+                        'filename' => md5($texttrack['link'])
+                    ];
+                    $filetrack = $fs->create_file_from_url($fileinfo, $texttrack['link']);
+                    foreach ($this->parse_texttrack($filetrack->get_content()) as $text) {
                         $text['track'] = $trackid;
                         $DB->insert_record('videotimetab_texttrack_text', $text);
                     }

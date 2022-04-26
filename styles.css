@@ -791,7 +791,7 @@ body.ie .video-image-preview .img-responsive {
 .select2-container--classic.select2-container--open .select2-dropdown {
     border-color: #5897fb;
 }
-
+/* Lmsace.*/
 .videotimetabs .nav-tabs .nav-item.active .nav-link{
     color: var(--color-primary);
 }
@@ -805,4 +805,28 @@ body.ie .video-image-preview .img-responsive {
     #region-main {
         overflow: auto;
     }
+}
+
+.path-mod-videotime .btn-dark:hover {
+    background: #373a4c;
+}
+
+.videotime-toast.toast .toast-body {
+    max-width: 347px;
+    margin: 0 auto;
+    background: #333;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.videotime-toast.toast .toast-body {
+    display: none;
+}
+
+.videotime-toast.toast {
+    position: fixed;
+    top: 20px;
+    left: 37%;
+    z-index: 1000;
 }
