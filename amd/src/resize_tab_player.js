@@ -49,16 +49,17 @@ const resize = () => {
             // Ignore if it is not visible.
             return;
         }
-        container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance .vimeo-embed iframe').forEach((iframe) => {
-            let instance = iframe.closest('.videotime-tab-instance'),
-                content = iframe.closest('.tab-content');
+        container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance').forEach(() => {
+            let instance = container.closest('.videotimetabs').querySelector('.videotime-tab-instance'),
+                content = container.closest('.videotimetabs').querySelector('.tab-content');
             Object.assign(instance.style, {
                 top: container.offsetTop + 'px',
                 left: container.offsetLeft + 'px',
+                maxWidth: container.offsetWidth + 'px',
                 width: container.offsetWidth + 'px'
             });
-            container.style.minHeight = iframe.closest('.videotime-tab-instance').offsetHeight + 'px';
-            content.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+            container.style.minHeight = instance.offsetHeight + 'px';
+            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
                 Object.assign(cover.style, {
                     height: content.offsetHeight + 'px',
                     left: content.offsetLeft + 'px',

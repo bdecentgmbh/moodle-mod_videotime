@@ -36,17 +36,27 @@
     }
 
 }}
+{{# instance }}
 <div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}}>
     <div class="vimeo-intro">
         {{{intro}}}
     </div>
-    <div class="vimeo-embed" id="vimeo-embed-{{uniqueid}}"></div>
+    <div class="video-resize">
+    <video class="video-js"
+        id="vimeo-embed-{{uniqueid}}"
+        controls
+>
+         <source src="{{ vimeo_url }}" type="video/mp4" />
+    </video>
+    </div>
     <div class="vimeo-video-description">
         {{{video_description}}}
     </div>
 </div>
+{{/ instance }}
 {{#js}}
-    require(['mod_videotime/videotime'], function(VideoTime) {
+    require(['videotimeplugin_videojs/videotime'], function(VideoTime) {
+        console.log(['vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}}]);
         let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
         {{#haspro}}
             {{! Register pro JS plugins }}

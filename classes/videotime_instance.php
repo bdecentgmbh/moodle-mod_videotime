@@ -24,6 +24,7 @@
 
 namespace mod_videotime;
 
+use core_component;
 use external_description;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
@@ -139,7 +140,13 @@ class videotime_instance implements \renderable, \templatable {
      */
     protected function __construct(\stdClass $instancerecord) {
         $this->uniqueid = uniqid();
-        $this->record = $instancerecord;
+
+        $instancerecord = (array) $instancerecord;
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            $instancerecord = component_callback("videotimeplugin_$name", 'load_settings', [$instancerecord], $instancerecord);
+        }
+
+        $this->record = (object) $instancerecord;
     }
 
     /**
@@ -308,7 +315,6 @@ class videotime_instance implements \renderable, \templatable {
 
         $record->intro_excerpt = videotime_get_excerpt($record->intro);
         $record->show_more_link = strlen(strip_tags($record->intro_excerpt)) < strlen(strip_tags($record->intro));
-
         return $record;
     }
 
@@ -429,22 +435,25 @@ class videotime_instance implements \renderable, \templatable {
      * @return \stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $PAGE;
-        $cm = get_coursemodule_from_instance('videotime', $this->id);
+        global $CFG;
+
+        $cm = get_coursemodule_from_instance('videotime', $this->record->id);
+
+        $embeddedplayer = $this->embed_player($this->to_record());
 
         $context = [
             'instance' => $this->to_record(),
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
             'interval' => 5,
+            'player' => $output->render($embeddedplayer),
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
         ];
 
         if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
-            $renderer = $PAGE->get_renderer('mod_videotime');
-            $context['next_activity_button_html'] = $renderer->render($nextactivitybutton);
+            $context['next_activity_button_html'] = $output->render($nextactivitybutton);
         }
 
         if ($this->enabletabs) {
@@ -470,44 +479,44 @@ class videotime_instance implements \renderable, \templatable {
             'video_description' => new \external_value(PARAM_RAW),
             'video_description_format' => new \external_value(PARAM_INT),
             'timemodified' => new \external_value(PARAM_INT),
-            'completion_on_view_time' => new \external_value(PARAM_BOOL),
-            'completion_on_view_time_second' => new \external_value(PARAM_INT),
-            'completion_on_finish' => new \external_value(PARAM_BOOL),
-            'completion_on_percent' => new \external_value(PARAM_BOOL),
-            'completion_on_percent_value' => new \external_value(PARAM_INT),
-            'autoplay' => new \external_value(PARAM_BOOL),
-            'byline' => new \external_value(PARAM_BOOL),
-            'color' => new \external_value(PARAM_TEXT),
-            'height' => new \external_value(PARAM_TEXT),
-            'maxheight' => new \external_value(PARAM_TEXT),
-            'maxwidth' => new \external_value(PARAM_TEXT),
-            'muted' => new \external_value(PARAM_BOOL),
-            'playsinline' => new \external_value(PARAM_BOOL),
-            'portrait' => new \external_value(PARAM_BOOL),
-            'speed' => new \external_value(PARAM_BOOL),
-            'title' => new \external_value(PARAM_BOOL),
-            'transparent' => new \external_value(PARAM_BOOL),
-            'autopause' => new \external_value(PARAM_BOOL),
-            'background' => new \external_value(PARAM_BOOL),
-            'controls' => new \external_value(PARAM_BOOL),
-            'pip' => new \external_value(PARAM_BOOL),
-            'dnt' => new \external_value(PARAM_BOOL),
-            'width' => new \external_value(PARAM_TEXT),
-            'responsive' => new \external_value(PARAM_BOOL),
-            'label_mode' => new \external_value(PARAM_INT),
-            'viewpercentgrade' => new \external_value(PARAM_BOOL),
-            'next_activity_button' => new \external_value(PARAM_BOOL),
-            'next_activity_id' => new \external_value(PARAM_INT),
-            'next_activity_auto' => new \external_value(PARAM_BOOL),
-            'resume_playback' => new \external_value(PARAM_BOOL),
-            'preview_picture' => new \external_value(PARAM_INT),
-            'show_description' => new \external_value(PARAM_BOOL),
-            'show_title' => new \external_value(PARAM_BOOL),
-            'show_tags' => new \external_value(PARAM_BOOL),
-            'show_duration' => new \external_value(PARAM_BOOL),
-            'show_viewed_duration' => new \external_value(PARAM_BOOL),
-            'columns' => new \external_value(PARAM_INT),
-            'preventfastforwarding' => new \external_value(PARAM_BOOL),
+            'completion_on_view_time' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'completion_on_view_time_second' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'completion_on_finish' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'completion_on_percent' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'completion_on_percent_value' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'autoplay' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'byline' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'color' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'height' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'maxheight' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'maxwidth' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'muted' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'playsinline' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'portrait' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'speed' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'title' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'transparent' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'autopause' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'background' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'controls' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'pip' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'dnt' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'width' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'responsive' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'label_mode' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'viewpercentgrade' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'next_activity_button' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'next_activity_id' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'next_activity_auto' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'resume_playback' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'preview_picture' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'show_description' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_title' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_tags' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_duration' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_viewed_duration' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'columns' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'preventfastforwarding' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
         ]);
     }
 
@@ -520,4 +529,17 @@ class videotime_instance implements \renderable, \templatable {
         }
     }
 
+    /**
+     * Get the correct player to embed
+     *
+     * @param stdClass $record module record
+     * @return object
+     */
+    public function embed_player($record) {
+        if (mod_videotime_get_vimeo_id_from_link($record->vimeo_url)) {
+            return new \mod_videotime\vimeo_embed($record);
+        } else {
+            return new \videotimeplugin_videojs\video_embed($record);
+        }
+    }
 }

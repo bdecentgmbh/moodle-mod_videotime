@@ -39,7 +39,6 @@
     }
 
 }}
-<div class="videotimetabs">
     <div class="instance-container videotime-small-view mb-2"></div>
     <ul class="nav nav-tabs nav-pills nav-justified" id="videotimetabs-{{ id }}" role="tablist">
         {{#tabs}}
@@ -70,14 +69,7 @@
                 </div>
             {{/persistent}}
         {{/tabs}}
-        {{# instance }}
-            <div class="videotime-tab-instance">
-                {{> mod_videotime/vimeo_embed }}
-            </div>
-            <div class="videotime-tab-instance-cover"></div>
-        {{/ instance }}
     </div>
-</div>
 {{# js }}
     require(['mod_videotime/resize_tab_player'], function(TabResizer) {
         TabResizer.initialize();

@@ -76,7 +76,7 @@ function videotime_grade_item_update($videotime, $grades=null) {
 
     $params = [
         'itemname' => $videotime->name,
-        'idnumber' => $videotime->cmidnumber,
+        'idnumber' => $videotime->idnumber ?? null,
         'gradetype' => GRADE_TYPE_NONE,
     ];
 
@@ -168,7 +168,20 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
+    $moduleinstance = [
+        'height' => 0,
+        'maxheight' => 0,
+        'maxwidth' => 0,
+        'width' => 0,
+    ] + (array) $moduleinstance;
+
+    $moduleinstance = (object) $moduleinstance;
+
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance]);
+    }
 
     videotime_grade_item_update($moduleinstance);
 
@@ -209,10 +222,10 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 function videotime_update_instance($moduleinstance, $mform = null) {
     global $DB;
 
-    $context = context_module::instance($moduleinstance->coursemodule);
+    $cm = get_coursemodule_from_id('videotime', $moduleinstance->coursemodule);
 
     $moduleinstance->timemodified = time();
-    $moduleinstance->id = $moduleinstance->instance;
+    $moduleinstance->id = $cm->instance;
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
@@ -223,7 +236,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     }
 
     // Disable custom completion fields when changing completion from automatic to none or manual.
-    if ($moduleinstance->completion != COMPLETION_TRACKING_AUTOMATIC) {
+    if ($cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
         $moduleinstance->completion_on_view_time = false;
         $moduleinstance->completion_on_percent = false;
         $moduleinstance->completion_on_finish = false;
@@ -236,6 +249,10 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->id,
         $completiontimeexpected
     );
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance]);
+    }
 
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
         $classname = "\\videotimetab_$name\\tab";
@@ -263,6 +280,12 @@ function videotime_delete_instance($id) {
     \core_completion\api::update_completion_date_event($cm->id, 'videotime', $id, null);
 
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::delete_settings($id);
+    }
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'delete_instance', [$id]);
         $classname = "\\videotimetab_$name\\tab";
         $classname::delete_settings($id);
     }
@@ -508,6 +531,16 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
         $beforekey = $keys[$i + 1];
     }
 
+    if (
+        $PAGE->cm &&
+        has_capability('mod/videotime:addinstance', $PAGE->cm->context)
+    ) {
+        $node = navigation_node::create(get_string('embed_options', 'mod_videotime'),
+            new moodle_url('/mod/videotime/options.php', array('id' => $PAGE->cm->id)),
+            navigation_node::TYPE_SETTING, null, 'mod_videotime_options',
+            new pix_icon('t/play', ''));
+        $videtimenode->add_node($node, $beforekey);
+    }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('report'),
             new moodle_url('/mod/videotime/report.php', array('id' => $PAGE->cm->id)),

@@ -108,26 +108,6 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
         if (videotime_has_pro()) {
-            $group = [];
-            $group[] = $mform->createElement('radio', 'label_mode', '', get_string('normal_mode', 'videotime'),
-                videotime_instance::NORMAL_MODE);
-            $group[] = $mform->createElement('radio', 'label_mode', '', get_string('label_mode', 'videotime'),
-                videotime_instance::LABEL_MODE);
-            if (videotime_has_repository()) {
-                $group[] = $mform->createElement('radio', 'label_mode', '', get_string('preview_mode', 'videotime'),
-                    videotime_instance::PREVIEW_MODE);
-            }
-
-            $mform->addGroup($group, 'modegroup', get_string('mode', 'videotime'), array('<br>'), false);
-            $mform->addHelpButton('modegroup', 'mode', 'videotime');
-            $mform->setDefault('label_mode', get_config('videotime', 'label_mode'));
-            if (get_config('videotime', 'label_mode_force')) {
-                $mform->addElement('static', 'label_mode_forced', '', get_string('option_forced', 'videotime', [
-                    'option' => get_string('label_mode', 'videotime'),
-                    'value' => videotime_instance::get_mode_options()[get_config('videotime', 'label_mode')]
-                ]));
-                $mform->disabledIf('label_mode', 'disable', 'eq', 1);
-            }
 
             if (videotime_has_repository()) {
                 $group = [];
@@ -253,54 +233,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setType('video_description', PARAM_RAW); // No XSS prevention here, users must be trusted.
         $mform->addHelpButton('video_description', 'video_description', 'videotime');
 
-        if (videotime_has_pro()) {
-            $mform->addElement('advcheckbox', 'resume_playback', get_string('resume_playback', 'videotime'));
-            $mform->addHelpButton('resume_playback', 'resume_playback', 'videotime');
-            $mform->setType('resume_playback', PARAM_BOOL);
-            $mform->setDefault('resume_playback', get_config('videotime', 'resume_playback'));
-            videotime_instance::create_additional_field_form_elements('resume_playback', $mform);
-
-            $mform->addElement('advcheckbox', 'next_activity_button', get_string('next_activity_button', 'videotime'));
-            $mform->addHelpButton('next_activity_button', 'next_activity_button', 'videotime');
-            $mform->setType('next_activity_button', PARAM_BOOL);
-            $mform->setDefault('next_activity_button', get_config('videotime', 'next_activity_button'));
-            videotime_instance::create_additional_field_form_elements('next_activity_button', $mform);
-
-            $modoptions = [-1 => get_string('next_activity_in_course', 'videotime')];
-            foreach (next_activity_button::get_available_cms($COURSE->id) as $cm) {
-                // Do not include current module in select list.
-                if ((isset($this->_cm->id) && $this->_cm->id == $cm->id)) {
-                    continue;
-                }
-                $modoptions[$cm->id] = $cm->name;
-            }
-
-            $mform->addElement('select', 'next_activity_id', get_string('next_activity', 'videotime'), $modoptions);
-            $mform->setType('next_activity_id', PARAM_INT);
-            if (method_exists($mform, 'hideIf')) {
-                $mform->hideIf('next_activity_id', 'next_activity_button');
-            } else {
-                $mform->disabledIf('next_activity_id', 'next_activity_button');
-            }
-
-            $mform->addElement('advcheckbox', 'next_activity_auto', get_string('next_activity_auto', 'videotime'));
-            $mform->addHelpButton('next_activity_auto', 'next_activity_auto', 'videotime');
-            $mform->setType('next_activity_auto', PARAM_BOOL);
-            if (method_exists($mform, 'hideIf')) {
-                $mform->hideIf('next_activity_auto', 'next_activity_button');
-            } else {
-                $mform->disabledIf('next_activity_auto', 'next_activity_button');
-            }
-            $mform->setDefault('next_activity_auto', get_config('videotime', 'next_activity_auto'));
-            videotime_instance::create_additional_field_form_elements('next_activity_auto', $mform);
-
-            $mform->addElement('advcheckbox', 'preventfastforwarding', get_string('preventfastforwarding', 'videotime'));
-            $mform->addHelpButton('preventfastforwarding', 'preventfastforwarding', 'videotime');
-            $mform->setType('preventfastforwarding', PARAM_BOOL);
-            $mform->setDefault('responsive', get_config('videotime', 'preventfastforwarding'));
-            videotime_instance::create_additional_field_form_elements('preventfastforwarding', $mform);
-        }
-
+        // Add section tab plugins.
         $mform->addElement('header', 'tabs', get_string('tabs', 'videotime'));
 
         $mform->addElement('advcheckbox', 'enabletabs', get_string('enabletabs', 'videotime'));
@@ -313,174 +246,13 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
         }
 
-        $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
-
-        // Add hidden 'disable' element used for disabling embed options when they are globally forced.
-        $mform->addElement('hidden', 'disable');
-        $mform->setType('disable', PARAM_INT);
-        $mform->setDefault('disable', 1);
-
-        $mform->addElement('advcheckbox', 'responsive', get_string('option_responsive', 'videotime'));
-        $mform->setType('responsive', PARAM_BOOL);
-        $mform->addHelpButton('responsive', 'option_responsive', 'videotime');
-        $mform->setDefault('responsive', get_config('videotime', 'responsive'));
-        videotime_instance::create_additional_field_form_elements('responsive', $mform);
-
-        $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
-        $mform->setType('height', PARAM_INT);
-        $mform->addHelpButton('height', 'option_height', 'videotime');
-        $mform->disabledIf('height', 'responsive', 'checked');
-        $mform->setDefault('height', get_config('videotime', 'height'));
-        videotime_instance::create_additional_field_form_elements('height', $mform);
-
-        $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
-        $mform->setType('width', PARAM_INT);
-        $mform->addHelpButton('width', 'option_width', 'videotime');
-        $mform->setDefault('width', get_config('videotime', 'width'));
-        $mform->disabledIf('width', 'responsive', 'checked');
-        videotime_instance::create_additional_field_form_elements('width', $mform);
-
-        $mform->addElement('text', 'maxheight', get_string('option_maxheight', 'videotime'));
-        $mform->setType('maxheight', PARAM_INT);
-        $mform->addHelpButton('maxheight', 'option_maxheight', 'videotime');
-        $mform->setDefault('maxheight', get_config('videotime', 'maxheight'));
-        $mform->disabledIf('maxheight', 'responsive', 'checked');
-        videotime_instance::create_additional_field_form_elements('maxheight', $mform);
-
-        $mform->addElement('text', 'maxwidth', get_string('option_maxwidth', 'videotime'));
-        $mform->setType('maxwidth', PARAM_INT);
-        $mform->addHelpButton('maxwidth', 'option_maxwidth', 'videotime');
-        $mform->setDefault('maxwidth', get_config('videotime', 'maxwidth'));
-        $mform->disabledIf('maxwidth', 'responsive', 'checked');
-        videotime_instance::create_additional_field_form_elements('maxwidth', $mform);
-
-        $mform->addElement('advcheckbox', 'autoplay', get_string('option_autoplay', 'videotime'));
-        $mform->setType('autoplay', PARAM_BOOL);
-        $mform->addHelpButton('autoplay', 'option_autoplay', 'videotime');
-        $mform->setDefault('autoplay', get_config('videotime', 'autoplay'));
-        videotime_instance::create_additional_field_form_elements('autoplay', $mform);
-
-        $mform->addElement('advcheckbox', 'byline', get_string('option_byline', 'videotime'));
-        $mform->setType('byline', PARAM_BOOL);
-        $mform->addHelpButton('byline', 'option_byline', 'videotime');
-        $mform->setDefault('byline', get_config('videotime', 'byline'));
-        videotime_instance::create_additional_field_form_elements('byline', $mform);
-
-        $mform->addElement('text', 'color', get_string('option_color', 'videotime'));
-        $mform->setType('color', PARAM_TEXT);
-        $mform->addHelpButton('color', 'option_color', 'videotime');
-        $mform->setDefault('color', get_config('videotime', 'color'));
-        videotime_instance::create_additional_field_form_elements('color', $mform);
-
-        $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
-        $mform->setType('muted', PARAM_BOOL);
-        $mform->addHelpButton('muted', 'option_muted', 'videotime');
-        $mform->setDefault('muted', get_config('videotime', 'muted'));
-        videotime_instance::create_additional_field_form_elements('muted', $mform);
-
-        $mform->addElement('advcheckbox', 'playsinline', get_string('option_playsinline', 'videotime'));
-        $mform->setType('playsinline', PARAM_BOOL);
-        $mform->addHelpButton('playsinline', 'option_playsinline', 'videotime');
-        $mform->setDefault('playsinline', get_config('videotime', 'playsinline'));
-        videotime_instance::create_additional_field_form_elements('playsinline', $mform);
-
-        $mform->addElement('advcheckbox', 'portrait', get_string('option_portrait', 'videotime'));
-        $mform->setType('portrait', PARAM_BOOL);
-        $mform->addHelpButton('portrait', 'option_portrait', 'videotime');
-        $mform->setDefault('portrait', get_config('videotime', 'portrait'));
-        videotime_instance::create_additional_field_form_elements('portrait', $mform);
-
-        $mform->addElement('advcheckbox', 'speed', get_string('option_speed', 'videotime'));
-        $mform->setType('speed', PARAM_BOOL);
-        $mform->addHelpButton('speed', 'option_speed', 'videotime');
-        $mform->setDefault('speed', get_config('videotime', 'speed'));
-        videotime_instance::create_additional_field_form_elements('speed', $mform);
-
-        $mform->addElement('advcheckbox', 'title', get_string('option_title', 'videotime'));
-        $mform->setType('title', PARAM_BOOL);
-        $mform->addHelpButton('title', 'option_title', 'videotime');
-        $mform->setDefault('title', get_config('videotime', 'title'));
-        videotime_instance::create_additional_field_form_elements('title', $mform);
-
-        $mform->addElement('advcheckbox', 'transparent', get_string('option_transparent', 'videotime'));
-        $mform->setType('transparent', PARAM_BOOL);
-        $mform->addHelpButton('transparent', 'option_transparent', 'videotime');
-        $mform->setDefault('transparent', get_config('videotime', 'transparent'));
-        videotime_instance::create_additional_field_form_elements('transparent', $mform);
-
-        if (videotime_has_pro()) {
-            $mform->addElement('advcheckbox', 'dnt', get_string('option_dnt', 'videotime'));
-            $mform->setType('dnt', PARAM_BOOL);
-            $mform->addHelpButton('dnt', 'option_dnt', 'videotime');
-            $mform->setDefault('dnt', get_config('videotime', 'dnt'));
-            videotime_instance::create_additional_field_form_elements('dnt', $mform);
-
-            $mform->addElement('advcheckbox', 'autopause', get_string('option_autopause', 'videotime'));
-            $mform->setType('autopause', PARAM_BOOL);
-            $mform->addHelpButton('autopause', 'option_autopause', 'videotime');
-            $mform->setDefault('autopause', get_config('videotime', 'autopause'));
-            videotime_instance::create_additional_field_form_elements('autopause', $mform);
-
-            $mform->addElement('advcheckbox', 'background', get_string('option_background', 'videotime'));
-            $mform->setType('background', PARAM_BOOL);
-            $mform->addHelpButton('background', 'option_background', 'videotime');
-            $mform->setDefault('background', get_config('videotime', 'background'));
-            videotime_instance::create_additional_field_form_elements('background', $mform);
-
-            $mform->addElement('advcheckbox', 'controls', get_string('option_controls', 'videotime'));
-            $mform->setType('controls', PARAM_BOOL);
-            $mform->addHelpButton('controls', 'option_controls', 'videotime');
-            $mform->setDefault('controls', get_config('videotime', 'controls'));
-            videotime_instance::create_additional_field_form_elements('controls', $mform);
-
-            $mform->addElement('advcheckbox', 'pip', get_string('option_pip', 'videotime'));
-            $mform->setType('pip', PARAM_BOOL);
-            $mform->addHelpButton('pip', 'option_pip', 'videotime');
-            $mform->setDefault('pip', get_config('videotime', 'pip'));
-            videotime_instance::create_additional_field_form_elements('pip', $mform);
-
-            // -------------------------------------------------------------------------------
-            // Grade settings.
-            $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
-            global $COURSE, $OUTPUT;
-
-            $mform->addElement('checkbox', 'viewpercentgrade', get_string('viewpercentgrade', 'videotime'));
-            $mform->setType('viewpercentgrade', PARAM_BOOL);
-            $mform->addHelpButton('viewpercentgrade', 'viewpercentgrade', 'videotime');
-
-            $mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
-                grade_get_categories_menu($COURSE->id, false));
-            $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
-            $mform->disabledIf('gradecat', 'viewpercentgrade');
-
-            // Grade to pass.
-            $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
-            $mform->addHelpButton('gradepass', 'gradepass', 'grades');
-            $mform->setDefault('gradepass', '');
-            $mform->setType('gradepass', PARAM_RAW);
-            $mform->disabledIf('gradepass', 'viewpercentgrade');
-
-            if ($this->_cm) {
-                if (!grade_item::fetch(array('itemtype' => 'mod',
-                    'itemmodule' => $this->_cm->modname,
-                    'iteminstance' => $this->_cm->instance,
-                    'itemnumber' => 0,
-                    'courseid' => $COURSE->id))) {
-
-                    $mform->addElement('static', 'gradewarning', '', $OUTPUT->notification(
-                        get_string('gradeitemnotcreatedyet', 'videotime'), 'warning'
-                    ), null, ['id' => 'id_gradewarning']);
-                    if (method_exists($mform, 'hideIf')) {
-                        $mform->hideIf('gradewarning', 'viewpercentgrade', 'checked');
-                    } else {
-                        $mform->disabledIf('gradewarning', 'viewpercentgrade', 'checked');
-                    }
-                }
-            }
-        }
-
         // Add standard elements.
         $this->standard_coursemodule_elements();
+
+        // Add fields from extensions.
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this)]);
+        }
 
         // Add standard buttons.
         $this->add_action_buttons();
