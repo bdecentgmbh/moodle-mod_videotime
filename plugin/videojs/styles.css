@@ -1,0 +1,9 @@
+.videotime-tab-instance .vjs-layout-tiny,
+.videotime-tab-instance .vjs-layout-x-small,
+.videotime-tab-instance .vjs-layout-large,
+.videotime-tab-instance .vjs-layout-small,
+.videotime-tab-instance .vjs-layout-medium,
+.videotime-tab-instance .vjs-layout-x-large,
+.videotime-tab-instance .vjs-layout-huge {
+    width: 100%;
+}
