@@ -139,9 +139,17 @@ class videotime_instance implements \renderable, \templatable {
      * @param \stdClass $instancerecord
      */
     protected function __construct(\stdClass $instancerecord) {
+        global $DB;
+
         $this->uniqueid = uniqid();
 
         $instancerecord = (array) $instancerecord;
+        if (mod_videotime_get_vimeo_id_from_link($instancerecord['vimeo_url'])) {
+            $instancerecord = $instancerecord + (array) $DB->get_record(
+                'videotime_vimeo_embed',
+                ['videotime' => $instancerecord['id']]
+            );
+        }
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             $instancerecord = component_callback("videotimeplugin_$name", 'load_settings', [$instancerecord], $instancerecord);
         }

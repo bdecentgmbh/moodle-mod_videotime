@@ -57,7 +57,7 @@ require_capability('mod/videotime:view', $context);
 
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
-if (class_exists('core\\output\\activity_header') && !$moduleinstance->show_description_in_player) {
+if (class_exists('core\\output\\activity_header') && empty($moduleinstance->show_description_in_player)) {
     $PAGE->activityheader->set_description('');
 }
 $PAGE->set_heading(format_string($course->fullname));

@@ -603,5 +603,167 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022040801, 'videotime');
     }
 
+    if ($oldversion < 2022050800) {
+
+        // Define table videotime_vimeo_embed to be created.
+        $table = new xmldb_table('videotime_vimeo_embed');
+
+        // Adding fields to table videotime_vimeo_embed.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('videotime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('autoplay', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('byline', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('color', XMLDB_TYPE_CHAR, '15', null, XMLDB_NOTNULL, null, '00adef');
+        $table->add_field('height', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('maxheight', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('maxwidth', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('muted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('playsinline', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('portrait', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('responsive', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('speed', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('title', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('transparent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('width', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table videotime_vimeo_embed.
+        $table->add_key('videotime', XMLDB_KEY_FOREIGN_UNIQUE, ['videotime'], 'videotime', ['id']);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for videotime_vimeo_embed.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Copy embed settings to new table.
+        $rs = $DB->get_recordset_select('videotime', []);
+        foreach ($rs as $record) {
+            $record->videotime = $record->id;
+            unset($record->id);
+            $DB->insert_record('videotime_vimeo_embed', $record);
+        }
+        $rs->close();
+
+        // Define field autoplay to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('autoplay');
+
+        // Conditionally launch drop field autoplay.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field byline to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('byline');
+
+        // Conditionally launch drop field byline.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field color to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('color');
+
+        // Conditionally launch drop field color.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field height to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('height');
+
+        // Conditionally launch drop field height.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field maxheight to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('maxheight');
+
+        // Conditionally launch drop field maxheight.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field maxwidth to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('maxwidth');
+
+        // Conditionally launch drop field maxwidth.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field muted to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('muted');
+
+        // Conditionally launch drop field muted.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field playsinline to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('playsinline');
+
+        // Conditionally launch drop field playsinline.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field portrait to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('portrait');
+
+        // Conditionally launch drop field portrait.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field responsive to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('responsive');
+
+        // Conditionally launch drop field responsive.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field speed to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('speed');
+
+        // Conditionally launch drop field title.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field transparent to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('transparent');
+
+        // Conditionally launch drop field transparent.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field width to be dropped from videotime_vimeo_embed.
+        $table = new xmldb_table('videotime_vimeo_embed');
+        $field = new xmldb_field('width');
+
+        // Conditionally launch drop field width.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2022050800, 'videotime');
+    }
+
     return true;
 }

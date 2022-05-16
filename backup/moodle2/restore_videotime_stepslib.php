@@ -49,9 +49,10 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         // A chance for tab subplugins to set up their data.
         $this->add_subplugin_structure('videotimetab', $videotime);
 
-        if ($userinfo && videotime_has_pro()) {
-            $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
-        }
+        // A chance for plugin subplugins to set up their data.
+        $this->add_subplugin_structure('videotimeplugin', $videotime);
+
+        $paths[] = new restore_path_element('vimeooptions', '/activity/videotime/vimeoembed');
 
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
@@ -91,9 +92,25 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
 
         $data->module_id = $this->get_mappingid('course_module', $data->module_id);
 
-        $newitemid = $DB->insert_record('videotime_session', $data);
-        $this->set_mapping('videotime_session', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('videotime_pro_session', $data);
+        $this->set_mapping('videotime_pro_session', $oldid, $newitemid);
     }
+
+    /**
+     * Process vimeo embed data
+     *
+     * @param array $data data
+     */
+    protected function process_videotime_vimeooptions($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $newitemid = $DB->insert_record('videotime_vimeo_embed', $data);
+        $this->set_mapping('videotime_vimeo_embed', $oldid, $newitemid);
+    }
+
 
     /**
      * Defines post-execution actions to dd files

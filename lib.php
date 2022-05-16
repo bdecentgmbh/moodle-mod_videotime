@@ -179,6 +179,9 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
+    if (mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)) {
+        $DB->insert_record('videotime_vimeo_embed', ['id' => null, 'videotime' => $moduleinstance->id]);
+    }
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
         component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance]);
     }
@@ -249,6 +252,16 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->id,
         $completiontimeexpected
     );
+
+    if (mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)) {
+        if ($record = $DB->get_record('videotime_vimeo_embed', ['videotime' => $moduleinstance->id])) {
+            $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) $record;
+            $DB->update_record('videotime_vimeo_embed', $record);
+        } else {
+            $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance;
+            $DB->insert_record('videotime_vimeo_embed', $record);
+        }
+    }
 
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
         component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance]);
@@ -811,4 +824,23 @@ function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
         1,
         true
     );
+}
+
+/**
+ * Return array of the settings that are forced
+ *
+ * @return array Settings that are forced
+ */
+function videotime_forced_settings($component = 'videotime') {
+
+    $config = (array) get_config($component);
+    $forced = [];
+
+    foreach ($config as $key => $value) {
+        if (!empty($config["{$key}_force"])) {
+            $forced[$key] = $value;
+        }
+    }
+
+    return $forced;
 }

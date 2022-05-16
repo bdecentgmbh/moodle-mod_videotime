@@ -81,39 +81,48 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'autoplay',
             'byline',
             'color',
+            'title',
+            'transparent',
+            // 'dnt',
+            // 'autopause',
+            // 'background',
+            // 'controls',
+            // 'pip',
+            'responsive',
+            'label_mode',
+            'viewpercentgrade',
+            // 'next_activity_button',
+            // 'next_activity_id',
+            // 'next_activity_auto',
+            'resume_playback',
+            'preview_picture',
+            // 'show_description',
+            // 'show_title',
+            // 'show_tags',
+            // 'show_duration',
+            // 'show_viewed_duration',
+            // 'columns',
+            // 'preventfastforwarding',
+            'enabletabs'
+        ]);
+
+        $vimeooptions = new backup_nested_element('vimeo_options', ['id'], [
+            'id',
+            'videotime',
             'height',
             'maxheight',
             'maxwidth',
             'muted',
+            'width',
             'playsinline',
             'portrait',
             'speed',
-            'title',
-            'transparent',
-            'dnt',
-            'autopause',
-            'background',
-            'controls',
-            'pip',
-            'width',
-            'responsive',
-            'label_mode',
-            'viewpercentgrade',
-            'next_activity_button',
-            'next_activity_id',
-            'next_activity_auto',
-            'resume_playback',
-            'preview_picture',
-            'show_description',
-            'show_title',
-            'show_tags',
-            'show_duration',
-            'show_viewed_duration',
-            'columns',
-            'preventfastforwarding',
-            'enabletabs'
         ]);
 
+        // Build the tree.
+        $module->add_child($vimeooptions);
+
+        /*
         if (videotime_has_pro()) {
             $sessions = new backup_nested_element('sessions');
 
@@ -131,16 +140,21 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             $module->add_child($sessions);
             $sessions->add_child($session);
         }
+         */
 
         // Define elements for tab subplugin settings.
         $this->add_subplugin_structure('videotimetab', $module, true);
 
+        // Define elements for plugin subplugin settings.
+        $this->add_subplugin_structure('videotimeplugin', $module, true);
+
         // Define sources.
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
+        $vimeooptions->set_source_table('videotime_vimeo_embed', ['videotime' => backup::VAR_ACTIVITYID]);
 
+        /*
         if (videotime_has_pro()) {
             if ($userinfo) {
-                $session->set_source_table('videotime_session', ['module_id' => backup::VAR_MODID], 'id ASC');
             }
 
             // Define id annotations.
@@ -148,6 +162,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         }
 
         $module->annotate_ids('course_module', 'next_activity_id');
+         */
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.

@@ -74,7 +74,12 @@ $returnurl = new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]);
 if ($form->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $form->get_data()) {
-    $moduleinstance = ['coursemodule' => $cm->id] + (array) $data + (array) $moduleinstance->to_record();
+    $defaults = [];
+    foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+        $classname = "\\videotimetab_$name\\tab";
+        $classname::data_preprocessing($defaults, $cm->instance);
+    }
+    $moduleinstance = ['coursemodule' => $cm->id] + (array) $data + (array) $moduleinstance->to_record() + $defaults;
     videotime_update_instance((object) $moduleinstance);
     redirect($returnurl);
 }

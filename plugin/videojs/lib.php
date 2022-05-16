@@ -25,31 +25,6 @@
 use mod_videotime\videotime_instance;
 
 /**
- * Saves a new instance of the videotimeplugin_videojs into the database.
- *
- * Given an object containing all the necessary data, (defined by the form
- * in mod_form.php) this function will create a new instance and return the id
- * number of the instance.
- *
- * @param object $moduleinstance An object from the form.
- */
-function xvideotimeplugin_videojs_add_instance($moduleinstance) {
-    global $DB;
-
-    if (mod_videotime_get_vimeo_id_from_link($instance->vimeo_url)) {
-        return;
-    }
-
-    if ($record = $DB->get_record('videotimeplugin_videojs', ['videotime' => $moduleinstance->id])) {
-        $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) $record;
-        $DB->update_record('videotimeplugin_videojs', $record);
-    } else {
-        $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance;
-        $DB->insert_record('videotimeplugin_videojs', $record);
-    }
-}
-
-/**
  * Updates an instance of the videotimeplugin_videojs in the database.
  *
  * Given an object containing all the necessary data (defined in mod_form.php),
@@ -66,11 +41,13 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
         return;
     }
 
+    $forced = videotime_forced_settings('videotimeplugin_videojs');
+
     if ($record = $DB->get_record('videotimeplugin_videojs', ['videotime' => $moduleinstance->id])) {
-        $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) $record;
+        $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance + (array) $record;
         $DB->update_record('videotimeplugin_videojs', $record);
     } else {
-        $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance;
+        $record = ['id' => null, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance;
         $DB->insert_record('videotimeplugin_videojs', $record);
     }
 }
@@ -98,6 +75,8 @@ function videotimeplugin_videojs_delete_instance($id) {
 function videotimeplugin_videojs_load_settings($instance) {
     global $DB;
 
+    $forced = videotime_forced_settings('videotimeplugin_videojs');
+
     $instance = (array) $instance;
     if (
         !mod_videotime_get_vimeo_id_from_link($instance['vimeo_url'])
@@ -105,8 +84,8 @@ function videotimeplugin_videojs_load_settings($instance) {
     ) {
         unset($record->id);
         unset($record->videotime);
-        return ((array) $record) + ((array) $instance);
+        return $forced + ((array) $record) + ((array) $instance);
     }
 
-    return $instance;
+    return $forced + (array) $instance + (array) get_config('videotimeplugin_videojs');
 }

@@ -107,118 +107,6 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
-        if (videotime_has_pro()) {
-
-            if (videotime_has_repository()) {
-                $group = [];
-                $group[] = $mform->createElement('advcheckbox', 'show_title', '', get_string('show_title', 'videotime'));
-                $mform->setDefault('show_title', 1);
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('show_title', 'label_mode', 'noeq', 2);
-                } else {
-                    $mform->disabledIf('show_title', 'label_mode', 'noeq', 2);
-                }
-                $mform->setDefault('show_title', get_config('videotime', 'show_title'));
-                videotime_instance::create_additional_field_form_elements('show_title', $mform, $group);
-
-                $group[] = $mform->createElement('advcheckbox', 'show_description', '',
-                    get_string('show_description', 'videotime'));
-                $mform->setDefault('show_description', 1);
-                $group[] = $mform->createElement('advcheckbox', 'show_description_in_player', '',
-                    get_string('show_description_in_player', 'videotime'));
-                $mform->setDefault('show_description_in_player', 1);
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('show_description', 'label_mode', 'noeq', 2);
-                    $mform->hideIf('show_description_in_player', 'label_mode', 'eq', 2);
-                } else {
-                    $mform->disabledIf('show_description', 'label_mode', 'noeq', 2);
-                    $mform->disabledIf('show_description_in_player', 'label_mode', 'eq', 2);
-                }
-                $mform->setDefault('show_description', get_config('videotime', 'show_description'));
-                videotime_instance::create_additional_field_form_elements('show_description', $mform, $group);
-
-                $group[] = $mform->createElement('advcheckbox', 'show_tags', '', get_string('show_tags', 'videotime'));
-                $mform->setDefault('show_tags', 1);
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('show_tags', 'label_mode', 'noeq', 2);
-                } else {
-                    $mform->disabledIf('show_tags', 'label_mode', 'noeq', 2);
-                }
-                $mform->setDefault('show_tags', get_config('videotime', 'show_tags'));
-                videotime_instance::create_additional_field_form_elements('show_tags', $mform, $group);
-
-                $group[] = $mform->createElement('advcheckbox', 'show_duration', '', get_string('show_duration', 'videotime'));
-                $mform->setDefault('show_duration', 1);
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('show_duration', 'label_mode', 'noeq', 2);
-                } else {
-                    $mform->disabledIf('show_duration', 'label_mode', 'noeq', 2);
-                }
-                $mform->setDefault('show_duration', get_config('videotime', 'show_duration'));
-                videotime_instance::create_additional_field_form_elements('show_duration', $mform, $group);
-
-                $group[] = $mform->createElement('advcheckbox', 'show_viewed_duration', '',
-                    get_string('show_viewed_duration', 'videotime'));
-                $mform->setDefault('show_viewed_duration', 1);
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('show_viewed_duration', 'label_mode', 'noeq', 2);
-                } else {
-                    $mform->disabledIf('show_viewed_duration', 'label_mode', 'noeq', 2);
-                }
-                $mform->setDefault('show_viewed_duration', get_config('videotime', 'show_viewed_duration'));
-                videotime_instance::create_additional_field_form_elements('show_viewed_duration', $mform, $group);
-
-                $mform->addGroup($group, 'displaygroup', get_string('display_options', 'videotime'), array('<br>'), false);
-
-                $mform->addElement('select', 'columns', get_string('columns', 'videotime'), [
-                    1 => '1 (100% width)',
-                    2 => '2 (50% width)',
-                    3 => '3 (33% width)',
-                    4 => '4 (25% width'
-                ]);
-                $mform->setType('columns', PARAM_INT);
-                $mform->addHelpButton('columns', 'columns', 'videotime');
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('columns', 'label_mode', 'noeq', 2);
-                } else {
-                    $mform->disabledIf('columns', 'label_mode', 'noeq', 2);
-                }
-                $mform->setDefault('columns', get_config('videotime', 'columns'));
-                if (get_config('videotime', 'columns_force')) {
-                    if (method_exists($mform, 'hideIf')) {
-                        $mform->hideIf('columns_forced', 'label_mode', 'noeq', 2);
-                    } else {
-                        $mform->disabledIf('columns_forced', 'label_mode', 'noeq', 2);
-                    }
-                    $mform->disabledIf('columns', 'disable', 'eq', 1);
-                }
-
-                $mform->addElement('select', 'preview_picture', get_string('preview_picture', 'videotime'), [
-                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG => '1920 x 1200',
-                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM => '640 x 400',
-                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_BIG_WITH_PLAY => '1920 x 1200 ' .
-                        get_string('with_play_button', 'videotime'),
-                    \videotimeplugin_repository\video_interface::PREVIEW_PICTURE_MEDIUM_WITH_PLAY => '640 x 400 ' .
-                        get_string('with_play_button', 'videotime')
-                ]);
-                $mform->setType('preview_picture', PARAM_INT);
-                if (method_exists($mform, 'hideIf')) {
-                    $mform->hideIf('preview_picture', 'label_mode', 'noeq', 2);
-                } else {
-                    $mform->disabledIf('preview_picture', 'label_mode', 'noeq', 2);
-                }
-                $mform->setDefault('preview_picture', get_config('videotime', 'preview_picture'));
-                if (get_config('videotime', 'preview_picture_force')) {
-                    if (method_exists($mform, 'hideIf')) {
-                        $mform->hideIf('preview_picture_forced', 'label_mode', 'noeq', 2);
-                    } else {
-                        $mform->disabledIf('preview_picture_forced', 'label_mode', 'noeq', 2);
-                    }
-                    $mform->disabledIf('preview_picture', 'disable', 'eq', 1);
-                }
-            }
-        }
-
         // Adding the standard "intro" and "introformat" fields.
         if ($CFG->branch >= 29) {
             $this->standard_intro_elements();
@@ -401,6 +289,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             $defaultvalues['video_description']['text']   = file_prepare_draft_area($draftitemid, $this->context->id,
                 'mod_videotime', 'video_description', 0, [], $videodescription);
             $defaultvalues['video_description']['itemid'] = $draftitemid;
+
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaultvalues, $this->current->instance]);
+            }
 
             foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
                 $classname = "\\videotimetab_$name\\tab";

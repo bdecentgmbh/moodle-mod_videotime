@@ -40,6 +40,32 @@ require_once("$CFG->libdir/formslib.php");
 class options extends moodleform {
 
     /**
+     * @var array Vimeo embed option fields.
+     */
+    private static $optionfields = [
+        'autoplay',
+        'byline',
+        'color',
+        'height',
+        'maxheight',
+        'maxwidth',
+        'muted',
+        'playsinline',
+        'portrait',
+        'responsive',
+        'speed',
+        'title',
+        'transparent',
+        'autopause',
+        'background',
+        'controls',
+        'pip',
+        'dnt',
+        'width',
+        'preventfastforwarding'
+    ];
+
+    /**
      * Defines forms elements
      */
     public function definition() {
@@ -64,39 +90,39 @@ class options extends moodleform {
         $mform->setType('responsive', PARAM_BOOL);
         $mform->addHelpButton('responsive', 'option_responsive', 'videotime');
         $mform->setDefault('responsive', get_config('videotime', 'responsive'));
-        videotime_instance::create_additional_field_form_elements('responsive', $mform);
+        self::create_additional_field_form_elements('responsive', $mform);
 
         $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
         $mform->setType('height', PARAM_INT);
         $mform->addHelpButton('height', 'option_height', 'videotime');
         $mform->disabledIf('height', 'responsive', 'checked');
         $mform->setDefault('height', get_config('videotime', 'height'));
-        videotime_instance::create_additional_field_form_elements('height', $mform);
+        self::create_additional_field_form_elements('height', $mform);
 
         $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
         $mform->setType('width', PARAM_INT);
         $mform->addHelpButton('width', 'option_width', 'videotime');
         $mform->setDefault('width', get_config('videotime', 'width'));
         $mform->disabledIf('width', 'responsive', 'checked');
-        videotime_instance::create_additional_field_form_elements('width', $mform);
+        self::create_additional_field_form_elements('width', $mform);
 
         $mform->addElement('advcheckbox', 'autoplay', get_string('option_autoplay', 'videotime'));
         $mform->setType('autoplay', PARAM_BOOL);
         $mform->addHelpButton('autoplay', 'option_autoplay', 'videotime');
         $mform->setDefault('autoplay', get_config('videotime', 'autoplay'));
-        videotime_instance::create_additional_field_form_elements('autoplay', $mform);
+        self::create_additional_field_form_elements('autoplay', $mform);
 
         $mform->addElement('advcheckbox', 'controls', get_string('option_controls', 'videotime'));
         $mform->setType('controls', PARAM_BOOL);
         $mform->addHelpButton('controls', 'option_controls', 'videotime');
         $mform->setDefault('controls', get_config('videotime', 'controls'));
-        videotime_instance::create_additional_field_form_elements('autoplay', $mform);
+        self::create_additional_field_form_elements('autoplay', $mform);
 
         $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
         $mform->setType('muted', PARAM_BOOL);
         $mform->addHelpButton('muted', 'option_muted', 'videotime');
         $mform->setDefault('muted', get_config('videotime', 'muted'));
-        videotime_instance::create_additional_field_form_elements('muted', $mform);
+        self::create_additional_field_form_elements('muted', $mform);
 
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
@@ -110,6 +136,59 @@ class options extends moodleform {
             $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro2'),
                 html_writer::img('https://link.bdecent.de/videotimepro2/image.jpg', '',
                     ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
+        }
+    }
+
+    /**
+     * Allow additional form elements to be added for each Video Time field.
+     *
+     * @param string $fieldname
+     * @param \MoodleQuickForm $mform
+     * @param array $group
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
+        if (get_config('videotimeplugin_videojs', $fieldname . '_force')) {
+
+            if (in_array($fieldname, self::$optionfields)) {
+                $label = get_string('option_' . $fieldname, 'videotime');
+            } else {
+                $label = get_string($fieldname, 'videotime');
+            }
+
+            $value = get_config('videotimeplugin_videojs', $fieldname);
+            if ($group) {
+                $element = null;
+                foreach ($group as $element) {
+                    if ($element->getName() == $fieldname) {
+                        break;
+                    }
+                }
+            } else {
+                $element = $group ? null : $mform->getElement($fieldname);
+            }
+
+            if ($element) {
+                if ($element instanceof \MoodleQuickForm_checkbox || $element instanceof \MoodleQuickForm_advcheckbox) {
+                    $value = $value ? get_string('yes') : get_string('no');
+                }
+            } else if ($element instanceof \MoodleQuickForm_radio) {
+                if ($element->getValue() == $value) {
+                    $value = $element->getLabel();
+                }
+            }
+
+            $element = $mform->createElement('static', $fieldname . '_forced', '', get_string('option_forced', 'videotime', [
+                'option' => $label,
+                'value' => $value
+            ]));
+            if ($group) {
+                $group[] = $element;
+            } else {
+                $mform->addElement($element);
+            }
+            $mform->disabledIf($fieldname, 'disable', 'eq', 1);
         }
     }
 }

@@ -37,30 +37,7 @@ export default class VideoTime extends VideoTimeBase {
                 options.width = instance.width;
             }
             Log.debug('Initializing VideoJS player with options:');
-            Log.debug(options);
             this.player = new Player(this.elementId, options);
-            /*
-            {
-                autopause: instance.autopause,
-                background: instance.background,
-                byline: instance.byline,
-                color: instance.color,
-                dnt: instance.dnt,
-                height: instance.height,
-                maxheight: instance.maxheight,
-                maxwidth: instance.maxwidth,
-                muted: instance.muted,
-                portrait: instance.portrait,
-                pip: instance.pip,
-                playsinline: instance.playsinline,
-                responsive: instance.responsive,
-                speed: instance.speed,
-                title: instance.title,
-                transparent: instance.transparent,
-                url: instance.vimeo_url,
-                width: instance.width
-            });
-            */
 
             let url = new URL(window.location.href),
                 q = url.searchParams.get('q'),
@@ -262,6 +239,14 @@ export default class VideoTime extends VideoTimeBase {
                 }
             });
         }.bind(this));
+
+        // Readjust height when responsive player is resized.
+        if (this.player.options().responsive) {
+            let observer = new ResizeObserver(() => {
+                this.player.height(this.player.videoHeight() / this.player.videoWidth() * this.player.currentWidth());
+            });
+            observer.observe(document.querySelector('#' + this.elementId));
+        }
     }
 
     /**
