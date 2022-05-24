@@ -1,9 +1,9 @@
-.videotime-tab-instance .vjs-layout-tiny,
-.videotime-tab-instance .vjs-layout-x-small,
-.videotime-tab-instance .vjs-layout-large,
-.videotime-tab-instance .vjs-layout-small,
-.videotime-tab-instance .vjs-layout-medium,
-.videotime-tab-instance .vjs-layout-x-large,
-.videotime-tab-instance .vjs-layout-huge {
+.videotime-embed .vjs-layout-tiny,
+.videotime-embed .vjs-layout-x-small,
+.videotime-embed .vjs-layout-large,
+.videotime-embed .vjs-layout-small,
+.videotime-embed .vjs-layout-medium,
+.videotime-embed .vjs-layout-x-large,
+.videotime-embed .vjs-layout-huge {
     width: 100%;
 }

@@ -118,11 +118,23 @@ class options extends moodleform {
         $mform->setDefault('controls', get_config('videotime', 'controls'));
         self::create_additional_field_form_elements('autoplay', $mform);
 
+        $mform->addElement('advcheckbox', 'option_loop', get_string('option_loop', 'videotimeplugin_videojs'));
+        $mform->setType('option_loop', PARAM_BOOL);
+        $mform->addHelpButton('option_loop', 'option_loop', 'videotimeplugin_videojs');
+        $mform->setDefault('option_loop', get_config('videotimeplugin_videojs', 'loop'));
+        self::create_additional_field_form_elements('option_loop', $mform);
+
         $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
         $mform->setType('muted', PARAM_BOOL);
         $mform->addHelpButton('muted', 'option_muted', 'videotime');
         $mform->setDefault('muted', get_config('videotime', 'muted'));
         self::create_additional_field_form_elements('muted', $mform);
+
+        $mform->addElement('advcheckbox', 'speed', get_string('option_speed', 'videotime'));
+        $mform->setType('speed', PARAM_BOOL);
+        $mform->addHelpButton('speed', 'option_speed', 'videotime');
+        $mform->setDefault('speed', get_config('videotime', 'speed'));
+        self::create_additional_field_form_elements('speed', $mform);
 
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
@@ -149,8 +161,13 @@ class options extends moodleform {
      * @throws \dml_exception
      */
     public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
-        if (get_config('videotimeplugin_videojs', $fieldname . '_force')) {
+        $advanced = explode(',', get_config('videotimeplugin_videojs', 'advanced'));
 
+        if (in_array($fieldname, $advanced)) {
+            $mform->setAdvanced($fieldname);
+        }
+
+        if (get_config('videotimeplugin_videojs', $fieldname . '_force')) {
             if (in_array($fieldname, self::$optionfields)) {
                 $label = get_string('option_' . $fieldname, 'videotime');
             } else {

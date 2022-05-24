@@ -51,4 +51,41 @@ if ($ADMIN->fulltree) {
         get_string('option_width_help', 'videotime'), '', PARAM_INT));
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/width_force', get_string('force', 'videotime'),
         get_string('force_help', 'videotime'), '0'));
+
+    $settings->add(new admin_setting_heading('option_controls', get_string('default', 'videotime') . ' ' .
+        get_string('option_controls', 'videotime'), ''));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/controls', get_string('option_controls', 'videotime'),
+        get_string('option_controls_help', 'videotime'), '1'));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/controls_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+    $settings->add(new admin_setting_heading('option_loop', get_string('default', 'videotime') . ' ' .
+        get_string('option_loop', 'videotimeplugin_videojs'), ''));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/loop', get_string('option_loop', 'videotimeplugin_videojs'),
+        get_string('option_loop_help', 'videotimeplugin_videojs'), '1'));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/loop_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+    $settings->add(new admin_setting_heading('option_muted', get_string('default', 'videotime') . ' ' .
+        get_string('option_muted', 'videotime'), ''));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/muted', get_string('option_muted', 'videotime'),
+        get_string('option_muted_help', 'videotime'), '1'));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/muted_force', get_string('force', 'videotime'),
+        get_string('force_help', 'videotime'), '0'));
+
+    $settings->add(new admin_setting_configmultiselect(
+        'videotimeplugin_videojs/advanced',
+        new lang_string('advancedsettings', 'videotime'),
+        new lang_string('advancedsettings_help', 'videotime'),
+        [ ],
+        [
+            'responsive' => new lang_string('option_responsive', 'videotime'),
+            'controls' => new lang_string('option_controls', 'videotime'),
+            'height' => new lang_string('option_height', 'videotime'),
+            'muted' => new lang_string('option_muted', 'videotime'),
+            'option_loop' => new lang_string('option_loop', 'videotimeplugin_videojs'),
+            'speed' => new lang_string('option_speed', 'videotime'),
+            'width' => new lang_string('option_width', 'videotime'),
+        ]
+    ));
 }

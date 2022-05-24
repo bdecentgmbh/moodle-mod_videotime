@@ -283,7 +283,11 @@ function videotime_update_instance($moduleinstance, $mform = null) {
  */
 function videotime_delete_instance($id) {
     global $DB;
+    throw new \moodle_exception($id);
 
+    $DB->delete_records('videotime', array('id' => $id));
+
+    return true;
     $exists = $DB->get_record('videotime', array('id' => $id));
     if (!$exists) {
         return false;
@@ -299,8 +303,6 @@ function videotime_delete_instance($id) {
 
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
         component_callback("videotimeplugin_$name", 'delete_instance', [$id]);
-        $classname = "\\videotimetab_$name\\tab";
-        $classname::delete_settings($id);
     }
 
     $DB->delete_records('videotime', array('id' => $id));

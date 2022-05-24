@@ -1,14 +1,8 @@
 /*
- * @package    mod_videotime
- * @copyright  2021 bdecent gmbh <https://bdecent.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-/*
- * Load chapters into tab
+ * Video time player specific js
  *
- * @package    videotimetab_chapter
- * @module     videotimetab_chapter/loadchapters
+ * @package    videotimeplugin_videojs
+ * @module     videotimeplugin_videojs/videotime
  * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +24,7 @@ export default class VideoTime extends VideoTimeBase {
                 autoplay: instance.autoplay,
                 controls: instance.controls,
                 responsive: instance.responsive,
+                playbackRates: instance.speed ? [0.5, 0.75, 1, 1.25, 1.5, 2] : [1],
                 muted: instance.muted
             };
             if (!instance.responsive && instance.height && instance.width) {
@@ -37,6 +32,7 @@ export default class VideoTime extends VideoTimeBase {
                 options.width = instance.width;
             }
             Log.debug('Initializing VideoJS player with options:');
+            Log.debug(options);
             this.player = new Player(this.elementId, options);
 
             let url = new URL(window.location.href),
@@ -102,7 +98,6 @@ export default class VideoTime extends VideoTimeBase {
                 return true;
             }
 
-            this.player.on('loaded', () => {
                 let duration = this.getPlayer().duration(),
                     resumeTime = seconds;
                 // Duration is often a little greater than a resume time at the end of the video.
@@ -114,8 +109,7 @@ export default class VideoTime extends VideoTimeBase {
                     resumeTime = 0;
                 }
                 Log.debug('VIDEO_TIME resuming at ' + resumeTime);
-                this.player.setCurrentTime(resumeTime);
-            });
+                this.getPlayer().currentTime(resumeTime);
             return true;
         }).catch(Notification.exception);
 
@@ -263,5 +257,54 @@ export default class VideoTime extends VideoTimeBase {
         }
         Log.debug('Set start time:' + starttime);
         return this.player.currentTime();
+    }
+
+    /**
+     * Get play back rate
+     *
+     * @returns {Promise}
+     */
+    getDuration() {
+        return new Promise((resolve) => {
+            resolve(this.player.duration());
+            return true;
+        });
+    }
+
+    /**
+     * Get duration of video
+     *
+     * @returns {Promise}
+     */
+    getPlaybackRate() {
+        return new Promise((resolve) => {
+            resolve(this.player.playbackRate());
+            return true;
+        });
+    }
+
+    /**
+     * Set current time of player
+     *
+     * @param {float} secs time
+     * @returns {Promise}
+     */
+    setCurrentPosition(secs) {
+        return new Promise((resolve) => {
+            resolve(this.player.currentTime(secs));
+            return true;
+        });
+    }
+
+    /**
+     * Get current time of player
+     *
+     * @returns {Promise}
+     */
+    getCurrentPosition() {
+        return new Promise((resolve) => {
+            resolve(this.player.currentTime());
+            return true;
+        });
     }
 }

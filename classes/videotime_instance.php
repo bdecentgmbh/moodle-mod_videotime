@@ -336,6 +336,12 @@ class videotime_instance implements \renderable, \templatable {
      * @throws \dml_exception
      */
     public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
+        $advanced = array_merge(explode(',', get_config('videotimeplugin_pro', 'advanced'))
+            , explode(',', get_config('videotimeplugin_repository', 'advanced')));
+
+        if (in_array($fieldname, $advanced)) {
+            $mform->setAdvanced($fieldname);
+        }
         if (get_config('videotime', $fieldname . '_force')) {
 
             if (in_array($fieldname, self::$optionfields)) {

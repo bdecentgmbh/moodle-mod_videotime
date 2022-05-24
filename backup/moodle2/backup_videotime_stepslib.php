@@ -83,32 +83,15 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'color',
             'title',
             'transparent',
-            // 'dnt',
-            // 'autopause',
-            // 'background',
-            // 'controls',
-            // 'pip',
             'responsive',
             'label_mode',
             'viewpercentgrade',
-            // 'next_activity_button',
-            // 'next_activity_id',
-            // 'next_activity_auto',
             'resume_playback',
             'preview_picture',
-            // 'show_description',
-            // 'show_title',
-            // 'show_tags',
-            // 'show_duration',
-            // 'show_viewed_duration',
-            // 'columns',
-            // 'preventfastforwarding',
             'enabletabs'
         ]);
 
-        $vimeooptions = new backup_nested_element('vimeo_options', ['id'], [
-            'id',
-            'videotime',
+        $vimeooptions = new backup_nested_element('vimeo_options', [], [
             'height',
             'maxheight',
             'maxwidth',
@@ -122,26 +105,6 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         // Build the tree.
         $module->add_child($vimeooptions);
 
-        /*
-        if (videotime_has_pro()) {
-            $sessions = new backup_nested_element('sessions');
-
-            $session = new backup_nested_element('session', ['id'], [
-                'id',
-                'module_id',
-                'user_id',
-                'time',
-                'timestarted',
-                'state',
-                'percent_watch'
-            ]);
-
-            // Build the tree.
-            $module->add_child($sessions);
-            $sessions->add_child($session);
-        }
-         */
-
         // Define elements for tab subplugin settings.
         $this->add_subplugin_structure('videotimetab', $module, true);
 
@@ -152,17 +115,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
         $vimeooptions->set_source_table('videotime_vimeo_embed', ['videotime' => backup::VAR_ACTIVITYID]);
 
-        /*
-        if (videotime_has_pro()) {
-            if ($userinfo) {
-            }
-
-            // Define id annotations.
-            $session->annotate_ids('user', 'user_id');
-        }
-
-        $module->annotate_ids('course_module', 'next_activity_id');
-         */
+        //$module->annotate_ids('course_module', 'next_activity_id');
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.

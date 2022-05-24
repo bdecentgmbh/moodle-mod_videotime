@@ -29,6 +29,8 @@ require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 $string['activity_name'] = 'Activity name';
 $string['activity_name_help'] = 'Name displayed in course for this Video Time activity module.';
+$string['advancedsettings'] = 'Advanced settings';
+$string['advancedsettings_help'] = 'Select all elements that should be displayed as advanced.';
 $string['albums'] = 'Albums';
 $string['api_not_authenticated'] = 'Vimeo API is not authenticated.';
 $string['api_not_configured'] = 'Vimeo API is not configured.';

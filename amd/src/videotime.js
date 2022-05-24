@@ -169,7 +169,7 @@ define([
                 return true;
             }
 
-            this.getPlayer().getDuration().then((duration) => {
+            this.getDuration().then((duration) => {
                 let resumeTime = seconds;
                 // Duration is often a little greater than a resume time at the end of the video.
                 // A user may have watched 100 seconds when the video ends, but the duration may be
@@ -181,7 +181,7 @@ define([
                 }
 
                 Log.debug('VIDEO_TIME resuming at ' + resumeTime);
-                this.player.setCurrentTime(resumeTime);
+                this.currentTime(this.resumeTime);
 
                 return true;
             }).catch(Notification.exception);
@@ -485,7 +485,7 @@ define([
         let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
             this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
-            return this.player.setCurrentTime(this.resumeTime);
+            this.currentTime(this.resumeTime);
         }
         return this.player.getCurrentTime();
     };
@@ -530,6 +530,43 @@ define([
                 }).fail(Notification.exception);
             }
         }.bind(this));
+    };
+
+    /**
+     * Get play back rate
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getPlaybackRate = function() {
+        return this.player.getPlaybackRate();
+    };
+
+    /**
+     * Get duration of video
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getDuration = function() {
+        return this.player.getDuration();
+    };
+
+    /**
+     * Set current time of player
+     *
+     * @param {float} secs time
+     * @returns {Promise}
+     */
+    VideoTime.prototype.setCurrentPosition = function(secs) {
+        return this.player.setCurrentTime(secs);
+    };
+
+    /**
+     * Get current time of player
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getCurrentPosition = function() {
+        return this.player.getCurrentTime();
     };
 
     return VideoTime;

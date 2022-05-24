@@ -37,11 +37,15 @@ class backup_videotimeplugin_videojs_subplugin extends backup_subplugin {
         // Create XML elements.
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
-        $subplugintablesettings = new backup_nested_element('videotimeplugin_videojs', null, [
+        $subplugintablesettings = new backup_nested_element('videojs_settings', null, [
             'responsive',
             'autoplay',
             'controls',
             'muted',
+            'height',
+            'option_loop',
+            'speed',
+            'width',
         ]);
 
         // Connect XML elements into the tree.

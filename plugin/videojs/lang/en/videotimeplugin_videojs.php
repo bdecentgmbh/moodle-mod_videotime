@@ -26,3 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Video Time VideoJS Player';
 $string['privacy:metadata'] = 'The Video Time VideoJS Player plugin does not store any personal data.';
+$string['option_loop'] = 'Loop';
+$string['option_loop_help'] = 'Causes the video to start over as soon as it ends.';

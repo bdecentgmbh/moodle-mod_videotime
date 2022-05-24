@@ -48,11 +48,9 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
 
         // A chance for tab subplugins to set up their data.
         $this->add_subplugin_structure('videotimetab', $videotime);
-
-        // A chance for plugin subplugins to set up their data.
         $this->add_subplugin_structure('videotimeplugin', $videotime);
 
-        $paths[] = new restore_path_element('vimeooptions', '/activity/videotime/vimeoembed');
+        $paths[] = new restore_path_element('vimeooptions', '/activity/videotime/vimeo_options');
 
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
@@ -101,14 +99,13 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
      *
      * @param array $data data
      */
-    protected function process_videotime_vimeooptions($data) {
+    protected function process_vimeooptions($data) {
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
+        $data->videotime = $this->get_new_parentid('videotime');
 
-        $newitemid = $DB->insert_record('videotime_vimeo_embed', $data);
-        $this->set_mapping('videotime_vimeo_embed', $oldid, $newitemid);
+        $DB->insert_record('videotime_vimeo_embed', $data);
     }
 
 

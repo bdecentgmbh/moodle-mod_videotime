@@ -45,7 +45,7 @@ class restore_videotimeplugin_videojs_subplugin extends restore_subplugin {
         $paths = array();
 
         $elename = $this->get_namefor('');
-        $elepath = $this->get_pathfor('/videotimeplugin_videojs');
+        $elepath = $this->get_pathfor('/videojs_settings');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths;
@@ -59,7 +59,7 @@ class restore_videotimeplugin_videojs_subplugin extends restore_subplugin {
         global $DB;
 
         $data = (object)$data;
-        $oldvideotime = $data->videotime;
         $data->videotime = $this->get_new_parentid('videotime');
+        $DB->insert_record('videotimeplugin_videojs', $data);
     }
 }
