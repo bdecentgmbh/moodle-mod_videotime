@@ -181,7 +181,7 @@ define([
                 }
 
                 Log.debug('VIDEO_TIME resuming at ' + resumeTime);
-                this.currentTime(this.resumeTime);
+                this.setCurrentPosition(this.resumeTime);
 
                 return true;
             }).catch(Notification.exception);
