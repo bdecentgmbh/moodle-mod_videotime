@@ -35,7 +35,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="videotime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="autoplay" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Automatically start playback of the video. Note that this won’t work on some devices."/>
+        <FIELD NAME="autoplay" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Automatically start playback of the video. Note that this won’t work on some devices."/>
         <FIELD NAME="byline" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Show the byline on the video."/>
         <FIELD NAME="color" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="00adef" SEQUENCE="false" COMMENT="Specify the color of the video controls. Colors may be overridden by the embed settings of the video."/>
         <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The exact height of the video. Defaults to the height of the largest available version of the video."/>
