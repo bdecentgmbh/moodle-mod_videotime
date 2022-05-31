@@ -144,7 +144,10 @@ class videotime_instance implements \renderable, \templatable {
         $this->uniqueid = uniqid();
 
         $instancerecord = (array) $instancerecord;
-        if (mod_videotime_get_vimeo_id_from_link($instancerecord['vimeo_url'])) {
+        if (
+            mod_videotime_get_vimeo_id_from_link($instancerecord['vimeo_url'])
+            || empty(get_config('videotimeplugin_videojs', 'enabled'))
+        ) {
             $instancerecord = $instancerecord + (array) $DB->get_record(
                 'videotime_vimeo_embed',
                 ['videotime' => $instancerecord['id']]
@@ -522,6 +525,7 @@ class videotime_instance implements \renderable, \templatable {
             'next_activity_button' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'next_activity_id' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
             'next_activity_auto' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'option_loop' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'resume_playback' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'preview_picture' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
             'show_description' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
@@ -550,7 +554,10 @@ class videotime_instance implements \renderable, \templatable {
      * @return object
      */
     public function embed_player($record) {
-        if (mod_videotime_get_vimeo_id_from_link($record->vimeo_url)) {
+        if (
+            mod_videotime_get_vimeo_id_from_link($record->vimeo_url)
+            || empty(get_config('videotimeplugin_videojs', 'enabled'))
+        ) {
             return new \mod_videotime\vimeo_embed($record);
         } else {
             return new \videotimeplugin_videojs\video_embed($record);

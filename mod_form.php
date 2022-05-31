@@ -67,7 +67,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
 
             $group = [];
-            $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
+            $group[] = $mform->createElement('url', 'vimeo_url', get_string('vimeo_url', 'videotime'));
             if (!$needssetup) {
                 $group[] = $mform->createElement('button', 'pull_from_vimeo', get_string('pull_from_vimeo', 'videotime'));
             }
@@ -126,6 +126,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'enabletabs', get_string('enabletabs', 'videotime'));
         $mform->setType('enabletabs', PARAM_BOOL);
+        $mform->setDefault('enabletabs', get_config('videotime', 'enabletabs'));
 
         foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
             if (!empty(get_config('videotimetab_' . $name, 'enabled'))) {

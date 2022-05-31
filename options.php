@@ -64,7 +64,10 @@ $PAGE->set_context($modulecontext);
 
 $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 
-if (mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)) {
+if (
+    mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
+    || empty(get_config('videotimeplugin_videojs', 'enabled'))
+) {
     $form = new \mod_videotime\form\options($PAGE->url->out(), $moduleinstance);
 } else {
     $form = new \videotimeplugin_videojs\form\options($PAGE->url->out(), $moduleinstance);

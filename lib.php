@@ -179,7 +179,10 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
-    if (mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)) {
+    if (
+        mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
+        || empty(get_config('videotimeplugin_videojs', 'enabled'))
+    ) {
         $DB->insert_record('videotime_vimeo_embed', ['id' => null, 'videotime' => $moduleinstance->id]);
     }
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
@@ -253,7 +256,10 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $completiontimeexpected
     );
 
-    if (mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)) {
+    if (
+        mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
+        || empty(get_config('videotimeplugin_videojs', 'enabled'))
+    ) {
         if ($record = $DB->get_record('videotime_vimeo_embed', ['videotime' => $moduleinstance->id])) {
             $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) $record;
             $DB->update_record('videotime_vimeo_embed', $record);
@@ -493,6 +499,9 @@ function videotime_has_pro() {
     if (isset($CFG->disable_videotime_pro) && $CFG->disable_videotime_pro) {
         return false;
     }
+    if (!get_config('videotimeplugin_pro', 'enabled')) {
+        return false;
+    }
     return array_key_exists('pro', core_component::get_plugin_list('videotimeplugin'));
 }
 
@@ -505,6 +514,9 @@ function videotime_has_repository() {
     global $CFG;
 
     if (isset($CFG->disable_videotime_repository) && $CFG->disable_videotime_repository) {
+        return false;
+    }
+    if (!get_config('videotimeplugin_repository', 'enabled')) {
         return false;
     }
     return array_key_exists('repository', core_component::get_plugin_list('videotimeplugin'));
@@ -831,6 +843,7 @@ function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
 /**
  * Return array of the settings that are forced
  *
+ * @param string $component component to us for plugins
  * @return array Settings that are forced
  */
 function videotime_forced_settings($component = 'videotime') {

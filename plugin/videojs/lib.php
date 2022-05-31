@@ -37,7 +37,10 @@ use mod_videotime\videotime_instance;
 function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null) {
     global $DB;
 
-    if (mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)) {
+    if (
+        mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
+        || empty(get_config('videotimeplugin_videojs', 'enabled'))
+    ) {
         return;
     }
 
@@ -74,6 +77,10 @@ function videotimeplugin_videojs_delete_instance($id) {
  */
 function videotimeplugin_videojs_load_settings($instance) {
     global $DB;
+
+    if (empty(get_config('videotimeplugin_videojs', 'enabled'))) {
+        return $instance;
+    }
 
     $forced = videotime_forced_settings('videotimeplugin_videojs');
 

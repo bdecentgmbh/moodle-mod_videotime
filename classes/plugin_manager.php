@@ -75,7 +75,10 @@ class plugin_manager {
 
         foreach ($names as $name => $path) {
             $classname = '\\' . $this->subtype . '_' . $name . '\\tab';
-            if (!empty(get_config($this->subtype . '_' . $name, 'enabled')) && empty($classname::added_dependencies())) {
+            if (
+                !empty(get_config($this->subtype . '_' . $name, 'enabled'))
+                && (!class_exists($classname) || empty($classname::added_dependencies()))
+            ) {
                 $idx = get_config($this->subtype . '_' . $name, 'sortorder');
                 if (!$idx) {
                     $idx = 0;
@@ -155,11 +158,12 @@ class plugin_manager {
             $row[] = get_config($this->subtype . '_' . $plugin, 'version');
 
             $classname = '\\' . $this->subtype . '_' . $plugin . '\\tab';
-            $visible = !empty(get_config($this->subtype . '_' .$plugin, 'enabled')) && empty($classname::added_dependencies());
+            $visible = !empty(get_config($this->subtype . '_' .$plugin, 'enabled')) &&
+                (!class_exists($classname) || empty($classname::added_dependencies()));
 
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
-            } else if ($classname::added_dependencies()) {
+            } else if (class_exists($classname) && $classname::added_dependencies()) {
                 $row[] = '';
             } else {
                 $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
@@ -185,7 +189,7 @@ class plugin_manager {
                 $row[] = '&nbsp;';
             }
 
-            $row[] = $classname::added_dependencies();
+            $row[] = class_exists($classname) ? $classname::added_dependencies() : '';
 
             $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('uninstallplugin', 'core_admin'));
 

@@ -44,6 +44,7 @@ class backup_videotimeplugin_videojs_subplugin extends backup_subplugin {
             'muted',
             'height',
             'option_loop',
+            'playsinline',
             'speed',
             'width',
         ]);

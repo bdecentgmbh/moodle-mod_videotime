@@ -115,8 +115,6 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
         $vimeooptions->set_source_table('videotime_vimeo_embed', ['videotime' => backup::VAR_ACTIVITYID]);
 
-        //$module->annotate_ids('course_module', 'next_activity_id');
-
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.

@@ -44,7 +44,7 @@
     <div class="videotime-embed video-resize">
     <video class="video-js"
         id="vimeo-embed-{{uniqueid}}"
-        controls
+        controls {{# playsinline }} playsinline {{/ playsinline }}
 >
          <source src="{{ vimeo_url }}" type="video/mp4" />
     </video>

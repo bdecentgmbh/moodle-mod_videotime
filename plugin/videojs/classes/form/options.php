@@ -24,6 +24,8 @@
 
 namespace videotimeplugin_videojs\form;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core_component;
 use mod_videotime\videotime_instance;
 use moodleform;
@@ -129,6 +131,12 @@ class options extends moodleform {
         $mform->addHelpButton('muted', 'option_muted', 'videotime');
         $mform->setDefault('muted', get_config('videotime', 'muted'));
         self::create_additional_field_form_elements('muted', $mform);
+
+        $mform->addElement('advcheckbox', 'playsinline', get_string('option_playsinline', 'videotime'));
+        $mform->setType('playsinline', PARAM_BOOL);
+        $mform->addHelpButton('playsinline', 'option_playsinline', 'videotime');
+        $mform->setDefault('playsinline', get_config('videotime', 'playsinline'));
+        self::create_additional_field_form_elements('playsinline', $mform);
 
         $mform->addElement('advcheckbox', 'speed', get_string('option_speed', 'videotime'));
         $mform->setType('speed', PARAM_BOOL);
