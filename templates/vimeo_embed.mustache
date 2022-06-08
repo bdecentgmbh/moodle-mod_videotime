@@ -31,7 +31,7 @@
     {
         "responsive": true,
         "cmid": 3,
-        "haspro": false,
+        "haspro": 0,
         "interval": 2.5,
         "uniqueid": "60dccff8871f6",
         "plugins": true,
@@ -51,7 +51,7 @@
 </div>
 {{#js}}
     require(['mod_videotime/videotime'], function(VideoTime) {
-        let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
+        var v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
         {{#haspro}}
             {{! Register pro JS plugins }}
             {{# plugins }}

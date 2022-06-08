@@ -31,8 +31,8 @@
     {
         "responsive": true,
         "cmid": 3,
-        "haspro": false,
-        "interval", 2.5,
+        "haspro": 0,
+        "interval": 2.5,
         "uniqueid": "60dccff8871f6",
         "video_description": "UX design tips",
         "vimeo_url": "https://vimeo.com/323424"
@@ -48,7 +48,7 @@
     <video class="video-js"
         id="vimeo-embed-{{uniqueid}}"
         controls {{# playsinline }} playsinline {{/ playsinline }}
->
+    >
          <source src="{{ vimeo_url }}" type="video/mp4" />
     </video>
     </div>
@@ -59,8 +59,7 @@
 {{/ instance }}
 {{#js}}
     require(['videotimeplugin_videojs/videotime'], function(VideoTime) {
-        console.log(['vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}}]);
-        let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
+        var v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
         {{#haspro}}
             {{! Register pro JS plugins }}
             {{# plugins }}
@@ -72,7 +71,7 @@
                 ], function(
                     PreventFastForwarding
                 ) {
-                    v.registerPlugin(new PreventFastForwarding);
+                    v.registerPlugin(new PreventFastForwarding());
                     v.initialize();
                 });
             {{/ plugins }}
