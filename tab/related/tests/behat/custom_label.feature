@@ -1,5 +1,5 @@
 @mod @mod_videotime @videotimetab_related
-Feature: Customize videotime related tab label
+Feature: Customize related tab label
   In order to create a video assignment I need to customize related tab label
   As an teacher
   I need change related activites tab label

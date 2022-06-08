@@ -35,5 +35,5 @@ Feature: Customize videotime related tab label
       | Video Time Related activities tab | 1          |
     When I press "Save and display"
     And I follow "Related activities"
-    Then I should see "Page1" in the "region-main" "region"
-    And I should not see "Page2" in the "region-main" "region"
+    Then I should see "Page1" in the ".videotimetabs" "css_element"
+    And I should not see "Page2" in the ".videotimetabs" "css_element"
