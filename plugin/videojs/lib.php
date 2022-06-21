@@ -96,3 +96,27 @@ function videotimeplugin_videojs_load_settings($instance) {
 
     return $forced + (array) $instance + (array) get_config('videotimeplugin_videojs');
 }
+
+/**
+ * Loads plugin settings into module record
+ *
+ * @param object $instance the module record.
+ * @param array $forcedsettings current forced settings array
+ * @return array
+ */
+function videotimeplugin_videojs_forced_settings($instance, $forcedsettings) {
+    global $DB;
+
+    if (empty(get_config('videotimeplugin_videojs', 'enabled'))) {
+        return $forcedsettings;
+    }
+
+    $instance = (array) $instance;
+    if (
+        !mod_videotime_get_vimeo_id_from_link($instance['vimeo_url'])
+    ) {
+        return (array) get_config('videotimeplugin_videojs', 'force') + (array) $forcedsettings;
+    }
+
+    return $forcedsettings;
+}

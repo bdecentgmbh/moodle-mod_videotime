@@ -120,9 +120,9 @@ class options extends moodleform {
         $mform->setDefault('controls', get_config('videotime', 'controls'));
         self::create_additional_field_form_elements('autoplay', $mform);
 
-        $mform->addElement('advcheckbox', 'option_loop', get_string('option_loop', 'videotimeplugin_videojs'));
+        $mform->addElement('advcheckbox', 'option_loop', get_string('option_loop', 'videotime'));
         $mform->setType('option_loop', PARAM_BOOL);
-        $mform->addHelpButton('option_loop', 'option_loop', 'videotimeplugin_videojs');
+        $mform->addHelpButton('option_loop', 'option_loop', 'videotime');
         $mform->setDefault('option_loop', get_config('videotimeplugin_videojs', 'loop'));
         self::create_additional_field_form_elements('option_loop', $mform);
 
@@ -170,12 +170,13 @@ class options extends moodleform {
      */
     public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
         $advanced = explode(',', get_config('videotimeplugin_videojs', 'advanced'));
+        $forced = explode(',', get_config('videotimeplugin_videojs', 'forced'));
 
         if (in_array($fieldname, $advanced)) {
             $mform->setAdvanced($fieldname);
         }
 
-        if (get_config('videotimeplugin_videojs', $fieldname . '_force')) {
+        if (in_array($fieldname, $forced)) {
             if (in_array($fieldname, self::$optionfields)) {
                 $label = get_string('option_' . $fieldname, 'videotime');
             } else {

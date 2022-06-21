@@ -849,13 +849,7 @@ function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
 function videotime_forced_settings($component = 'videotime') {
 
     $config = (array) get_config($component);
-    $forced = [];
-
-    foreach ($config as $key => $value) {
-        if (!empty($config["{$key}_force"])) {
-            $forced[$key] = $value;
-        }
-    }
+    $forced = array_intersect($config, explode(',', $config['forced'] ?? ''));
 
     return $forced;
 }
