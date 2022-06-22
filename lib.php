@@ -516,7 +516,7 @@ function videotime_has_repository() {
     if (isset($CFG->disable_videotime_repository) && $CFG->disable_videotime_repository) {
         return false;
     }
-    if (!get_config('videotimeplugin_repository', 'enabled')) {
+    if (!get_config('videotimeplugin_repository', 'enabled') || !videotime_has_pro()) {
         return false;
     }
     return array_key_exists('repository', core_component::get_plugin_list('videotimeplugin'));

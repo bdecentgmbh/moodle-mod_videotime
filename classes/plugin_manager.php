@@ -35,6 +35,7 @@ use moodle_url;
 use pix_icon;
 
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 /**
  * Class that handles the display and configuration of the list of tab plugins.
@@ -78,6 +79,7 @@ class plugin_manager {
             if (
                 !empty(get_config($this->subtype . '_' . $name, 'enabled'))
                 && (!class_exists($classname) || empty($classname::added_dependencies()))
+                && (($this->subtype != 'videotimeplugin') || ($name != 'repository') || \videotime_has_pro())
             ) {
                 $idx = get_config($this->subtype . '_' . $name, 'sortorder');
                 if (!$idx) {
@@ -159,7 +161,8 @@ class plugin_manager {
 
             $classname = '\\' . $this->subtype . '_' . $plugin . '\\tab';
             $visible = !empty(get_config($this->subtype . '_' .$plugin, 'enabled')) &&
-                (!class_exists($classname) || empty($classname::added_dependencies()));
+                (!class_exists($classname) || empty($classname::added_dependencies())) &&
+                (($plugin != 'repository') || videotime_has_pro());
 
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
