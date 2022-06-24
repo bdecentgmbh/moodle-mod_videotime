@@ -170,18 +170,6 @@ class videotime_instance implements \renderable, \templatable {
     public function __get($name) {
         if (isset($this->record->$name)) {
             if ($this->is_field_forced($name)) {
-                foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $plugin) {
-                    if (!empty(component_callback(
-                        "videotimeplugin_$plugin",
-                        'force_settings',
-                        [$this->record,
-                        $this->forcesettings],
-                        $this->forcesettings
-                    ))) {
-                        return get_config("videotimeplugin_$plugin", $name);
-                    }
-                }
-
                 return $this->get_forced_value($name);
             }
 
@@ -219,16 +207,14 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function get_force_settings() : array {
         if (is_null($this->forcesettings)) {
-            $component = 'videotime';
-            $config = (array) get_config($component);
-            $this->forcesettings = array_fill_keys(explode(',', get_config($component, 'forced')), true)
-                + array_fill_keys(array_keys($config), false);
+            $config =get_config('videotime', 'forced');
+            $this->forcesettings = $config ? array_fill_keys(explode(',', $config), true) : [];
         }
 
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             $this->forcesettings = component_callback(
                 "videotimeplugin_$name",
-                'force_settings',
+                'forced_settings',
                 [$this->record, $this->forcesettings],
                 $this->forcesettings
             );
@@ -259,11 +245,11 @@ class videotime_instance implements \renderable, \templatable {
     public function get_forced_value($fieldname) {
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $plugin) {
             if (!empty(component_callback(
-                "videotimeplugin_$plugin", 'force_settings',
+                "videotimeplugin_$plugin", 'forced_settings',
                 [$this->record, $this->forcesettings],
                 $this->forcesettings
-            ))) {
-                return get_config("videotimeplugin_$plugin", $name);
+            )[$fieldname])) {
+                return get_config("videotimeplugin_$plugin", $fieldname);
             }
         }
 
@@ -321,13 +307,10 @@ class videotime_instance implements \renderable, \templatable {
         $record = clone $this->record;
 
         if ($useforcedsettings) {
-            foreach ($this->get_force_settings() as $name => $enabled) {
-                $fieldname = str_replace('_force', '', $name);
-                if (isset($record->$fieldname)) {
-                    // If option is globally forced, use the default instead.
-                    if ($this->is_field_forced($fieldname)) {
-                        $record->$fieldname = get_config('videotime', $fieldname);
-                    }
+            foreach ($this->get_force_settings() as $fieldname => $enabled) {
+                // If option is globally forced, use the default instead.
+                if ($this->is_field_forced($fieldname)) {
+                    $record->$fieldname = $this->get_forced_value($fieldname);
                 }
             }
         }
@@ -368,10 +351,10 @@ class videotime_instance implements \renderable, \templatable {
      * @throws \dml_exception
      */
     public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
-        $advanced = array_merge(explode(',', get_config('videotimeplugin_pro', 'advanced'))
-            , explode(',', get_config('videotimeplugin_repository', 'advanced')));
-        $forced = array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
-            , explode(',', get_config('videotimeplugin_repository', 'forced')));
+        $advanced = array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'advanced'))
+            , explode(',', get_config('videotimeplugin_repository', 'advanced'))));
+        $forced = array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
+            , explode(',', get_config('videotimeplugin_repository', 'forced'))));
 
         if (in_array($fieldname, $advanced)) {
             $mform->setAdvanced($fieldname);
@@ -384,8 +367,8 @@ class videotime_instance implements \renderable, \templatable {
                 $label = get_string($fieldname, 'videotime');
             }
 
-            $value = ((array) get_config('videotime') + (array) get_config('videotimeplugin_pro')
-                + (array) get_config('videotimeplugin_repository'))[$fieldname];
+            $value = ((array) get_config('videotimeplugin_repository') + (array) get_config('videotimeplugin_pro')
+                + (array) get_config('videotime'))[$fieldname];
             if ($group) {
                 $element = null;
                 foreach ($group as $element) {
