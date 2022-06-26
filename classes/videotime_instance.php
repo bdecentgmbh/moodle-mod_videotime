@@ -207,7 +207,7 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function get_force_settings() : array {
         if (is_null($this->forcesettings)) {
-            $config =get_config('videotime', 'forced');
+            $config = get_config('videotime', 'forced');
             $this->forcesettings = $config ? array_fill_keys(explode(',', $config), true) : [];
         }
 
