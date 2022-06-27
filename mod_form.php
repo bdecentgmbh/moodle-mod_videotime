@@ -88,7 +88,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $PAGE->requires->js_call_amd('videotimeplugin_repository/mod_form', 'init',
                 [videotime_is_totara(), $this->context->id]);
         } else {
-            $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
+            $mform->addElement('url', 'vimeo_url', get_string('vimeo_url', 'videotime'), ['size' => 100]);
             $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');
         }
 
