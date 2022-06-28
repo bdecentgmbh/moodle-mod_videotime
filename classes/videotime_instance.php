@@ -347,19 +347,35 @@ class videotime_instance implements \renderable, \templatable {
      * @param string $fieldname
      * @param \MoodleQuickForm $mform
      * @param array $group
+     * @param stdClass $instance
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
+    public static function create_additional_field_form_elements(
+        string $fieldname,
+        \MoodleQuickForm $mform,
+        $group = null,
+        $instance = null
+    ) {
         $advanced = array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'advanced'))
             , explode(',', get_config('videotimeplugin_repository', 'advanced'))));
-        $forced = array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
-            , explode(',', get_config('videotimeplugin_repository', 'forced'))));
+        $forced = array_fill_keys(array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
+            , explode(',', get_config('videotimeplugin_repository', 'forced')))), true);
+        if (!empty($instance)) {
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                $forced = component_callback(
+                    "videotimeplugin_$name",
+                    'forced_settings',
+                    [$instance, $forced],
+                    $forced
+                );
+            }
+        }
 
         if (in_array($fieldname, $advanced)) {
             $mform->setAdvanced($fieldname);
         }
-        if (in_array($fieldname, $forced)) {
+        if (key_exists($fieldname, $forced)) {
 
             if (in_array($fieldname, self::$optionfields)) {
                 $label = get_string('option_' . $fieldname, 'videotime');

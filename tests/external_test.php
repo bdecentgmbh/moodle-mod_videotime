@@ -56,6 +56,7 @@ class external_test extends advanced_testcase {
         $this->videotimeinstance = $this->getDataGenerator()->create_module('videotime', [
             'course' => $this->course->id,
             'autoplay' => 1,
+            'vimeo_embed' => 'https://vimeo.com/253989945',
             'responsive' => 1
         ]);
         $this->student = $this->getDataGenerator()->create_user();

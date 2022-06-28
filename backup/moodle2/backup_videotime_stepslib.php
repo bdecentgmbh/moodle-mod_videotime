@@ -91,19 +91,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'enabletabs'
         ]);
 
-        $vimeooptions = new backup_nested_element('vimeo_options', [], [
-            'height',
-            'maxheight',
-            'maxwidth',
-            'muted',
-            'width',
-            'playsinline',
-            'portrait',
-            'speed',
-        ]);
-
         // Build the tree.
-        $module->add_child($vimeooptions);
 
         // Define elements for tab subplugin settings.
         $this->add_subplugin_structure('videotimetab', $module, true);
