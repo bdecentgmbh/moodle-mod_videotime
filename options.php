@@ -66,11 +66,11 @@ $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 
 if (
     mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
-    || empty(get_config('videotimeplugin_videojs', 'enabled'))
+    && !empty(get_config('videotimeplugin_vimeo', 'enabled'))
 ) {
-    $form = new \mod_videotime\form\options($PAGE->url->out(), $moduleinstance);
-} else {
-    $form = new \videotimeplugin_videojs\form\options($PAGE->url->out(), $moduleinstance);
+    $form = new \mod_videotime\form\options($PAGE->url->out(), ['instance' => $moduleinstance->to_record()]);
+} else if (!empty(get_config('videotimeplugin_videojs', 'enabled'))) {
+    $form = new \videotimeplugin_videojs\form\options($PAGE->url->out(), ['instance' => $moduleinstance->to_record()]);
 }
 
 $returnurl = new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]);
