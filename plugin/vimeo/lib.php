@@ -84,7 +84,7 @@ function videotimeplugin_vimeo_load_settings($instance) {
 
     if (get_config('videotimeplugin_vimeo', 'forced')) {
         $forced = array_intersect_key(
-            get_config('videotimeplugin_vimeo'),
+            (array) get_config('videotimeplugin_vimeo'),
             array_fill_keys(explode(',', get_config('videotimeplugin_vimeo', 'forced')), true)
         );
     } else {
