@@ -30,44 +30,34 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
 if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_heading('defaultsettings', get_string('default', 'videotime') . ' ' .
+        get_string('settings'), ''));
 
-    $settings->add(new admin_setting_heading('option_responsive', get_string('default', 'videotime') . ' ' .
-        get_string('option_responsive', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/responsive', get_string('option_responsive', 'videotime'),
         get_string('option_responsive_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_height', get_string('default', 'videotime') . ' ' .
-        get_string('option_height', 'videotime'), ''));
     $settings->add(new admin_setting_configtext('videotimeplugin_videojs/height', get_string('option_height', 'videotime'),
         get_string('option_height_help', 'videotime'), '', PARAM_INT));
 
-    $settings->add(new admin_setting_heading('option_width', get_string('default') . ' ' .
-        get_string('option_width', 'videotime'), ''));
     $settings->add(new admin_setting_configtext('videotimeplugin_videojs/width', get_string('option_width', 'videotime'),
         get_string('option_width_help', 'videotime'), '', PARAM_INT));
 
-    $settings->add(new admin_setting_heading('option_controls', get_string('default', 'videotime') . ' ' .
-        get_string('option_controls', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/controls', get_string('option_controls', 'videotime'),
         get_string('option_controls_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_loop', get_string('default', 'videotime') . ' ' .
-        get_string('option_loop', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/loop', get_string('option_loop', 'videotime'),
         get_string('option_loop_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_muted', get_string('default', 'videotime') . ' ' .
-        get_string('option_muted', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/muted', get_string('option_muted', 'videotime'),
         get_string('option_muted_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_playsinline', get_string('default', 'videotime') . ' ' .
-        get_string('option_playsinline', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/playsinline', get_string('option_playsinline', 'videotime'),
         get_string('option_playsinline_help', 'videotime'), '1'));
+
+    $settings->add(new admin_setting_heading('forcedhdr', get_string('forcedsettings', 'videotime'), ''));
 
     $options = [
         'responsive' => new lang_string('option_responsive', 'videotime'),
@@ -87,6 +77,8 @@ if ($ADMIN->fulltree) {
         [ ],
         $options
     ));
+
+    $settings->add(new admin_setting_heading('advancedhdr', get_string('advancedsettings', 'videotime'), ''));
 
     $settings->add(new admin_setting_configmultiselect(
         'videotimeplugin_videojs/advanced',

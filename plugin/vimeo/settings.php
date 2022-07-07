@@ -30,58 +30,32 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
 if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_heading('defaultsettings', get_string('default', 'videotime') . ' ' .
+        get_string('settings'), ''));
 
-    $settings->add(new admin_setting_heading('option_responsive', get_string('default', 'videotime') . ' ' .
-        get_string('option_responsive', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/responsive', get_string('option_responsive', 'videotime'),
         get_string('option_responsive_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_height', get_string('default', 'videotime') . ' ' .
-        get_string('option_height', 'videotime'), ''));
     $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/height', get_string('option_height', 'videotime'),
         get_string('option_height_help', 'videotime'), '', PARAM_INT));
 
-    $settings->add(new admin_setting_heading('option_width', get_string('default') . ' ' .
-        get_string('option_width', 'videotime'), ''));
     $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/width', get_string('option_width', 'videotime'),
         get_string('option_width_help', 'videotime'), '', PARAM_INT));
 
-    $settings->add(new admin_setting_heading('option_color', new lang_string('default') . ' ' .
-        new lang_string('option_color', 'videotime'), ''));
     $settings->add(new admin_setting_configtext('videotimeplugin_pro/color', new lang_string('option_color', 'videotime'),
         new lang_string('option_color_help', 'videotime'), '00adef', PARAM_TEXT));
 
-    $settings->add(new admin_setting_heading('option_controls', get_string('default', 'videotime') . ' ' .
-        get_string('option_controls', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_vimeo/controls', get_string('option_controls', 'videotime'),
         get_string('option_controls_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_autoplay', get_string('default', 'videotime') . ' ' .
-        get_string('option_autoplay', 'videotime'), ''));
-    $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/autoplay', get_string('option_autoplay', 'videotime'),
-        get_string('option_autoplay_help', 'videotime'), '1'));
-
-    $settings->add(new admin_setting_heading('option_byline', get_string('default', 'videotime') . ' ' .
-        get_string('option_byline', 'videotime'), ''));
-    $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/byline', get_string('option_byline', 'videotime'),
-        get_string('option_byline_help', 'videotime'), '1'));
-
-    $settings->add(new admin_setting_heading('option_loop', get_string('default', 'videotime') . ' ' .
-        get_string('option_loop', 'videotimeplugin_vimeo'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/loop', get_string('option_loop', 'videotimeplugin_vimeo'),
         get_string('option_loop_help', 'videotimeplugin_vimeo'), '1'));
 
-    $settings->add(new admin_setting_heading('option_muted', get_string('default', 'videotime') . ' ' .
-        get_string('option_muted', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_vimeo/muted', get_string('option_muted', 'videotime'),
         get_string('option_muted_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_playsinline', get_string('default', 'videotime') . ' ' .
-        get_string('option_playsinline', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/playsinline', get_string('option_playsinline', 'videotime'),
         get_string('option_playsinline_help', 'videotime'), '1'));
@@ -110,6 +84,8 @@ if ($ADMIN->fulltree) {
         'videotimeplugin_vimeo/transparent', get_string('option_transparent', 'videotime'),
         get_string('option_transparent_help', 'videotime'), '1'));
 
+    $settings->add(new admin_setting_heading('forcedhdr', get_string('forcedsettings', 'videotime'), ''));
+
     $options = [
         'autoplay' => new lang_string('option_autoplay', 'videotime'),
         'byline' => new lang_string('option_byline', 'videotime'),
@@ -134,6 +110,8 @@ if ($ADMIN->fulltree) {
         [ ],
         $options
     ));
+
+    $settings->add(new admin_setting_heading('advancedhdr', get_string('advancedsettings', 'videotime'), ''));
 
     $settings->add(new admin_setting_configmultiselect(
         'videotimeplugin_vimeo/advanced',
