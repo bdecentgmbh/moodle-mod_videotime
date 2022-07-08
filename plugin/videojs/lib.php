@@ -44,13 +44,11 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
         return;
     }
 
-    $forced = videotime_forced_settings('videotimeplugin_videojs');
-
     if ($record = $DB->get_record('videotimeplugin_videojs', ['videotime' => $moduleinstance->id])) {
-        $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance + (array) $record;
+        $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) $record;
         $DB->update_record('videotimeplugin_videojs', $record);
     } else {
-        $record = ['id' => null, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance;
+        $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance;
         $DB->insert_record('videotimeplugin_videojs', $record);
     }
 }
@@ -78,11 +76,13 @@ function videotimeplugin_videojs_delete_instance($id) {
 function videotimeplugin_videojs_load_settings($instance) {
     global $DB;
 
-    if (empty(get_config('videotimeplugin_videojs', 'enabled'))) {
+    $instance = (object) $instance;
+    if (
+        empty(get_config('videotimeplugin_videojs', 'enabled'))
+        || mod_videotime_get_vimeo_id_from_link($instance->vimeo_url)
+    ) {
         return $instance;
     }
-
-    $forced = videotime_forced_settings('videotimeplugin_videojs');
 
     $instance = (array) $instance;
     if (
@@ -91,10 +91,10 @@ function videotimeplugin_videojs_load_settings($instance) {
     ) {
         unset($record->id);
         unset($record->videotime);
-        return $forced + ((array) $record) + ((array) $instance);
+        return ((array) $record) + ((array) $instance);
     }
 
-    return $forced + (array) $instance + (array) get_config('videotimeplugin_videojs');
+    return (array) $instance + (array) get_config('videotimeplugin_videojs');
 }
 
 /**
