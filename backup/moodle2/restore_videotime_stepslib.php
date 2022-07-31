@@ -104,8 +104,6 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
 
         $data = (object)$data;
         $data->videotime = $this->get_new_parentid('videotime');
-
-        $DB->insert_record('videotime_vimeo_embed', $data);
     }
 
 

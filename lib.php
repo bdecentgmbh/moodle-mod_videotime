@@ -434,7 +434,7 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         $fullpath = "/$context->id/mod_videotime/$filearea/$relativepath";
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
             return false;
         }
 
@@ -533,7 +533,7 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
     $keys = $videtimenode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
-    if ($i === false and array_key_exists(0, $keys)) {
+    if ($i === false && array_key_exists(0, $keys)) {
         $beforekey = $keys[0];
     } else if (array_key_exists($i + 1, $keys)) {
         $beforekey = $keys[$i + 1];
