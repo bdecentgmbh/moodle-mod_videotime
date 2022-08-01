@@ -147,12 +147,6 @@ class options extends moodleform {
         $mform->setDefault('title', get_config('videotime', 'title'));
         videotime_instance::create_additional_field_form_elements('title', $mform, null, $instance);
 
-        $mform->addElement('advcheckbox', 'transparent', get_string('option_transparent', 'videotime'));
-        $mform->setType('transparent', PARAM_BOOL);
-        $mform->addHelpButton('transparent', 'option_transparent', 'videotime');
-        $mform->setDefault('transparent', get_config('videotime', 'transparent'));
-        videotime_instance::create_additional_field_form_elements('transparent', $mform, null, $instance);
-
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this)]);

@@ -60,26 +60,18 @@ if ($ADMIN->fulltree) {
         'videotimeplugin_vimeo/playsinline', get_string('option_playsinline', 'videotime'),
         get_string('option_playsinline_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_portrait', get_string('default', 'videotime') . ' ' .
-        get_string('option_portrait', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/portrait', get_string('option_portrait', 'videotime'),
         get_string('option_portrait_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_speed', get_string('default', 'videotime') . ' ' .
-        get_string('option_speed', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/speed', get_string('option_speed', 'videotime'),
         get_string('option_speed_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_title', get_string('default', 'videotime') . ' ' .
-        get_string('option_title', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/title', get_string('option_title', 'videotime'),
         get_string('option_title_help', 'videotime'), '1'));
 
-    $settings->add(new admin_setting_heading('option_transparent', get_string('default', 'videotime') . ' ' .
-        get_string('option_transparent', 'videotime'), ''));
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/transparent', get_string('option_transparent', 'videotime'),
         get_string('option_transparent_help', 'videotime'), '1'));

@@ -64,7 +64,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->add_body_class('limitedwidth');
 
 $edit = optional_param('edit', null, PARAM_BOOL);
-if ($edit !== null and confirm_sesskey() and $PAGE->user_allowed_editing()) {
+if ($edit !== null && confirm_sesskey() && $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
     redirect($PAGE->url);
 }

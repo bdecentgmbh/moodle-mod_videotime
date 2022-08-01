@@ -78,12 +78,6 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'completion_on_percent',
             'completion_on_percent_value',
             'completion_hide_detail',
-            'autoplay',
-            'byline',
-            'color',
-            'title',
-            'transparent',
-            'responsive',
             'label_mode',
             'viewpercentgrade',
             'resume_playback',
@@ -101,7 +95,6 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
 
         // Define sources.
         $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
-        $vimeooptions->set_source_table('videotime_vimeo_embed', ['videotime' => backup::VAR_ACTIVITYID]);
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.

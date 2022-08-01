@@ -86,7 +86,7 @@ foreach ($videotimes as $videotime) {
             format_string($videotime->name, true));
     }
 
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    if ($course->format == 'weeks' || $course->format == 'topics') {
         $data = array($videotime->section, $link);
     } else {
         $data = array($link);
