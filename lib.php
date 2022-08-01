@@ -765,7 +765,10 @@ function mod_videotime_treat_as_label(cm_info $mod) {
  */
 function mod_videotime_get_vimeo_id_from_link($link) {
     $videoid = null;
-    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $outputarray)) {
+    if (
+        preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $outputarray)
+        && get_config('videotimeplugin_vimeo', 'enabled')
+    ) {
         return $outputarray[5];
     }
 

@@ -64,13 +64,11 @@ $PAGE->set_context($modulecontext);
 
 $moduleinstance = videotime_instance::instance_by_id($moduleinstance->id);
 
-if (
-    mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
-    && !empty(get_config('videotimeplugin_vimeo', 'enabled'))
-) {
-    $form = new \mod_videotime\form\options($PAGE->url->out(), ['instance' => $moduleinstance->to_record()]);
-} else if (!empty(get_config('videotimeplugin_videojs', 'enabled'))) {
-    $form = new \videotimeplugin_videojs\form\options($PAGE->url->out(), ['instance' => $moduleinstance->to_record()]);
+foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+    if ($player = component_callback("videotimeplugin_$name", 'embed_player', [$moduleinstance->to_record()], null)) {
+        $classname = "\\videotimeplugin_$name\\form\options";
+        $form = new $classname($PAGE->url->out(), ['instance' => $moduleinstance->to_record()]);
+    }
 }
 
 $returnurl = new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]);

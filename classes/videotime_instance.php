@@ -578,13 +578,10 @@ class videotime_instance implements \renderable, \templatable {
      * @return object
      */
     public function embed_player($record) {
-        if (
-            mod_videotime_get_vimeo_id_from_link($record->vimeo_url)
-            || empty(get_config('videotimeplugin_videojs', 'enabled'))
-        ) {
-            return new \mod_videotime\vimeo_embed($record);
-        } else {
-            return new \videotimeplugin_videojs\video_embed($record);
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            if ($player = component_callback("videotimeplugin_$name", 'embed_player', [$record], null)) {
+                return $player;
+            }
         }
     }
 }

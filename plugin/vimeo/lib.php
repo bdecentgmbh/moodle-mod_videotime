@@ -130,3 +130,22 @@ function videotimeplugin_vimeo_forced_settings($instance, $forcedsettings) {
 
     return $forcedsettings;
 }
+
+/**
+ * Loads plugin player for instance
+ *
+ * @param object $instance the module record.
+ * @return object|null
+ */
+function videotimeplugin_vimeo_embed_player($instance) {
+    global $DB;
+
+    if (
+        empty(get_config('videotimeplugin_vimeo', 'enabled'))
+        || !mod_videotime_get_vimeo_id_from_link($instance->vimeo_url)
+    ) {
+        return null;
+    }
+
+    return new \mod_videotime\vimeo_embed($instance);
+}

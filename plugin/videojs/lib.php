@@ -23,6 +23,7 @@
  */
 
 use mod_videotime\videotime_instance;
+use mod_videotime\embed_player;
 
 /**
  * Updates an instance of the videotimeplugin_videojs in the database.
@@ -119,4 +120,23 @@ function videotimeplugin_videojs_forced_settings($instance, $forcedsettings) {
     }
 
     return $forcedsettings;
+}
+
+/**
+ * Loads plugin player for instance
+ *
+ * @param object $instance the module record.
+ * @return object|null
+ */
+function videotimeplugin_videojs_embed_player($instance) {
+    global $DB;
+
+    if (
+        empty(get_config('videotimeplugin_videojs', 'enabled'))
+        || mod_videotime_get_vimeo_id_from_link($instance->vimeo_url)
+    ) {
+        return null;
+    }
+
+    return new video_embed($instance);
 }
