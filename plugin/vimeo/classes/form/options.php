@@ -33,6 +33,7 @@ use mod_videotime\videotime_instance;
 use moodleform;
 
 require_once($CFG->dirroot . '/mod/videotime/lib.php');
+require_once("$CFG->libdir/formslib.php");
 
 /**
  * The Vimeo options form.
@@ -41,7 +42,7 @@ require_once($CFG->dirroot . '/mod/videotime/lib.php');
  * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class options extends \mod_videotime\form\options {
+class options extends moodleform {
 
     /**
      * Defines forms elements

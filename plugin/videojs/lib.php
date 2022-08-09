@@ -24,6 +24,7 @@
 
 use mod_videotime\videotime_instance;
 use mod_videotime\embed_player;
+use videotimeplugin_videojs\video_embed;
 
 /**
  * Updates an instance of the videotimeplugin_videojs in the database.
