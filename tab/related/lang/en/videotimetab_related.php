@@ -25,10 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Video Time Related activities tab';
-$string['informationtab_name'] = 'Custom tab name';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
-$string['information'] = 'Information tab content';
 $string['label'] = 'Related activities';
 $string['open'] = 'Open';
 $string['privacy:metadata'] = 'The Video Time Related activities tab plugin does not store any personal data.';

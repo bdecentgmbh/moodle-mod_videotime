@@ -188,7 +188,7 @@ class tab extends \mod_videotime\local\tabs\tab {
                 'format' => $record->format,
                 'itemid' => $draftitemid,
             );
-            $defaultvalues['blocktab_name'] = $record->name;
+            $defaultvalues['relatedtab_name'] = $record->name;
         } else {
             $defaultvalues['enable_related'] = 0;
         }
