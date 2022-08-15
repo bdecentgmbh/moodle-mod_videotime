@@ -249,10 +249,18 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @return array eventual errors indexed by the field name
      */
     public function validation($data, $files) {
+        global $USER;
+
         $errors = parent::validation($data, $files);
 
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
-            $errors['vimeo_url'] = get_string('required');
+            $fs = get_file_storage();
+            if (
+                empty($data['mediafile'])
+                || !$files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile'])
+            ) {
+                $errors['vimeo_url'] = get_string('required');
+            }
         } else if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');
         }

@@ -62,4 +62,12 @@ class restore_videotimeplugin_videojs_subplugin extends restore_subplugin {
         $data->videotime = $this->get_new_parentid('videotime');
         $DB->insert_record('videotimeplugin_videojs', $data);
     }
+
+    /**
+     * Defines post-execution actions.
+     */
+    protected function after_execute(): void {
+        // Add related files, no need to match by itemname (just internally handled context).
+        $this->add_related_files('videotimeplugin_videojs', 'mediafile', null);
+    }
 }

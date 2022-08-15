@@ -57,6 +57,28 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
     }
 
     /**
+     * Add annotated subplugin files
+     * @param string $subtype the plugin type to handle
+     * @return void
+     */
+    protected function add_subplugin_files($subtype) {
+        $pluginmanager = new \mod_videotime\plugin_manager($subtype);
+        $plugins = $pluginmanager->get_sorted_plugins_list();
+        foreach ($plugins as $plugin) {
+            $component = $subtype . '_' . $plugin;
+            if ($subtype == 'videotimetab') {
+                $classname = '\\' . $component . '\\tab';
+                $areas = $classname::get_config_file_areas();
+            } else {
+                $areas = component_callback($component, 'config_file_areas', [], []);
+            }
+            foreach ($areas as $area) {
+                $this->add_related_files($component, $area, null);
+            }
+        }
+    }
+
+    /**
      * Processes the videotim restore data.
      *
      * @param array $data Parsed element data.
@@ -114,5 +136,7 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         // Add videotime related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_videotime', 'intro', null);
         $this->add_related_files('mod_videotime', 'video_description', null);
+
+        $this->add_subplugin_files('videotimeplugin');
     }
 }

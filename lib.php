@@ -251,7 +251,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     );
 
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
-        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance]);
+        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance, $mform]);
     }
 
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {

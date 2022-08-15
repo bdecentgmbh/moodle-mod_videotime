@@ -41,8 +41,12 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         $plugins = $pluginmanager->get_sorted_plugins_list();
         foreach ($plugins as $plugin) {
             $component = $subtype . '_' . $plugin;
-            $classname = '\\' . $subtype . '_' . $plugin . '\\tab';
-            $areas = $classname::get_config_file_areas();
+            if ($subtype == 'videotimetab') {
+                $classname = '\\' . $component . '\\tab';
+                $areas = $classname::get_config_file_areas();
+            } else {
+                $areas = component_callback($component, 'config_file_areas', [], []);
+            }
             foreach ($areas as $area) {
                 $videotime->annotate_files($component, $area, null);
             }
@@ -101,6 +105,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.
 
         $this->annotate_plugin_config_files($module, 'videotimetab');
+        $this->annotate_plugin_config_files($module, 'videotimeplugin');
 
         // Return the root element (videotime), wrapped into standard activity structure.
         return $this->prepare_activity_structure($module);

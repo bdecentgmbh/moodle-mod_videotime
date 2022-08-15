@@ -89,10 +89,18 @@ foreach (\core_component::get_component_classes_in_namespace(null, 'videotime\\i
 }
 
 echo $OUTPUT->header();
+
 if (!class_exists('core\\output\\activity_header')) {
     echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 }
-if (!$moduleinstance->vimeo_url) {
+
+foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+    if ($player = component_callback("videotimeplugin_$name", 'embed_player', [$moduleinstance->to_record()], null)) {
+        break;
+    }
+}
+
+if (empty($player)) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
     // Render the activity information.

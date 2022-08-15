@@ -24,5 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['mediafile'] = 'Media file';
+$string['mediafile_help'] = 'Upload an audio or video file to use';
 $string['pluginname'] = 'Video Time VideoJS Player';
 $string['privacy:metadata'] = 'The Video Time VideoJS Player plugin does not store any personal data.';

@@ -51,7 +51,19 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
         $DB->update_record('videotimeplugin_videojs', $record);
     } else {
         $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance;
-        $DB->insert_record('videotimeplugin_videojs', $record);
+        $record['id'] = $DB->insert_record('videotimeplugin_videojs', $record);
+    }
+
+    if (!empty($mform) && $data = $mform->get_data()) {
+        $context = context_module::instance($moduleinstance->coursemodule);
+        file_save_draft_area_files(
+            $data->mediafile,
+            $context->id,
+            'videotimeplugin_videojs',
+            'mediafile',
+            0,
+            ['subdirs' => 0, 'maxfiles' => 1]
+        );
     }
 }
 
@@ -139,5 +151,112 @@ function videotimeplugin_videojs_embed_player($instance) {
         return null;
     }
 
+    $cm = get_coursemodule_from_instance('videotime', $instance->id);
+    $context = context_module::instance($cm->id);
+    $fs = get_file_storage();
+    foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'mediafile') as $file) {
+        if (!$file->is_directory()) {
+            $instance->vimeo_url = moodle_url::make_pluginfile_url(
+                $context->id,
+                'videotimeplugin_videojs',
+                'mediafile',
+                0,
+                $file->get_filepath(),
+                $file->get_filename()
+            );
+        }
+    }
     return new video_embed($instance);
+}
+
+/**
+ * Add additional fields to form
+ *
+ * @param moodleform $mform Setting form to modify
+ * @param string $formclass Class nam of the form
+ */
+function videotimeplugin_videojs_add_form_fields($mform, $formclass) {
+    global $COURSE, $OUTPUT, $PAGE;
+
+    if ($formclass === 'mod_videotime_mod_form') {
+        $mform->insertElementBefore(
+            $mform->createElement('filemanager', 'mediafile', get_string('mediafile', 'videotimeplugin_videojs'), null, [
+                'subdirs' => 0,
+                'maxfiles' => 1,
+                'accepted_types' => ['audio', 'video'],
+            ]),
+            'name'
+        );
+        $mform->addHelpButton('mediafile', 'mediafile', 'videotimeplugin_videojs');
+    }
+}
+
+/**
+ * Prepares the form before data are set
+ *
+ * @param  array $defaultvalues
+ * @param  int $instance
+ */
+function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $instance) {
+    global $DB;
+
+    if (!empty($instance)) {
+        $draftitemid = file_get_submitted_draft_itemid('mediafile');
+        $cm = get_coursemodule_from_instance('videotime', $instance);
+        $context = context_module::instance($cm->id);
+        file_prepare_draft_area(
+            $draftitemid,
+            $context->id,
+            'videotimeplugin_videojs',
+            'mediafile',
+            0
+        );
+        $defaultvalues['mediafile'] = $draftitemid;
+    }
+}
+
+/**
+ * File serving callback
+ *
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool false if the file was not found, just send the file otherwise and do not return anything
+ */
+function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_login($course, true, $cm);
+
+    if ($filearea == 'mediafile') {
+
+        $relativepath = implode('/', $args);
+
+        $fullpath = "/$context->id/videotimeplugin_videojs/$filearea/$relativepath";
+
+        $fs = get_file_storage();
+        if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    }
+}
+
+/**
+ * Return file areas for backup
+ *
+ * @return array List of file areas
+ */
+function videotimeplugin_videojs_config_file_areas() {
+    return [
+        'mediafile',
+    ];
 }
