@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->dirroot/mod/videotime/lib.php");
+require_once("$CFG->libdir/resourcelib.php");
 
 /**
  * Represents a single Video Time activity module. Adds more functionality when working with instances.
@@ -54,6 +55,8 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
 
         $cm = get_coursemodule_from_instance('videotime', $this->record->id);
 
+        $mimetype = resourcelib_guess_url_mimetype($this->record->vimeo_url);
+
         $context = [
             'instance' => $this->record,
             'cmid' => $cm->id,
@@ -62,6 +65,8 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
+            'mimetype' => $mimetype,
+            'video' => !file_mimetype_in_typegroup($mimetype, ['web_audio']),
         ];
 
         return $context;

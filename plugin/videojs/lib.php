@@ -56,6 +56,7 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
 
     if (!empty($mform) && $data = $mform->get_data()) {
         $context = context_module::instance($moduleinstance->coursemodule);
+
         file_save_draft_area_files(
             $data->mediafile,
             $context->id,

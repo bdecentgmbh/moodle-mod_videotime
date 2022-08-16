@@ -45,12 +45,22 @@
         {{{intro}}}
     </div>
     <div class="videotime-embed video-resize">
+    {{# video }}
     <video class="video-js"
         id="vimeo-embed-{{uniqueid}}"
         controls {{# playsinline }} playsinline {{/ playsinline }}
     >
-         <source src="{{ vimeo_url }}" type="video/mp4" />
+         <source src="{{ vimeo_url }}" type="{{ mimetype }}" />
     </video>
+    {{/ video }}
+    {{^ video }}
+    <audio class="video-js"
+        id="vimeo-embed-{{uniqueid}}"
+        controls {{# playsinline }} playsinline {{/ playsinline }}
+    >
+         <source src="{{ vimeo_url }}" type="{{ mimetype }}" />
+    </audio>
+    {{/ video }}
     </div>
     <div class="vimeo-video-description">
         {{{video_description}}}
