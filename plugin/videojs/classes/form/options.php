@@ -27,6 +27,7 @@ namespace videotimeplugin_videojs\form;
 defined('MOODLE_INTERNAL') || die();
 
 use core_component;
+use html_writer;
 use mod_videotime\videotime_instance;
 use moodleform;
 
