@@ -50,7 +50,7 @@ function videotimeplugin_vimeo_update_instance($moduleinstance, $mform = null) {
         $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance + (array) $record;
         $DB->update_record('videotimeplugin_vimeo', $record);
     } else {
-        $record = ['id' => null, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance;
+        $record = ['id' => null, 'videotime' => $moduleinstance->id] + $forced + (array) $moduleinstance + (array) get_config('videotimeplugin_vimeo');
         $DB->insert_record('videotimeplugin_vimeo', $record);
     }
 }

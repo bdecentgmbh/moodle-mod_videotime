@@ -50,7 +50,7 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
         $record = ['id' => $record->id, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) $record;
         $DB->update_record('videotimeplugin_videojs', $record);
     } else {
-        $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance;
+        $record = ['id' => null, 'videotime' => $moduleinstance->id] + (array) $moduleinstance + (array) get_config('videotimeplugin_videojs');
         $record['id'] = $DB->insert_record('videotimeplugin_videojs', $record);
     }
 
