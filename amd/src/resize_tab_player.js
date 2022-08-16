@@ -52,6 +52,7 @@ const resize = () => {
         container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance').forEach(() => {
             let instance = container.closest('.videotimetabs').querySelector('.videotime-tab-instance'),
                 content = container.closest('.videotimetabs').querySelector('.tab-content');
+            container.style.minHeight = '0px';
             Object.assign(instance.style, {
                 top: container.offsetTop + 'px',
                 left: container.offsetLeft + 'px',
