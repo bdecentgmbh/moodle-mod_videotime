@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  * @return true | null True if the feature is supported, null otherwise.
  */
 function videotime_supports($feature) {
+    if (defined('FEATURE_MOD_PURPOSE') && $feature == FEATURE_MOD_PURPOSE) {
+        return MOD_PURPOSE_CONTENT;
+    }
     switch ($feature) {
         case FEATURE_GRADE_HAS_GRADE:
             return true;
@@ -52,8 +55,6 @@ function videotime_supports($feature) {
             return true;
         case FEATURE_GRADE_OUTCOMES:
             return false;
-        case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_CONTENT;
         default:
             return null;
     }
