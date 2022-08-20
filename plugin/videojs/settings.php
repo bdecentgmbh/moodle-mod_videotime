@@ -34,6 +34,10 @@ if ($ADMIN->fulltree) {
         get_string('settings'), ''));
 
     $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_videojs/autoplay', get_string('option_autoplay', 'videotime'),
+        get_string('option_autoplay_help', 'videotime'), '1'));
+
+    $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/responsive', get_string('option_responsive', 'videotime'),
         get_string('option_responsive_help', 'videotime'), '1'));
 
@@ -57,9 +61,14 @@ if ($ADMIN->fulltree) {
         'videotimeplugin_videojs/playsinline', get_string('option_playsinline', 'videotime'),
         get_string('option_playsinline_help', 'videotime'), '1'));
 
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_videojs/speed', get_string('option_speed', 'videotime'),
+        get_string('option_speed_help', 'videotime'), '1'));
+
     $settings->add(new admin_setting_heading('forcedhdr', get_string('forcedsettings', 'videotime'), ''));
 
     $options = [
+        'autoplay' => new lang_string('option_autoplay', 'videotime'),
         'responsive' => new lang_string('option_responsive', 'videotime'),
         'controls' => new lang_string('option_controls', 'videotime'),
         'height' => new lang_string('option_height', 'videotime'),

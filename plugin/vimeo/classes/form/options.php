@@ -118,6 +118,12 @@ class options extends moodleform {
         $mform->setDefault('color', get_config('videotime', 'color'));
         videotime_instance::create_additional_field_form_elements('color', $mform, null, $instance);
 
+        $mform->addElement('advcheckbox', 'option_loop', get_string('option_loop', 'videotime'));
+        $mform->setType('option_loop', PARAM_BOOL);
+        $mform->addHelpButton('option_loop', 'option_loop', 'videotime');
+        $mform->setDefault('option_loop', get_config('videotimeplugin_vimeo', 'option_loop'));
+        videotime_instance::create_additional_field_form_elements('option_loop', $mform, null, $instance);
+
         $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
         $mform->setType('muted', PARAM_BOOL);
         $mform->addHelpButton('muted', 'option_muted', 'videotime');
@@ -147,6 +153,12 @@ class options extends moodleform {
         $mform->addHelpButton('title', 'option_title', 'videotime');
         $mform->setDefault('title', get_config('videotime', 'title'));
         videotime_instance::create_additional_field_form_elements('title', $mform, null, $instance);
+
+        $mform->addElement('advcheckbox', 'transparent', get_string('option_transparent', 'videotime'));
+        $mform->setType('transparent', PARAM_BOOL);
+        $mform->addHelpButton('transparent', 'option_transparent', 'videotime');
+        $mform->setDefault('transparent', get_config('videotimeplugin_vimeo', 'transparent'));
+        videotime_instance::create_additional_field_form_elements('transparent', $mform, null, $instance);
 
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
