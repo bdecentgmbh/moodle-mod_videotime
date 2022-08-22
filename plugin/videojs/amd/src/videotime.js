@@ -24,7 +24,7 @@ export default class VideoTime extends VideoTimeBase {
                 autoplay: instance.autoplay,
                 controls: instance.controls,
                 loop: instance.option_loop,
-                responsive: instance.responsive,
+                fluid: instance.responsive,
                 playbackRates: instance.speed ? [0.5, 0.75, 1, 1.25, 1.5, 2] : [1],
                 muted: instance.muted
             };
