@@ -13,6 +13,7 @@ import Log from "core/log";
 import Notification from "core/notification";
 import Player from "media_videojs/video-lazy";
 import Templates from "core/templates";
+import "media_videojs/Youtube-lazy";
 
 export default class VideoTime extends VideoTimeBase {
 
@@ -23,11 +24,15 @@ export default class VideoTime extends VideoTimeBase {
             let options = {
                 autoplay: instance.autoplay,
                 controls: instance.controls,
+                sources: [{type: instance.type, src: instance.vimeo_url}],
                 loop: instance.option_loop,
                 fluid: instance.responsive,
                 playbackRates: instance.speed ? [0.5, 0.75, 1, 1.25, 1.5, 2] : [1],
                 muted: instance.muted
             };
+            if (instance.type === 'video/youtube') {
+                options.techOrder = ['youtube'];
+            }
             if (!instance.responsive && instance.height && instance.width) {
                 options.height = instance.height;
                 options.width = instance.width;

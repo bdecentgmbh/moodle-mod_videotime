@@ -22,9 +22,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 use mod_videotime\videotime_instance;
 use mod_videotime\embed_player;
 use videotimeplugin_videojs\video_embed;
+
+require_once("$CFG->libdir/resourcelib.php");
 
 /**
  * Updates an instance of the videotimeplugin_videojs in the database.
@@ -107,6 +111,32 @@ function videotimeplugin_videojs_load_settings($instance) {
     ) {
         unset($record->id);
         unset($record->videotime);
+
+        if (empty($instance['vimeo_url'])) {
+            $cm = get_coursemodule_from_instance('videotime', $instance['id']);
+            $context = context_module::instance($cm->id);
+            $fs = get_file_storage();
+            foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'mediafile') as $file) {
+                if (!$file->is_directory()) {
+                    $instance['vimeo_url'] = moodle_url::make_pluginfile_url(
+                        $context->id,
+                        'videotimeplugin_videojs',
+                        'mediafile',
+                        0,
+                        $file->get_filepath(),
+                        $file->get_filename()
+                    )->out(false);
+                }
+            }
+        }
+        if (!empty($instance['vimeo_url'])) {
+            if (strpos($instance['vimeo_url'], 'youtube')) {
+                $instance['type'] = 'video/youtube';
+            } else {
+                $instance['type'] = resourcelib_guess_url_mimetype($instance['vimeo_url']);
+            }
+        }
+
         return ((array) $record) + ((array) $instance);
     }
 
@@ -153,21 +183,6 @@ function videotimeplugin_videojs_embed_player($instance) {
         return null;
     }
 
-    $cm = get_coursemodule_from_instance('videotime', $instance->id);
-    $context = context_module::instance($cm->id);
-    $fs = get_file_storage();
-    foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'mediafile') as $file) {
-        if (!$file->is_directory()) {
-            $instance->vimeo_url = moodle_url::make_pluginfile_url(
-                $context->id,
-                'videotimeplugin_videojs',
-                'mediafile',
-                0,
-                $file->get_filepath(),
-                $file->get_filename()
-            );
-        }
-    }
     return new video_embed($instance);
 }
 

@@ -31,4 +31,5 @@ $plugin->requires = 2015111610;
 $plugin->maturity = MATURITY_BETA;
 $plugin->dependencies = [
     'videotime' => 2022040800,
+    'media_videojs' => 2015111600,
 ];

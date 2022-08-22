@@ -537,6 +537,7 @@ class videotime_instance implements \renderable, \templatable {
             'speed' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'title' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'transparent' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'type' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
             'autopause' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'background' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'controls' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
