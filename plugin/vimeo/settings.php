@@ -49,13 +49,14 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/width', new lang_string('option_width', 'videotime'),
         new lang_string('option_width_help', 'videotime'), '', PARAM_INT));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_pro/autoplay', new lang_string('option_autoplay', 'videotime'),
-        new lang_string('option_autoplay_help', 'videotime'), '00adef', PARAM_TEXT));
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_vimeo/autoplay', new lang_string('option_autoplay', 'videotime'),
+        new lang_string('option_autoplay_help', 'videotime'), 1));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_pro/byline', new lang_string('option_byline', 'videotime'),
-        new lang_string('option_byline_help', 'videotime'), '00adef', PARAM_TEXT));
+    $settings->add(new admin_setting_configcheckbox('videotimeplugin_vimeo/byline', new lang_string('option_byline', 'videotime'),
+        new lang_string('option_byline_help', 'videotime'), 1));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_pro/color', new lang_string('option_color', 'videotime'),
+    $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/color', new lang_string('option_color', 'videotime'),
         new lang_string('option_color_help', 'videotime'), '00adef', PARAM_TEXT));
 
     $settings->add(new admin_setting_configcheckbox(

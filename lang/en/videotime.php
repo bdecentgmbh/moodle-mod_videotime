@@ -311,6 +311,7 @@ $string['watch_percent'] = 'Watch percent';
 $string['watch_percent_help'] = 'The furthest moment in the video the student has watched.';
 $string['with_play_button'] = 'with play button';
 $string['vimeo_overview'] = 'Overview and setup';
+$string['vimeodefaultsettings'] = 'Vimeo default settings';
 $string['completiondetail:_on_view_time'] = 'View for time {$a}';
 $string['completiondetail:_on_finish'] = 'Finish video';
 $string['completiondetail:_on_percent'] = 'Finish watching {$a} percent';
