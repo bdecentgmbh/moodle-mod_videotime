@@ -83,6 +83,7 @@ define([
                 controls: instance.controls,
                 dnt: instance.dnt,
                 height: instance.height,
+                loop: instance.option_loop,
                 maxheight: instance.maxheight,
                 maxwidth: instance.maxwidth,
                 muted: instance.muted,
