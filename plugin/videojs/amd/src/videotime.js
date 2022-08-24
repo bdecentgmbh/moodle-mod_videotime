@@ -156,7 +156,7 @@ export default class VideoTime extends VideoTimeBase {
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function() {
             this.currentTime = this.player.currentTime();
-            this.percent = 100 * this.currentTime / this.player.duration();
+            this.percent = this.currentTime / this.player.duration();
             Log.debug('VIDEO_TIME timeupdate. Percent: ' + this.percent + '. Current time: ' + this.currentTime);
         }.bind(this));
 
