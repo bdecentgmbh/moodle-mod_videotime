@@ -69,53 +69,53 @@ class options extends moodleform {
         $mform->addElement('advcheckbox', 'responsive', get_string('option_responsive', 'videotime'));
         $mform->setType('responsive', PARAM_BOOL);
         $mform->addHelpButton('responsive', 'option_responsive', 'videotime');
-        $mform->setDefault('responsive', get_config('videotime', 'responsive'));
+        $mform->setDefault('responsive', get_config('videotimeplugin_vimeo', 'responsive'));
         videotime_instance::create_additional_field_form_elements('responsive', $mform, null, $instance);
 
         $mform->addElement('text', 'height', get_string('option_height', 'videotime'));
         $mform->setType('height', PARAM_INT);
         $mform->addHelpButton('height', 'option_height', 'videotime');
         $mform->disabledIf('height', 'responsive', 'checked');
-        $mform->setDefault('height', get_config('videotime', 'height'));
+        $mform->setDefault('height', get_config('videotimeplugin_vimeo', 'height'));
         videotime_instance::create_additional_field_form_elements('height', $mform, null, $instance);
 
         $mform->addElement('text', 'width', get_string('option_width', 'videotime'));
         $mform->setType('width', PARAM_INT);
         $mform->addHelpButton('width', 'option_width', 'videotime');
-        $mform->setDefault('width', get_config('videotime', 'width'));
+        $mform->setDefault('width', get_config('videotimeplugin_vimeo', 'width'));
         $mform->disabledIf('width', 'responsive', 'checked');
         videotime_instance::create_additional_field_form_elements('width', $mform, null, $instance);
 
         $mform->addElement('text', 'maxheight', get_string('option_maxheight', 'videotime'));
         $mform->setType('maxheight', PARAM_INT);
         $mform->addHelpButton('maxheight', 'option_maxheight', 'videotime');
-        $mform->setDefault('maxheight', get_config('videotime', 'maxheight'));
+        $mform->setDefault('maxheight', get_config('videotimeplugin_vimeo', 'maxheight'));
         $mform->disabledIf('maxheight', 'responsive', 'checked');
         videotime_instance::create_additional_field_form_elements('maxheight', $mform, null, $instance);
 
         $mform->addElement('text', 'maxwidth', get_string('option_maxwidth', 'videotime'));
         $mform->setType('maxwidth', PARAM_INT);
         $mform->addHelpButton('maxwidth', 'option_maxwidth', 'videotime');
-        $mform->setDefault('maxwidth', get_config('videotime', 'maxwidth'));
+        $mform->setDefault('maxwidth', get_config('videotimeplugin_vimeo', 'maxwidth'));
         $mform->disabledIf('maxwidth', 'responsive', 'checked');
         videotime_instance::create_additional_field_form_elements('maxwidth', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'autoplay', get_string('option_autoplay', 'videotime'));
         $mform->setType('autoplay', PARAM_BOOL);
         $mform->addHelpButton('autoplay', 'option_autoplay', 'videotime');
-        $mform->setDefault('autoplay', get_config('videotime', 'autoplay'));
+        $mform->setDefault('autoplay', get_config('videotimeplugin_vimeo', 'autoplay'));
         videotime_instance::create_additional_field_form_elements('autoplay', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'byline', get_string('option_byline', 'videotime'));
         $mform->setType('byline', PARAM_BOOL);
         $mform->addHelpButton('byline', 'option_byline', 'videotime');
-        $mform->setDefault('byline', get_config('videotime', 'byline'));
+        $mform->setDefault('byline', get_config('videotimeplugin_vimeo', 'byline'));
         videotime_instance::create_additional_field_form_elements('byline', $mform, null, $instance);
 
         $mform->addElement('text', 'color', get_string('option_color', 'videotime'));
         $mform->setType('color', PARAM_TEXT);
         $mform->addHelpButton('color', 'option_color', 'videotime');
-        $mform->setDefault('color', get_config('videotime', 'color'));
+        $mform->setDefault('color', get_config('videotimeplugin_vimeo', 'color'));
         videotime_instance::create_additional_field_form_elements('color', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'option_loop', get_string('option_loop', 'videotime'));
@@ -127,31 +127,31 @@ class options extends moodleform {
         $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
         $mform->setType('muted', PARAM_BOOL);
         $mform->addHelpButton('muted', 'option_muted', 'videotime');
-        $mform->setDefault('muted', get_config('videotime', 'muted'));
+        $mform->setDefault('muted', get_config('videotimeplugin_vimeo', 'muted'));
         videotime_instance::create_additional_field_form_elements('muted', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'playsinline', get_string('option_playsinline', 'videotime'));
         $mform->setType('playsinline', PARAM_BOOL);
         $mform->addHelpButton('playsinline', 'option_playsinline', 'videotime');
-        $mform->setDefault('playsinline', get_config('videotime', 'playsinline'));
+        $mform->setDefault('playsinline', get_config('videotimeplugin_vimeo', 'playsinline'));
         videotime_instance::create_additional_field_form_elements('playsinline', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'portrait', get_string('option_portrait', 'videotime'));
         $mform->setType('portrait', PARAM_BOOL);
         $mform->addHelpButton('portrait', 'option_portrait', 'videotime');
-        $mform->setDefault('portrait', get_config('videotime', 'portrait'));
+        $mform->setDefault('portrait', get_config('videotimeplugin_vimeo', 'portrait'));
         videotime_instance::create_additional_field_form_elements('portrait', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'speed', get_string('option_speed', 'videotime'));
         $mform->setType('speed', PARAM_BOOL);
         $mform->addHelpButton('speed', 'option_speed', 'videotime');
-        $mform->setDefault('speed', get_config('videotime', 'speed'));
+        $mform->setDefault('speed', get_config('videotimeplugin_vimeo', 'speed'));
         videotime_instance::create_additional_field_form_elements('speed', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'title', get_string('option_title', 'videotime'));
         $mform->setType('title', PARAM_BOOL);
         $mform->addHelpButton('title', 'option_title', 'videotime');
-        $mform->setDefault('title', get_config('videotime', 'title'));
+        $mform->setDefault('title', get_config('videotimeplugin_vimeo', 'title'));
         videotime_instance::create_additional_field_form_elements('title', $mform, null, $instance);
 
         $mform->addElement('advcheckbox', 'transparent', get_string('option_transparent', 'videotime'));
@@ -162,7 +162,7 @@ class options extends moodleform {
 
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
-            component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this)]);
+            component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this), $instance]);
         }
 
         // Add standard buttons.

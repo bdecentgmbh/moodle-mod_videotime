@@ -349,8 +349,10 @@ class videotime_instance implements \renderable, \templatable {
         $group = null,
         $instance = null
     ) {
-        $advanced = array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'advanced'))
-            , explode(',', get_config('videotimeplugin_repository', 'advanced'))));
+        $advanced = [];
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            $advanced = array_merge($advanced, explode(',', get_config("videotimeplugin_$name", 'advanced')));
+        }
         $forced = array_fill_keys(array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
             , explode(',', get_config('videotimeplugin_repository', 'forced')))), true);
         if (!empty($instance)) {
@@ -375,8 +377,11 @@ class videotime_instance implements \renderable, \templatable {
                 $label = get_string($fieldname, 'videotime');
             }
 
-            $value = ((array) get_config('videotimeplugin_repository') + (array) get_config('videotimeplugin_pro')
-                + (array) get_config('videotime'))[$fieldname];
+            $defaults = (array) get_config('videotime');
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                $defaults += (array) get_config("videotimeplugin_$name");
+            }
+            $value = $defaults[$fieldname];
             if ($group) {
                 $element = null;
                 foreach ($group as $element) {
