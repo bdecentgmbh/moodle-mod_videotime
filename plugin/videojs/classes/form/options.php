@@ -211,6 +211,7 @@ class options extends moodleform {
                 $group[] = $element;
             } else {
                 $mform->addElement($element);
+                $mform->removeElement($fieldname);
             }
             $mform->disabledIf($fieldname, 'disable', 'eq', 1);
         }
