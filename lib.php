@@ -676,6 +676,9 @@ function videotime_cm_info_view(cm_info $cm) {
 function videotime_get_coursemodule_info($coursemodule) {
     global $DB;
 
+    if (empty($coursemodule->instance)) {
+        return false;
+    }
     $instance = videotime_instance::instance_by_id($coursemodule->instance);
 
     $result = new cached_cm_info();
