@@ -273,11 +273,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
  */
 function videotime_delete_instance($id) {
     global $DB;
-    throw new \moodle_exception($id);
 
-    $DB->delete_records('videotime', array('id' => $id));
-
-    return true;
     $exists = $DB->get_record('videotime', array('id' => $id));
     if (!$exists) {
         return false;

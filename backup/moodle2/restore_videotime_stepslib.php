@@ -46,6 +46,10 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $videotime = new restore_path_element('videotime', '/activity/videotime');
         $paths[] = $videotime;
 
+        if ($userinfo) {
+            $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
+        }
+
         // A chance for tab subplugins to set up their data.
         $this->add_subplugin_structure('videotimetab', $videotime);
         $this->add_subplugin_structure('videotimeplugin', $videotime);
@@ -108,12 +112,11 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
 
         $data->module_id = $this->get_mappingid('course_module', $data->module_id);
+        $data->user_id = $this->get_mappingid('user', $data->user_id);
 
-        $newitemid = $DB->insert_record('videotime_pro_session', $data);
-        $this->set_mapping('videotime_pro_session', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('videotimeplugin_pro_session', $data);
     }
 
     /**

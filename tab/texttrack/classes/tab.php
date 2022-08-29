@@ -202,7 +202,7 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id',  'videotime = ?', array($record->id))) {
+        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id',  'videotime = ?', array($id))) {
             list($sql, $params) = $DB->get_in_or_equal($trackids);
             $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
             $DB->delete_records('videotimetab_texttrack_track', array('videotime' => $record->id));
