@@ -41,11 +41,12 @@
 
 }}
 {{#instance}}
-    <div id="next-activity-button">
-        {{{next_activity_button_html}}}
-    </div>
-
     <div class="container-fluid position-relative">
+    {{# next_activity_button_html }}
+        <div id="next-activity-button">
+            {{{next_activity_button_html}}}
+        </div>
+    {{/ next_activity_button_html }}
     {{^tabshtml}}
         {{{ player }}}
     {{/tabshtml}}
