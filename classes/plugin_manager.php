@@ -78,7 +78,7 @@ class plugin_manager {
             $classname = '\\' . $this->subtype . '_' . $name . '\\tab';
             if (
                 !empty(get_config($this->subtype . '_' . $name, 'enabled'))
-                && (class_exists($classname) || empty($classname::added_dependencies()))
+                && (!class_exists($classname) || empty($classname::added_dependencies()))
                 && (($this->subtype != 'videotimeplugin') || ($name != 'repository') || \videotime_has_pro())
             ) {
                 $idx = get_config($this->subtype . '_' . $name, 'sortorder');
