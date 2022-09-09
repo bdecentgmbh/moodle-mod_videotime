@@ -30,6 +30,7 @@ use core_component;
 use html_writer;
 use mod_videotime\videotime_instance;
 use moodleform;
+use moodle_url;
 
 require_once("$CFG->libdir/formslib.php");
 
