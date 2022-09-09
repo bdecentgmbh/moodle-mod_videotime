@@ -86,6 +86,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'viewpercentgrade',
             'resume_playback',
             'preview_picture',
+            'show_description_in_player',
             'enabletabs'
         ]);
 

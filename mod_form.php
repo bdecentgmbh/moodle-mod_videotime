@@ -114,6 +114,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
+        $mform->addElement('advcheckbox', 'show_description_in_player', '',
+            get_string('show_description_in_player', 'videotime'));
+        $mform->setDefault('show_description_in_player', 1);
+
         // Video Time video description.
         $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'),
             array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
