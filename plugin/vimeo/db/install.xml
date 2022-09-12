@@ -11,7 +11,6 @@
         <FIELD NAME="autoplay" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to start video immediately"/>
         <FIELD NAME="byline" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="color" TYPE="char" LENGTH="15" NOTNULL="true" DEFAULT="00adef" SEQUENCE="false" COMMENT="Specify the color of the video controls. Colors may be overridden by the embed settings of the video."/>
-        <FIELD NAME="controls" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The exact height of the video. Defaults to the height of the largest available version of the video."/>
         <FIELD NAME="maxheight" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="maxwidth" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
