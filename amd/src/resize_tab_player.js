@@ -58,7 +58,7 @@ const resize = () => {
                 maxWidth: container.offsetWidth + 'px',
                 width: container.offsetWidth + 'px'
             });
-            container.style.minHeight = instance.offsetHeight + 'px';
+            container.style.minHeight = instance.offsetHeight + 5 + 'px';
             container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
                 Object.assign(cover.style, {
                     height: content.offsetHeight + 'px',
