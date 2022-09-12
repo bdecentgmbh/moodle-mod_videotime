@@ -149,6 +149,10 @@ class videotime_instance implements \renderable, \templatable {
             $instancerecord = component_callback("videotimeplugin_$name", 'load_settings', [$instancerecord], $instancerecord);
         }
 
+        $instancerecord = (array) $instancerecord + [
+            'background' => 0,
+            'controls' => 1,
+        ];
         $this->record = (object) $instancerecord;
     }
 
