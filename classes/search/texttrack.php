@@ -45,8 +45,8 @@ class texttrack extends \core_search\base_mod {
      * @param number $modifiedfrom
      * @return \moodle_recordset
      */
-    public function get_recordset_by_timestamp($modifiedfrom = 0, \context $context = null) {
-        return $this->get_recordset_document($modifiedfrom, $context);
+    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+        return $this->get_recordset_document($modifiedfrom);
     }
 
     /**
