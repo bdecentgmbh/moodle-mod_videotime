@@ -46,7 +46,7 @@ class texttrack extends \core_search\base_mod {
      * @return \moodle_recordset
      */
     public function get_recordset_by_timestamp($modifiedfrom = 0) {
-        return $this->get_recordset_document($modifiedfrom);
+        return $this->get_document_recordset($modifiedfrom);
     }
 
     /**
@@ -296,5 +296,14 @@ class texttrack extends \core_search\base_mod {
         }
 
         return [$sql, $params];
+    }
+
+    /**
+     * Returns the module name.
+     *
+     * @return string
+     */
+    protected function get_module_name() {
+        return substr($this->componentname, 4);
     }
 }
