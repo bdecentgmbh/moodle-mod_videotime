@@ -585,27 +585,6 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
 }
 
 /**
- * Sets dynamic information about a course module
- *
- * This function is called from cm_info when displaying the module
- * mod_folder can be displayed inline on course page and therefore have no course link
- *
- * @param cm_info $cm
- */
-function videotime_cm_info_dynamic(cm_info $cm) {
-
-    if (!videotime_has_pro()) {
-        return;
-    }
-
-    $instance = videotime_instance::instance_by_id($cm->instance);
-
-    if (in_array($instance->label_mode, [videotime_instance::LABEL_MODE, videotime_instance::PREVIEW_MODE])) {
-        $cm->set_no_view_link();
-    }
-}
-
-/**
  * Called when viewing course page.
  *
  * @param cm_info $cm Course module information
