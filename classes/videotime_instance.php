@@ -561,6 +561,7 @@ class videotime_instance implements \renderable, \templatable {
             'next_activity_auto' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'option_loop' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'resume_playback' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'resume_time' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
             'preview_picture' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
             'show_description' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
             'show_title' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),

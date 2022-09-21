@@ -94,7 +94,7 @@ function videotimeplugin_videojs_delete_instance($id) {
  * @return object
  */
 function videotimeplugin_videojs_load_settings($instance) {
-    global $DB;
+    global $DB, $USER;
 
     $instance = (object) $instance;
     if (
@@ -146,6 +146,12 @@ function videotimeplugin_videojs_load_settings($instance) {
             } else {
                 $instance['type'] = resourcelib_guess_url_mimetype($instance['vimeo_url']);
             }
+        }
+
+        if (!empty($instance['resume_playback'])) {
+            $cm = get_coursemodule_from_instance('videotime', $instance['id']);
+            $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $USER->id);
+            $instance['resume_time'] = (int)$sessions->get_current_watch_time();
         }
 
         return ((array) $record) + ((array) $instance);

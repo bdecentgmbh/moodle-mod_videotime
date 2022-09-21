@@ -51,7 +51,7 @@ if ($ADMIN->fulltree) {
         get_string('option_controls_help', 'videotime'), '1'));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_videojs/loop', get_string('option_loop', 'videotime'),
+        'videotimeplugin_videojs/option_loop', get_string('option_loop', 'videotime'),
         get_string('option_loop_help', 'videotime'), '1'));
 
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/muted', get_string('option_muted', 'videotime'),

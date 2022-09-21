@@ -41,6 +41,27 @@ export default class VideoTime extends VideoTimeBase {
             Log.debug(options);
             this.player = new Player(this.elementId, options);
 
+            this.player.on('loadedmetadata', () => {
+                if (!instance.resume_playback || instance.resume_time <= 0) {
+                    return true;
+                }
+
+                let duration = this.getPlayer().duration(),
+                    resumeTime = instance.resume_time;
+                // Duration is often a little greater than a resume time at the end of the video.
+                // A user may have watched 100 seconds when the video ends, but the duration may be
+                // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
+                // video loads, so it may be 101 seconds. Hence the +1 and Math.floor usage.
+                if (resumeTime + 1 >= Math.floor(duration)) {
+                    Log.debug('VIDEO_TIME video finished, resuming at start of video.');
+                    resumeTime = 0;
+                }
+                Log.debug('VIDEO_TIME duration is ' + duration);
+                Log.debug('VIDEO_TIME resuming at ' + resumeTime);
+                this.setCurrentPosition(resumeTime);
+                return true;
+            });
+
             let url = new URL(window.location.href),
                 q = url.searchParams.get('q'),
                 starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
@@ -98,27 +119,6 @@ export default class VideoTime extends VideoTimeBase {
             return;
         }
 
-        // If resume is present force seek the player to that point.
-        this.getResumeTime().then((seconds) => {
-            if (seconds <= 0) {
-                return true;
-            }
-
-                let duration = this.getPlayer().duration(),
-                    resumeTime = seconds;
-                // Duration is often a little greater than a resume time at the end of the video.
-                // A user may have watched 100 seconds when the video ends, but the duration may be
-                // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
-                // video loads, so it may be 101 seconds. Hence the +1 and Math.floor usage.
-                if (seconds + 1 >= Math.floor(duration)) {
-                    Log.debug('VIDEO_TIME video finished, resuming at start of video.');
-                    resumeTime = 0;
-                }
-                Log.debug('VIDEO_TIME resuming at ' + resumeTime);
-                this.getPlayer().currentTime(resumeTime);
-            return true;
-        }).catch(Notification.exception);
-
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
         // Catch all events where video plays.
@@ -149,7 +149,7 @@ export default class VideoTime extends VideoTimeBase {
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
-        this.player.on('playbackratechange', function() {
+        this.player.on('playbackrateschange', function() {
             this.playbackRate = this.player.playbackRate();
         }.bind(this));
 
