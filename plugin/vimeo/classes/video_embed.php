@@ -25,47 +25,17 @@
 namespace videotimeplugin_vimeo;
 
 use core_component;
-use mod_videotime\vimeo_embed;
+use mod_videotime\vimeo_embed as vimeo_embed_base;
 use renderer_base;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/filelib.php");
-require_once("$CFG->dirroot/mod/videotime/lib.php");
+use renderable;
+use templatable;
 
 /**
  * Represents a single Video Time activity module. Adds more functionality when working with instances.
  *
  * @package videotimeplugin_vimeo
  */
-class video_embed extends vimeo_embed implements \renderable, \templatable {
-
-    /**
-     * Function to export the renderer data in a format that is suitable for a
-     * mustache template. This means:
-     * 1. No complex types - only stdClass, array, int, string, float, bool
-     * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
-     *
-     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
-     * @return \stdClass|array
-     */
-    public function export_for_template(renderer_base $output) {
-        global $CFG;
-
-        $cm = get_coursemodule_from_instance('videotime', $this->record->id);
-
-        $context = [
-            'instance' => $this->record,
-            'cmid' => $cm->id,
-            'haspro' => videotime_has_pro(),
-            'interval' => $this->record->interval ?? 5,
-            'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
-            'uniqueid' => $this->get_uniqueid(),
-            'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
-        ];
-
-        return $context;
-    }
+class video_embed extends vimeo_embed_base implements renderable, templatable {
 
     /**
      * Returns the moodle component name.

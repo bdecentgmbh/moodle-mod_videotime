@@ -148,5 +148,5 @@ function videotimeplugin_vimeo_embed_player($instance) {
         return null;
     }
 
-    return new \mod_videotime\vimeo_embed($instance);
+    return new \videotimeplugin_vimeo\video_embed($instance);
 }

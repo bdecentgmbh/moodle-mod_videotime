@@ -53,18 +53,9 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
-        $cm = get_coursemodule_from_instance('videotime', $this->record->id);
-
         $mimetype = resourcelib_guess_url_mimetype($this->record->vimeo_url);
 
-        $context = [
-            'instance' => $this->record,
-            'cmid' => $cm->id,
-            'haspro' => videotime_has_pro(),
-            'interval' => $this->record->interval ?? 5,
-            'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
-            'uniqueid' => $this->get_uniqueid(),
-            'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
+        $context = parent::export_for_template($output) + [
             'mimetype' => $mimetype,
             'video' => !file_mimetype_in_typegroup($mimetype, ['web_audio']),
         ];

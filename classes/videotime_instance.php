@@ -495,7 +495,6 @@ class videotime_instance implements \renderable, \templatable {
             'instance' => $this->to_record(),
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
-            'interval' => 5,
             'player' => $output->render($embeddedplayer),
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),

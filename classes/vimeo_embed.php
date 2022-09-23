@@ -93,7 +93,7 @@ class vimeo_embed implements \renderable, \templatable {
             'instance' => $this->record,
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
-            'interval' => 5,
+            'interval' => $this->record->saveinterval ?? 5,
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
