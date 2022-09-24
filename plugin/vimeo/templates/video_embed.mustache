@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_videotime/vimeo_embed
+    @template videotimeplugin_vimeo/video_embed
 
     This template will render the video time activity and load player in tab
 
@@ -34,31 +34,23 @@
         "haspro": 0,
         "interval": 2.5,
         "uniqueid": "60dccff8871f6",
+        "plugins": true,
         "video_description": "UX design tips",
         "vimeo_url": "https://vimeo.com/323424"
     }
 
 }}
-{{# instance }}
 <div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}}>
     <div class="vimeo-intro">
         {{{intro}}}
     </div>
-    <div class="videotime-embed video-resize">
-    <video class="video-js"
-        id="vimeo-embed-{{uniqueid}}"
-        controls {{# playsinline }} playsinline {{/ playsinline }}
-    >
-         <source src="{{ vimeo_url }}" type="video/mp4" />
-    </video>
-    </div>
+    <div class="vimeo-embed" id="vimeo-embed-{{uniqueid}}"></div>
     <div class="vimeo-video-description">
         {{{video_description}}}
     </div>
 </div>
-{{/ instance }}
 {{#js}}
-    require(['videotimeplugin_videojs/videotime'], function(VideoTime) {
+    require(['mod_videotime/videotime'], function(VideoTime) {
         var v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
         {{#haspro}}
             {{! Register pro JS plugins }}
