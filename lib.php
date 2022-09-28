@@ -183,7 +183,7 @@ function videotime_add_instance($moduleinstance, $mform = null) {
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
 
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
-        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance]);
+        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance, $mform]);
     }
 
     videotime_grade_item_update($moduleinstance);
