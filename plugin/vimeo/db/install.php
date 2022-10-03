@@ -40,6 +40,7 @@ function xmldb_videotimeplugin_vimeo_install() {
         'autoplay',
         'byline',
         'color',
+        'controls',
         'height',
         'maxheight',
         'maxwidth',
@@ -56,6 +57,7 @@ function xmldb_videotimeplugin_vimeo_install() {
 
     $videojsoptions = [
         'autoplay',
+        'controls',
         'height',
         'muted',
         'option_loop',

@@ -41,6 +41,7 @@ class backup_videotimeplugin_vimeo_subplugin extends backup_subplugin {
             'autoplay',
             'byline',
             'color',
+            'controls',
             'height',
             'maxheight',
             'maxwidth',

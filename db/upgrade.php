@@ -710,6 +710,15 @@ function xmldb_videotime_upgrade($oldversion) {
             if ($dbman->field_exists($table, $field)) {
                 $dbman->drop_field($table, $field);
             }
+
+            // Define field controls to be dropped from videotime.
+            $table = new xmldb_table('videotime');
+            $field = new xmldb_field('controls');
+
+            // Conditionally launch drop field controls.
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
         }
 
         if (!key_exists('repository', $plugins)) {

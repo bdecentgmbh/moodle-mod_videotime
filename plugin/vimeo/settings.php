@@ -68,10 +68,10 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/option_loop', new lang_string('option_loop', 'videotimeplugin_vimeo'),
-        new lang_string('option_loop_help', 'videotimeplugin_vimeo'), '1'));
+        new lang_string('option_loop_help', 'videotimeplugin_vimeo'), '0'));
 
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_vimeo/muted', new lang_string('option_muted', 'videotime'),
-        new lang_string('option_muted_help', 'videotime'), '1'));
+        new lang_string('option_muted_help', 'videotime'), '0'));
 
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/playsinline', new lang_string('option_playsinline', 'videotime'),
@@ -99,6 +99,7 @@ if ($ADMIN->fulltree) {
         'autoplay' => new lang_string('option_autoplay', 'videotime'),
         'byline' => new lang_string('option_byline', 'videotime'),
         'color' => new lang_string('option_color', 'videotime'),
+        'controls' => new lang_string('option_controls', 'videotime'),
         'height' => new lang_string('option_height', 'videotime'),
         'maxheight' => new lang_string('option_maxheight', 'videotime'),
         'maxwidth' => new lang_string('option_maxwidth', 'videotime'),
@@ -126,7 +127,19 @@ if ($ADMIN->fulltree) {
         'videotimeplugin_vimeo/advanced',
         new lang_string('advancedsettings', 'videotime'),
         new lang_string('advancedsettings_help', 'videotime'),
-        [ ],
+        [
+            'byline',
+            'height',
+            'maxheight',
+            'maxwidth',
+            'muted',
+            'option_loop',
+            'playsinline' ,
+            'portrait',
+            'title',
+            'transparent',
+            'width',
+        ],
         $options
     ));
 }

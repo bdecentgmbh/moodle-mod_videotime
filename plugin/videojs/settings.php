@@ -52,10 +52,10 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/option_loop', get_string('option_loop', 'videotime'),
-        get_string('option_loop_help', 'videotime'), '1'));
+        get_string('option_loop_help', 'videotime'), '0'));
 
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/muted', get_string('option_muted', 'videotime'),
-        get_string('option_muted_help', 'videotime'), '1'));
+        get_string('option_muted_help', 'videotime'), '0'));
 
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/playsinline', get_string('option_playsinline', 'videotime'),
@@ -93,7 +93,13 @@ if ($ADMIN->fulltree) {
         'videotimeplugin_videojs/advanced',
         new lang_string('advancedsettings', 'videotime'),
         new lang_string('advancedsettings_help', 'videotime'),
-        [ ],
+        [
+            'height',
+            'muted',
+            'option_loop',
+            'playsinline',
+            'width',
+        ],
         $options
     ));
 }
