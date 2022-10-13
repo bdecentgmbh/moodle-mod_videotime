@@ -292,8 +292,26 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addElement('advcheckbox', 'preventfastforwarding', get_string('preventfastforwarding', 'videotime'));
             $mform->addHelpButton('preventfastforwarding', 'preventfastforwarding', 'videotime');
             $mform->setType('preventfastforwarding', PARAM_BOOL);
-            $mform->setDefault('responsive', get_config('videotime', 'preventfastforwarding'));
+            $mform->setDefault('preventfastforwarding', get_config('videotime', 'preventfastforwarding'));
             videotime_instance::create_additional_field_form_elements('preventfastforwarding', $mform);
+
+            $mform->insertElementBefore(
+                $mform->createElement(
+                    'select',
+                    'saveinterval',
+                    get_string('saveinterval', 'videotime'),
+                    mod_videotime_pro_get_interval_options()
+                ),
+                'resume_playback'
+            );
+            $mform->addHelpButton('saveinterval', 'saveinterval', 'videotime');
+            $mform->setType('saveinterval', PARAM_INT);
+            $mform->setDefault('saveinterval', get_config('videotime', 'saveinterval'));
+            videotime_instance::create_additional_field_form_elements('saveinterval', $mform);
+            $mform->disabledIf('completion_on_view', 'saveinterval', 'eq', 0);
+            $mform->disabledIf('completion_on_percent', 'saveinterval', 'eq', 0);
+            $mform->disabledIf('preventfastforwarding', 'saveinterval', 'eq', 0);
+            $mform->disabledIf('resume_playback', 'saveinterval', 'eq', 0);
         }
 
         $mform->addElement('header', 'tabs', get_string('tabs', 'videotime'));

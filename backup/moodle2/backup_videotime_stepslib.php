@@ -104,6 +104,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'next_activity_auto',
             'resume_playback',
             'preview_picture',
+            'saveinterval',
             'show_description',
             'show_title',
             'show_tags',

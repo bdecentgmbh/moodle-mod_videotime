@@ -56,6 +56,13 @@ if ($ADMIN->fulltree) {
     }
 
     if (videotime_has_pro()) {
+        $settings->add(new admin_setting_heading('saveinterval', get_string('default', 'videotime') . ' ' .
+            get_string('saveinterval', 'videotime'), ''));
+        $settings->add(new admin_setting_configselect('videotime/saveinterval', new lang_string('saveinterval', 'videotime'),
+            new lang_string('saveinterval_help', 'videotime'), 5, mod_videotime_pro_get_interval_options()));
+        $settings->add(new admin_setting_configcheckbox('videotime/saveinterval_force', get_string('force', 'videotime'),
+            get_string('force_help', 'videotime'), '0'));
+
         $settings->add(new admin_setting_heading('preventfastforwarding', get_string('default', 'videotime') . ' ' .
             get_string('preventfastforwarding', 'videotime'), ''));
         $settings->add(new admin_setting_configcheckbox('videotime/preventfastforwarding',

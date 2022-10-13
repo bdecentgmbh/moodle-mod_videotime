@@ -18,14 +18,14 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     mod_videotime
- * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @copyright   2022 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_videotime';
-$plugin->release = '1.5.1';
-$plugin->version = 2022022803;
+$plugin->release = '1.5.3';
+$plugin->version = 2022091402;
 $plugin->requires = 2015111610;
 $plugin->maturity = MATURITY_STABLE;

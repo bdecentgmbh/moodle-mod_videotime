@@ -566,5 +566,20 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022022802, 'videotime');
     }
 
+    if ($oldversion < 2022091402) {
+
+        // Define field saveinterval to be added to videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('saveinterval', XMLDB_TYPE_INTEGER, '10', null, null, null, '5', 'preventfastforwarding');
+
+        // Conditionally launch add field saveinterval.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2022091402, 'videotime');
+    }
+
     return true;
 }
