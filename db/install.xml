@@ -54,6 +54,7 @@
         <FIELD NAME="show_viewed_duration" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Show view duration in preview mode."/>
         <FIELD NAME="columns" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of columns the video will be displayed within preview mode."/>
         <FIELD NAME="preventfastforwarding" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Prevent user from seeking beyond the time they have watched."/>
+        <FIELD NAME="saveinterval" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="5" SEQUENCE="false" COMMENT="Interval to save data"/>
         <FIELD NAME="enabletabs" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Enable tabs view for this videotime instance."/>
       </FIELDS>
       <KEYS>

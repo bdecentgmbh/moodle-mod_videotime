@@ -779,3 +779,17 @@ function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
         true
     );
 }
+
+/**
+ * Get options to offer for interval to save position of video
+ *
+ * @return array Options
+ */
+function mod_videotime_pro_get_interval_options() {
+    return [
+        5 => get_string('normal'),
+        60 => get_string('long', 'videotime'),
+        300 => get_string('verylong', 'videotime'),
+        0 => get_string('disable'),
+    ];
+}
