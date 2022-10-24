@@ -71,7 +71,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             if (!$needssetup) {
                 $group[] = $mform->createElement('button', 'pull_from_vimeo', get_string('pull_from_vimeo', 'videotime'));
             }
-            $mform->addGroup($group, 'vimeo_url_group', get_string('vimeo_url', 'videotime'));
+            $mform->addGroup($group, 'vimeo_url_group', get_string('vimeo_url', 'videotime'), null, false);
             $mform->addHelpButton('vimeo_url_group', 'vimeo_url', 'videotime');
             $mform->setType('vimeo_url_group', PARAM_RAW);
 
