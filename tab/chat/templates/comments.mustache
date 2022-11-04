@@ -30,12 +30,12 @@
         <div>
             {{ label }}
         </div>
-        <div class="videotimetab_chat p-2">
+        <div class="videotimetab_chat mr-2">
             {{# rawcomments }}
                 {{# date }}
-                    <div class="videotimetab_chat_comment_date card bg-light mt-3">{{date}}</div>
+                    <div class="videotimetab_chat_comment_date card bg-light mt-3 text-center text-muted small">{{date}}</div>
                 {{/ date }}
-                <div class="videotimetab_chat_comment card position-relative border border-secondary m-2 p-1" data-comment="{{ id }}">
+                <div class="videotimetab_chat_comment card position-relative border border-secondary mb-1 mt-1 p-1" data-comment="{{ id }}">
                     <div class="card-content">
                         <span class="picture float-left">{{{ avatar }}}</span>
                         <div class="card-title">
