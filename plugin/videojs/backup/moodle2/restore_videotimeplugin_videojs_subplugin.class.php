@@ -58,6 +58,7 @@ class restore_videotimeplugin_videojs_subplugin extends restore_subplugin {
     public function process_videotimeplugin_videojs($data) {
         global $DB;
 
+        $data = (array) $data + (array) get_config('videotimeplugin_videojs');
         $data = (object)$data;
         $data->videotime = $this->get_new_parentid('videotime');
         $DB->insert_record('videotimeplugin_videojs', $data);
