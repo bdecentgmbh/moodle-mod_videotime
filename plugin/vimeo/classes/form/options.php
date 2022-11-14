@@ -112,6 +112,12 @@ class options extends moodleform {
         $mform->setDefault('byline', get_config('videotimeplugin_vimeo', 'byline'));
         videotime_instance::create_additional_field_form_elements('byline', $mform, null, $instance);
 
+        $mform->addElement('advcheckbox', 'controls', get_string('option_controls', 'videotime'));
+        $mform->setType('controls', PARAM_BOOL);
+        $mform->addHelpButton('controls', 'option_controls', 'videotime');
+        $mform->setDefault('controls', get_config('videotimeplugin_vimeo', 'controls'));
+        videotime_instance::create_additional_field_form_elements('controls', $mform, null, $instance);
+
         $mform->addElement('text', 'color', get_string('option_color', 'videotime'));
         $mform->setType('color', PARAM_TEXT);
         $mform->addHelpButton('color', 'option_color', 'videotime');
