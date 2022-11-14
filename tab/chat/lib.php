@@ -29,7 +29,6 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 use videotimetab_chat\output\main;
 use videotimetab_chat\socket;
-use videotimetab_chat\task;
 
 /**
  * Validate comment parameter before perform other comments actions

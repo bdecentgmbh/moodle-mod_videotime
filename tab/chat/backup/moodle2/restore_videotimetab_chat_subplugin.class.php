@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * videotime restore task
+ * videotime restore tab
  *
  * provides all the settings and steps to perform one * complete restore of the activity
  *

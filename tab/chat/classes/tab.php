@@ -104,12 +104,6 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        if ($trackids = $DB->get_fieldset_select('videotimetab_chat_task', 'id',  'videotime = ?', array($record->id))) {
-            list($sql, $params) = $DB->get_in_or_equal($trackids);
-            $DB->delete_records_select('videotimetab_chat_task', "track $sql", $params);
-            $DB->delete_records('videotimetab_chat_task', array('videotime' => $record->id));
-        }
-
         $DB->delete_records('videotimetab_chat', array(
             'videotime' => $id,
         ));

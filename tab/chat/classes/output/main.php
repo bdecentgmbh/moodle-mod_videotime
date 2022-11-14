@@ -36,7 +36,6 @@ use stdClass;
 use templatable;
 use core_course\external\course_summary_exporter;
 use videotimetab_chat\socket;
-use videotimetab_chat\task;
 
 /**
  * Class to render Chat tab

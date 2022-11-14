@@ -122,8 +122,8 @@ class provider implements
             }
             \core_comment\privacy\provider::export_comments(
                 $context,
-                'block_deft',
-                'task',
+                'videotiometab_chat',
+                'chat',
                 0,
                 []
             );
