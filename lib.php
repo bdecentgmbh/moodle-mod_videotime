@@ -22,9 +22,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_videotime\videotime_instance;
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/completionlib.php');
+
+use mod_videotime\videotime_instance;
 
 /**
  * Checks if Videotime supports a specific feature.
@@ -450,11 +452,12 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
  * @param  stdClass $context    context object
  */
 function videotime_view(videotime_instance $videotime, $course, $cm, $context) {
+    global $USER;
 
     // Trigger course_module_viewed event.
     $params = array(
         'context' => $context,
-        'objectid' => $videotime->id
+        'objectid' => $videotime->id,
     );
 
     $event = \mod_videotime\event\course_module_viewed::create($params);

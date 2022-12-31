@@ -27,8 +27,10 @@ namespace mod_videotime\output;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
+require_once($CFG->dirroot . '/lib/externallib.php');
 
 use context_module;
+use moodle_url;
 
 /**
  * Mobile output class for Video Time.
@@ -67,11 +69,23 @@ class mobile {
         list($videotime->intro, $videotime->introformat) =
             external_format_text($videotime->intro, $videotime->introformat, $context->id, 'mod_videotime', 'intro');
 
+        $url = new moodle_url('/mod/videotime/player.php', [
+            'id' => $cm->id,
+            'token' => self::create_service_token($context),
+        ]);
         $data = array(
             'instance' => $videotime,
             'cmid' => $cm->id,
-            'has_pro' => videotime_has_pro()
+            'has_pro' => videotime_has_pro(),
+            'iframe' => !empty(get_config('videotime', 'mobileiframe')),
+            'url' => $url->out(false),
         );
+
+        if (empty(get_config('videotime', 'mobileiframe'))) {
+            $js = file_get_contents($CFG->dirroot . '/mod/videotime/appjs/videotime.js');
+        } else {
+            $js = '';
+        }
 
         return [
             'templates' => [
@@ -80,7 +94,7 @@ class mobile {
                     'html' => $OUTPUT->render_from_template('mod_videotime/view_mobile', $data),
                 ],
             ],
-            'javascript' => file_get_contents($CFG->dirroot . '/mod/videotime/appjs/videotime.js'),
+            'javascript' => $js,
             'otherdata' => '',
         ];
     }
@@ -98,5 +112,19 @@ class mobile {
                 file_get_contents("$CFG->dirroot/mod/videotime/appjs/view_init.js")
         ];
 
+    }
+
+    /**
+     * Create and return a context linked token. Token to be used for html embedded client apps that want to communicate
+     * with the Moodle server through web services.
+     *
+     * @param int $context context within which the web service can operate.
+     * @return int returns token id.
+     */
+    public static function create_service_token($context) {
+        global $DB;
+
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE), '*', MUST_EXIST);
+        return external_generate_token_for_current_user($service)->token;
     }
 }

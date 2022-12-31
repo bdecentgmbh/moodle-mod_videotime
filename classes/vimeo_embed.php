@@ -90,7 +90,7 @@ class vimeo_embed implements \renderable, \templatable {
         $cm = get_coursemodule_from_instance('videotime', $this->record->id);
 
         $context = [
-            'instance' => $this->record,
+            'instance' => json_encode($this->record),
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
             'interval' => $this->record->saveinterval ?? 5,

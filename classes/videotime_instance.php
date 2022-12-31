@@ -120,13 +120,14 @@ class videotime_instance implements \renderable, \templatable {
      * Get a new object by Video Time instance ID.
      *
      * @param int $id
+     * @param int $token Optional token to be used by mobile player
      * @return videotime_instance
      * @throws \dml_exception
      */
-    public static function instance_by_id($id) : videotime_instance {
+    public static function instance_by_id($id, $token = '') : videotime_instance {
         global $DB;
 
-        $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], '*', MUST_EXIST));
+        $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], "*, '{$token}' AS token", MUST_EXIST));
         if ($instance->enabletabs) {
             $instance->tabs = new tabs($instance);
         }
@@ -147,6 +148,7 @@ class videotime_instance implements \renderable, \templatable {
 
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             $instancerecord = component_callback("videotimeplugin_$name", 'load_settings', [$instancerecord], $instancerecord);
+            $instancerecord = (array) $instancerecord;
         }
 
         $instancerecord = (array) $instancerecord + [

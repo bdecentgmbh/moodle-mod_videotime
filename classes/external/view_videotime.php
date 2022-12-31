@@ -69,6 +69,7 @@ trait view_videotime {
         $context = \context_module::instance($cm->id);
         external_api::validate_context($context);
 
+        require_login($course, false, $cm);
         require_capability('mod/videotime:view', $context);
 
         // Trigger course_module_viewed event and completion.

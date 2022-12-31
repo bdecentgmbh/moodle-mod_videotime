@@ -44,7 +44,12 @@
             {{{intro}}}
         </ion-card-content>
     </ion-card>
-    <div class="vimeo-embed" data-vimeo-url="{{vimeo_url}}" id="vimeo-embed-{{cmid}}" data-cmid="{{cmid}}" data-has-pro="{{has_pro}}"></div>
+    {{# iframe }}
+        <iframe src="{{ url }}" style="height: 100vw; width: 100%;"></iframe>
+    {{/ iframe }}
+    {{^ iframe }}
+        <div class="vimeo-embed" data-vimeo-url="{{vimeo_url}}" id="vimeo-embed-{{cmid}}" data-cmid="{{cmid}}" data-has-pro="{{has_pro}}"></div>
+    {{/ iframe }}
     <ion-card>
         <ion-card-content>
             {{{video_description}}}

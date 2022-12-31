@@ -70,6 +70,13 @@ if ($ADMIN->fulltree) {
             'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
     )));
 
+    $settings->add(new admin_setting_configcheckbox(
+        'videotime/mobileiframe',
+        new lang_string('mobileiframe', 'videotime'),
+        new lang_string('mobileiframe_help', 'videotime'),
+        0
+    ));
+
     if (!videotime_has_pro()) {
         $settings->add(new admin_setting_heading('pro2', '',
             html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),

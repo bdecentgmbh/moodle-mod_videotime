@@ -7,11 +7,4 @@
         <version>v2.18.0</version>
         <licenseversion></licenseversion>
     </library>
-    <library>
-        <location>appjs/player.js</location>
-        <name>Vimeo Player API</name>
-        <license>MIT</license>
-        <version>v2.10.0</version>
-        <licenseversion></licenseversion>
-    </library>
 </libraries>

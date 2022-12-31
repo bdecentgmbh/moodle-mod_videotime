@@ -33,8 +33,10 @@
         "cmid": 3,
         "haspro": 0,
         "interval": 2.5,
+        "instance": "{}",
         "uniqueid": "60dccff8871f6",
         "video_description": "UX design tips",
+        "video": 1,
         "vimeo_url": "https://vimeo.com/323424"
     }
 
@@ -68,7 +70,7 @@
 {{/ instance }}
 {{#js}}
     require(['videotimeplugin_videojs/videotime'], function(VideoTime) {
-        var v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
+        var v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}}, {{{instance}}});
         {{#haspro}}
             {{! Register pro JS plugins }}
             {{# plugins }}
