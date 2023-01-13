@@ -25,10 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'videotimetab_related';
-$plugin->release = '1.6';
+$plugin->release = '1.7';
 $plugin->version = 2022030100;
 $plugin->requires = 2015111610;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = [
-    'videotime' => 2022022800
+    'videotime' => 2023011200
 ];

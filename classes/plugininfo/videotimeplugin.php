@@ -51,16 +51,16 @@ class videotimeplugin extends \core\plugininfo\base {
         switch ($this->name) {
             case 'pro':
                 $info = array(
-                    'maturity' => MATURITY_BETA,
-                    'release' => '1.7 Beta',
-                    'version' => 2022110700,
+                    'maturity' => MATURITY_STABLE,
+                    'release' => '1.7',
+                    'version' => 2023011200,
                 );
                 break;
             case 'repository':
                 $info = array(
-                    'maturity' => MATURITY_BETA,
-                    'release' => '1.7 Beta',
-                    'version' => 2022110700,
+                    'maturity' => MATURITY_STABLE,
+                    'release' => '1.7',
+                    'version' => 2023011200,
                 );
                 break;
         }
