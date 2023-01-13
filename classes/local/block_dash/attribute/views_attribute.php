@@ -49,7 +49,7 @@ class views_attribute extends abstract_field_attribute {
         $instance = videotime_instance::instance_by_id($data);
 
         return $DB->get_field_sql(
-            'SELECT COUNT(*) FROM {videotime_session} vts WHERE vts.module_id = ?',
+            'SELECT COUNT(*) FROM {videotimeplugin_pro_session} vts WHERE vts.module_id = ?',
             [$instance->get_cm()->id]
         );
     }

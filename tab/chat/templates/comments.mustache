@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template videotimetab_chat/comments
+
+    This template renders the view for the chat tab
+
+    Example context (json):
+    {
+        "name": "Welcome",
+        "comments": ""
+    }
+}}
+<div data-region="deft-view">
+    <h5>{{ name }}</h5>
+        <div>
+            {{ label }}
+        </div>
+        <div class="videotimetab_chat mr-2">
+            {{# rawcomments }}
+                {{# date }}
+                    <div class="videotimetab_chat_comment_date card bg-light mt-3 text-center text-muted small">{{date}}</div>
+                {{/ date }}
+                <div class="videotimetab_chat_comment card position-relative border border-secondary mb-1 mt-1 p-1" data-comment="{{ id }}">
+                    <div class="card-content">
+                        <span class="picture float-left">{{{ avatar }}}</span>
+                        <div class="card-title">
+                            <span class="name">{{ fullname }}</span>
+                            <span class="time">{{ time }}</span>
+                            {{# delete }}
+                                <a href="#" class="card-link float-right" data-action="delete" title="{{# str }} delete {{/ str }}"><i class="icon fa fa-trash"></i></a>
+                            {{/ delete }}
+                        </div>
+                        <div class="card-text">
+                             {{{ content }}}
+                        </div>
+                    </div>
+                </div>
+            {{/ rawcomments }}
+        </div>
+</div>

@@ -46,15 +46,40 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $videotime = new restore_path_element('videotime', '/activity/videotime');
         $paths[] = $videotime;
 
-        // A chance for tab subplugins to set up their data.
-        $this->add_subplugin_structure('videotimetab', $videotime);
-
-        if ($userinfo && videotime_has_pro()) {
+        if ($userinfo) {
             $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
         }
 
+        // A chance for tab subplugins to set up their data.
+        $this->add_subplugin_structure('videotimetab', $videotime);
+        $this->add_subplugin_structure('videotimeplugin', $videotime);
+
+        $paths[] = new restore_path_element('vimeooptions', '/activity/videotime/vimeo_options');
+
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
+    }
+
+    /**
+     * Add annotated subplugin files
+     * @param string $subtype the plugin type to handle
+     * @return void
+     */
+    protected function add_subplugin_files($subtype) {
+        $pluginmanager = new \mod_videotime\plugin_manager($subtype);
+        $plugins = $pluginmanager->get_sorted_plugins_list();
+        foreach ($plugins as $plugin) {
+            $component = $subtype . '_' . $plugin;
+            if ($subtype == 'videotimetab') {
+                $classname = '\\' . $component . '\\tab';
+                $areas = $classname::get_config_file_areas();
+            } else {
+                $areas = component_callback($component, 'config_file_areas', [], []);
+            }
+            foreach ($areas as $area) {
+                $this->add_related_files($component, $area, null);
+            }
+        }
     }
 
     /**
@@ -87,13 +112,25 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
 
         $data->module_id = $this->get_mappingid('course_module', $data->module_id);
+        $data->user_id = $this->get_mappingid('user', $data->user_id);
 
-        $newitemid = $DB->insert_record('videotime_session', $data);
-        $this->set_mapping('videotime_session', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('videotimeplugin_pro_session', $data);
     }
+
+    /**
+     * Process vimeo embed data
+     *
+     * @param array $data data
+     */
+    protected function process_vimeooptions($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->videotime = $this->get_new_parentid('videotime');
+    }
+
 
     /**
      * Defines post-execution actions to dd files
@@ -102,5 +139,7 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         // Add videotime related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_videotime', 'intro', null);
         $this->add_related_files('mod_videotime', 'video_description', null);
+
+        $this->add_subplugin_files('videotimeplugin');
     }
 }

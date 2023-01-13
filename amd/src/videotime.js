@@ -11,6 +11,7 @@ define([
     'jquery',
     'mod_videotime/player',
     'core/ajax',
+    'core/config',
     'core/log',
     'core/templates',
     'core/notification'
@@ -18,12 +19,13 @@ define([
     $,
     Vimeo,
     Ajax,
+    Config,
     Log,
     Templates,
     Notification
 ) {
 
-    let VideoTime = function(elementId, cmId, hasPro, interval) {
+    let VideoTime = function(elementId, cmId, hasPro, interval, instance) {
         this.elementId = elementId;
         this.cmId = cmId;
         this.hasPro = hasPro;
@@ -31,7 +33,7 @@ define([
         this.player = null;
         this.resumeTime = null;
         this.session = null;
-        this.instance = null;
+        this.instance = instance;
 
         this.played = false;
 
@@ -69,30 +71,31 @@ define([
     };
 
     VideoTime.prototype.initialize = function() {
+        let instance = this.instance;
         Log.debug('Initializing Video Time ' + this.elementId);
 
-        this.getInstance().then((instance) => {
             Log.debug('Initializing Vimeo player with options:');
             Log.debug(instance);
             this.player = new Vimeo(this.elementId, {
-                autopause: instance.autopause,
-                autoplay: instance.autoplay,
-                background: instance.background,
-                byline: instance.byline,
+                autopause: Number(instance.autopause),
+                autoplay: Number(instance.autoplay),
+                background: Number(instance.background),
+                byline: Number(instance.byline),
                 color: instance.color,
-                controls: instance.controls,
-                dnt: instance.dnt,
+                controls: Number(instance.controls),
+                dnt: Number(instance.dnt),
                 height: instance.height,
+                loop: Number(instance.option_loop),
                 maxheight: instance.maxheight,
                 maxwidth: instance.maxwidth,
-                muted: instance.muted,
+                muted: Number(instance.muted),
                 portrait: instance.portrait,
-                pip: instance.pip,
+                pip: Number(instance.pip),
                 playsinline: instance.playsinline,
-                responsive: instance.responsive,
+                responsive: Number(instance.responsive),
                 speed: instance.speed,
-                title: instance.title,
-                transparent: instance.transparent,
+                title: Number(instance.title),
+                transparent: Number(instance.transparent),
                 url: instance.vimeo_url,
                 width: instance.width
             });
@@ -119,7 +122,6 @@ define([
             }
 
             return true;
-        }).catch(Notification.exeption);
     };
 
     /**
@@ -140,21 +142,46 @@ define([
             return;
         }
 
+        // If this is a tab play set time cues and listener.
+        $($('#' + this.elementId).closest('.videotimetabs')).each(function(i, tabs) {
+           $(tabs).find('[data-action="cue"]').each(function(index, anchor) {
+                let starttime = anchor.getAttribute('data-start'),
+                    time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+                if (time) {
+                    this.player.addCuePoint(
+                        3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]),
+                        {
+                            starttime: starttime
+                        }
+                    ).catch(Notification.exeception);
+                }
+            }.bind(this));
+
+            this.player.on('cuepoint', function(event) {
+                if (event.data.starttime) {
+                    $(tabs).find('.videotime-highlight').removeClass('videotime-highlight');
+                    $(tabs).find('[data-action="cue"][data-start="' + event.data.starttime + '"]')
+                        .closest('.row')
+                        .addClass('videotime-highlight');
+                    $('.videotime-highlight').each(function() {
+                        if (this.offsetTop) {
+                            this.parentNode.scrollTo({
+                                top: this.offsetTop - 50,
+                                left: 0,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                }
+            });
+        }.bind(this));
+
         // Fire view event in Moodle on first play only.
         this.player.on('play', () => {
-            if (!this.played) {
-                if (this.hasPro) {
-                    // Getting a new session on first play.
-                    this.getSession().then(() => {
-                        this.view();
-                        this.startWatchInterval();
-                        return true;
-                    }).catch(Notification.exception);
-                } else {
-                    // Free version can still mark completion on video time view.
-                    this.view();
-                }
+            if (this.hasPro) {
+                this.startWatchInterval();
             }
+            this.view();
             return true;
         });
 
@@ -164,30 +191,29 @@ define([
         }
 
         // If resume is present force seek the player to that point.
-        this.getResumeTime().then((seconds) => {
-            if (seconds <= 0) {
+        this.player.on("loaded", () => {
+            if (!this.instance.resume_playback || this.instance.resume_time <= 0) {
                 return true;
             }
 
-            this.getPlayer().getDuration().then((duration) => {
-                let resumeTime = seconds;
+            this.getDuration().then((duration) => {
+                let resumeTime = this.instance.resume_time;
                 // Duration is often a little greater than a resume time at the end of the video.
                 // A user may have watched 100 seconds when the video ends, but the duration may be
                 // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
                 // video loads, so it may be 101 seconds. Hence the +1 and Math.floor usage.
-                if (seconds + 1 >= Math.floor(duration)) {
-                    Log.debug('VIDEO_TIME video finished, resuming at start of video.');
+                if (resumeTime + 1 >= Math.floor(duration)) {
+                    Log.debug(
+                        "VIDEO_TIME video finished, resuming at start of video."
+                    );
                     resumeTime = 0;
                 }
-
-                Log.debug('VIDEO_TIME resuming at ' + resumeTime);
-                this.player.setCurrentTime(resumeTime);
-
+                Log.debug("VIDEO_TIME duration is " + duration);
+                Log.debug("VIDEO_TIME resuming at " + resumeTime);
+                this.setCurrentPosition(resumeTime);
                 return true;
-            }).catch(Notification.exception);
-
-            return true;
-        }).catch(Notification.exception);
+            }).fail(Notification.exception);
+        });
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
@@ -235,27 +261,23 @@ define([
         }.bind(this));
 
         // Initiate video finish procedure.
-        this.player.on('ended', function() {
+        this.player.on('ended', this.handleEnd.bind(this));
+    };
+
+    /**
+     * Start interval that will periodically record user progress via Ajax.
+     */
+    VideoTime.prototype.handleEnd = function() {
             this.playing = false;
             Log.debug('VIDEO_TIME ended');
 
-            new Promise(function(resolve) {
-                this.getSession().then(function(session) {
-                    resolve(session);
-                    return true;
-                }).catch(Notification.exception);
-            }.bind(this)).then(function(session) {
-                this.setSessionState(session.id, 1);
-                return session;
-            }.bind(this)).then(function(session) {
-                this.setPercent(session.id, 1);
-                return session;
-            }.bind(this)).then(function(session) {
-                this.setCurrentTime(session.id, this.currentTime);
-                return session;
-            }.bind(this)).catch(Notification.exception).finally(function() {
-                this.getSession().then(function(session) {
-                    this.getNextActivityButtonData(session.id).then(function(response) {
+            this.getSession().then(function(session) {
+                this.setSessionState(session.id, 1).then(() => {
+                    return this.setPercent(session.id, 1);
+                }).then(() => {
+                    return this.setCurrentTime(session.id, this.currentTime);
+                }).then(() => {
+                    return this.getNextActivityButtonData(session.id).then(response => {
                         let data = JSON.parse(response.data);
 
                         if (data.instance && parseInt(data.instance.next_activity_auto)) {
@@ -269,50 +291,14 @@ define([
                             }
                         }
 
-                        Templates.render('videotime/next_activity_button', JSON.parse(response.data))
+                        return Templates.render('videotime/next_activity_button', JSON.parse(response.data))
                             .then(function(html) {
                                 $('#next-activity-button').html(html);
                                 return true;
-                            }).fail(Notification.exception);
-                        return true;
-                    }).fail(Notification.exception);
-                }.bind(this)).catch(Notification.exception);
-            }.bind(this)).fail(Notification.exception);
-        }.bind(this));
-
-        // If this is a tab play set time cues and listener.
-        $($('#' + this.elementId).closest('.videotimetabs')).each(function(i, tabs) {
-           $(tabs).find('[data-action="cue"]').each(function(index, anchor) {
-                let starttime = anchor.getAttribute('data-start'),
-                    time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
-                if (time) {
-                    this.player.addCuePoint(
-                        3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]),
-                        {
-                            starttime: starttime
-                        }
-                    ).catch(Notification.exeception);
-                }
-            }.bind(this));
-
-            this.player.on('cuepoint', function(event) {
-                if (event.data.starttime) {
-                    $(tabs).find('.videotime-highlight').removeClass('videotime-highlight');
-                    $(tabs).find('[data-action="cue"][data-start="' + event.data.starttime + '"]')
-                        .closest('.row')
-                        .addClass('videotime-highlight');
-                    $('.videotime-highlight').each(function() {
-                        if (this.offsetTop) {
-                            this.parentNode.scrollTo({
-                                top: this.offsetTop - 50,
-                                left: 0,
-                                behavior: 'smooth'
                             });
-                        }
                     });
-                }
-            });
-        }.bind(this));
+                }).catch(Notification.exception);
+            }.bind(this)).catch(Notification.exception);
     };
 
     /**
@@ -348,9 +334,26 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.setSessionState = function(sessionId, state) {
+        if (this.instance.token) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', this.instance.token);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_pro_set_session_state');
+            data.set('state', state);
+            data.set('session_id', sessionId);
+            return fetch(url).then((response) => {
+                if (!response.ok)  {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
+
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_session_state',
-            args: {"session_id": sessionId, state: state}
+            args: {"session_id": sessionId, state: state},
+            fail: Notification.exception
         }])[0];
     };
 
@@ -362,9 +365,25 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.setCurrentTime = function(sessionId, currentTime) {
+        if (this.instance.token) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', this.instance.token);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_pro_set_session_current_time');
+            data.set('current_time', currentTime);
+            data.set('session_id', sessionId);
+            return fetch(url).then((response) => {
+                if (!response.ok)  {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_session_current_time',
-            args: {"session_id": sessionId, "current_time": currentTime}
+            args: {"session_id": sessionId, "current_time": currentTime},
+            fail: Notification.exception
         }])[0];
     };
 
@@ -376,9 +395,25 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.setPercent = function(sessionId, percent) {
+        if (this.instance.token) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', this.instance.token);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_pro_set_percent');
+            data.set('percent', percent);
+            data.set('session_id', sessionId);
+            return fetch(url).then((response) => {
+                if (!response.ok)  {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_percent',
-            args: {"session_id": sessionId, percent: percent}
+            args: {"session_id": sessionId, percent: percent},
+            fail: Notification.exception
         }])[0];
     };
 
@@ -390,9 +425,25 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.recordWatchTime = function(sessionId, time) {
+        if (this.instance.token) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', this.instance.token);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_pro_record_watch_time');
+            data.set('session_id', sessionId);
+            data.set('time', time);
+            return fetch(url).then((response) => {
+                if (!response.ok)  {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_record_watch_time',
-            args: {"session_id": sessionId, time: time}
+            args: {"session_id": sessionId, time: time},
+            fail: Notification.exception
         }])[0];
     };
 
@@ -403,6 +454,21 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.getNextActivityButtonData = function(sessionId) {
+        if (this.instance.token) {
+            return Promise.resolve({data: '{}'});
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', this.instance.token);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_pro_get_next_activity_button_data');
+            data.set('session_id', sessionId);
+            return fetch(url).then((response) => {
+                if (!response.ok)  {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_get_next_activity_button_data',
             args: {"session_id": sessionId}
@@ -419,16 +485,15 @@ define([
             return Promise.resolve(this.instance);
         }
 
-        return new Promise((resolve) => {
-            Ajax.call([{
-                methodname: 'mod_videotime_get_videotime',
-                args: {cmid: this.cmId}
-            }])[0].then((response) => {
+        return Ajax.call([{
+            methodname: 'mod_videotime_get_videotime',
+            args: {cmid: this.cmId},
+            done: (response) => {
                 this.instance = response;
-                resolve(this.instance);
-                return true;
-            }).fail(Notification.exception);
-        });
+                return this.instance;
+            },
+            fail: Notification.exception
+        }])[0];
     };
 
     /**
@@ -441,16 +506,15 @@ define([
             return Promise.resolve(this.resumeTime);
         }
 
-        return new Promise((resolve) => {
-            Ajax.call([{
-                methodname: 'videotimeplugin_pro_get_resume_time',
-                args: {cmid: this.cmId}
-            }])[0].then((response) => {
+        return Ajax.call([{
+            methodname: 'videotimeplugin_pro_get_resume_time',
+            args: {cmid: this.cmId},
+            done: (response) => {
                 this.resumeTime = response.seconds;
-                resolve(this.resumeTime);
-                return true;
-            }).fail(Notification.exception);
-        });
+                return this.resumeTime;
+            },
+            fail: Notification.exception
+        }])[0];
     };
 
     /**
@@ -459,20 +523,32 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.getSession = function() {
-        if (this.session) {
-            return Promise.resolve(this.session);
-        }
+        if (this.instance.token) {
+            if (!this.session) {
+                const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                    data = url.searchParams;
+                data.set('wstoken', this.instance.token);
+                data.set('moodlewsrestformat', 'json');
+                data.set('wsfunction', 'videotimeplugin_pro_get_new_session');
+                data.set('cmid', this.cmId);
+                this.session = fetch(url).then((response) => {
+                    if (!response.ok)  {
+                        Notification.exeption('Web service error');
+                    }
+                    return response.json();
+                });
+            }
 
-        return new Promise((resolve) => {
-            Ajax.call([{
+            return this.session;
+        }
+        if (!this.session) {
+            this.session = Ajax.call([{
                 methodname: 'videotimeplugin_pro_get_new_session',
-                args: {cmid: this.cmId}
-            }])[0].then(function(response) {
-                this.session = response;
-                resolve(response);
-                return true;
-            }.bind(this)).fail(Notification.exception);
-        });
+                args: {cmid: this.cmId},
+                fail: Notification.exception
+            }])[0];
+        }
+        return this.session;
     };
 
     /**
@@ -485,7 +561,7 @@ define([
         let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
             this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
-            return this.player.setCurrentTime(this.resumeTime);
+            this.currentTime(this.resumeTime);
         }
         return this.player.getCurrentTime();
     };
@@ -496,9 +572,25 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.view = function() {
+        if (this.instance.token) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', this.instance.token);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'mod_videotime_view_videotime');
+            data.set('cmid', this.cmId);
+            return fetch(url).then((response) => {
+                if (!response.ok)  {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+
+        }
         return Ajax.call([{
             methodname: 'mod_videotime_view_videotime',
-            args: {cmid: this.cmId}
+            args: {cmid: this.cmId},
+            fail: Notification.exception
         }])[0];
     };
 
@@ -530,6 +622,43 @@ define([
                 }).fail(Notification.exception);
             }
         }.bind(this));
+    };
+
+    /**
+     * Get play back rate
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getPlaybackRate = function() {
+        return this.player.getPlaybackRate();
+    };
+
+    /**
+     * Get duration of video
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getDuration = function() {
+        return this.player.getDuration();
+    };
+
+    /**
+     * Set current time of player
+     *
+     * @param {float} secs time
+     * @returns {Promise}
+     */
+    VideoTime.prototype.setCurrentPosition = function(secs) {
+        return this.player.setCurrentTime(secs);
+    };
+
+    /**
+     * Get current time of player
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getCurrentPosition = function() {
+        return this.player.getCurrentTime();
     };
 
     return VideoTime;

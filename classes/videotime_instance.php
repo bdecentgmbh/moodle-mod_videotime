@@ -24,6 +24,7 @@
 
 namespace mod_videotime;
 
+use core_component;
 use external_description;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
@@ -119,13 +120,14 @@ class videotime_instance implements \renderable, \templatable {
      * Get a new object by Video Time instance ID.
      *
      * @param int $id
+     * @param int $token Optional token to be used by mobile player
      * @return videotime_instance
      * @throws \dml_exception
      */
-    public static function instance_by_id($id) : videotime_instance {
+    public static function instance_by_id($id, $token = '') : videotime_instance {
         global $DB;
 
-        $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], '*', MUST_EXIST));
+        $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], "*, '{$token}' AS token", MUST_EXIST));
         if ($instance->enabletabs) {
             $instance->tabs = new tabs($instance);
         }
@@ -138,8 +140,22 @@ class videotime_instance implements \renderable, \templatable {
      * @param \stdClass $instancerecord
      */
     protected function __construct(\stdClass $instancerecord) {
+        global $DB;
+
         $this->uniqueid = uniqid();
-        $this->record = $instancerecord;
+
+        $instancerecord = (array) $instancerecord;
+
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            $instancerecord = component_callback("videotimeplugin_$name", 'load_settings', [$instancerecord], $instancerecord);
+            $instancerecord = (array) $instancerecord;
+        }
+
+        $instancerecord = (array) $instancerecord + [
+            'background' => 0,
+            'controls' => 1,
+        ];
+        $this->record = (object) $instancerecord;
     }
 
     /**
@@ -189,12 +205,17 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function get_force_settings() : array {
         if (is_null($this->forcesettings)) {
-            $this->forcesettings = [];
-            foreach (get_config('videotime') as $name => $value) {
-                if (substr($name, -strlen('_force')) === '_force') {
-                    $this->forcesettings[$name] = $value;
-                }
-            }
+            $config = get_config('videotime', 'forced');
+            $this->forcesettings = $config ? array_fill_keys(explode(',', $config), true) : [];
+        }
+
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            $this->forcesettings = component_callback(
+                "videotimeplugin_$name",
+                'forced_settings',
+                [$this->record, $this->forcesettings],
+                $this->forcesettings
+            );
         }
 
         return $this->forcesettings;
@@ -208,8 +229,8 @@ class videotime_instance implements \renderable, \templatable {
      * @throws \dml_exception
      */
     public function is_field_forced($fieldname) : bool {
-        return isset($this->get_force_settings()[$fieldname . '_force'])
-            && $this->get_force_settings()[$fieldname . '_force'];
+        return isset($this->get_force_settings()[$fieldname])
+            && $this->get_force_settings()[$fieldname];
     }
 
     /**
@@ -220,6 +241,16 @@ class videotime_instance implements \renderable, \templatable {
      * @throws \dml_exception
      */
     public function get_forced_value($fieldname) {
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $plugin) {
+            if (!empty(component_callback(
+                "videotimeplugin_$plugin", 'forced_settings',
+                [$this->record, $this->forcesettings],
+                $this->forcesettings
+            )[$fieldname])) {
+                return get_config("videotimeplugin_$plugin", $fieldname);
+            }
+        }
+
         return get_config('videotime', $fieldname);
     }
 
@@ -274,13 +305,10 @@ class videotime_instance implements \renderable, \templatable {
         $record = clone $this->record;
 
         if ($useforcedsettings) {
-            foreach ($this->get_force_settings() as $name => $enabled) {
-                $fieldname = str_replace('_force', '', $name);
-                if (isset($record->$fieldname)) {
-                    // If option is globally forced, use the default instead.
-                    if ($this->is_field_forced($fieldname)) {
-                        $record->$fieldname = get_config('videotime', $fieldname);
-                    }
+            foreach ($this->get_force_settings() as $fieldname => $enabled) {
+                // If option is globally forced, use the default instead.
+                if ($this->is_field_forced($fieldname)) {
+                    $record->$fieldname = $this->get_forced_value($fieldname);
                 }
             }
         }
@@ -308,7 +336,6 @@ class videotime_instance implements \renderable, \templatable {
 
         $record->intro_excerpt = videotime_get_excerpt($record->intro);
         $record->show_more_link = strlen(strip_tags($record->intro_excerpt)) < strlen(strip_tags($record->intro));
-
         return $record;
     }
 
@@ -318,11 +345,37 @@ class videotime_instance implements \renderable, \templatable {
      * @param string $fieldname
      * @param \MoodleQuickForm $mform
      * @param array $group
+     * @param stdClass $instance
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function create_additional_field_form_elements(string $fieldname, \MoodleQuickForm $mform, &$group = null) {
-        if (get_config('videotime', $fieldname . '_force')) {
+    public static function create_additional_field_form_elements(
+        string $fieldname,
+        \MoodleQuickForm $mform,
+        $group = null,
+        $instance = null
+    ) {
+        $advanced = [];
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            $advanced = array_merge($advanced, explode(',', get_config("videotimeplugin_$name", 'advanced')));
+        }
+        $forced = array_fill_keys(array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
+            , explode(',', get_config('videotimeplugin_repository', 'forced')))), true);
+        if (!empty($instance)) {
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                $forced = component_callback(
+                    "videotimeplugin_$name",
+                    'forced_settings',
+                    [$instance, $forced],
+                    $forced
+                );
+            }
+        }
+
+        if (in_array($fieldname, $advanced)) {
+            $mform->setAdvanced($fieldname);
+        }
+        if (key_exists($fieldname, $forced)) {
 
             if (in_array($fieldname, self::$optionfields)) {
                 $label = get_string('option_' . $fieldname, 'videotime');
@@ -330,7 +383,11 @@ class videotime_instance implements \renderable, \templatable {
                 $label = get_string($fieldname, 'videotime');
             }
 
-            $value = get_config('videotime', $fieldname);
+            $defaults = (array) get_config('videotime');
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                $defaults += (array) get_config("videotimeplugin_$name");
+            }
+            $value = $defaults[$fieldname];
             if ($group) {
                 $element = null;
                 foreach ($group as $element) {
@@ -352,14 +409,15 @@ class videotime_instance implements \renderable, \templatable {
                 }
             }
 
-            $element = $mform->createElement('static', $fieldname . '_forced', '', get_string('option_forced', 'videotime', [
+            $newelement = $mform->createElement('static', $fieldname . '_forced', '', get_string('option_forced', 'videotime', [
                 'option' => $label,
                 'value' => $value
             ]));
             if ($group) {
-                $group[] = $element;
+                $group[] = $newelement;
             } else {
-                $mform->addElement($element);
+                $mform->insertElementBefore($newelement, $fieldname);
+                $mform->removeElement($fieldname);
             }
             $mform->disabledIf($fieldname, 'disable', 'eq', 1);
         }
@@ -429,22 +487,24 @@ class videotime_instance implements \renderable, \templatable {
      * @return \stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $PAGE;
-        $cm = get_coursemodule_from_instance('videotime', $this->id);
+        global $CFG;
+
+        $cm = get_coursemodule_from_instance('videotime', $this->record->id);
+
+        $embeddedplayer = $this->embed_player($this->to_record());
 
         $context = [
             'instance' => $this->to_record(),
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
-            'interval' => 5,
+            'player' => $output->render($embeddedplayer),
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
         ];
 
         if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
-            $renderer = $PAGE->get_renderer('mod_videotime');
-            $context['next_activity_button_html'] = $renderer->render($nextactivitybutton);
+            $context['next_activity_button_html'] = $output->render($nextactivitybutton);
         }
 
         if ($this->enabletabs) {
@@ -470,44 +530,47 @@ class videotime_instance implements \renderable, \templatable {
             'video_description' => new \external_value(PARAM_RAW),
             'video_description_format' => new \external_value(PARAM_INT),
             'timemodified' => new \external_value(PARAM_INT),
-            'completion_on_view_time' => new \external_value(PARAM_BOOL),
-            'completion_on_view_time_second' => new \external_value(PARAM_INT),
-            'completion_on_finish' => new \external_value(PARAM_BOOL),
-            'completion_on_percent' => new \external_value(PARAM_BOOL),
-            'completion_on_percent_value' => new \external_value(PARAM_INT),
-            'autoplay' => new \external_value(PARAM_BOOL),
-            'byline' => new \external_value(PARAM_BOOL),
-            'color' => new \external_value(PARAM_TEXT),
-            'height' => new \external_value(PARAM_TEXT),
-            'maxheight' => new \external_value(PARAM_TEXT),
-            'maxwidth' => new \external_value(PARAM_TEXT),
-            'muted' => new \external_value(PARAM_BOOL),
-            'playsinline' => new \external_value(PARAM_BOOL),
-            'portrait' => new \external_value(PARAM_BOOL),
-            'speed' => new \external_value(PARAM_BOOL),
-            'title' => new \external_value(PARAM_BOOL),
-            'transparent' => new \external_value(PARAM_BOOL),
-            'autopause' => new \external_value(PARAM_BOOL),
-            'background' => new \external_value(PARAM_BOOL),
-            'controls' => new \external_value(PARAM_BOOL),
-            'pip' => new \external_value(PARAM_BOOL),
-            'dnt' => new \external_value(PARAM_BOOL),
-            'width' => new \external_value(PARAM_TEXT),
-            'responsive' => new \external_value(PARAM_BOOL),
-            'label_mode' => new \external_value(PARAM_INT),
-            'viewpercentgrade' => new \external_value(PARAM_BOOL),
-            'next_activity_button' => new \external_value(PARAM_BOOL),
-            'next_activity_id' => new \external_value(PARAM_INT),
-            'next_activity_auto' => new \external_value(PARAM_BOOL),
-            'resume_playback' => new \external_value(PARAM_BOOL),
-            'preview_picture' => new \external_value(PARAM_INT),
-            'show_description' => new \external_value(PARAM_BOOL),
-            'show_title' => new \external_value(PARAM_BOOL),
-            'show_tags' => new \external_value(PARAM_BOOL),
-            'show_duration' => new \external_value(PARAM_BOOL),
-            'show_viewed_duration' => new \external_value(PARAM_BOOL),
-            'columns' => new \external_value(PARAM_INT),
-            'preventfastforwarding' => new \external_value(PARAM_BOOL),
+            'completion_on_view_time' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'completion_on_view_time_second' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'completion_on_finish' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'completion_on_percent' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'completion_on_percent_value' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'autoplay' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'byline' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'color' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'height' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'maxheight' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'maxwidth' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'muted' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'playsinline' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'portrait' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'speed' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'title' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'transparent' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'type' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'autopause' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'background' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'controls' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'pip' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'dnt' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'width' => new \external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
+            'responsive' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'label_mode' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'viewpercentgrade' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'next_activity_button' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'next_activity_id' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'next_activity_auto' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'option_loop' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'resume_playback' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'resume_time' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'preview_picture' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'show_description' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_title' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_tags' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_duration' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'show_viewed_duration' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
+            'columns' => new \external_value(PARAM_INT, '', VALUE_OPTIONAL),
+            'preventfastforwarding' => new \external_value(PARAM_BOOL, '', VALUE_OPTIONAL),
         ]);
     }
 
@@ -520,4 +583,17 @@ class videotime_instance implements \renderable, \templatable {
         }
     }
 
+    /**
+     * Get the correct player to embed
+     *
+     * @param stdClass $record module record
+     * @return object
+     */
+    public function embed_player($record) {
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            if ($player = component_callback("videotimeplugin_$name", 'embed_player', [$record], null)) {
+                return $player;
+            }
+        }
+    }
 }

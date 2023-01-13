@@ -57,14 +57,14 @@ require_capability('mod/videotime:view', $context);
 
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
-if (class_exists('core\\output\\activity_header') && !$moduleinstance->show_description_in_player) {
+if (class_exists('core\\output\\activity_header') && empty($moduleinstance->show_description_in_player)) {
     $PAGE->activityheader->set_description('');
 }
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->add_body_class('limitedwidth');
 
 $edit = optional_param('edit', null, PARAM_BOOL);
-if ($edit !== null and confirm_sesskey() and $PAGE->user_allowed_editing()) {
+if ($edit !== null && confirm_sesskey() && $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
     redirect($PAGE->url);
 }
@@ -89,10 +89,18 @@ foreach (\core_component::get_component_classes_in_namespace(null, 'videotime\\i
 }
 
 echo $OUTPUT->header();
+
 if (!class_exists('core\\output\\activity_header')) {
     echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 }
-if (!$moduleinstance->vimeo_url) {
+
+foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+    if ($player = component_callback("videotimeplugin_$name", 'embed_player', [$moduleinstance->to_record()], null)) {
+        break;
+    }
+}
+
+if (empty($player)) {
     \core\notification::error(get_string('vimeo_url_missing', 'videotime'));
 } else {
     // Render the activity information.

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_videotime/vimeo_embed
+    @template videotimeplugin_vimeo/video_embed
 
     This template will render the video time activity and load player in tab
 
@@ -30,7 +30,13 @@
     Example context (json):
     {
         "responsive": true,
+        "cmid": 3,
+        "haspro": 0,
+        "interval": 2.5,
+        "instance": "{}",
         "uniqueid": "60dccff8871f6",
+        "plugins": true,
+        "video": 1,
         "video_description": "UX design tips",
         "vimeo_url": "https://vimeo.com/323424"
     }
@@ -45,3 +51,27 @@
         {{{video_description}}}
     </div>
 </div>
+{{#js}}
+    require(['mod_videotime/videotime'], function(VideoTime) {
+        var v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}}, {{{instance}}});
+        {{#haspro}}
+            {{! Register pro JS plugins }}
+            {{# plugins }}
+               {{> videotimeplugin_pro/plugins }}
+            {{/ plugins }}
+            {{^ plugins }}
+                require([
+                    "videotimeplugin_pro/prevent-fast-forwarding"
+                ], function(
+                    PreventFastForwarding
+                ) {
+                    v.registerPlugin(new PreventFastForwarding());
+                    v.initialize();
+                });
+            {{/ plugins }}
+        {{/haspro}}
+        {{^haspro}}
+            v.initialize();
+        {{/haspro}}
+    });
+{{/js}}

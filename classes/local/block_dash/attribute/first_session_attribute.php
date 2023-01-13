@@ -49,7 +49,7 @@ class first_session_attribute extends abstract_field_attribute {
         $instance = videotime_instance::instance_by_id($data);
 
         return $DB->get_field_sql('SELECT MIN(vts.timestarted)
-                                     FROM {videotime_session} vts
+                                     FROM {videotimeplugin_pro_session} vts
                                     WHERE vts.module_id = ? AND vts.timestarted > 0', [$instance->get_cm()->id]);
     }
 }

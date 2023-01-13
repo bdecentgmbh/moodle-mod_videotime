@@ -65,7 +65,7 @@ class videotime_session_table extends table {
      * Build a new table.
      */
     public function __construct() {
-        parent::__construct('videotime_session', 'vts');
+        parent::__construct('videotimeplugin_pro_session', 'vts');
     }
 
     /**

@@ -22,9 +22,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_videotime\videotime_instance;
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/completionlib.php');
+
+use mod_videotime\videotime_instance;
 
 /**
  * Checks if Videotime supports a specific feature.
@@ -35,6 +37,9 @@ defined('MOODLE_INTERNAL') || die();
  * @return true | null True if the feature is supported, null otherwise.
  */
 function videotime_supports($feature) {
+    if (defined('FEATURE_MOD_PURPOSE') && $feature == FEATURE_MOD_PURPOSE) {
+        return MOD_PURPOSE_CONTENT;
+    }
     switch ($feature) {
         case FEATURE_GRADE_HAS_GRADE:
             return true;
@@ -76,7 +81,7 @@ function videotime_grade_item_update($videotime, $grades=null) {
 
     $params = [
         'itemname' => $videotime->name,
-        'idnumber' => $videotime->cmidnumber,
+        'idnumber' => $videotime->idnumber ?? null,
         'gradetype' => GRADE_TYPE_NONE,
     ];
 
@@ -168,7 +173,20 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
+    $moduleinstance = [
+        'height' => 0,
+        'maxheight' => 0,
+        'maxwidth' => 0,
+        'width' => 0,
+    ] + (array) $moduleinstance;
+
+    $moduleinstance = (object) $moduleinstance;
+
     $moduleinstance->id = $DB->insert_record('videotime', $moduleinstance);
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance, $mform]);
+    }
 
     videotime_grade_item_update($moduleinstance);
 
@@ -209,10 +227,10 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 function videotime_update_instance($moduleinstance, $mform = null) {
     global $DB;
 
-    $context = context_module::instance($moduleinstance->coursemodule);
+    $cm = get_coursemodule_from_id('videotime', $moduleinstance->coursemodule);
 
     $moduleinstance->timemodified = time();
-    $moduleinstance->id = $moduleinstance->instance;
+    $moduleinstance->id = $cm->instance;
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
@@ -223,7 +241,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     }
 
     // Disable custom completion fields when changing completion from automatic to none or manual.
-    if ($moduleinstance->completion != COMPLETION_TRACKING_AUTOMATIC) {
+    if ($cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
         $moduleinstance->completion_on_view_time = false;
         $moduleinstance->completion_on_percent = false;
         $moduleinstance->completion_on_finish = false;
@@ -236,6 +254,10 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->id,
         $completiontimeexpected
     );
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'update_instance', [$moduleinstance, $mform]);
+    }
 
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
         $classname = "\\videotimetab_$name\\tab";
@@ -265,6 +287,10 @@ function videotime_delete_instance($id) {
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
         $classname = "\\videotimetab_$name\\tab";
         $classname::delete_settings($id);
+    }
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'delete_instance', [$id]);
     }
 
     $DB->delete_records('videotime', array('id' => $id));
@@ -409,7 +435,7 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         $fullpath = "/$context->id/mod_videotime/$filearea/$relativepath";
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
             return false;
         }
 
@@ -426,11 +452,12 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
  * @param  stdClass $context    context object
  */
 function videotime_view(videotime_instance $videotime, $course, $cm, $context) {
+    global $USER;
 
     // Trigger course_module_viewed event.
     $params = array(
         'context' => $context,
-        'objectid' => $videotime->id
+        'objectid' => $videotime->id,
     );
 
     $event = \mod_videotime\event\course_module_viewed::create($params);
@@ -455,6 +482,9 @@ function videotime_has_pro() {
     if (isset($CFG->disable_videotime_pro) && $CFG->disable_videotime_pro) {
         return false;
     }
+    if (!get_config('videotimeplugin_pro', 'enabled')) {
+        return false;
+    }
     return array_key_exists('pro', core_component::get_plugin_list('videotimeplugin'));
 }
 
@@ -467,6 +497,9 @@ function videotime_has_repository() {
     global $CFG;
 
     if (isset($CFG->disable_videotime_repository) && $CFG->disable_videotime_repository) {
+        return false;
+    }
+    if (!get_config('videotimeplugin_repository', 'enabled') || !videotime_has_pro()) {
         return false;
     }
     return array_key_exists('repository', core_component::get_plugin_list('videotimeplugin'));
@@ -502,12 +535,22 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
     $keys = $videtimenode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
-    if ($i === false and array_key_exists(0, $keys)) {
+    if ($i === false && array_key_exists(0, $keys)) {
         $beforekey = $keys[0];
     } else if (array_key_exists($i + 1, $keys)) {
         $beforekey = $keys[$i + 1];
     }
 
+    if (
+        $PAGE->cm &&
+        has_capability('mod/videotime:addinstance', $PAGE->cm->context)
+    ) {
+        $node = navigation_node::create(get_string('embed_options', 'mod_videotime'),
+            new moodle_url('/mod/videotime/options.php', array('id' => $PAGE->cm->id)),
+            navigation_node::TYPE_SETTING, null, 'mod_videotime_options',
+            new pix_icon('t/play', ''));
+        $videtimenode->add_node($node, $beforekey);
+    }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('report'),
             new moodle_url('/mod/videotime/report.php', array('id' => $PAGE->cm->id)),
@@ -541,27 +584,6 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
         $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
         $node->add(get_string('pluginname', 'videotime'), $url, navigation_node::TYPE_SETTING, null, null,
             new pix_icon('i/report', ''));
-    }
-}
-
-/**
- * Sets dynamic information about a course module
- *
- * This function is called from cm_info when displaying the module
- * mod_folder can be displayed inline on course page and therefore have no course link
- *
- * @param cm_info $cm
- */
-function videotime_cm_info_dynamic(cm_info $cm) {
-
-    if (!videotime_has_pro()) {
-        return;
-    }
-
-    $instance = videotime_instance::instance_by_id($cm->instance);
-
-    if (in_array($instance->label_mode, [videotime_instance::LABEL_MODE, videotime_instance::PREVIEW_MODE])) {
-        $cm->set_no_view_link();
     }
 }
 
@@ -636,6 +658,9 @@ function videotime_cm_info_view(cm_info $cm) {
 function videotime_get_coursemodule_info($coursemodule) {
     global $DB;
 
+    if (empty($coursemodule->instance)) {
+        return false;
+    }
     $instance = videotime_instance::instance_by_id($coursemodule->instance);
 
     $result = new cached_cm_info();
@@ -724,7 +749,10 @@ function mod_videotime_treat_as_label(cm_info $mod) {
  */
 function mod_videotime_get_vimeo_id_from_link($link) {
     $videoid = null;
-    if (preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $outputarray)) {
+    if (
+        preg_match("/(https?:\/\/)?(www\.)?(player\.)?vimeo\.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/", $link, $outputarray)
+        && get_config('videotimeplugin_vimeo', 'enabled')
+    ) {
         return $outputarray[5];
     }
 
@@ -778,4 +806,18 @@ function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
         1,
         true
     );
+}
+
+/**
+ * Return array of the settings that are forced
+ *
+ * @param string $component component to us for plugins
+ * @return array Settings that are forced
+ */
+function videotime_forced_settings($component = 'videotime') {
+
+    $config = (array) get_config($component);
+    $forced = array_intersect($config, explode(',', $config['forced'] ?? ''));
+
+    return $forced;
 }

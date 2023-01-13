@@ -82,7 +82,7 @@ class videotime_sessions_data_source extends abstract_data_source {
             ->select('vts.id', 'vts_id')
             ->from('videotime', 'vt')
             ->join('course_modules', 'cm', 'instance', 'vt.id', join::TYPE_INNER_JOIN, ['cm.module' => $module])
-            ->join('videotime_session', 'vts', 'module_id', 'cm.id')
+            ->join('videotime_pro_session', 'vts', 'module_id', 'cm.id')
             ->join('user', 'u', 'id', 'vts.user_id')
             ->join('course', 'c', 'id', 'vt.course')
             ->join('course_categories', 'cc', 'id', 'c.category')

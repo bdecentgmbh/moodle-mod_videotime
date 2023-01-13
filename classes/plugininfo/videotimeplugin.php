@@ -51,16 +51,16 @@ class videotimeplugin extends \core\plugininfo\base {
         switch ($this->name) {
             case 'pro':
                 $info = array(
-                    'maturity' => MATURITY_BETA,
-                    'release' => '1.6',
-                    'version' => 2022040800,
+                    'maturity' => MATURITY_STABLE,
+                    'release' => '1.7',
+                    'version' => 2023011200,
                 );
                 break;
             case 'repository':
                 $info = array(
-                    'maturity' => MATURITY_BETA,
-                    'release' => '1.6',
-                    'version' => 2022040800,
+                    'maturity' => MATURITY_STABLE,
+                    'release' => '1.7',
+                    'version' => 2023011200,
                 );
                 break;
         }
@@ -69,5 +69,68 @@ class videotimeplugin extends \core\plugininfo\base {
         }
 
         return $updates;
+    }
+
+    /**
+     * Loads plugin settings to the settings tree
+     *
+     * This function usually includes settings.php file in plugins folder.
+     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
+     *
+     * @param \part_of_admin_tree $adminroot
+     * @param string $parentnodename
+     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
+     */
+    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        $ADMIN = $adminroot; // May be used in settings.php.
+        $plugininfo = $this; // Also can be used inside settings.php.
+
+        if (!$this->is_installed_and_upgraded()) {
+            return;
+        }
+
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
+            return;
+        }
+
+        $section = $this->get_settings_section_name();
+
+        $settings = new \admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+
+        if ($adminroot->fulltree) {
+            $shortsubtype = substr($this->type, strlen('assign'));
+            include($this->full_path('settings.php'));
+        }
+
+        $adminroot->add($this->type . 'plugins', $settings);
+    }
+
+    /**
+     * Get name to identify section
+     *
+     * @return string
+     */
+    public function get_settings_section_name() {
+        return $this->type . '_' . $this->name;
+    }
+
+    /**
+     * Returns the information about plugin availability
+     *
+     * True means that the plugin is enabled. False means that the plugin is
+     * disabled. Null means that the information is not available, or the
+     * plugin does not support configurable availability or the availability
+     * can not be changed.
+     *
+     * @return null|bool
+     */
+    public function is_enabled() {
+        $function = "videotime_has_$this->name";
+        if (function_exists($function) && !$function()) {
+            return false;
+        }
+
+        return !empty(get_config($this->type . '_' . $this->name, 'enabled'));
     }
 }

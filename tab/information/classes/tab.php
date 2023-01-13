@@ -121,7 +121,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             if ($record = $DB->get_record('videotimetab_information', array('videotime' => $data->id))) {
                 $record->text = $text;
                 $record->format = $data->information['format'];
-                $record->name = $data->informationtab_name;
+                $record->name = $data->informationtab_name ?? '';
                 $DB->update_record('videotimetab_information', $record);
             } else {
                 $DB->insert_record('videotimetab_information', array(
@@ -169,7 +169,7 @@ class tab extends \mod_videotime\local\tabs\tab {
                 'format' => $record->format,
                 'itemid' => $draftitemid,
             );
-            $defaultvalues['blocktab_name'] = $record->name;
+            $defaultvalues['informationtab_name'] = $record->name;
         } else {
             $defaultvalues['enable_information'] = 0;
         }

@@ -32,12 +32,10 @@
 
     Example context (json):
     {
-        "cmid": 30,
-        "haspro": true,
-        "interval": 5,
         "intro": "Watch this",
         "uniqueid": "60dccff8871f6",
         "next_activity_button_html": "<button>Next</button>",
+        "player": "<iframe></iframe>",
         "video_description": "UX design tips"
     }
 
@@ -47,38 +45,19 @@
         {{{next_activity_button_html}}}
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid position-relative">
     {{^tabshtml}}
-        {{> mod_videotime/vimeo_embed }}
+        {{{ player }}}
     {{/tabshtml}}
     {{#tabshtml}}
         {{{ intro }}}
-        {{{tabshtml}}}
+        <div class="videotimetabs">
+            {{{tabshtml}}}
+            <div class="videotime-tab-instance">
+                {{{ player }}}
+            </div>
+            <div class="videotime-tab-instance-cover"></div>
+        </div>
     {{/tabshtml}}
     </div>
-
-    {{#js}}
-        require(['mod_videotime/videotime'], function(VideoTime) {
-            let v = new VideoTime('vimeo-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}});
-            {{#haspro}}
-                {{! Register pro JS plugins }}
-                {{# plugins }}
-                   {{> videotimeplugin_pro/plugins }}
-                {{/ plugins }}
-                {{^ plugins }}
-                    require([
-                        "videotimeplugin_pro/prevent-fast-forwarding"
-                    ], function(
-                        PreventFastForwarding
-                    ) {
-                        v.registerPlugin(new PreventFastForwarding);
-                        v.initialize();
-                    });
-                {{/ plugins }}
-            {{/haspro}}
-            {{^haspro}}
-                v.initialize();
-            {{/haspro}}
-        });
-    {{/js}}
 {{/instance}}
