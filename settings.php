@@ -32,23 +32,8 @@ require_once($CFG->dirroot.'/mod/videotime/lib.php');
 $ADMIN->add('modsettings', new admin_category('modvideotimefolder',
     new lang_string('pluginname', 'videotime'), $module->is_enabled() === false));
 
-if (videotime_has_pro() && videotime_has_repository()) {
-    $ADMIN->add('modvideotimefolder', new admin_externalpage(
-        'authenticate',
-        get_string('authenticate_vimeo', 'videotime'),
-        new moodle_url('/mod/videotime/plugin/repository/authenticate.php'),
-        'moodle/site:config', false));
-
-    $ADMIN->add('modvideotimefolder', new admin_externalpage(
-        'overview',
-        get_string('vimeo_overview', 'videotime'),
-        new moodle_url('/mod/videotime/plugin/repository/overview.php')));
-}
-
-$ADMIN->add('modvideotimefolder', new admin_category('videotimetabplugins',
-    new lang_string('videotimetabplugins', 'videotime'), !$module->is_enabled()));
-$settings = new admin_settingpage($section, get_string('tabsettings', 'videotime'),
-    'moodle/site:config', $module->is_enabled() === false);
+$settings = new admin_settingpage('generalsettings', get_string('generalsettings', 'videotime'),
+    'moodle/site:config');
 
 if ($ADMIN->fulltree) {
 
@@ -85,10 +70,25 @@ if ($ADMIN->fulltree) {
     }
 }
 
-$ADMIN->add('videotimetabplugins', $settings);
+$ADMIN->add('modvideotimefolder', $settings);
 // Tell core we already added the settings structure.
 $settings = null;
 
+if (videotime_has_pro() && videotime_has_repository()) {
+    $ADMIN->add('modvideotimefolder', new admin_externalpage(
+        'authenticate',
+        get_string('authenticate_vimeo', 'videotime'),
+        new moodle_url('/mod/videotime/plugin/repository/authenticate.php'),
+        'moodle/site:config', false));
+
+    $ADMIN->add('modvideotimefolder', new admin_externalpage(
+        'overview',
+        get_string('vimeo_overview', 'videotime'),
+        new moodle_url('/mod/videotime/plugin/repository/overview.php')));
+}
+
+$ADMIN->add('modvideotimefolder', new admin_category('videotimetabplugins',
+    new lang_string('videotimetabplugins', 'videotime'), !$module->is_enabled()));
 $ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplugins',
     get_string('managevideotimetabplugins', 'videotime'),
     new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'))));
