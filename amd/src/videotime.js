@@ -24,7 +24,6 @@ define([
     Templates,
     Notification
 ) {
-
     let VideoTime = function(elementId, cmId, hasPro, interval, instance) {
         this.elementId = elementId;
         this.cmId = cmId;
@@ -196,7 +195,7 @@ define([
                 return true;
             }
 
-            this.getDuration().then((duration) => {
+            return this.getDuration().then((duration) => {
                 let resumeTime = this.instance.resume_time;
                 // Duration is often a little greater than a resume time at the end of the video.
                 // A user may have watched 100 seconds when the video ends, but the duration may be
@@ -343,7 +342,7 @@ define([
             data.set('state', state);
             data.set('session_id', sessionId);
             return fetch(url).then((response) => {
-                if (!response.ok)  {
+                if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
                 return response.json();
@@ -374,7 +373,7 @@ define([
             data.set('current_time', currentTime);
             data.set('session_id', sessionId);
             return fetch(url).then((response) => {
-                if (!response.ok)  {
+                if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
                 return response.json();
@@ -404,7 +403,7 @@ define([
             data.set('percent', percent);
             data.set('session_id', sessionId);
             return fetch(url).then((response) => {
-                if (!response.ok)  {
+                if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
                 return response.json();
@@ -434,7 +433,7 @@ define([
             data.set('session_id', sessionId);
             data.set('time', time);
             return fetch(url).then((response) => {
-                if (!response.ok)  {
+                if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
                 return response.json();
@@ -455,19 +454,8 @@ define([
      */
     VideoTime.prototype.getNextActivityButtonData = function(sessionId) {
         if (this.instance.token) {
+            // We do not support button in iframe.
             return Promise.resolve({data: '{}'});
-            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
-                data = url.searchParams;
-            data.set('wstoken', this.instance.token);
-            data.set('moodlewsrestformat', 'json');
-            data.set('wsfunction', 'videotimeplugin_pro_get_next_activity_button_data');
-            data.set('session_id', sessionId);
-            return fetch(url).then((response) => {
-                if (!response.ok)  {
-                    Notification.exeption('Web service error');
-                }
-                return response.json();
-            });
         }
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_get_next_activity_button_data',
@@ -532,7 +520,7 @@ define([
                 data.set('wsfunction', 'videotimeplugin_pro_get_new_session');
                 data.set('cmid', this.cmId);
                 this.session = fetch(url).then((response) => {
-                    if (!response.ok)  {
+                    if (!response.ok) {
                         Notification.exeption('Web service error');
                     }
                     return response.json();
@@ -580,7 +568,7 @@ define([
             data.set('wsfunction', 'mod_videotime_view_videotime');
             data.set('cmid', this.cmId);
             return fetch(url).then((response) => {
-                if (!response.ok)  {
+                if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
                 return response.json();
