@@ -15,15 +15,7 @@ define([
     'core/log',
     'core/templates',
     'core/notification'
-], function(
-    $,
-    Vimeo,
-    Ajax,
-    Config,
-    Log,
-    Templates,
-    Notification
-) {
+], function($, Vimeo, Ajax, Config, Log, Templates, Notification) {
     let VideoTime = function(elementId, cmId, hasPro, interval, instance) {
         this.elementId = elementId;
         this.cmId = cmId;
