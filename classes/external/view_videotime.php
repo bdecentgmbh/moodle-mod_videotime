@@ -62,15 +62,15 @@ trait view_videotime {
         ]);
 
         $cm = get_coursemodule_from_id('videotime', $params['cmid']);
+        $course = get_course($cm->course);
 
-        $moduleinstance = videotime_instance::instance_by_id($cm->instance);
-
-        $course = $DB->get_record('course', ['id' => $cm->course]);
         $context = \context_module::instance($cm->id);
         external_api::validate_context($context);
 
         require_login($course, false, $cm);
         require_capability('mod/videotime:view', $context);
+
+        $moduleinstance = videotime_instance::instance_by_id($cm->instance);
 
         // Trigger course_module_viewed event and completion.
         videotime_view($moduleinstance, $course, $cm, $context);

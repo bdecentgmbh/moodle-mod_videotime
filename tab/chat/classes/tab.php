@@ -154,7 +154,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $OUTPUT;
         $manager = \core_plugin_manager::instance();
         $plugin = $manager->get_plugin_info('block_deft');
-        if ($plugin && $plugin->versiondb > 2022111401) {
+        if ($plugin && $plugin->versiondb > 2022111400) {
             return '';
         }
         return $OUTPUT->render_from_template('videotimetab_chat/upgrade', []);
