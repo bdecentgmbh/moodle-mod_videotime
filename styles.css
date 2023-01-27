@@ -64,9 +64,7 @@ div.videotimetab-resize {
 .modtype_videotime.label_mode,
 .modtype_videotime.label_mode .mod-indent-outer,
 .modtype_videotime.label_mode .contentwithoutlink {
-    display: block !
-        
-        ; /* stylelint-disable-line declaration-no-important */
+    display: block !important; /* stylelint-disable-line declaration-no-important */
 }
 
 /** Compatible with non-Bootstrap 4 themes **/
