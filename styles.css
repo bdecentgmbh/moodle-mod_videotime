@@ -792,3 +792,28 @@ body.ie .video-image-preview .img-responsive {
 .select2-container--classic.select2-container--open .select2-dropdown {
     border-color: #5897fb;
 }
+
+body:not(.editing) .modtype_videotime.label_mode .activity-basis,
+body:not(.editing) .modtype_videotime.preview_mode .activity-basis {
+    display: none !important; /* stylelint-disable-line declaration-no-important */
+}
+.modtype_videotime.preview_mode .activity-item:not(.activityinline),
+.modtype_videotime.label_mode .activity-item:not(.activityinline) {
+    padding: 0;
+    border: none;
+}
+.modtype_videotime.label_mode  .description .activity-altcontent .container-fluid {
+    padding: 0;
+}
+.modtype_videotime.label_mode  .description .course-description-item,
+.modtype_videotime.preview_mode .description .course-description-item {
+    background-color: transparent;
+    font-size: 100%;
+}
+.modtype_videotime.preview_mode .description .course-description-item:last-child,
+.modtype_videotime.label_mode .description .course-description-item:last-child {
+    padding: 5px;
+}
+.path-course-view li.activity.videotime.preview_mode .panel {
+    min-height: 360px;
+}
