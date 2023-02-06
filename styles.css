@@ -795,7 +795,7 @@ body.ie .video-image-preview .img-responsive {
 
 body:not(.editing) .modtype_videotime.label_mode .activity-basis,
 body:not(.editing) .modtype_videotime.preview_mode .activity-basis {
-   display: none !important; /* stylelint-disable-line declaration-no-important */
+    display: none !important; /* stylelint-disable-line declaration-no-important */
 }
 .modtype_videotime.preview_mode .activity-item:not(.activityinline),
 .modtype_videotime.label_mode .activity-item:not(.activityinline) {
