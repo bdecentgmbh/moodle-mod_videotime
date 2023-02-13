@@ -793,8 +793,8 @@ body.ie .video-image-preview .img-responsive {
     border-color: #5897fb;
 }
 
-body:not(.editing) .modtype_videotime.label_mode .activity-basis,
-body:not(.editing) .modtype_videotime.preview_mode .activity-basis {
+body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-basis,
+body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-basis {
     display: none !important; /* stylelint-disable-line declaration-no-important */
 }
 .modtype_videotime.preview_mode .activity-item:not(.activityinline),
