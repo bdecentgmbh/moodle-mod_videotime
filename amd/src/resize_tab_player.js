@@ -56,7 +56,8 @@
                 // Ignore if it is not visible.
                 return;
             }
-            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance .vimeo-embed iframe').forEach((iframe) => {
+            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance .vimeo-embed iframe')
+                .forEach((iframe) => {
             let instance = iframe.closest('.videotime-tab-instance'),
                 content = iframe.closest('.tab-content');
                 Object.assign(instance.style, {
@@ -110,7 +111,7 @@
     resizeTabPlayer.prototype.mousemoveHandler = function(e) {
         document.querySelectorAll('.videotimetab-resize-handle').forEach((h) => {
             if (h.closest('.tab-pane') && document.querySelector('.videotime-tab-instance-cover').style.display == 'block') {
-                this.column.style.width = e.pageX - column.getBoundingClientRect().left + 'px';
+                this.column.style.width = e.pageX - this.column.getBoundingClientRect().left + 'px';
             }
         });
     };
