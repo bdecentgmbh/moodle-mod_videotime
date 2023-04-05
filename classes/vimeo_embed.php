@@ -97,6 +97,7 @@ class vimeo_embed implements \renderable, \templatable {
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
+            'video_description' => $this->record->video_description,
         ];
 
         return $context;
