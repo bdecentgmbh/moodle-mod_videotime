@@ -22,7 +22,7 @@ export default class VideoTime extends VideoTimeBase {
             options = {
                 autoplay: Number(instance.autoplay),
                 controls: Number(instance.controls),
-                sources: [{ type: instance.type, src: instance.vimeo_url }],
+                sources: [{type: instance.type, src: instance.vimeo_url}],
                 loop: Number(instance.option_loop),
                 fluid: Number(instance.responsive),
                 playbackRates: instance.speed
