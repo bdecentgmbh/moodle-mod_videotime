@@ -167,10 +167,6 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function __get($name) {
         if (isset($this->record->$name)) {
-            if ($this->is_field_forced($name)) {
-                return $this->get_forced_value($name);
-            }
-
             return $this->record->$name;
         }
 
@@ -303,15 +299,6 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function to_record($useforcedsettings = true) {
         $record = clone $this->record;
-
-        if ($useforcedsettings) {
-            foreach ($this->get_force_settings() as $fieldname => $enabled) {
-                // If option is globally forced, use the default instead.
-                if ($this->is_field_forced($fieldname)) {
-                    $record->$fieldname = $this->get_forced_value($fieldname);
-                }
-            }
-        }
 
         $record->name = format_string($record->name, FORMAT_HTML);
 

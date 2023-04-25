@@ -105,7 +105,7 @@ function videotimeplugin_vimeo_load_settings($instance) {
         return $forced + ((array) $record) + ((array) $instance);
     }
 
-    return $forced + (array) $instance + (array) get_config('videotimeplugin_vimeo');
+    return $forced  + (array) get_config('videotimeplugin_vimeo')+ (array) $instance;
 }
 
 /**

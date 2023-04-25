@@ -151,7 +151,7 @@ function videotimeplugin_videojs_load_settings($instance) {
         return ((array) $record) + ((array) $instance);
     }
 
-    return (array) $instance + (array) get_config('videotimeplugin_videojs');
+    return  (array) get_config('videotimeplugin_videojs') + (array) $instance;
 }
 
 /**

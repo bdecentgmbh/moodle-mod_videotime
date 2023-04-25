@@ -122,6 +122,15 @@ function xmldb_videotimeplugin_vimeo_install() {
         $dbman->drop_field($table, $field);
     }
 
+    // Define field controls to be dropped from videotime.
+    $table = new xmldb_table('videotime');
+    $field = new xmldb_field('controls');
+
+    // Conditionally launch drop field controls.
+    if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+    }
+
     // Define field height to be dropped from videotime.
     $table = new xmldb_table('videotime');
     $field = new xmldb_field('height');

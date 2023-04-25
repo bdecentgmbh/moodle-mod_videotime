@@ -40,3 +40,29 @@ Feature: Configure videotime tabs
     And I wait "3" seconds
     And I switch to "" class iframe
     Then "Play" "button" should not be visible
+
+  @javascript
+  Scenario: Force control setting on
+    Given the following config values are set as admin:
+      | forced   | controls | videotimeplugin_vimeo |
+      | controls | 1        | videotimeplugin_vimeo |
+    When I am on the "Video Time with no controls" "mod_videotime > Embed options" page logged in as "teacher"
+    Then I should see "Controls is globally forced to: Yes"
+
+  @javascript
+  Scenario: Force control setting off on embed settings page
+    Given the following config values are set as admin:
+      | forced   | controls | videotimeplugin_vimeo |
+      | controls | 0        | videotimeplugin_vimeo |
+    When I am on the "Video Time with no controls" "mod_videotime > Embed options" page logged in as "teacher"
+    Then I should see "Controls is globally forced to: No"
+
+  @javascript
+  Scenario: Force control setting off on activity page
+    Given the following config values are set as admin:
+      | forced   | controls | videotimeplugin_vimeo |
+      | controls | 0        | videotimeplugin_vimeo |
+    When I am on the "Video Time with controls" "videotime activity" page logged in as "teacher"
+    And I wait "3" seconds
+    And I switch to "" class iframe
+    Then "Play" "button" should not be visible
