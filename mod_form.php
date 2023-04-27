@@ -118,7 +118,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'show_description_in_player', '',
             get_string('show_description_in_player', 'videotime'));
-        $mform->setDefault('show_description_in_player', 1);
+        $mform->setDefault('show_description_in_player', get_config('videotime', 'show_description_in_player'));
 
         // Video Time video description.
         $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'),

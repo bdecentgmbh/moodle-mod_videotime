@@ -72,6 +72,15 @@ class videotimeplugin extends \core\plugininfo\base {
     }
 
     /**
+     * Allow uninstall
+     *
+     * @return bool
+     */
+    public function is_uninstall_allowed() {
+        return true;
+    }
+
+    /**
      * Loads plugin settings to the settings tree
      *
      * This function usually includes settings.php file in plugins folder.

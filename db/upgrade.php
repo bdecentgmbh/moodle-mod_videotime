@@ -790,5 +790,18 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022040801, 'videotime');
     }
 
+    if ($oldversion < 2023011204) {
+
+        // Changing the default of field show_description_in_player on table videotime to 1.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_description_in_player', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'completion_hide_detail');
+
+        // Launch change of default for field show_description_in_player.
+        $dbman->change_field_default($table, $field);
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2023011204, 'videotime');
+    }
+
     return true;
 }

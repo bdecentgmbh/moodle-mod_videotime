@@ -249,6 +249,7 @@ $string['showtab'] = 'Show tab';
 $string['show_title'] = 'Show title';
 $string['show_description'] = 'Show description';
 $string['show_description_in_player'] = 'Show description above the player';
+$string['show_description_in_player_help'] = 'Show description above the player when the activity is displayed.';
 $string['show_tags'] = 'Show tags';
 $string['show_duration'] = 'Show duration';
 $string['show_viewed_duration'] = 'Show viewed duration';

@@ -230,5 +230,174 @@ function xmldb_videotimeplugin_vimeo_install() {
         $dbman->drop_field($table, $field);
     }
 
+    // Conditionally launch create table for videotime_session.
+    if (!$dbman->table_exists('videotime_pro') && !$dbman->table_exists('videotimeplugin_pro')) {
+
+        // Remove pro fields from main table.
+        // Define field label_mode to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('label_mode');
+
+        // Conditionally launch drop field resume_playback.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field resume_playback to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('resume_playback');
+
+        // Conditionally launch drop field resume_playback.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field next_activity_button to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('next_activity_button');
+
+        // Conditionally launch drop field next_activity_button.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field next_activity_id to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('next_activity_id');
+
+        // Conditionally launch drop field next_activity_id.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field next_activity_auto to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('next_activity_auto');
+
+        // Conditionally launch drop field next_activity_auto.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field preventfastforwarding to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('preventfastforwarding');
+
+        // Conditionally launch drop field preventfastforwarding.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field saveinterval to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('saveinterval');
+
+        // Conditionally launch drop field saveinterval.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field dnt to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('dnt');
+
+        // Conditionally launch drop field dnt.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field autopause to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('autopause');
+
+        // Conditionally launch drop field autopause.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field background to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('background');
+
+        // Conditionally launch drop field background.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field pip to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('pip');
+
+        // Conditionally launch drop field pip.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+    }
+
+    if (!$dbman->table_exists('videotime_repository') && !$dbman->table_exists('videotimeplugin_repository')) {
+        // Define field show_description to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_description');
+
+        // Conditionally launch drop field show_description.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field show_title to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_title');
+
+        // Conditionally launch drop field show_title.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field show_tags to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_tags');
+
+        // Conditionally launch drop field show_tags.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field show_duration to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_duration');
+
+        // Conditionally launch drop field show_duration.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field show_viewed_duration to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('show_viewed_duration');
+
+        // Conditionally launch drop field show_viewed_duration.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field columns to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('columns');
+
+        // Conditionally launch drop field columns.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field preview_picture to be dropped from videotime.
+        $table = new xmldb_table('videotime');
+        $field = new xmldb_field('preview_picture');
+
+        // Conditionally launch drop field preview_picture.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+    }
+
     return true;
 }

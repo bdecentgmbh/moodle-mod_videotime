@@ -44,6 +44,10 @@ if ($ADMIN->fulltree) {
                 ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
     }
 
+    $settings->add(new admin_setting_configcheckbox('videotime/show_description_in_player', new lang_string('default', 'videotime') . ' ' .
+        new lang_string('show_description_in_player', 'videotime'),
+        new lang_string('show_description_in_player_help', 'videotime'), 1));
+
     $settings->add(new admin_setting_configcheckbox('videotime/enabletabs', new lang_string('default', 'videotime') . ' ' .
         new lang_string('enabletabs', 'videotime'),
         new lang_string('enabletabs_help', 'videotime'), 0));
