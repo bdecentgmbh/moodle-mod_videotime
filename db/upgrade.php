@@ -794,7 +794,16 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Changing the default of field show_description_in_player on table videotime to 1.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('show_description_in_player', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'completion_hide_detail');
+        $field = new xmldb_field(
+            'show_description_in_player',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            null,
+            null,
+            '1',
+            'completion_hide_detail'
+        );
 
         // Launch change of default for field show_description_in_player.
         $dbman->change_field_default($table, $field);

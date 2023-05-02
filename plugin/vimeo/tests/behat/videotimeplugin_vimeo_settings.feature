@@ -1,5 +1,5 @@
 @mod @mod_videotime @videotimeplugin_vimeo
-Feature: Configure videotime tabs
+Feature: Configure vimeo settings
   In use a video assignment I need to control settings
   As an admin
   I need to adjust player options
