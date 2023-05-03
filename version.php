@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_videotime';
 $plugin->release = '1.7.1';
-$plugin->version = 2023011204;
+$plugin->version = 2023011205;
+$plugin->incompatible = 402;
 $plugin->requires = 2015111610;
 $plugin->maturity = MATURITY_STABLE;

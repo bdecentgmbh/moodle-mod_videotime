@@ -592,7 +592,7 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field show_description_in_player to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('show_description_in_player', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'show_description');
+        $field = new xmldb_field('show_description_in_player', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'show_description');
 
         // Conditionally launch add field show_description_in_player.
         if (!$dbman->field_exists($table, $field)) {
@@ -790,7 +790,7 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022040801, 'videotime');
     }
 
-    if ($oldversion < 2023011204) {
+    if ($oldversion < 2023011205) {
 
         // Changing the default of field show_description_in_player on table videotime to 1.
         $table = new xmldb_table('videotime');
@@ -808,8 +808,10 @@ function xmldb_videotime_upgrade($oldversion) {
         // Launch change of default for field show_description_in_player.
         $dbman->change_field_default($table, $field);
 
+        $DB->set_field('videotime', 'show_description_in_player', 1, ['show_description_in_player' => null]);
+
         // Videotime savepoint reached.
-        upgrade_mod_savepoint(true, 2023011204, 'videotime');
+        upgrade_mod_savepoint(true, 2023011205, 'videotime');
     }
 
     return true;
