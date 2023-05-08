@@ -24,13 +24,11 @@
 
 namespace mod_videotime\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-use external_api;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use mod_videotime\videotime_instance;
-
-require_once($CFG->libdir.'/externallib.php');
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
 
 /**
  * Get videotime instance object for cm.
@@ -43,8 +41,8 @@ trait get_videotime {
      * @return external_function_parameters
      */
     public static function get_videotime_parameters() {
-        return new \external_function_parameters([
-            'cmid' => new \external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED)
+        return new external_function_parameters([
+            'cmid' => new external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED)
         ]);
     }
 

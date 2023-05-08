@@ -29,22 +29,16 @@ jobs:
       matrix:
         include:
           - php: '8.0'
-            moodle-branch: 'MOODLE_401_STABLE'
+            moodle-branch: 'master'
             database: 'pgsql'
           - php: '8.0'
-            moodle-branch: 'MOODLE_401_STABLE'
+            moodle-branch: 'master'
             database: 'mariadb'
           - php: '8.0'
-            moodle-branch: 'MOODLE_400_STABLE'
+            moodle-branch: 'MOODLE_402_STABLE'
             database: 'pgsql'
-          - php: '7.4'
-            moodle-branch: 'MOODLE_311_STABLE'
-            database: 'mariadb'
-          - php: '7.4'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'pgsql'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_39_STABLE'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_402_STABLE'
             database: 'mariadb'
 
     steps:
@@ -107,7 +101,7 @@ jobs:
         run: moodle-plugin-ci mustache
 
       - name: Grunt
-        if: ${{ matrix.moodle-branch == 'MOODLE_401_STABLE' }}
+        if: ${{ matrix.moodle-branch == 'MOODLE_402_STABLE' }}
         run: moodle-plugin-ci grunt
 
       - name: PHPUnit tests
