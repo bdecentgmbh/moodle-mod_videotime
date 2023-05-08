@@ -17,20 +17,20 @@
 /**
  * Video Time Vimeo force settings test
  *
- * @package   videotimeplugin_vimeo
+ * @package   videotimeplugin_videojs
  * @copyright 2023 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace videotimeplugin_vimeo;
+namespace videotimeplugin_videojs;
 
 use advanced_testcase;
 use mod_videotime\videotime_instance;
 
 /**
- * Class fore_settings_test
+ * Class force_settings_test
  *
- * @group videotimeplugin_vimeo
+ * @group videotimeplugin_videojs
  * @covers \mod_videotime\videotime_instance
  */
 class force_settings_test extends advanced_testcase {
@@ -59,7 +59,7 @@ class force_settings_test extends advanced_testcase {
         $this->instancerecord = $this->getDataGenerator()->create_module('videotime', [
             'course' => $this->course->id,
             'controls' => 0,
-            'vimeo_url' => 'https://vimeo.com/253989945',
+            'vimeo_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         ]);
         $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
     }
@@ -80,10 +80,10 @@ class force_settings_test extends advanced_testcase {
         $this->assertIsArray($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));
 
-        set_config('enabled', 1, 'videotimeplugin_vimeo');
+        set_config('enabled', 1, 'videotimeplugin_videojs');
         foreach ($this->get_options() as $option) {
-            set_config($option, 0, 'videotimeplugin_vimeo');
-            set_config('forced', $option, 'videotimeplugin_vimeo');
+            set_config($option, 0, 'videotimeplugin_videojs');
+            set_config('forced', $option, 'videotimeplugin_videojs');
 
             $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
 
@@ -95,14 +95,14 @@ class force_settings_test extends advanced_testcase {
     /**
      * Force setting test
      */
-    public function test_enable_options() {
+    public function test_enable_controls() {
         $this->assertIsArray($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));
 
-        set_config('enabled', 1, 'videotimeplugin_vimeo');
+        set_config('enabled', 1, 'videotimeplugin_videojs');
         foreach ($this->get_options() as $option) {
-            set_config($option, 1, 'videotimeplugin_vimeo');
-            set_config('forced', $option, 'videotimeplugin_vimeo');
+            set_config($option, 1, 'videotimeplugin_videojs');
+            set_config('forced', $option, 'videotimeplugin_videojs');
 
             $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
 
@@ -119,15 +119,11 @@ class force_settings_test extends advanced_testcase {
     public function get_options() {
         return [
             'autoplay',
-            'byline',
             'controls',
             'muted',
             'option_loop',
             'playsinline',
-            'portrait',
             'responsive',
-            'title',
-            'transparent',
         ];
     }
 }

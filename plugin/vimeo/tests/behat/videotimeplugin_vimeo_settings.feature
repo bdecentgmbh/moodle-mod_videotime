@@ -32,7 +32,7 @@ Feature: Configure vimeo settings
     Then "Play" "button" should be visible
 
   @javascript
-  Scenario: Controls are available
+  Scenario: Controls are unavailable
     When I am on the "Video Time with no controls" "mod_videotime > Embed options" page logged in as "teacher"
     And I set the following fields to these values:
       | controls    | 0 |

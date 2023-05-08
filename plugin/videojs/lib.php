@@ -105,6 +105,15 @@ function videotimeplugin_videojs_load_settings($instance) {
     }
 
     $instance = (array) $instance;
+    if (get_config('videotimeplugin_videojs', 'forced')) {
+        $forced = array_intersect_key(
+            (array) get_config('videotimeplugin_videojs'),
+            array_fill_keys(explode(',', get_config('videotimeplugin_videojs', 'forced')), true)
+        );
+    } else {
+        $forced = [];
+    }
+
     if (
         !mod_videotime_get_vimeo_id_from_link($instance['vimeo_url'])
         && $record = $DB->get_record('videotimeplugin_videojs', array('videotime' => $instance['id']))
@@ -148,7 +157,7 @@ function videotimeplugin_videojs_load_settings($instance) {
             }
         }
 
-        return ((array) $record) + ((array) $instance);
+        return $forced + (array) $record + (array) $instance;
     }
 
     return  (array) get_config('videotimeplugin_videojs') + (array) $instance;
