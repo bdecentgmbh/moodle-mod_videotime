@@ -645,8 +645,7 @@ function videotime_cm_info_view(cm_info $cm) {
 }
 
 /**
- * Add a get_coursemodule_info function in case any forum type wants to add 'extra' information
- * for the course (see resource).
+ * Add a get_coursemodule_info function to add description and completion information
  *
  * Given a course_module object, this function returns any "extra" information that may be needed
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
@@ -668,7 +667,7 @@ function videotime_get_coursemodule_info($coursemodule) {
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
-        $result->content = format_module_intro('forum', $instance, $coursemodule->id, false);
+        $result->content = format_module_intro('videotime', $instance, $coursemodule->id, false);
     }
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
