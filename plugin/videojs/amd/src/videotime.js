@@ -30,12 +30,9 @@ export default class VideoTime extends VideoTimeBase {
                     : [1],
                 muted: Number(instance.muted)
             };
-        if (instance.type === "video/youtube") {
-            options.techOrder = ["youtube"];
-        }
-        if (!instance.responsive && instance.height && instance.width) {
-            options.height = instance.height;
-            options.width = instance.width;
+        if (!Number(instance.responsive) && Number(instance.height) && Number(instance.width)) {
+            options.height = Number(instance.height);
+            options.width = Number(instance.width);
         }
         Log.debug("Initializing VideoJS player with options:");
         Log.debug(options);
