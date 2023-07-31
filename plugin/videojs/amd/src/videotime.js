@@ -30,6 +30,9 @@ export default class VideoTime extends VideoTimeBase {
                     : [1],
                 muted: Number(instance.muted)
             };
+        if (instance.type === "video/youtube") {
+            options.techOrder = ["youtube"];
+        }
         if (!Number(instance.responsive) && Number(instance.height) && Number(instance.width)) {
             options.height = Number(instance.height);
             options.width = Number(instance.width);
