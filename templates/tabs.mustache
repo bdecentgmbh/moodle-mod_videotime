@@ -42,15 +42,15 @@
     <div class="instance-container videotime-small-view mb-2"></div>
     <ul class="nav nav-tabs nav-pills nav-justified" id="videotimetabs-{{ id }}" role="tablist">
         {{#tabs}}
-            <li class="nav-item">
-                <a class="nav-link {{#active}}active{{/active}}" id="{{name}}-{{id}}-tab" data-toggle="tab" href="#{{name}}-{{id}}" role="tab" aria-controls="{{name}}-{{id}}" aria-selected="true">{{{label}}}</a>
+            <li class="nav-item {{#active}}active{{/active}}">
+                <a class="nav-link" id="{{name}}-{{id}}-tab" data-toggle="tab" href="#{{name}}-{{id}}" role="tab" aria-controls="{{name}}-{{id}}" aria-selected="true">{{{label}}}</a>
             </li>
         {{/tabs}}
     </ul>
     <div class="tab-content">
         {{#tabs}}
             {{^persistent}}
-                <div class="tab-pane mt-3 fade {{#active}}show active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
+                <div class="tab-pane mt-3 fade {{#active}}active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
                     <div class="" style="display: flex">
                         <div class="videotimetab-resize {{ panelclass }}">
                             {{{tabcontent}}}
@@ -61,7 +61,7 @@
                 </div>
             {{/persistent}}
             {{#persistent}}
-                <div class="tab-pane mt-3 fade persistent-tab {{#active}}show active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
+                <div class="tab-pane mt-3 fade persistent-tab {{#active}}active{{/active}}" id="{{name}}-{{id}}" role="tabpanel" aria-labelledby="{{name}}-{{id}}-tab">
                     <div class="instance-container videotime-large-view"></div>
                     <div class="">
                         {{{tabcontent}}}
@@ -72,6 +72,6 @@
     </div>
 {{# js }}
     require(['mod_videotime/resize_tab_player'], function(TabResizer) {
-        TabResizer.initialize();
+        TabResizer.init();
     });
 {{/ js }}

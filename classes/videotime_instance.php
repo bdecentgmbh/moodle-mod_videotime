@@ -298,20 +298,22 @@ class videotime_instance implements \renderable, \templatable {
      * @throws \dml_exception
      */
     public function to_record($useforcedsettings = true) {
+        global $PAGE;
         $record = clone $this->record;
-
+        $pagecourseid = "course-view-" . $PAGE->course->format;
         $record->name = format_string($record->name, FORMAT_HTML);
-
         if (
             !empty($record->show_description_in_player)
             && !class_exists('core\\output\\activity_header')
+            && $PAGE->pagetype != $pagecourseid
         ) {
             $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
                 'mod_videotime', 'intro', null);
             $record->intro = format_text($record->intro, $record->introformat, [
                 'noclean' => true,
             ]);
-        } else {
+        }
+        else {
             $record->intro = '';
         }
 
