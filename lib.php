@@ -88,13 +88,13 @@ function videotime_grade_item_update($videotime, $grades=null) {
         'gradetype' => GRADE_TYPE_NONE,
     ];
 
-    if (!empty($videotime->viewpercentgrade)) {
+    //if (!empty($videotime->viewpercentgrade)) {
         $params = [
             'gradetype' => GRADE_TYPE_VALUE,
             'grademax' => 100,
             'grademin' => 0,
         ] + $params;
-    }
+    //}
 
     if ($grades === 'reset') {
         $params['reset'] = true;
@@ -115,7 +115,6 @@ function videotime_grade_item_update($videotime, $grades=null) {
 function videotime_update_grades($videotime, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
-
     if (!videotime_has_pro() || !$videotime->viewpercentgrade) {
         return null;
     }
@@ -402,6 +401,10 @@ function videotime_update_completion($cmid) {
     global $DB, $CFG;
 
     require_once($CFG->libdir.'/completionlib.php');
+
+    if (!$DB->record_exists('course_modules', array('id' => $cmid, 'deletioninprogress' => 0))) {
+        return;
+    }
 
     $cm = get_coursemodule_from_id('videotime', $cmid, 0, false, MUST_EXIST);
     $course = get_course($cm->course);

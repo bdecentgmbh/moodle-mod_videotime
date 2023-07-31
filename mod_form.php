@@ -86,7 +86,6 @@ class mod_videotime_mod_form extends moodleform_mod {
                         get_string('setup_repository', 'videotime')));
             }
             $mform->addGroup($group);
-
             $PAGE->requires->js_call_amd('videotimeplugin_repository/mod_form', 'init',
                 [videotime_is_totara(), $this->context->id]);
         } else {
@@ -208,7 +207,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform =& $this->_form;
-
+        $mform->disabledIf('completionusegrade', 'viewpercentgrade', 'notchecked');
         if (videotime_has_pro()) {
             // Completion on view and seconds.
             $group = [];

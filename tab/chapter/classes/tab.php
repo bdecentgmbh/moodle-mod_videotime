@@ -54,7 +54,6 @@ class tab extends \mod_videotime\local\tabs\tab {
             'id' => $instance->id,
             'title' => $instance->name,
         ];
-
         return $OUTPUT->render_from_template(
             'videotimetab_chapter/tab',
             $data

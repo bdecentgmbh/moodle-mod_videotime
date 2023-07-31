@@ -1,23 +1,20 @@
-/*
- * Video time player specific js
- *
- * @package    videotimeplugin_videojs
- * @module     videotimeplugin_videojs/videotime
- * @copyright  2022 bdecent gmbh <https://bdecent.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+define([
+    "jquery",
+    "mod_videotime/videotime",
+    "core/log",
+    "core/notification",
+    "media_videojs/video-lazy",
+    "media_videojs/Youtube-lazy"
+], function ($, VideoTimeBase, Log, Notification, Player) {
+    function VideoTime(elementId, cmId, hasPro, interval, instance) {
+        VideoTimeBase.call(this, elementId, cmId, hasPro, interval, instance);
+    }
 
-import $ from "jquery";
-import VideoTimeBase from "mod_videotime/videotime";
-import Log from "core/log";
-import Notification from "core/notification";
-import Player from "media_videojs/video-lazy";
-import "media_videojs/Youtube-lazy";
+    VideoTime.prototype = Object.create(VideoTimeBase.prototype);
+    VideoTime.prototype.constructor = VideoTime;
 
-export default class VideoTime extends VideoTimeBase {
-    initialize() {
+    VideoTime.prototype.initialize = function () {
         Log.debug("Initializing Video Time " + this.elementId);
-
         let instance = this.instance,
             options = {
                 autoplay: Number(instance.autoplay),
@@ -95,12 +92,9 @@ export default class VideoTime extends VideoTimeBase {
         }
 
         return true;
-    }
+    };
 
-    /**
-     * Register player events to respond to user interaction and play progress.
-     */
-    addListeners() {
+    VideoTime.prototype.addListeners = function () {
         // If this is a tab play set time cues and listener.
         $($("#" + this.elementId).closest(".videotimetabs")).each(
             function(i, tabs) {
@@ -263,15 +257,9 @@ export default class VideoTime extends VideoTimeBase {
             });
             observer.observe(document.querySelector("#" + this.elementId));
         }
-    }
+    };
 
-    /**
-     * Parse start time and set player
-     *
-     * @param {string} starttime
-     * @returns {Promise}
-     */
-    setStartTime(starttime) {
+    VideoTime.prototype.setStartTime = function (starttime) {
         let time = starttime.match(
             /((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/
         );
@@ -284,54 +272,35 @@ export default class VideoTime extends VideoTimeBase {
         }
         Log.debug("Set start time:" + starttime);
         return this.player.currentTime();
-    }
+    };
 
-    /**
-     * Get play back rate
-     *
-     * @returns {Promise}
-     */
-    getDuration() {
+    VideoTime.prototype.getDuration = function () {
         return new Promise(resolve => {
             resolve(this.player.duration());
             return true;
         });
-    }
+    };
 
-    /**
-     * Get duration of video
-     *
-     * @returns {Promise}
-     */
-    getPlaybackRate() {
+    VideoTime.prototype.getPlaybackRate = function () {
         return new Promise(resolve => {
             resolve(this.player.playbackRate());
             return true;
         });
-    }
+    };
 
-    /**
-     * Set current time of player
-     *
-     * @param {float} secs time
-     * @returns {Promise}
-     */
-    setCurrentPosition(secs) {
+    VideoTime.prototype.setCurrentPosition = function (secs) {
         return new Promise(resolve => {
             resolve(this.player.currentTime(secs));
             return true;
         });
-    }
+    };
 
-    /**
-     * Get current time of player
-     *
-     * @returns {Promise}
-     */
-    getCurrentPosition() {
+    VideoTime.prototype.getCurrentPosition = function () {
         return new Promise(resolve => {
             resolve(this.player.currentTime());
             return true;
         });
-    }
-}
+    };
+
+    return VideoTime;
+});
