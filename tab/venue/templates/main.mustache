@@ -1,0 +1,90 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template videotimetab_venue/main
+
+    This template renders the main content area for the deft choice block.
+
+    Example context (json):
+    {
+        "instanceid": 100,
+        "autogaincontrol": true,
+        "contextid": 2,
+        "echocancellation": true,
+        "iceservers": "[]",
+        "noisesuppression": true,
+        "peerid": 109,
+        "peers": "[105, 106]",
+        "roomid": 3,
+        "samplerate": 11025,
+        "server": "wss://deftly.us/janus/ws",
+        "token": "dladfjlakerlaa3j4lr",
+        "throttle": 100,
+        "uniqueid": "eworio"
+    }
+}}
+<div id="videotimetab-venue-{{uniqid}}" class="block-deft block-cards" data-instanceid="{{ instanceid }}" data-region="deft-venue" data-contextid="{{ contextid }}" data-roomid="{{ roomid }}">
+    <div class="container-fluid">
+        <div class="row">
+            {{^ peerid }}
+            <div class="card col col-12 text-center p-3">
+                <div class="card-body">
+                {{# str }} venueclosed, block_deft {{/ str }}
+                </div>
+            </div>
+            {{/ peerid }}
+            {{# peerid }}
+            {{# user }}
+                <div class="card col-12" data-peerid={{ peerid }}>
+                    {{# picture }}
+                        <img src="{{ pictureurl }}" class="card-img-top img-fluid rounded-circle">
+                    {{/ picture }}
+                    {{^ picture }}
+                        {{{ avatar }}}
+                    {{/ picture }}
+                    <div class="card-body">
+                        <div class="card-head">
+                            <h5 class="text-center">
+                                {{ fullname }}
+                            </h5>
+                        </div>
+                        {{> block_deft/volume_indicator }}
+                    </div>
+                    <div class="card-footer p-1">
+                        <p class="text-center h3 p-0  m-1">
+                            <a href="#" class="card-link {{# mute }}hidden {{/ mute }}m-0 p-1" data-action="mute" title="{{# str }} mute, block_deft {{/ str }}"><i class="icon fa fa-microphone bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link {{^ mute }}hidden {{/ mute }}m-0 p-1" data-action="unmute" title="{{# str }} unmute, block_deft {{/ str }}"><i class="icon fa fa-microphone-slash bg-warning rounded-circle m-0 p-2"></i></a>
+                            <a href="#" class="card-link m-0 p-1" data-action="raisehand" title="{{# str }} raisehand, block_deft {{/ str }}"><i class="icon fa fa-hand-grab-o bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link hidden m-0 p-1" data-action="lowerhand" title="{{# str }} lowerhand, block_deft {{/ str }}"><i class="icon fa fa-hand-stop-o bg-success rounded-circle m-0 p-2"></i></a>
+                            <a href="#" class="card-link m-0 p-1" data-action="join" title="{{# str }} join, block_deft {{/ str }}"><i class="icon fa fa-sign-in bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link hidden m-0 p-1" data-action="leave" title="{{# str }} leave, block_deft {{/ str }}"><i class="icon fa fa-sign-out bg-success rounded-circle m-0 p-2"></i></a>
+                        </p>
+                    </div>
+                </div>
+            {{/ user }}
+            {{/ peerid }}
+        </div>
+        <div class="row p-0" data-region="venue-participants"></div>
+        <div id="room" class="hidden">
+            <audio class="rounded centered" id="roomaudio" width="100%" height="100%" autoplay/>
+        </div>
+    </div>
+</div>
+{{#js}}
+    require([
+        'videotimetab_venue/venue_manager'
+    ], function(VenueManager) {
+        new VenueManager({{ contextid }}, '{{ token }}', [], {{ peerid }}, {{{ iceservers }}}, {{ autogaincontrol }}, {{ echocancellation }}, {{ noisesuppression }}, {{ samplerate }}, {{ roomid }}, '{{ server }}');
+});
+{{/js}}
