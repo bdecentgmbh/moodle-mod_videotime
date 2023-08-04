@@ -274,6 +274,8 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
             'mediafile',
             0
         );
+        $defaultvalues['mediafile'] = $draftitemid;
+        $draftitemid = file_get_submitted_draft_itemid('poster');
         file_prepare_draft_area(
             $draftitemid,
             $context->id,
