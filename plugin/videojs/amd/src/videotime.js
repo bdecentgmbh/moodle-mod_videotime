@@ -165,18 +165,10 @@ export default class VideoTime extends VideoTimeBase {
         this.player.on("play", () => {
             if (!this.played) {
                 if (this.hasPro) {
-                    // Getting a new session on first play.
-                    this.getSession()
-                        .then(() => {
-                            this.view();
-                            this.startWatchInterval();
-                            return true;
-                        })
-                        .catch(Notification.exception);
-                } else {
-                    // Free version can still mark completion on video time view.
-                    this.view();
+                    this.startWatchInterval();
                 }
+                // Free version can still mark completion on video time view.
+                this.view();
             }
             return true;
         });
