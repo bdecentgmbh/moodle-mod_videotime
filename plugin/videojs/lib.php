@@ -62,23 +62,25 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
     if (!empty($mform) && $data = $mform->get_data()) {
         $context = context_module::instance($moduleinstance->coursemodule);
 
-        file_save_draft_area_files(
-            $data->mediafile,
-            $context->id,
-            'videotimeplugin_videojs',
-            'mediafile',
-            0,
-            ['subdirs' => 0, 'maxfiles' => 1]
-        );
-
-        file_save_draft_area_files(
-            $data->poster,
-            $context->id,
-            'videotimeplugin_videojs',
-            'poster',
-            0,
-            ['subdirs' => 0, 'maxfiles' => 1]
-        );
+        if (get_class($mform) == 'videotimeplugin_videojs\form\options') {
+            file_save_draft_area_files(
+                $data->poster,
+                $context->id,
+                'videotimeplugin_videojs',
+                'poster',
+                0,
+                ['subdirs' => 0, 'maxfiles' => 1]
+            );
+        } else {
+            file_save_draft_area_files(
+                $data->mediafile,
+                $context->id,
+                'videotimeplugin_videojs',
+                'mediafile',
+                0,
+                ['subdirs' => 0, 'maxfiles' => 1]
+            );
+        }
     }
 }
 
@@ -234,16 +236,6 @@ function videotimeplugin_videojs_add_form_fields($mform, $formclass) {
             'name'
         );
         $mform->addHelpButton('mediafile', 'mediafile', 'videotimeplugin_videojs');
-
-        $mform->insertElementBefore(
-            $mform->createElement('filemanager', 'poster', get_string('poster', 'videotimeplugin_videojs'), null, [
-                'subdirs' => 0,
-                'maxfiles' => 1,
-                'accepted_types' => ['image'],
-            ]),
-            'name'
-        );
-        $mform->addHelpButton('poster', 'poster', 'videotimeplugin_videojs');
     } else {
         $mform->addElement('filemanager', 'poster', get_string('poster', 'videotimeplugin_videojs'), null, [
             'subdirs' => 0,
@@ -275,6 +267,7 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
             0
         );
         $defaultvalues['mediafile'] = $draftitemid;
+
         $draftitemid = file_get_submitted_draft_itemid('poster');
         file_prepare_draft_area(
             $draftitemid,

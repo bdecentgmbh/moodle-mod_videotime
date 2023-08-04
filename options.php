@@ -80,11 +80,21 @@ if ($form->is_cancelled()) {
         $classname = "\\videotimetab_$name\\tab";
         $classname::data_preprocessing($defaults, $cm->instance);
     }
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaults, $cm->instance]);
+    }
     $moduleinstance = ['coursemodule' => $cm->id] + (array) $data + (array) $moduleinstance->to_record() + $defaults;
-    videotime_update_instance((object) $moduleinstance);
+    unset($moduleinstance['vimeo_url']);
+    videotime_update_instance((object) $moduleinstance, $form);
     redirect($returnurl);
 }
-$form->set_data($moduleinstance->to_record());
+
+$defaults = [];
+foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+    component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaults, $cm->instance]);
+}
+
+$form->set_data((array)$moduleinstance->to_record() + $defaults);
 
 echo $OUTPUT->header();
 if (!class_exists('core\\output\\activity_header')) {
