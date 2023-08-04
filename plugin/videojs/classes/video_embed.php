@@ -24,8 +24,10 @@
 
 namespace videotimeplugin_videojs;
 
+use context_module;
 use core_component;
 use mod_videotime\vimeo_embed;
+use moodle_url;
 use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
@@ -55,9 +57,24 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
 
         $mimetype = resourcelib_guess_url_mimetype($this->record->vimeo_url);
 
+        $context = context_module::instance($this->get_cm()->id);
+        $fs = get_file_storage();
+        foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'poster') as $file) {
+            if (!$file->is_directory()) {
+                $poster = moodle_url::make_pluginfile_url(
+                    $context->id,
+                    'videotimeplugin_videojs',
+                    'poster',
+                    0,
+                    $file->get_filepath(),
+                    $file->get_filename()
+                )->out(false);
+            }
+        }
         $context = parent::export_for_template($output) + [
             'mimetype' => $mimetype,
             'video' => !file_mimetype_in_typegroup($mimetype, ['web_audio']),
+            'poster' => $poster ?? false,
         ];
 
         return $context;
