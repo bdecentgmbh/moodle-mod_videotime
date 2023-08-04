@@ -70,6 +70,15 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
             0,
             ['subdirs' => 0, 'maxfiles' => 1]
         );
+
+        file_save_draft_area_files(
+            $data->poster,
+            $context->id,
+            'videotimeplugin_videojs',
+            'poster',
+            0,
+            ['subdirs' => 0, 'maxfiles' => 1]
+        );
     }
 }
 
@@ -225,6 +234,23 @@ function videotimeplugin_videojs_add_form_fields($mform, $formclass) {
             'name'
         );
         $mform->addHelpButton('mediafile', 'mediafile', 'videotimeplugin_videojs');
+
+        $mform->insertElementBefore(
+            $mform->createElement('filemanager', 'poster', get_string('poster', 'videotimeplugin_videojs'), null, [
+                'subdirs' => 0,
+                'maxfiles' => 1,
+                'accepted_types' => ['image'],
+            ]),
+            'name'
+        );
+        $mform->addHelpButton('poster', 'poster', 'videotimeplugin_videojs');
+    } else {
+        $mform->addElement('filemanager', 'poster', get_string('poster', 'videotimeplugin_videojs'), null, [
+            'subdirs' => 0,
+            'maxfiles' => 1,
+            'accepted_types' => ['image'],
+        ]);
+        $mform->addHelpButton('poster', 'poster', 'videotimeplugin_videojs');
     }
 }
 
@@ -248,7 +274,14 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
             'mediafile',
             0
         );
-        $defaultvalues['mediafile'] = $draftitemid;
+        file_prepare_draft_area(
+            $draftitemid,
+            $context->id,
+            'videotimeplugin_videojs',
+            'poster',
+            0
+        );
+        $defaultvalues['poster'] = $draftitemid;
     }
 }
 
@@ -272,7 +305,9 @@ function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $
 
     require_login($course, true, $cm);
 
-    if ($filearea == 'mediafile') {
+    if (in_array($filearea, [
+        'mediafile', 'poster',
+    ])) {
 
         $relativepath = implode('/', $args);
 
@@ -295,5 +330,6 @@ function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $
 function videotimeplugin_videojs_config_file_areas() {
     return [
         'mediafile',
+        'poster',
     ];
 }
