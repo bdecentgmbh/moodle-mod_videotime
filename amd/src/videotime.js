@@ -183,7 +183,7 @@ define([
 
         // If resume is present force seek the player to that point.
         this.player.on("loaded", () => {
-            if (!this.instance.resume_playback || this.instance.resume_time <= 0) {
+            if (!this.instance.resume_playback || !this.instance.resume_time || this.instance.resume_time <= 0) {
                 return true;
             }
 
@@ -248,7 +248,15 @@ define([
         this.player.on('timeupdate', function(event) {
             this.percent = event.percent;
             this.currentTime = event.seconds;
-            Log.debug('VIDEO_TIME timeupdate. Percent: ' + this.percent + '. Current time: ' + this.currentTime);
+            if (event.seconds === event.duration) {
+                this.plugins.forEach(plugin => {
+                    if (typeof plugin.setCurrentTime == 'function') {
+                        plugin.getSessions().then(session => {
+                            plugin.setCurrentTime(session.id, event.seconds);
+                        });
+                    }
+                });
+            }
         }.bind(this));
 
         // Initiate video finish procedure.
@@ -259,9 +267,16 @@ define([
      * Start interval that will periodically record user progress via Ajax.
      */
     VideoTime.prototype.handleEnd = function() {
-            this.playing = false;
-            Log.debug('VIDEO_TIME ended');
-
+        this.playing = false;
+        Log.debug('VIDEO_TIME ended');
+        if (this.plugins.length > 2) {
+            this.plugins.forEach(plugin => {
+                if (typeof plugin.handleEnd == 'function') {
+                    plugin.handleEnd();
+                }
+            });
+        } else {
+            // This moved to pro plugin, but left for compatibility.
             this.getSession().then(function(session) {
                 this.setSessionState(session.id, 1).then(() => {
                     return this.setPercent(session.id, 1);
@@ -290,12 +305,19 @@ define([
                     });
                 }).catch(Notification.exception);
             }.bind(this)).catch(Notification.exception);
+        }
     };
 
     /**
      * Start interval that will periodically record user progress via Ajax.
      */
     VideoTime.prototype.startWatchInterval = function() {
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.startWatchInterval == 'function') {
+                this.watchInterval = true;
+                plugin.startWatchInterval();
+            }
+        });
         if (this.watchInterval) {
             return;
         }
