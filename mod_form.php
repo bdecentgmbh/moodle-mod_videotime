@@ -141,6 +141,9 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
         }
 
+        // Add availability section.
+        //$this->availability_elements();
+
         // Add standard elements.
         $this->standard_coursemodule_elements();
 
@@ -188,6 +191,28 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
             $mform->addHelpButton('showdescription', 'showdescription', 'videotime');
         }
+    }
+
+    /**
+     * Add availability section
+     *
+     * @throws coding_exception
+     */
+    protected function availability_elements() {
+
+        $mform = $this->_form;
+        $mform->addElement('header', 'availabilityhdr', get_string('availability'));
+        $mform->addElement(
+            'date_time_selector', 'timeopen', get_string("videoopen", "videotime"), ['optional' => true]
+        );
+
+        $mform->addElement(
+            'date_time_selector', 'timeclose', get_string("videoclose", "videotime"), ['optional' => true]
+        );
+
+        $mform->addElement('advcheckbox', 'showpreview', get_string('showpreview', 'choice'));
+        $mform->addHelpButton('showpreview', 'showpreview', 'choice');
+        $mform->disabledIf('showpreview', 'timeopen[enabled]');
     }
 
     /**
