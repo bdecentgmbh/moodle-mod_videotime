@@ -250,6 +250,7 @@ export default class VideoTime extends VideoTimeBase {
 
         // Initiate video finish procedure.
         this.player.on("ended", this.handleEnd.bind(this));
+        this.player.on("pause", this.handleEnd.bind(this));
 
         // Readjust height when responsive player is resized.
         if (this.player.options().responsive) {

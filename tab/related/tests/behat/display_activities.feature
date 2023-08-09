@@ -18,7 +18,7 @@ Feature: Customize videotime related tab label
       | student | C1     | student        |
     And the following "activities" exist:
       | activity  | name   | intro      | course | vimeo_url                   | label_mode | section | enabletabs |
-      | videotime | Video1 | VideoDesc1 | C1     | https://vimeo.com/253989945 | 0          | 1       | 1          |
+      | videotime | Video1 | VideoDesc1 | C1     | https://vimeo.com/347119375 | 0          | 1       | 1          |
     And the following "activities" exist:
       | activity  | name   | intro     | course | content      | section |
       | page      | Page1  | PageDesc1 | C1     | PageContent1 | 1       |
