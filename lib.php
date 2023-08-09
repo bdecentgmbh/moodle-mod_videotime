@@ -559,7 +559,7 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
         $node = navigation_node::create(get_string('embed_options', 'mod_videotime'),
             new moodle_url('/mod/videotime/options.php', ['id' => $PAGE->cm->id]),
             navigation_node::TYPE_SETTING, null, 'mod_videotime_options',
-            new pix_icon('t/play', ''));
+            new pix_icon('play', '', 'mod_videotime'));
         $videtimenode->add_node($node, $beforekey);
     }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {

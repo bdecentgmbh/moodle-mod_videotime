@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'videotimetab_texttrack';
 $plugin->release = '1.7';
-$plugin->version = 2022022800;
+$plugin->version = 2023080900;
 $plugin->requires = 2015111610;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = [
