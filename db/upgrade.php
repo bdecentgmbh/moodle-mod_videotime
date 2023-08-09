@@ -804,10 +804,12 @@ function xmldb_videotime_upgrade($oldversion) {
             '1',
             'completion_hide_detail'
         );
-
-        // Launch change of default for field show_description_in_player.
-        $dbman->change_field_default($table, $field);
-
+        if ($dbman->field_exists($table, $field)) {
+            // Launch change of default for field show_description_in_player.
+            $dbman->change_field_default($table, $field);
+        } else {
+            $dbman->add_field($table, $field);
+        }
         $DB->set_field('videotime', 'show_description_in_player', 1, ['show_description_in_player' => null]);
 
         // Videotime savepoint reached.

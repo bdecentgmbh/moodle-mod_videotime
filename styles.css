@@ -871,8 +871,9 @@ body.format-topics:not(.editing) .modtype_videotime.preview_mode .actions {
 .pagelayout-incourse #page #region-main {
     overflow: auto;
 }
-.course-content ul.topics li.section .content.block-content {
-    padding: 15px;
+.path-mod-videotime .block_settings .block_tree p.hasicon img {
+    width: auto;
+    margin-right: 3px;
 }
 
 @media (min-width: 992px) {
