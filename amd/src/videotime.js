@@ -261,6 +261,18 @@ define([
 
         // Initiate video finish procedure.
         this.player.on('ended', this.handleEnd.bind(this));
+        this.player.on('pause', this.handlePause.bind(this));
+    };
+
+    /**
+     * Handle pause
+     */
+    VideoTime.prototype.handlePause = function() {
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.handlePause == 'function') {
+                plugin.handlePause();
+            }
+        });
     };
 
     /**

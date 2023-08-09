@@ -18,7 +18,7 @@ Feature: Customize videotime information tab label
       | student | C1     | student        |
     And the following "activities" exist:
       | activity  | name   | intro      | course | vimeo_url                   | label_mode | section | enabletabs |
-      | videotime | Video1 | VideoDesc1 | C1     | https://vimeo.com/253989945 | 0          | 1       | 1          |
+      | videotime | Video1 | VideoDesc1 | C1     | https://vimeo.com/347119375 | 0          | 1       | 1          |
     And the following config values are set as admin:
       | enabled | 1 | videotimetab_information |
       | default | 1 | videotimetab_information |
