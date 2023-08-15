@@ -43,6 +43,16 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
 class vimeo_embed implements \renderable, \templatable {
 
     /**
+     * @var $cm Course module
+     */
+    protected $cm = null;
+
+    /**
+     * @var $record Instance rocord
+     */
+    protected $record = null;
+
+    /**
      * Constructor
      *
      * @param \stdClass $instancerecord
@@ -61,7 +71,7 @@ class vimeo_embed implements \renderable, \templatable {
      */
     public function get_cm() {
         if (is_null($this->cm)) {
-            $this->cm = get_coursemodule_from_instance('videotime', $this->id);
+            $this->cm = get_coursemodule_from_instance('videotime', $this->record->id);
         }
         return $this->cm;
     }

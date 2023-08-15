@@ -65,6 +65,20 @@ if ($ADMIN->fulltree) {
         'videotimeplugin_videojs/speed', get_string('option_speed', 'videotime'),
         get_string('option_speed_help', 'videotime'), '1'));
 
+    $options = [
+        'accepted_types' => [
+            '.png', '.jpg', '.gif', '.webp', '.tiff', '.svg'
+        ],
+    ];
+    $settings->add(new admin_setting_configstoredfile(
+        'videotimeplugin_videojs/audioimage',
+        new lang_string('audioimage', 'videotimeplugin_videojs'),
+        new lang_string('audioimage_desc', 'videotimeplugin_videojs'),
+        'audioimage',
+        0,
+        $options
+    ));
+
     $settings->add(new admin_setting_heading('forcedhdr', get_string('forcedsettings', 'videotime'), ''));
 
     $options = [
