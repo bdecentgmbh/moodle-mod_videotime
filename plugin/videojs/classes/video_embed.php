@@ -25,6 +25,7 @@
 namespace videotimeplugin_videojs;
 
 use context_module;
+use context_system;
 use core_component;
 use mod_videotime\vimeo_embed;
 use moodle_url;
@@ -71,9 +72,29 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
                 )->out(false);
             }
         }
+
+        $isvideo = !file_mimetype_in_typegroup($mimetype, ['web_audio']);
+        if (empty($poster) && !$isvideo) {
+            $poster = $output->image_url('f/audio-256', 'core');
+            $files = $fs->get_area_files(context_system::instance()->id, 'videotimeplugin_videojs', 'audioimage', 0);
+            foreach ($files as $file) {
+                if (!$file->is_directory()) {
+                    $poster = moodle_url::make_pluginfile_url(
+                        $file->get_contextid(),
+                        $file->get_component(),
+                        $file->get_filearea(),
+                        null,
+                        $file->get_filepath(),
+                        $file->get_filename(),
+                        false
+                    );
+                }
+            }
+        }
+
         $context = parent::export_for_template($output) + [
             'mimetype' => $mimetype,
-            'video' => !file_mimetype_in_typegroup($mimetype, ['web_audio']),
+            'video' => $isvideo,
             'poster' => $poster ?? false,
         ];
 

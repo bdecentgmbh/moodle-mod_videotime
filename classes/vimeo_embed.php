@@ -45,6 +45,16 @@ class vimeo_embed implements \renderable, \templatable {
     protected $cm = null;
 
     /**
+     * @var $cm Course module
+     */
+    protected $cm = null;
+
+    /**
+     * @var $record Instance rocord
+     */
+    protected $record = null;
+
+    /**
      * Constructor
      *
      * @param \stdClass $instancerecord

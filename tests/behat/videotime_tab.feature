@@ -18,7 +18,7 @@ Feature: Configure videotime tabs
       | student | C1     | student        |
     And the following "activities" exist:
       | activity  | name                        | intro                      | course | vimeo_url                   | label_mode | section | enabletabs |
-      | videotime | Video Time with information | This video has information | C1     | https://vimeo.com/253989945 | 0          | 1       | 1          |
+      | videotime | Video Time with information | This video has information | C1     | https://vimeo.com/347119375 | 0          | 1       | 1          |
     And I am on the "Video Time with information" "videotime activity editing" page logged in as "teacher"
     And I set the following fields to these values:
       | Video Time Information tab | 1                           |

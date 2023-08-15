@@ -143,6 +143,13 @@ class options extends moodleform {
         $mform->setDefault('speed', get_config('videotime', 'speed'));
         self::create_additional_field_form_elements('speed', $mform);
 
+        $mform->addElement('filemanager', 'poster', get_string('poster', 'videotimeplugin_videojs'), null, [
+            'subdirs' => 0,
+            'maxfiles' => 1,
+            'accepted_types' => ['image'],
+        ]);
+        $mform->addHelpButton('poster', 'poster', 'videotimeplugin_videojs');
+
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this)]);

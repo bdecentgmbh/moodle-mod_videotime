@@ -58,9 +58,9 @@
     {{^ video }}
     <audio class="video-js"
         id="vimeo-embed-{{uniqueid}}"
+        {{# poster }} poster="{{ poster }}" {{/ poster }}
         controls {{# playsinline }} playsinline {{/ playsinline }}
     >
-         <source src="{{ vimeo_url }}" type="{{ mimetype }}" />
     </audio>
     {{/ video }}
     </div>

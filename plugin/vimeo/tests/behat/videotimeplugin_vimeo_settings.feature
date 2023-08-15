@@ -18,8 +18,8 @@ Feature: Configure vimeo settings
       | student | C1     | student        |
     And the following "activities" exist:
       | activity  | name                        | course | vimeo_url                   | label_mode | section | controls |
-      | videotime | Video Time with controls    | C1     | https://vimeo.com/253989945 | 0          | 1       | 1        |
-      | videotime | Video Time with no controls | C1     | https://vimeo.com/253989945 | 0          | 1       | 0        |
+      | videotime | Video Time with controls    | C1     | https://vimeo.com/347119375 | 0          | 1       | 1        |
+      | videotime | Video Time with no controls | C1     | https://vimeo.com/347119375 | 0          | 1       | 0        |
 
   @javascript
   Scenario: Controls are available
