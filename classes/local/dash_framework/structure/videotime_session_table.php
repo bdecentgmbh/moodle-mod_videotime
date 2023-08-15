@@ -48,6 +48,7 @@ use mod_videotime\local\block_dash\attribute\unique_visitors_attribute;
 use mod_videotime\local\block_dash\attribute\video_created_attribute;
 use mod_videotime\local\block_dash\attribute\video_preview_attribute;
 use mod_videotime\local\block_dash\attribute\views_attribute;
+use mod_videotime\local\block_dash\attribute\completion_status_attribute;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -65,7 +66,7 @@ class videotime_session_table extends table {
      * Build a new table.
      */
     public function __construct() {
-        parent::__construct('videotimeplugin_pro_session', 'vts');
+        parent::__construct('videotime', 'vts');
     }
 
     /**
@@ -83,17 +84,17 @@ class videotime_session_table extends table {
      * @return field_interface[]
      */
     public function get_fields(): array {
-        return [
+        $fields = [
             new field('id', new lang_string('pluginname', 'videotime'), $this, null, [
                 new identifier_attribute()
             ]),
             new field('time', new lang_string('watch_time', 'videotime'), $this, 'SUM(time)', [
                 new time_attribute()
             ]),
-            new field('state', new lang_string('state_finished', 'videotime'), $this, 'MAX(state)', [
+            new field('state', new lang_string('state_finished', 'videotime'), $this, 'MAX(vtn.state)', [
                 new bool_attribute()
             ]),
-            new field('timestarted', new lang_string('timestarted', 'videotime'), $this, 'MIN(vts.timestarted)', [
+            new field('timestarted', new lang_string('timestarted', 'videotime'), $this, 'MIN(vtn.timecreated)', [
                 new date_attribute()
             ]),
             new field('percent_watch', new lang_string('watch_percent', 'videotime'), $this, 'MAX(percent_watch)', [
@@ -101,7 +102,23 @@ class videotime_session_table extends table {
             ]),
             new field('current_watch_time', new lang_string('currentwatchtime', 'videotime'), $this, 'MAX(current_watch_time)', [
                 new time_attribute()
-            ])
+            ]),
         ];
+
+        if (videotime_has_repository()) {
+            $addfields = [
+                new field('watched_time', new lang_string('watchedtime', 'videotime'), $this, 'MAX(current_watch_time)', [
+                    new time_attribute()
+                ]),
+                new field('time_left', new lang_string('timeleft', 'videotime'), $this, 'MIN(vvv.duration - current_watch_time)', [
+                    new time_attribute()
+                ]),
+                new field('status', new lang_string('activitystatus', 'videotime'), $this, 'MAX(cmc.completionstate)', [
+                    new completion_status_attribute()
+                ])
+            ];
+            $fields = array_merge($fields, $addfields);
+        }
+        return $fields;
     }
 }

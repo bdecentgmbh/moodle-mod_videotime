@@ -87,7 +87,7 @@ class videotime_table extends table {
             new field('id', new lang_string('pluginname', 'videotime'), $this, null, [
                 new identifier_attribute()
             ]),
-            new field('name', new lang_string('activity_name', 'videotime'), $this),
+            new field('name', new lang_string('activity_name', 'videotime'), $this, 'vt.name'),
             new field('url', new lang_string('videotimeurl', 'videotime'), $this, 'vt.id', [
                 new moodle_url_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])])
             ]),

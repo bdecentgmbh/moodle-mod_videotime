@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * After records are relieved from database each field has a chance to transform the data.
+ * Transforms completion status into human readable form
  *
  * @package     mod_videotime
  * @copyright   2020 bdecent gmbh <https://bdecent.de>
@@ -27,12 +27,18 @@ namespace mod_videotime\local\block_dash\attribute;
 use block_dash\local\data_grid\field\attribute\abstract_field_attribute;
 use mod_videotime\videotime_instance;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir.'/completionlib.php');
+
 /**
  * Transforms data to average view time.
  *
  * @package mod_videotime
+ * @copyright   2020 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class last_session_attribute extends abstract_field_attribute {
+class completion_status_attribute extends abstract_field_attribute {
 
     /**
      * After records are relieved from database each field has a chance to transform the data.
@@ -45,11 +51,14 @@ class last_session_attribute extends abstract_field_attribute {
      */
     public function transform_data($data, \stdClass $record) {
         global $DB;
-
-        $instance = videotime_instance::instance_by_id($data);
-
-        return $DB->get_field_sql('SELECT MAX(vts.timecreated)
-                                     FROM {videotimeplugin_pro_session} vts
-                                    WHERE vts.module_id = ? AND vts.timecreated > 0', [$instance->get_cm()->id]);
+        if ($data == COMPLETION_COMPLETE) {
+            return get_string("completed", "mod_videotime");
+        } else if ($data == COMPLETION_COMPLETE_PASS) {
+            return get_string("passed", "mod_videotime");
+        } else if ($data == COMPLETION_COMPLETE_FAIL) {
+            return get_string("failed", "mod_videotime");
+        } else {
+            return get_string("incomplete", "mod_videotime");
+        }
     }
 }
