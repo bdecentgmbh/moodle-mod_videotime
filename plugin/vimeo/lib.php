@@ -38,8 +38,9 @@ function videotimeplugin_vimeo_update_instance($moduleinstance, $mform = null) {
     global $DB;
 
     if (
-        !mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
-        || empty(get_config('videotimeplugin_vimeo', 'enabled'))
+        empty(get_config('videotimeplugin_vimeo', 'enabled'))
+        || empty($moduleinstance->vimeo_url)
+        || !mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
     ) {
         return;
     }
