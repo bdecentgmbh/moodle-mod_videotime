@@ -59,7 +59,7 @@ class force_settings_test extends advanced_testcase {
         $this->instancerecord = $this->getDataGenerator()->create_module('videotime', [
             'course' => $this->course->id,
             'controls' => 0,
-            'vimeo_url' => 'https://vimeo.com/253989945',
+            'vimeo_url' => 'https://vimeo.com/347119375',
         ]);
         $this->videotimeinstance = videotime_instance::instance_by_id($this->instancerecord->id);
     }
