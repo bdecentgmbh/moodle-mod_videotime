@@ -236,7 +236,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
 
     videotime_grade_item_update($moduleinstance);
 
-    if (videotime_has_repository()) {
+    if (videotime_has_repository() && !empty($moduleinstance->vimeo_url)) {
         \videotimeplugin_repository\video::add_adhoc($moduleinstance->vimeo_url);
     }
 

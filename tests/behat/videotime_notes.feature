@@ -18,10 +18,10 @@ Feature: Video Time notes
       | student | C1     | student        |
     And the following "activities" exist:
         | activity  | name                          | intro                      | course | vimeo_url                   | label_mode | section | enabletabs | video_description  | show_description_in_player |
-        | videotime | Video Time without tabs       | This video has information | C1     | https://vimeo.com/253989945 | 0          | 1       | 0          | The world is round | 0                          |
-        | videotime | Video Time with tabs          | This video has information | C1     | https://vimeo.com/253989945 | 0          | 1       | 1          | The world is round | 1                          |
-        | videotime | Video Time with info          | This video has information | C1     | https://vimeo.com/253989945 | 0          | 1       | 0          | The world is round | 1                          |
-        | videotime | Video Time with no info       | This video has information | C1     | https://vimeo.com/253989945 | 0          | 1       | 1          | The world is round | 0                          |
+        | videotime | Video Time without tabs       | This video has information | C1     | https://vimeo.com/347119375 | 0          | 1       | 0          | The world is round | 0                          |
+        | videotime | Video Time with tabs          | This video has information | C1     | https://vimeo.com/347119375 | 0          | 1       | 1          | The world is round | 1                          |
+        | videotime | Video Time with info          | This video has information | C1     | https://vimeo.com/347119375 | 0          | 1       | 0          | The world is round | 1                          |
+        | videotime | Video Time with no info       | This video has information | C1     | https://vimeo.com/347119375 | 0          | 1       | 1          | The world is round | 0                          |
     And I am on the "Video Time with tabs" "videotime activity editing" page logged in as "teacher"
     And I set the following fields to these values:
       | Video Time Information tab | 1                           |

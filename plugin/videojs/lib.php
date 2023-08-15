@@ -44,8 +44,9 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
     global $DB;
 
     if (
-        mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
-        || empty(get_config('videotimeplugin_videojs', 'enabled'))
+        empty(get_config('videotimeplugin_videojs', 'enabled'))
+        || !empty($moduleinstance->vimeo_url)
+        && mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
     ) {
         return;
     }
@@ -71,7 +72,7 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
                 0,
                 ['subdirs' => 0, 'maxfiles' => 1]
             );
-        } else {
+        } else if (!empty($data->mediafile)) {
             file_save_draft_area_files(
                 $data->mediafile,
                 $context->id,
@@ -236,13 +237,6 @@ function videotimeplugin_videojs_add_form_fields($mform, $formclass) {
             'name'
         );
         $mform->addHelpButton('mediafile', 'mediafile', 'videotimeplugin_videojs');
-    } else {
-        $mform->addElement('filemanager', 'poster', get_string('poster', 'videotimeplugin_videojs'), null, [
-            'subdirs' => 0,
-            'maxfiles' => 1,
-            'accepted_types' => ['image'],
-        ]);
-        $mform->addHelpButton('poster', 'poster', 'videotimeplugin_videojs');
     }
 }
 
@@ -293,6 +287,26 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
 function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea == 'audioimage' ) {
+
+        // Extract the filename / filepath from the $args array.
+        $filename = array_pop($args);
+        if (!$args) {
+            $filepath = '/';
+        } else {
+            $filepath = '/' . implode('/', $args) . '/';
+        }
+
+        // Retrieve the file from the Files API.
+        $itemid = 0;
+        $fs = get_file_storage();
+        $file = $fs->get_file($context->id, 'videotimeplugin_videojs', $filearea, $itemid, $filepath, $filename);
+        if (!$file) {
+            return false; // The file does not exist.
+        }
+
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    }
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
