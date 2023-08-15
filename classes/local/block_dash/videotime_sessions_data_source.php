@@ -26,6 +26,7 @@ namespace mod_videotime\local\block_dash;
 
 use block_dash\local\dash_framework\query_builder\builder;
 use block_dash\local\dash_framework\query_builder\join;
+use block_dash\local\dash_framework\query_builder\where;
 use block_dash\local\dash_framework\structure\user_table;
 use block_dash\local\data_grid\filter\bool_filter;
 use block_dash\local\data_grid\filter\course_condition;
@@ -79,14 +80,22 @@ class videotime_sessions_data_source extends abstract_data_source {
 
         $builder = new builder();
         $builder
-            ->select('vts.id', 'vts_id')
+            ->select("CONCAT(vt.id, '-', u.id)", 'vtn_id')
             ->from('videotime', 'vt')
+            ->join('videotime', 'vts', 'id', 'vt.id')
             ->join('course_modules', 'cm', 'instance', 'vt.id', join::TYPE_INNER_JOIN, ['cm.module' => $module])
-            ->join('videotime_pro_session', 'vts', 'module_id', 'cm.id')
-            ->join('user', 'u', 'id', 'vts.user_id')
+            ->join('videotimeplugin_pro_session', 'vtn', 'module_id', 'cm.id')
+            ->join('user', 'u', 'id', 'vtn.user_id')
             ->join('course', 'c', 'id', 'vt.course')
             ->join('course_categories', 'cc', 'id', 'c.category')
-            ->groupby('vt.id')->groupby('vts.user_id');
+            ->join('videotime_vimeo_video', 'vvv', 'link', 'vt.vimeo_url', join::TYPE_LEFT_JOIN)
+            ->join('course_modules_completion', 'cmc', 'coursemoduleid', 'cm.id', join::TYPE_LEFT_JOIN, ['cmc.userid' => 'u.id'])
+            ->groupby('vt.id')
+            ->groupby('vts.id')
+            ->groupby('u.id')
+            ->groupby('c.id')
+            ->groupby('vvv.duration')
+            ->groupby('vtn.user_id');
 
         $filterpreferences = $this->get_preferences('filters');
 
