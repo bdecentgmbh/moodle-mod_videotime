@@ -253,7 +253,8 @@ define([
                     if (typeof plugin.setCurrentTime == 'function') {
                         plugin.getSessions().then(session => {
                             plugin.setCurrentTime(session.id, event.seconds);
-                        });
+                            return session;
+                        }).catch(Notification.exception);
                     }
                 });
             }
