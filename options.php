@@ -84,7 +84,6 @@ if ($form->is_cancelled()) {
         component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaults, $cm->instance]);
     }
     $moduleinstance = ['coursemodule' => $cm->id] + (array) $data + (array) $moduleinstance->to_record() + $defaults;
-    unset($moduleinstance['vimeo_url']);
     videotime_update_instance((object) $moduleinstance, $form);
     redirect($returnurl);
 }
