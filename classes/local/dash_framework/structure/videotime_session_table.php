@@ -107,10 +107,17 @@ class videotime_session_table extends table {
 
         if (videotime_has_repository()) {
             $addfields = [
-                new field('watched_time', new lang_string('watchedtime', 'videotime'), $this, 'MAX(current_watch_time)', [
+                new field('watched_time', new lang_string('watchedtime', 'videotime'), $this, 'MAX(
+                    CASE WHEN vtn.current_watch_time - vtn.start > 1 THEN vtn.current_watch_time ELSE 0 END
+                )', [
                     new time_attribute()
                 ]),
-                new field('time_left', new lang_string('timeleft', 'videotime'), $this, 'MIN(vvv.duration - current_watch_time)', [
+                new field('time_left', new lang_string('timeleft', 'videotime'), $this, 'MIN(
+                    CASE WHEN vtn.current_watch_time - vtn.start > 1
+                         THEN vvv.duration - vtn.current_watch_time
+                         ELSE vvv.duration
+                     END
+                )', [
                     new time_attribute()
                 ]),
                 new field('status', new lang_string('activitystatus', 'videotime'), $this, 'MAX(cmc.completionstate)', [
