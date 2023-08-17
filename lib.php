@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+define('VIDEOTIME_EVENT_TYPE_OPEN', 'open');
+define('VIDEOTIME_EVENT_TYPE_CLOSE', 'close');
+
 require_once($CFG->dirroot . '/lib/completionlib.php');
 
 use mod_videotime\videotime_instance;
@@ -819,4 +822,27 @@ function videotime_forced_settings($component = 'videotime') {
     $forced = array_intersect($config, explode(',', $config['forced'] ?? ''));
 
     return $forced;
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_videotime_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'videotime');
+
+    switch ($eventtype) {
+        case VIDEOTIME_EVENT_TYPE_OPEN:
+            $identifier = 'calendarstart';
+            break;
+        case VIDEOTIME_EVENT_TYPE_CLOSE:
+            $identifier = 'calendarend';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'videotime', $modulename);
 }
