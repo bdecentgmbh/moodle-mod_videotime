@@ -24,6 +24,7 @@
 
 namespace mod_videotime;
 
+use cm_info;
 use core_component;
 use external_description;
 use mod_videotime\local\tabs\tabs;
@@ -64,7 +65,7 @@ class videotime_instance implements \renderable, \templatable {
     /**
      * Temporary storage for course module. Use $this->get_cm() instead.
      *
-     * @var \stdClass|null
+     * @var cm_info|null
      */
     private $cm = null;
 
@@ -565,6 +566,10 @@ class videotime_instance implements \renderable, \templatable {
      * Call plugins hook to setup page
      */
     public function setup_page() {
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            component_callback("videotimeplugin_$name", 'setup_page', [$this->to_record(), $this->get_cm()]);
+        }
+
         if ($this->enabletabs) {
             $this->tabs->setup_page();
         }
