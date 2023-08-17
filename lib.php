@@ -267,6 +267,10 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $classname::save_settings($moduleinstance);
     }
 
+    if (!empty($mform) && !empty($mform->get_data()->livefeed)) {
+        $moduleinstance->vimeo_url = '';
+    }
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
