@@ -76,18 +76,6 @@ videotime_view($moduleinstance, $course, $cm, $moduleinstance->get_context());
 
 $renderer = $PAGE->get_renderer('mod_videotime');
 
-// Allow any subplugin to override video time instance output.
-foreach (\core_component::get_component_classes_in_namespace(null, 'videotime\\instance') as $fullclassname => $classpath) {
-    if (is_subclass_of($fullclassname, videotime_instance::class)) {
-        if ($override = $fullclassname::get_instance($moduleinstance->id)) {
-            $moduleinstance = $override;
-        }
-        if ($override = $fullclassname::get_renderer($moduleinstance->id)) {
-            $renderer = $override;
-        }
-    }
-}
-
 echo $OUTPUT->header();
 
 if (!class_exists('core\\output\\activity_header')) {
