@@ -49,11 +49,9 @@ class get_feed extends external_api {
     }
 
     /**
-     * Change settings
+     * Get settings
      *
-     * @param int $mute Whether to mute
-     * @param int $status Whether to close
-     * @param int $peerid The id of a user's peer changed by manager
+     * @param int $contextid Module context id of activity
      * @return array Status indicator
      */
     public static function execute($contextid): array {
