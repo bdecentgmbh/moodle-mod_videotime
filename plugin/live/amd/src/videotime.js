@@ -42,6 +42,31 @@ class Publish extends PublishBase {
         }])[0];
     }
 
+    getTransceiver(id) {
+        let result = null;
+
+        if (
+            this.videoroom.webrtcStuff.pc
+            && this.videoroom.webrtcStuff.pc.iceConnectionState == 'connected'
+        ) {
+
+            Log.debug(this.videoroom.webrtcStuff.pc.getTransceivers());
+            this.videoroom.webrtcStuff.pc.getTransceivers().forEach(transceiver => {
+                const sender = transceiver.sender;
+                if (
+                    sender.track
+                    && sender.track.id
+                    && sender.track.id == id
+                    && this.tracks[sender.track.id]
+                ) {
+                    result = transceiver;
+                }
+            });
+        }
+
+        return result;
+    }
+
     publishFeed() {
         if (
             this.videoroom.webrtcStuff.pc
@@ -81,13 +106,7 @@ class Publish extends PublishBase {
     unpublish() {
         if (this.videoInput) {
             this.videoInput.then(videoStream => {
-                if (videoStream) {
-                    videoStream.getVideoTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
                 this.videoInput = null;
-
                 return videoStream;
             }).catch(Notification.exception);
             this.videoroom.send({
@@ -95,6 +114,28 @@ class Publish extends PublishBase {
                     request: 'unpublish'
                 }
             });
+        }
+        if (this.currentCamera) {
+            this.currentCamera = this.currentCamera.then(videoStream => {
+                if (videoStream) {
+                    videoStream.getVideoTracks().forEach(track => {
+                        track.stop();
+                    });
+                }
+
+                return null;
+            }).catch(Notification.exception);
+        }
+        if (this.currentDisplay) {
+            this.currentDisplay = this.currentDisplay.then(videoStream => {
+                if (videoStream) {
+                    videoStream.getVideoTracks().forEach(track => {
+                        track.stop();
+                    });
+                }
+
+                return null;
+            }).catch(Notification.exception);
         }
         document.querySelectorAll(
             '[data-contextid="' + this.contextid + '"][data-action="publish"]'
@@ -110,6 +151,9 @@ class Publish extends PublishBase {
 
     onLocalTrack(track, on) {
         const remoteStream = new MediaStream([track]);
+        if (!on) {
+            return;
+        }
         remoteStream.mid = track.mid;
         Log.debug(on);
         Log.debug(remoteStream);
@@ -117,7 +161,6 @@ class Publish extends PublishBase {
             document.getElementById('video-controls-' + this.tracks[track.id]),
             remoteStream
         );
-        return;
     }
 
     handleClick(e) {
@@ -148,16 +191,32 @@ class Publish extends PublishBase {
 
                     this.videoInput.then(videoStream => {
                         const tracks = [];
+                        this.tracks = this.tracks || {};
                         if (videoStream) {
+                            Log.debug(videoStream.getVideoTracks());
                             videoStream.getVideoTracks().forEach(track => {
-                                tracks.push({
-                                    type: 'video',
-                                    capture: track,
-                                    recv: false
-                                });
-                                this.selectedTrack = track;
-                                this.tracks = this.tracks || {};
-                                this.tracks[track.id] = type;
+                                const transceiver = this.getTransceiver(track.id);
+                                if (!transceiver) {
+                                    tracks.push({
+                                        type: 'video',
+                                        capture: track,
+                                        recv: false
+                                    });
+                                    this.selectedTrack = track;
+                                    this.tracks[track.id] = type;
+                                    Log.debug('New track');
+                                } else {
+                                    const message = JSON.stringify({
+                                        feed: Number(this.peerid),
+                                        mid: transceiver.mid
+                                    });
+                                    this.videoroom.data({
+                                        text: message,
+                                        error: Log.debug
+                                    });
+                                    this.selectedTrack = track.id;
+                                    this.publishFeed();
+                                }
                             });
                             videoStream.getAudioTracks().forEach(track => {
                                 tracks.push({
@@ -166,6 +225,9 @@ class Publish extends PublishBase {
                                     recv: false
                                 });
                             });
+                            if (!tracks.length) {
+                                return videoStream;
+                            }
                             this.videoroom.createOffer({
                                 tracks: tracks,
                                 success: (jsep) => {
@@ -220,6 +282,95 @@ class Publish extends PublishBase {
         }
 
         return true;
+    }
+
+    /**
+     * Set video source to user camera
+     */
+    shareCamera() {
+        const videoInput = this.videoInput,
+            currentCamera = this.currentCamera || Promise.resolve(null);
+
+        this.videoInput = currentCamera.then(videoStream => {
+            if (videoStream) {
+                return videoStream;
+            } else {
+                const cameraInput = navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+
+                this.currentCamera = cameraInput.catch(() => {
+                    return currentCamera;
+                });
+
+                return cameraInput.then(videoStream => {
+                    this.tracks = this.tracks || {};
+                    videoStream.getTracks().forEach(track => {
+                        this.tracks[track.id] = 'camera';
+                    });
+
+                    return videoStream;
+                }).catch((e) => {
+                    Log.debug(e);
+
+                    return videoInput;
+                });
+            }
+        });
+    }
+
+    /**
+     * Set video source to display surface
+     */
+    shareDisplay() {
+        const videoInput = this.videoInput,
+            currentDisplay = this.currentDisplay || Promise.resolve(null),
+            displayInput = navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: false
+        });
+
+        this.videoInput = displayInput.then(videoStream => {
+            if (videoInput) {
+                videoInput.then(videoStream => {
+                    if (videoStream) {
+                        videoStream.getTracks().forEach(track => {
+                            Log.debug(track); //track.stop();
+                        });
+                    }
+                    return videoStream;
+                }).catch(Notification.exception);
+            }
+            this.tracks = this.tracks || {};
+            videoStream.getTracks().forEach(track => {
+                this.tracks[track.id] = 'display';
+            });
+
+            return videoStream;
+        }).catch((e) => {
+            Log.debug(e);
+
+            return videoInput;
+        });
+
+        this.currentDisplay = displayInput.then(videoStream => {
+            currentDisplay.then(videoStream => {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => {
+                        Log.debug('stop track');
+                        Log.debug(track);
+                        track.stop();
+                    });
+                }
+            });
+
+            return videoStream;
+        }).catch((e) => {
+            Log.debug(e);
+
+            return currentDisplay;
+        });
     }
 }
 
