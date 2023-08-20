@@ -47,7 +47,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('videotimeplugin_live/width', new lang_string('option_width', 'videotime'),
         new lang_string('option_width_help', 'videotime'), '', PARAM_INT));
 
-    $settings->add(new admin_setting_configcheckbox('videotimeplugin_live/controls', new lang_string('option_controls', 'videotime'),
+    $settings->add(
+        new admin_setting_configcheckbox('videotimeplugin_live/controls', new lang_string('option_controls', 'videotime'),
         new lang_string('option_controls_help', 'videotime'), '1'));
 
     $settings->add(new admin_setting_configcheckbox('videotimeplugin_live/muted', new lang_string('option_muted', 'videotime'),

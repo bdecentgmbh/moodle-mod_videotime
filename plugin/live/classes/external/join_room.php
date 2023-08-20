@@ -158,7 +158,7 @@ class join_room extends \block_deft\external\join_room {
             if ($record = $DB->get_record('videotimetab_venue_peer', [
                 'sessionid' => $sessionid,
                 'videotime' => $cm->instance,
-                'userid'=> $USER->id,
+                'userid' => $USER->id,
                 'status' => false,
             ])) {
                 $record->timemodified = $timenow;
@@ -167,7 +167,7 @@ class join_room extends \block_deft\external\join_room {
                 $DB->insert_record('videotimetab_venue_peer', [
                     'sessionid' => $sessionid,
                     'videotime' => $cm->instance,
-                    'userid'=> $USER->id,
+                    'userid' => $USER->id,
                     'mute' => true,
                     'status' => false,
                     'timecreated' => $timenow,

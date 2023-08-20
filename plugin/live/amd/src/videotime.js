@@ -49,14 +49,12 @@ class Publish extends PublishBase {
             this.videoroom.webrtcStuff.pc
             && this.videoroom.webrtcStuff.pc.iceConnectionState == 'connected'
         ) {
-
-            Log.debug(this.videoroom.webrtcStuff.pc.getTransceivers());
             this.videoroom.webrtcStuff.pc.getTransceivers().forEach(transceiver => {
                 const sender = transceiver.sender;
                 if (
                     sender.track
                     && sender.track.id
-                    && sender.track.id == id
+                    && (!id || sender.track.id == id)
                     && this.tracks[sender.track.id]
                 ) {
                     result = transceiver;
@@ -104,58 +102,74 @@ class Publish extends PublishBase {
     }
 
     unpublish() {
+        Ajax.call([{
+            args: {
+                id: Number(this.peerid),
+                publish: false,
+                room: this.roomid
+            },
+            contextid: this.contextid,
+            fail: Notification.exception,
+            methodname: 'videotimeplugin_live_publish_feed'
+        }]);
+
         if (this.videoInput) {
-            this.videoInput.then(videoStream => {
-                this.videoInput = null;
-                return videoStream;
-            }).catch(Notification.exception);
             this.videoroom.send({
                 message: {
                     request: 'unpublish'
                 }
             });
         }
-        if (this.currentCamera) {
-            this.currentCamera = this.currentCamera.then(videoStream => {
-                if (videoStream) {
-                    videoStream.getVideoTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
 
-                return null;
-            }).catch(Notification.exception);
-        }
-        if (this.currentDisplay) {
-            this.currentDisplay = this.currentDisplay.then(videoStream => {
-                if (videoStream) {
-                    videoStream.getVideoTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
+        [
+            this.currentCamera,
+            this.currentDisplay,
+        ].forEach(videoInput => {
+            if (videoInput) {
+                videoInput.then(videoStream => {
+                    if (videoStream) {
+                        videoStream.getTracks().forEach(track => {
+                            track.stop();
+                        });
+                    }
 
-                return null;
-            }).catch(Notification.exception);
-        }
-        document.querySelectorAll(
-            '[data-contextid="' + this.contextid + '"][data-action="publish"]'
-        ).forEach(button => {
-            button.classList.remove('hidden');
+                    return null;
+                }).catch(Notification.exception);
+            }
         });
-        //document.querySelectorAll(
-            //'[data-contextid="' + this.contextid + '"][data-action="unpublish"]'
-        //).forEach(button => {
-            //button.classList.add('hidden');
-        //});
+        this.currentCamera = null;
+        this.currentDisplay = null;
+        this.videoInput = null;
+
+        if (
+            this.videoroom.webrtcStuff.pc
+            && this.videoroom.webrtcStuff.pc.iceConnectionState == 'connected'
+        ) {
+
+            this.videoroom.webrtcStuff.pc.getTransceivers().forEach(transceiver => {
+                transceiver.stop();
+            });
+        }
+        this.tracks = {};
     }
 
     onLocalTrack(track, on) {
         const remoteStream = new MediaStream([track]);
         if (!on) {
+            this.videoInput.then(videoStream => {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(current => {
+                        if (current.id == track.id) {
+                            this.unpublish();
+                        }
+                    });
+                }
+                return videoStream;
+            }).catch(Notification.exception);
+
             return;
         }
         remoteStream.mid = track.mid;
-        Log.debug(on);
         Log.debug(remoteStream);
         Janus.attachMediaStream(
             document.getElementById('video-controls-' + this.tracks[track.id]),
@@ -251,33 +265,8 @@ class Publish extends PublishBase {
                     }).catch(Notification.exception);
                     break;
                 case 'unpublish':
-                    if (this.videoInput) {
-                        this.videoInput.then(videoStream => {
-                            if (videoStream) {
-                                videoStream.getVideoTracks().forEach(track => {
-                                    track.stop();
-                                });
-                            }
-                            this.videoInput = null;
-
-                            return videoStream;
-                        }).catch(Notification.exception);
-                    }
-                    this.videoroom.send({
-                        message: {
-                            request: 'unpublish'
-                        }
-                    });
-                    return Ajax.call([{
-                        args: {
-                            id: Number(this.peerid),
-                            publish: false,
-                            room: this.roomid
-                        },
-                        contextid: this.contextid,
-                        fail: Notification.exception,
-                        methodname: 'videotimeplugin_publish_feed'
-                    }])[0];
+                    this.unpublish();
+                    break;
             }
         }
 
@@ -332,16 +321,6 @@ class Publish extends PublishBase {
         });
 
         this.videoInput = displayInput.then(videoStream => {
-            if (videoInput) {
-                videoInput.then(videoStream => {
-                    if (videoStream) {
-                        videoStream.getTracks().forEach(track => {
-                            Log.debug(track); //track.stop();
-                        });
-                    }
-                    return videoStream;
-                }).catch(Notification.exception);
-            }
             this.tracks = this.tracks || {};
             videoStream.getTracks().forEach(track => {
                 this.tracks[track.id] = 'display';
@@ -355,15 +334,17 @@ class Publish extends PublishBase {
         });
 
         this.currentDisplay = displayInput.then(videoStream => {
-            currentDisplay.then(videoStream => {
-                if (videoStream) {
-                    videoStream.getTracks().forEach(track => {
-                        Log.debug('stop track');
-                        Log.debug(track);
-                        track.stop();
-                    });
-                }
-            });
+            if (videoStream) {
+                currentDisplay.then(videoStream => {
+                    if (videoStream) {
+                        videoStream.getTracks().forEach(track => {
+                            track.stop();
+                        });
+                    }
+
+                    return videoStream;
+                }).catch(Notification.exception);
+            }
 
             return videoStream;
         }).catch((e) => {
@@ -441,22 +422,6 @@ export default class VideoTime extends VideoTimeBase {
      * @param {int} source Feed to subscribe
      */
     subscribeTo(source) {
-        document.querySelectorAll('[data-contextid="' + this.contextid + '"][data-action="publish"]').forEach(button => {
-            if (source == Number(this.peerid)) {
-                button.classList.remove('hidden');
-            } else {
-                button.classList.remove('hidden');
-            }
-        });
-        document.querySelectorAll('[data-contextid="' + this.contextid + '"][data-action="unpublish"]').forEach(button => {
-            if (source == Number(this.peerid)) {
-                button.classList.remove('hidden');
-            } else {
-                button.classList.remove('hidden');
-            }
-        });
-        Log.debug(source);
-        Log.debug(this.peerid);
 
         if (this.remoteFeed && !this.remoteFeed.creatingSubscription && !this.remoteFeed.restart) {
             const update = {
@@ -476,12 +441,6 @@ export default class VideoTime extends VideoTimeBase {
             }
 
             if (this.remoteFeed.current != source) {
-                this.remoteFeed.videoroom.send({message: update});
-                if (this.remoteFeed.current == this.peerid) {
-                    const room = rooms[String(this.contextid)];
-                    room.publish.unpublish();
-                }
-                this.remoteFeed.current = source;
                 Log.debug('[data-contextid="' + this.contextid + '"] img.poster-img');
                 if (source) {
                     document.querySelectorAll('[data-contextid="' + this.contextid + '"] img.poster-img').forEach(img => {
@@ -498,9 +457,24 @@ export default class VideoTime extends VideoTimeBase {
                         img.classList.add('hidden');
                     });
                 }
+                this.remoteFeed.videoroom.send({message: update});
+                if (this.remoteFeed.current == this.peerid) {
+                    const room = rooms[String(this.contextid)];
+                    room.publish.unpublish();
+                }
+                this.remoteFeed.current = source;
+                if (!source) {
+                    if (this.remoteFeed && this.remoteFeed.janus) {
+                        this.remoteFeed.janus.destroy();
+                    }
+                    this.remoteFeed = null;
+                }
             }
         } else if (this.remoteFeed && this.remoteFeed.restart) {
             if (this.remoteFeed.current != source) {
+                if (this.remoteFeed && this.remoteFeed.janus) {
+                    this.remoteFeed.janus.destroy();
+                }
                 this.remoteFeed = null;
                 this.subscribeTo(source);
             }
