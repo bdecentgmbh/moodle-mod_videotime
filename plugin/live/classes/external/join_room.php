@@ -42,7 +42,7 @@ class join_room extends \block_deft\external\join_room {
      * Join room
      *
      * @param int $handle Janus plugin handle
-     * @param string $id Venue peer id
+     * @param string $id Context id
      * @param int $plugin Janus plugin name
      * @param bool $ptype Whether video publisher
      * @param int $room Room id being joined
@@ -63,50 +63,21 @@ class join_room extends \block_deft\external\join_room {
             'feed' => $feed,
         ]);
 
-        if (!empty($id) && !$DB->get_record('sessions', [
-            'id' => $id,
-            'sid' => session_id(),
-        ])) {
-            return [
-                'status' => false,
-            ];
-        }
-        $record = $DB->get_record(
-            'block_deft_room',
-            [
-                'roomid' => $room,
-                'component' => 'videotimeplugin_live',
-            ]
-        );
-
-        $cm = get_coursemodule_from_instance('videotime', $record->itemid);
-        $context = context_module::instance($cm->id);
+        $context = context::instance_by_id($id);
+        $cm = get_coursemodule_from_id('videotime', $context->instanceid);
         self::validate_context($context);
 
         require_login();
         require_capability('mod/videotime:view', $context);
 
         $janus = new janus($session);
-        $janusroom = new janus_room($record->itemid);
+
+        $janusroom = new janus_room($cm->instance);
 
         $token = $janusroom->get_token();
 
         if ($plugin == 'janus.plugin.videoroom') {
-            if (empty($id)) {
-                $id = $janus->transaction_identifier();
-            }
-            if ($ptype) {
-                $message = [
-                    'id' => $id,
-                    'request' => 'kick',
-                    'room' => $room,
-                    'secret' => $janusroom->get_secret(),
-                ];
-
-                $janus->send($handle, $message);
-            }
             $message = [
-                'id' => $ptype ? $id : $id . 'subscriber',
                 'ptype' => $ptype ? 'publisher' : 'subscriber',
                 'request' => 'join',
                 'room' => $room,
@@ -119,67 +90,28 @@ class join_room extends \block_deft\external\join_room {
                     ]
                 ];
             } else {
-                require_capability('videotimeplugin/live:sharevideo', $context);
-            }
-        } else {
-            $textroom = $janus->attach('janus.plugin.videoroom');
-            $janus->send($textroom, [
-                'request' => 'kick',
-                'room' => $room,
-                'secret' => $janusroom->get_secret(),
-                'username' => $id,
-            ]);
-
-            $janus->send($handle, [
-                'id' => $id,
-                'request' => 'kick',
-                'room' => $room,
-                'secret' => $janusroom->get_secret(),
-            ]);
-
-            $message = [
-                'id' => $id,
-                'request' => 'join',
-                'room' => $room,
-                'token' => $token,
-            ];
-            $params = [
-                'context' => $context,
-                'objectid' => $cm->instance,
-            ];
-
-            $event = \videotimetab_venue\event\audiobridge_launched::create($params);
-            $event->trigger();
-
-            $sessionid = $DB->get_field_select('sessions', 'id', 'sid = :sid', ['sid' => session_id()]);
-
-            $timenow = time();
-
-            if ($record = $DB->get_record('videotimetab_venue_peer', [
-                'sessionid' => $sessionid,
-                'videotime' => $cm->instance,
-                'userid' => $USER->id,
-                'status' => false,
-            ])) {
-                $record->timemodified = $timenow;
-                $DB->update_record('videotimetab_venue_peer', $record);
-            } else {
-                $DB->insert_record('videotimetab_venue_peer', [
-                    'sessionid' => $sessionid,
+                require_capability('block/deft:sharevideo', $context);
+                $DB->set_field('videotimeplugin_live_peer', 'status', 1, [
                     'videotime' => $cm->instance,
-                    'userid' => $USER->id,
-                    'mute' => true,
-                    'status' => false,
-                    'timecreated' => $timenow,
-                    'timemodified' => $timenow,
                 ]);
+                $feedid = $DB->insert_record('videotimeplugin_live_peer', [
+                    'sessionid' => $DB->get_field('sessions', 'id', [
+                        'sid' => session_id(),
+                    ]),
+                    'videotime' => $cm->instance,
+                    'timecreated' => time(),
+                    'timemodified' => time(),
+                    'userid' => $USER->id,
+                ]);
+                $message['id'] = $feedid;
             }
         }
 
-        $response = $janus->send($handle, $message);
+        $janus->send($handle, $message);
 
         return [
             'status' => true,
+            'id' => (int) $feedid ?? 0,
         ];
     }
 }

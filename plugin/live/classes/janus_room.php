@@ -48,7 +48,7 @@ class janus_room extends janus_room_base {
     /**
      * @var Plugin component using room
      */
-    protected $component = 'videotimeplugin_live';
+    protected string $component = 'videotimeplugin_live';
 
     /**
      * Constructor

@@ -30,7 +30,7 @@ class Publish extends PublishBase {
         return Ajax.call([{
             args: {
                 handle: pluginHandle.getId(),
-                id: Number(this.peerid),
+                id: Number(this.contextid),
                 plugin: pluginHandle.plugin,
                 room: this.roomid,
                 ptype: this.ptype == 'publish',
@@ -39,137 +39,76 @@ class Publish extends PublishBase {
             contextid: this.contextid,
             fail: Notification.exception,
             methodname: 'videotimeplugin_live_join_room'
+        }])[0].then(response => {
+            this.feed = response.id;
+        }).catch(Notification.exception);
+    }
+
+    /**
+     * Publish current video feed
+     */
+    publishFeed() {
+        return Ajax.call([{
+            args: {
+                id: Number(this.feed),
+                room: this.roomid,
+            },
+            contextid: this.contextid,
+            fail: Notification.exception,
+            methodname: 'videotimeplugin_live_publish_feed'
         }])[0];
     }
 
-    getTransceiver(id) {
-        let result = null;
 
-        if (
-            this.videoroom.webrtcStuff.pc
-            && this.videoroom.webrtcStuff.pc.iceConnectionState == 'connected'
-        ) {
-            this.videoroom.webrtcStuff.pc.getTransceivers().forEach(transceiver => {
-                const sender = transceiver.sender;
-                if (
-                    sender.track
-                    && sender.track.id
-                    && (!id || sender.track.id == id)
-                    && this.tracks[sender.track.id]
-                ) {
-                    result = transceiver;
-                }
-            });
-        }
-
-        return result;
-    }
-
-    publishFeed() {
-        if (
-            this.videoroom.webrtcStuff.pc
-            && this.videoroom.webrtcStuff.pc.iceConnectionState == 'connected'
-        ) {
-            setTimeout(() => {
-                this.videoroom.webrtcStuff.pc.getTransceivers().forEach(transceiver => {
-                    const sender = transceiver.sender;
-                    if (
-                        sender.track
-                        && this.selectedTrack
-                        && (sender.track.id == this.selectedTrack.id)
-                    ) {
-                        const message = JSON.stringify({
-                            feed: Number(this.peerid),
-                            mid: transceiver.mid
-                        });
-                        this.videoroom.data({
-                            text: message,
-                            error: Log.debug
-                        });
-                    }
-                });
-                return Ajax.call([{
-                    args: {
-                        id: Number(this.peerid),
-                        room: this.roomid,
-                    },
-                    contextid: this.contextid,
-                    fail: Notification.exception,
-                    methodname: 'videotimeplugin_live_publish_feed'
-                }])[0];
-            });
-        }
-    }
-
+    /**
+     * Stop video feed
+     */
     unpublish() {
-        Ajax.call([{
+        return Ajax.call([{
             args: {
-                id: Number(this.peerid),
+                id: Number(this.feed),
                 publish: false,
                 room: this.roomid
             },
             contextid: this.contextid,
             fail: Notification.exception,
             methodname: 'videotimeplugin_live_publish_feed'
-        }]);
+        }])[0];
+    }
 
-        if (this.videoInput) {
-            this.videoroom.send({
-                message: {
-                    request: 'unpublish'
-                }
-            });
-        }
+    handleClose() {
+        document.querySelectorAll(
+            '[data-contextid="' + this.contextid + '"][data-action="publish"]'
+        ).forEach(button => {
+            button.classList.remove('hidden');
+        });
+
+        this.janus.destroy();
 
         [
-            this.currentCamera,
-            this.currentDisplay,
+            this.currentCamera || Promise.resolve(null),
+            this.currentDisplay || Promise.resolve(null),
         ].forEach(videoInput => {
-            if (videoInput) {
-                videoInput.then(videoStream => {
-                    if (videoStream) {
-                        videoStream.getTracks().forEach(track => {
-                            track.stop();
-                        });
-                    }
+            videoInput.then(videoStream => {
+                if (videoStream) {
+                    videoStream.getVideoTracks().forEach(track => {
+                        track.enabled = false;
+                        track.stop();
+                    });
+                }
 
-                    return null;
-                }).catch(Notification.exception);
-            }
+                return null;
+            }).catch(Notification.exception);
         });
-        this.currentCamera = null;
-        this.currentDisplay = null;
-        this.videoInput = null;
-
-        if (
-            this.videoroom.webrtcStuff.pc
-            && this.videoroom.webrtcStuff.pc.iceConnectionState == 'connected'
-        ) {
-
-            this.videoroom.webrtcStuff.pc.getTransceivers().forEach(transceiver => {
-                transceiver.stop();
-            });
-        }
-        this.tracks = {};
     }
 
     onLocalTrack(track, on) {
         const remoteStream = new MediaStream([track]);
         if (!on) {
-            this.videoInput.then(videoStream => {
-                if (videoStream) {
-                    videoStream.getTracks().forEach(current => {
-                        if (current.id == track.id) {
-                            this.unpublish();
-                        }
-                    });
-                }
-                return videoStream;
-            }).catch(Notification.exception);
-
             return;
         }
         remoteStream.mid = track.mid;
+        Log.debug(on);
         Log.debug(remoteStream);
         Janus.attachMediaStream(
             document.getElementById('video-controls-' + this.tracks[track.id]),
@@ -207,31 +146,36 @@ class Publish extends PublishBase {
                         const tracks = [];
                         this.tracks = this.tracks || {};
                         if (videoStream) {
-                            Log.debug(videoStream.getVideoTracks());
+                            const transceiver = this.getTransceiver();
                             videoStream.getVideoTracks().forEach(track => {
-                                const transceiver = this.getTransceiver(track.id);
-                                if (!transceiver) {
-                                    tracks.push({
-                                        type: 'video',
-                                        capture: track,
-                                        recv: false
+                                track.addEventListener('ended', () => {
+                                    if (this.selectedTrack != track.id) {
+                                        this.unpublish();
+                                    }
+                                });
+                                if (transceiver) {
+                                    this.videoroom.replaceTracks({
+                                        tracks: [{
+                                            type: 'video',
+                                            mid: transceiver.mid,
+                                            capture: track
+                                        }],
+                                        error: Notification.exception
                                     });
+
                                     this.selectedTrack = track;
-                                    this.tracks[track.id] = type;
-                                    Log.debug('New track');
-                                } else {
-                                    const message = JSON.stringify({
-                                        feed: Number(this.peerid),
-                                        mid: transceiver.mid
-                                    });
-                                    this.videoroom.data({
-                                        text: message,
-                                        error: Log.debug
-                                    });
-                                    this.selectedTrack = track.id;
-                                    this.publishFeed();
+                                    return;
                                 }
+                                tracks.push({
+                                    type: 'video',
+                                    capture: track,
+                                    recv: false
+                                });
+                                this.selectedTrack = track;
                             });
+                            if (!tracks.length) {
+                                return videoStream;
+                            }
                             videoStream.getAudioTracks().forEach(track => {
                                 tracks.push({
                                     type: 'audio',
@@ -266,7 +210,6 @@ class Publish extends PublishBase {
                     break;
                 case 'unpublish':
                     this.unpublish();
-                    break;
             }
         }
 
@@ -321,6 +264,16 @@ class Publish extends PublishBase {
         });
 
         this.videoInput = displayInput.then(videoStream => {
+            if (videoInput) {
+                videoInput.then(videoStream => {
+                    if (videoStream) {
+                        videoStream.getTracks().forEach(track => {
+                            Log.debug(track); //track.stop();
+                        });
+                    }
+                    return videoStream;
+                }).catch(Notification.exception);
+            }
             this.tracks = this.tracks || {};
             videoStream.getTracks().forEach(track => {
                 this.tracks[track.id] = 'display';
@@ -334,17 +287,15 @@ class Publish extends PublishBase {
         });
 
         this.currentDisplay = displayInput.then(videoStream => {
-            if (videoStream) {
-                currentDisplay.then(videoStream => {
-                    if (videoStream) {
-                        videoStream.getTracks().forEach(track => {
-                            track.stop();
-                        });
-                    }
-
-                    return videoStream;
-                }).catch(Notification.exception);
-            }
+            currentDisplay.then(videoStream => {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => {
+                        Log.debug('stop track');
+                        Log.debug(track);
+                        track.stop();
+                    });
+                }
+            });
 
             return videoStream;
         }).catch((e) => {
@@ -422,6 +373,21 @@ export default class VideoTime extends VideoTimeBase {
      * @param {int} source Feed to subscribe
      */
     subscribeTo(source) {
+        document.querySelectorAll('[data-contextid="' + this.contextid + '"][data-action="publish"]').forEach(button => {
+            if (source == Number(this.peerid)) {
+                button.classList.remove('hidden');
+            } else {
+                button.classList.remove('hidden');
+            }
+        });
+        document.querySelectorAll('[data-contextid="' + this.contextid + '"][data-action="unpublish"]').forEach(button => {
+            if (source == Number(this.peerid)) {
+                button.classList.remove('hidden');
+            } else {
+                button.classList.remove('hidden');
+            }
+        });
+        Log.debug(source);
 
         if (this.remoteFeed && !this.remoteFeed.creatingSubscription && !this.remoteFeed.restart) {
             const update = {
@@ -441,40 +407,36 @@ export default class VideoTime extends VideoTimeBase {
             }
 
             if (this.remoteFeed.current != source) {
+                const room = rooms[String(this.contextid)];
+                this.remoteFeed.videoroom.send({message: update});
+                if (room.publish  && this.remoteFeed.current == room.publish.feed) {
+                    room.publish.handleClose();
+                    room.publish = null;
+                }
+                this.remoteFeed.current = source;
+                if (!source && this.remoteFeed.current) {
+                    this.remoteFeed.handleClose();
+                    this.remoteFeed = null;
+                }
                 Log.debug('[data-contextid="' + this.contextid + '"] img.poster-img');
-                if (source) {
+                if (Number(source)) {
                     document.querySelectorAll('[data-contextid="' + this.contextid + '"] img.poster-img').forEach(img => {
                         img.classList.add('hidden');
                     });
-                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] video').forEach(img => {
-                        img.classList.remove('hidden');
+                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] video').forEach(video => {
+                        video.classList.remove('hidden');
                     });
                 } else {
                     document.querySelectorAll('[data-contextid="' + this.contextid + '"] img.poster-img').forEach(img => {
                         img.classList.remove('hidden');
                     });
-                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] video').forEach(img => {
-                        img.classList.add('hidden');
+                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] video').forEach(video => {
+                        video.classList.add('hidden');
                     });
-                }
-                this.remoteFeed.videoroom.send({message: update});
-                if (this.remoteFeed.current == this.peerid) {
-                    const room = rooms[String(this.contextid)];
-                    room.publish.unpublish();
-                }
-                this.remoteFeed.current = source;
-                if (!source) {
-                    if (this.remoteFeed && this.remoteFeed.janus) {
-                        this.remoteFeed.janus.destroy();
-                    }
-                    this.remoteFeed = null;
                 }
             }
         } else if (this.remoteFeed && this.remoteFeed.restart) {
             if (this.remoteFeed.current != source) {
-                if (this.remoteFeed && this.remoteFeed.janus) {
-                    this.remoteFeed.janus.destroy();
-                }
                 this.remoteFeed = null;
                 this.subscribeTo(source);
             }
@@ -510,18 +472,7 @@ const handleClick = function(e) {
             type = button.getAttribute('data-type');
         e.stopPropagation();
         e.preventDefault();
-        if (action == 'unpublish') {
-            Ajax.call([{
-                args: {
-                    id: Number(peerid),
-                    room: roomid,
-                    publish: false
-                },
-                contextid: contextid,
-                fail: Notification.exception,
-                methodname: 'videotimeplugin_live_publish_feed'
-            }]);
-        } else if (!room.publish || room.publish.restart) {
+        if ((action == 'publish')  && (!room.publish || room.publish.restart)) {
             room.publish = new Publish(contextid, iceServers, roomid, server, peerid);
             if (type == 'display') {
                 room.publish.shareDisplay();
@@ -547,7 +498,7 @@ class Subscribe extends SubscribeBase {
         return Ajax.call([{
             args: {
                 handle: pluginHandle.getId(),
-                id: Number(this.peerid),
+                id: Number(this.contextid),
                 plugin: pluginHandle.plugin,
                 room: this.roomid,
                 ptype: false,
