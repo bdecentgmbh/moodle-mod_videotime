@@ -30,12 +30,6 @@
     Example context (json):
     {
         "responsive": true,
-        "cmid": 3,
-        "haspro": 0,
-        "interval": 2.5,
-        "instance": "{}",
-        "uniqueid": "60dccff8871f6",
-        "video_description": "UX design tips",
         "video": 1,
         "vimeo_url": "https://vimeo.com/323424"
     }
@@ -43,7 +37,7 @@
 }}
 {{# instance }}
 <div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}} data-roomid="{{ roomid }}" data-contextid="{{ contextid }}">
-    <div class="videotime-embed video-resize">
+    <div class="">
         {{# posterurl }}
             <img src="{{ posterurl }}" class="poster-img w-100">
         {{/ posterurl }}
@@ -54,7 +48,7 @@
         >
         </video>
     </div>
-    <div class="videotime-embed video-resize">
+    <div class="display">
         {{# posterurl }}
             <img src="{{ posterurl }}" class="poster-img w-100">
         {{/ posterurl }}

@@ -39,13 +39,13 @@ class publish_feed extends \block_deft\external\publish_feed {
     /**
      * Publish feed
      *
-     * @param string $id Venue peer id
+     * @param string $id Peer id
      * @param bool $publish Whether to publish
      * @param int $room Room id being joined
      * @return array
      */
     public static function execute($id, $publish, $room): array {
-        global $DB, $SESSION;
+        global $DB, $SESSION, $USER;
 
         $params = self::validate_parameters(self::execute_parameters(), [
             'id' => $id,
@@ -53,14 +53,6 @@ class publish_feed extends \block_deft\external\publish_feed {
             'room' => $room,
         ]);
 
-        if (!empty($id) && !$DB->get_record('sessions', [
-            'id' => $id,
-            'sid' => session_id(),
-        ])) {
-            return [
-                'status' => false,
-            ];
-        }
         $record = $DB->get_record(
             'block_deft_room',
             [
@@ -91,9 +83,9 @@ class publish_feed extends \block_deft\external\publish_feed {
             if (
                 !empty($data->feed)
                 && ($data->feed != $id)
-                && $DB->get_record('sessions', [
-                    'id' => $data->feed,
-                    'sid' => session_id(),
+                && $DB->get_record('videotimeplugin_live_peer', [
+                    'videotime' => $cm->instance,
+                    'userid' => $USER->id,
                 ])
             ) {
                 require_capability('videotimeplugin/live:moderate', $context);

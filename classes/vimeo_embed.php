@@ -25,7 +25,6 @@
 namespace mod_videotime;
 
 use core_component;
-use external_description;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
