@@ -59,17 +59,18 @@
         >
         </video>
     </div>
-    <div class="videotime-embed video-resize">
+    <div class="videotime-control hidden">
         <div class="text-center">
-            <a href="#" class="card-link m-0 p-1 hidden" data-action="publish" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
+            <a href="#" class="card-link m-0 p-1" data-action="publish" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
                 <i class="icon fa fa-camera bg-secondary rounded-circle m-0 p-2"></i>
             </a>
-            <a href="#" class="card-link m-0 p-1 hidden" data-action="unpublish" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} stopvideo, block_deft {{/ str }}">
+            <a href="#" class="card-link m-0 p-1" data-action="unpublish" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} stopvideo, block_deft {{/ str }}">
                 <i class="icon fa fa-stop bg-danger rounded-circle m-0 p-2"></i>
             </a>
-            <a href="#" class="card-link m-0 p-1 hidden" data-action="publish" data-type="display" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
+            <a href="#" class="card-link m-0 p-1" data-action="publish" data-type="display" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
                 <i class="icon fa fa-television bg-secondary rounded-circle m-0 p-2"></i>
             </a>
+            <a href="#" class="card-link hidden m-0 p-1" data-action="mute" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} mute, block_deft {{/ str }}"><i class="icon fa fa-microphone bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link m-0 p-1" data-action="unmute" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} unmute, block_deft {{/ str }}"><i class="icon fa fa-microphone-slash bg-warning rounded-circle m-0 p-2"></i></a>
         </div>
     </div>
 </div>
