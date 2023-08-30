@@ -78,6 +78,18 @@ class get_feed extends external_api {
 
         $data = json_decode($record->data) ?? new stdClass();
 
+        if (empty($data->feed || !$DB->get_record(
+            'videotimeplugin_live_peer',
+            [
+                'id' => $data->feed,
+                'status' => 0,
+            ]
+        ))) {
+            return [
+                'feed' => 0,
+            ];
+        }
+
         return [
             'feed' => $data->feed ?? 0,
         ];
