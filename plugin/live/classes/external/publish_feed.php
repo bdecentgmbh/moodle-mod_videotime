@@ -61,6 +61,19 @@ class publish_feed extends \block_deft\external\publish_feed {
             ]
         );
 
+        if (!$DB->get_record_select(
+            'videotimeplugin_live_peer',
+            "id = :id AND status = 0 AND sessionid IN (SELECT id FROM {sessions} WHERE sid = :sid)",
+            [
+                'id' => $id,
+                'sid' => session_id(),
+            ]
+        )) {
+            return [
+                'status' => false,
+            ];
+        }
+
         $cm = get_coursemodule_from_instance('videotime', $record->itemid);
         $context = context_module::instance($cm->id);
         self::validate_context($context);
@@ -79,6 +92,9 @@ class publish_feed extends \block_deft\external\publish_feed {
         $data = json_decode($record->data) ?? new stdClass();
         if (!$publish && !empty($data->feed) && $data->feed == $id) {
             $data->feed = 0;
+            $DB->set_field('videotimeplugin_live_peer', 'status', 1, [
+                'id' => $id,
+            ]);
         } else if ($publish) {
             if (
                 !empty($data->feed)

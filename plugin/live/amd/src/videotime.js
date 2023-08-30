@@ -104,7 +104,7 @@ class Publish extends PublishBase {
 
     onLocalTrack(track, on) {
         const remoteStream = new MediaStream([track]);
-        if (!on) {
+        if (!on || (track.kind == 'audio')) {
             return;
         }
         remoteStream.mid = track.mid;
@@ -118,22 +118,35 @@ class Publish extends PublishBase {
 
     handleClick(e) {
         const button = e.target.closest(
-            '[data-contextid="' + this.contextid + '"][data-action="publish"],  [data-contextid="'
-                + this.contextid + '"][data-action="unpublish"]'
+            '[data-contextid="' + this.contextid + '"][data-action="publish"], [data-contextid="'
+            + this.contextid + '"][data-action="mute"], [data-contextid="'
+            + this.contextid + '"][data-action="unmute"], [data-contextid="'
+            + this.contextid + '"][data-action="unpublish"]'
         );
         if (button) {
             const action = button.getAttribute('data-action'),
-                type = button.getAttribute('data-type') || 'camera';
+                type = button.getAttribute('data-type') || 'camera',
+                transceiver = this.getTransceiver('audio');
             e.stopPropagation();
             e.preventDefault();
             document.querySelectorAll(
-                '[data-region="deft-venue"] [data-action="publish"],  [data-region="deft-venue"] [data-action="unpublish"]'
+                '[data-region="deft-venue"] [data-action="publish"], [data-region="deft-venue"] [data-action="unpublish"]'
             ).forEach(button => {
                 if ((button.getAttribute('data-action') != action) || (button.getAttribute('data-type') != type)) {
                     button.classList.remove('hidden');
                 }
             });
             switch (action) {
+                case 'mute':
+                    if (transceiver) {
+                        transceiver.sender.track.enabled = false;
+                    }
+                    break;
+                case 'unmute':
+                    if (transceiver) {
+                        transceiver.sender.track.enabled = true;
+                    }
+                    break;
                 case 'publish':
                     Log.debug(type);
                     if (type == 'display') {
@@ -142,71 +155,7 @@ class Publish extends PublishBase {
                         this.shareCamera();
                     }
 
-                    this.videoInput.then(videoStream => {
-                        const tracks = [];
-                        this.tracks = this.tracks || {};
-                        if (videoStream) {
-                            const transceiver = this.getTransceiver();
-                            videoStream.getVideoTracks().forEach(track => {
-                                track.addEventListener('ended', () => {
-                                    if (this.selectedTrack != track.id) {
-                                        this.unpublish();
-                                    }
-                                });
-                                if (transceiver) {
-                                    this.videoroom.replaceTracks({
-                                        tracks: [{
-                                            type: 'video',
-                                            mid: transceiver.mid,
-                                            capture: track
-                                        }],
-                                        error: Notification.exception
-                                    });
-
-                                    this.selectedTrack = track;
-                                    return;
-                                }
-                                tracks.push({
-                                    type: 'video',
-                                    capture: track,
-                                    recv: false
-                                });
-                                this.selectedTrack = track;
-                            });
-                            if (!tracks.length) {
-                                return videoStream;
-                            }
-                            videoStream.getAudioTracks().forEach(track => {
-                                tracks.push({
-                                    type: 'audio',
-                                    capture: track,
-                                    recv: false
-                                });
-                            });
-                            if (!tracks.length) {
-                                return videoStream;
-                            }
-                            this.videoroom.createOffer({
-                                tracks: tracks,
-                                success: (jsep) => {
-                                    const publish = {
-                                        request: "configure",
-                                        video: true,
-                                        audio: true
-                                    };
-                                    this.videoroom.send({
-                                        message: publish,
-                                        jsep: jsep
-                                    });
-                                },
-                                error: function(error) {
-                                    Notification.alert("WebRTC error... ", error.message);
-                                }
-                            });
-                        }
-
-                        return videoStream;
-                    }).catch(Notification.exception);
+                    this.processStream([]);
                     break;
                 case 'unpublish':
                     this.unpublish();
@@ -229,7 +178,7 @@ class Publish extends PublishBase {
             } else {
                 const cameraInput = navigator.mediaDevices.getUserMedia({
                     video: true,
-                    audio: false
+                    audio: true
                 });
 
                 this.currentCamera = cameraInput.catch(() => {
@@ -260,7 +209,7 @@ class Publish extends PublishBase {
             currentDisplay = this.currentDisplay || Promise.resolve(null),
             displayInput = navigator.mediaDevices.getDisplayMedia({
             video: true,
-            audio: false
+            audio: true
         });
 
         this.videoInput = displayInput.then(videoStream => {
@@ -304,6 +253,91 @@ class Publish extends PublishBase {
             return currentDisplay;
         });
     }
+
+    processStream(tracks) {
+        this.videoInput.then(videoStream => {
+            this.tracks = this.tracks || {};
+            if (videoStream) {
+                const audiotransceiver = this.getTransceiver('audio'),
+                    videotransceiver = this.getTransceiver('video');
+                videoStream.getVideoTracks().forEach(track => {
+                    track.addEventListener('ended', () => {
+                        if (this.selectedTrack != track.id) {
+                            this.unpublish();
+                        }
+                    });
+                    this.selectedTrack = track;
+                    if (videotransceiver) {
+                        this.videoroom.replaceTracks({
+                            tracks: [{
+                                type: 'video',
+                                mid: videotransceiver.mid,
+                                capture: track
+                            }],
+                            error: Notification.exception
+                        });
+
+                        return;
+                    }
+                    tracks.push({
+                        type: 'video',
+                        capture: track,
+                        recv: false
+                    });
+                });
+                videoStream.getAudioTracks().forEach(track => {
+                    track.addEventListener('ended', () => {
+                        if (this.selectedTrack != track.id) {
+                            this.unpublish();
+                        }
+                    });
+                    if (document.querySelector('.hidden[data-action="mute"][data-contextid="' + this.contextid + '"]')) {
+                        track.enabled = false;
+                    }
+
+                    if (audiotransceiver) {
+                        this.videoroom.replaceTracks({
+                            tracks: [{
+                                type: 'audio',
+                                mid: audiotransceiver.mid,
+                                capture: track
+                            }],
+                            error: Notification.exception
+                        });
+
+                        return;
+                    }
+                    tracks.push({
+                        type: 'audio',
+                        capture: track,
+                        recv: false
+                    });
+                });
+                if (!tracks.length) {
+                    return videoStream;
+                }
+                this.videoroom.createOffer({
+                    tracks: tracks,
+                    success: (jsep) => {
+                        const publish = {
+                            request: "configure",
+                            video: true,
+                            audio: true
+                        };
+                        this.videoroom.send({
+                            message: publish,
+                            jsep: jsep
+                        });
+                    },
+                    error: function(error) {
+                        Notification.alert("WebRTC error... ", error.message);
+                    }
+                });
+            }
+
+            return videoStream;
+        }).catch(Notification.exception);
+    }
 }
 
 export default class VideoTime extends VideoTimeBase {
@@ -331,6 +365,8 @@ export default class VideoTime extends VideoTimeBase {
                     iceServers: JSON.parse(response.iceservers)
                 };
                 this.roomid = response.roomid;
+
+                document.querySelector('[data-contextid="' + this.contextid + '"] .videotime-control').classList.remove('hidden');
 
                 socket.subscribe(() => {
                     Ajax.call([{
@@ -373,6 +409,8 @@ export default class VideoTime extends VideoTimeBase {
      * @param {int} source Feed to subscribe
      */
     subscribeTo(source) {
+        Log.debug(source);
+        const room = rooms[String(this.contextid)];
         document.querySelectorAll('[data-contextid="' + this.contextid + '"][data-action="publish"]').forEach(button => {
             if (source == Number(this.peerid)) {
                 button.classList.remove('hidden');
@@ -407,14 +445,18 @@ export default class VideoTime extends VideoTimeBase {
             }
 
             if (this.remoteFeed.current != source) {
-                const room = rooms[String(this.contextid)];
+                this.remoteFeed.muteAudio = room.publish && (room.publish.feed === source);
                 this.remoteFeed.videoroom.send({message: update});
+                if (this.remoteFeed.audioTrack) {
+                    this.remoteFeed.audioTrack.enabled = !this.remoteFeed.muteAudio;
+                }
+
                 if (room.publish  && this.remoteFeed.current == room.publish.feed) {
                     room.publish.handleClose();
                     room.publish = null;
                 }
                 this.remoteFeed.current = source;
-                if (!source && this.remoteFeed.current) {
+                if (!source && this.remoteFeed) {
                     this.remoteFeed.handleClose();
                     this.remoteFeed = null;
                 }
@@ -448,6 +490,7 @@ export default class VideoTime extends VideoTimeBase {
             this.remoteFeed = new Subscribe(this.contextid, this.iceservers, this.roomid, this.server, this.peerid, source);
             this.remoteFeed.remoteVideo = document.getElementById(this.elementId);
             this.remoteFeed.remoteAudio = document.getElementById(this.elementId).parentNode.querySelector('audio');
+            this.remoteFeed.muteAudio = room.publish && (room.publish.feed === source);
             this.remoteFeed.startConnection(source);
             document.querySelectorAll('[data-contextid="' + this.contextid + '"] img.poster-img').forEach(img => {
                 img.classList.add('hidden');
@@ -460,7 +503,10 @@ export default class VideoTime extends VideoTimeBase {
 }
 
 const handleClick = function(e) {
-    const button = e.target.closest('[data-roomid] [data-action="publish"], [data-roomid] [data-action="unpublish"]');
+    const button = e.target.closest(
+        '[data-roomid] [data-action="publish"], [data-roomid] [data-action="unpublish"],'
+        + '[data-roomid] [data-action="mute"], [data-roomid] [data-action="unmute"]'
+    );
     if (button) {
         const action = button.getAttribute('data-action'),
             contextid = e.target.closest('[data-contextid]').getAttribute('data-contextid'),
@@ -481,7 +527,17 @@ const handleClick = function(e) {
             }
             room.publish.startConnection();
         } else {
-            room.publish.handleClick(e);
+            if ((action == 'mute') || (action == 'unmute')) {
+                button.classList.add('hidden');
+                button.parentNode.querySelectorAll('[data-action="mute"], [data-action="unmute"]').forEach(button => {
+                    if (button.getAttribute('data-action') != action) {
+                        button.classList.remove('hidden');
+                    }
+                });
+            }
+            if (room.publish) {
+                room.publish.handleClick(e);
+            }
         }
     }
 };
@@ -509,5 +565,23 @@ class Subscribe extends SubscribeBase {
             fail: Notification.exception,
             methodname: 'videotimeplugin_live_join_room'
         }])[0];
+    }
+
+    attachAudio(audioStream) {
+        Janus.attachMediaStream(
+            this.remoteVideo.parentNode.querySelector('audio'),
+            audioStream
+        );
+        audioStream.getTracks().forEach(track => {
+            this.audioTrack = track;
+            track.enabled = !this.muteAudio;
+        });
+    }
+
+    attachVideo(videoStream) {
+        Janus.attachMediaStream(
+            this.remoteVideo,
+            videoStream
+        );
     }
 }
