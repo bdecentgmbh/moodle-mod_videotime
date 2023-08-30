@@ -280,6 +280,7 @@ $string['tabtranscript'] = 'Transcript';
 $string['tabs'] = 'Tabs';
 $string['generalsettings'] = 'General settings';
 $string['taskscheduled'] = 'Task scheduled for next cron run';
+$string['timecompleted'] = 'Time completed';
 $string['timestarted'] = 'Date started';
 $string['todo'] = 'TODO';
 $string['totaluniquevisitors'] = 'Total unique visitors';

@@ -122,7 +122,14 @@ class videotime_session_table extends table {
                 ]),
                 new field('status', new lang_string('activitystatus', 'videotime'), $this, 'MAX(cmc.completionstate)', [
                     new completion_status_attribute()
-                ])
+                ]),
+                new field('timecompleted', new lang_string('timecompleted', 'videotime'), $this, 'CASE
+                         WHEN MAX(cmc.completionstate) > 0
+                         THEN MAX(cmc.timemodified)
+                         ELSE NULL
+                         END', [
+                    new date_attribute()
+                ]),
             ];
             $fields = array_merge($fields, $addfields);
         }
