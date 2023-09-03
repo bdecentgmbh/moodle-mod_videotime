@@ -877,7 +877,7 @@ body.format-topics:not(.editing) .modtype_videotime.preview_mode .actions {
 }
 
 @media (min-width: 992px) {
-    #region-main {
+    .path-admin-mod #region-main {
         overflow: auto;
     }
 }
