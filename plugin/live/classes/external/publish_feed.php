@@ -16,15 +16,14 @@
 
 namespace videotimeplugin_live\external;
 
-use block_deft\janus;
 use videotimeplugin_live\socket;
 use context;
 use context_module;
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use stdClass;
 use videotimeplugin_live\janus_room;
 
@@ -83,11 +82,6 @@ class publish_feed extends \block_deft\external\publish_feed {
         if ($publish) {
             require_capability('videotimeplugin/live:sharevideo', $context);
         }
-
-        $janus = new janus($session);
-        $janusroom = new janus_room($record->itemid);
-
-        $token = $janusroom->get_token();
 
         $data = json_decode($record->data) ?? new stdClass();
         if (!$publish && !empty($data->feed) && $data->feed == $id) {
