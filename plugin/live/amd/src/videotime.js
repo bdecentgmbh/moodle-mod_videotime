@@ -64,6 +64,10 @@ class Publish extends PublishBase {
      * Stop video feed
      */
     unpublish() {
+        document.querySelectorAll('#video-controls-camera, #video-controls-display').forEach(video => {
+            video.srcObject = null;
+            video.parentNode.classList.add('hidden');
+        });
         return Ajax.call([{
             args: {
                 id: Number(this.feed),
@@ -91,7 +95,7 @@ class Publish extends PublishBase {
         ].forEach(videoInput => {
             videoInput.then(videoStream => {
                 if (videoStream) {
-                    videoStream.getVideoTracks().forEach(track => {
+                    videoStream.getTracks().forEach(track => {
                         track.enabled = false;
                         track.stop();
                     });
@@ -119,14 +123,15 @@ class Publish extends PublishBase {
     handleClick(e) {
         const button = e.target.closest(
             '[data-contextid="' + this.contextid + '"][data-action="publish"], [data-contextid="'
+            + this.contextid + '"][data-action="close"], [data-contextid="'
             + this.contextid + '"][data-action="mute"], [data-contextid="'
             + this.contextid + '"][data-action="unmute"], [data-contextid="'
+            + this.contextid + '"][data-action="switch"], [data-contextid="'
             + this.contextid + '"][data-action="unpublish"]'
         );
         if (button) {
             const action = button.getAttribute('data-action'),
-                type = button.getAttribute('data-type') || 'camera',
-                transceiver = this.getTransceiver('audio');
+                type = button.getAttribute('data-type') || 'camera';
             e.stopPropagation();
             e.preventDefault();
             document.querySelectorAll(
@@ -137,15 +142,24 @@ class Publish extends PublishBase {
                 }
             });
             switch (action) {
-                case 'mute':
-                    if (transceiver) {
-                        transceiver.sender.track.enabled = false;
+                case 'close':
+                    document.getElementById('video-controls-' + type).srcObject = null;
+                    document.getElementById('video-controls-' + type).parentNode.classList.add('hidden');
+                    if (this.tracks[this.selectedTrack.id] == type) {
+                        this.unpublish();
                     }
                     break;
+                case 'mute':
                 case 'unmute':
-                    if (transceiver) {
-                        transceiver.sender.track.enabled = true;
-                    }
+                    ((type == 'display') ? this.currentDisplay : this.currentCamera)
+                    .then(videoStream => {
+                        if (videoStream) {
+                            videoStream.getAudioTracks().forEach(track => {
+                                track.enabled = (action == 'unmute');
+                            });
+                        }
+                        return videoStream;
+                    }).catch(Notification.exception);
                     break;
                 case 'publish':
                     Log.debug(type);
@@ -154,7 +168,41 @@ class Publish extends PublishBase {
                     } else {
                         this.shareCamera();
                     }
+                    document.querySelectorAll('#video-controls-camera, #video-controls-display').forEach(video => {
+                        video.parentNode.classList.remove('selected');
+                    });
+                    document
+                        .getElementById('video-controls-' + type)
+                        .parentNode
+                        .classList
+                        .remove('hidden');
+                    document
+                        .getElementById('video-controls-' + type)
+                        .parentNode
+                        .classList
+                        .add('selected');
 
+                    this.processStream([]);
+                    break;
+                case 'switch':
+                    document.querySelectorAll('#video-controls-camera, #video-controls-display').forEach(video => {
+                        video.parentNode.classList.remove('selected');
+                    });
+                    if (type == 'display') {
+                        this.videoInput = this.currentDisplay;
+                    } else {
+                        this.videoInput = this.currentCamera;
+                    }
+                    document
+                        .getElementById('video-controls-' + type)
+                        .parentNode
+                        .classList
+                        .remove('hidden');
+                    document
+                        .getElementById('video-controls-' + type)
+                        .parentNode
+                        .classList
+                        .add('selected');
                     this.processStream([]);
                     break;
                 case 'unpublish':
@@ -262,8 +310,14 @@ class Publish extends PublishBase {
                     videotransceiver = this.getTransceiver('video');
                 videoStream.getVideoTracks().forEach(track => {
                     track.addEventListener('ended', () => {
-                        if (this.selectedTrack != track.id) {
+                        if (this.selectedTrack.id == track.id) {
                             this.unpublish();
+                        } else {
+                            document
+                                .getElementById('video-controls-' + this.tracks[track.id])
+                                .parentNode
+                                .classList
+                                .add('hidden');
                         }
                     });
                     this.selectedTrack = track;
@@ -286,12 +340,10 @@ class Publish extends PublishBase {
                     });
                 });
                 videoStream.getAudioTracks().forEach(track => {
-                    track.addEventListener('ended', () => {
-                        if (this.selectedTrack != track.id) {
-                            this.unpublish();
-                        }
-                    });
-                    if (document.querySelector('.hidden[data-action="mute"][data-contextid="' + this.contextid + '"]')) {
+                    if (
+                        document.querySelector('.hidden[data-action="mute"][data-contextid="' + this.contextid + '"][data-type="'
+                        + this.tracks[this.selectedTrack.id] + '"]'
+                    )) {
                         track.enabled = false;
                     }
 
@@ -462,17 +514,26 @@ export default class VideoTime extends VideoTimeBase {
                 }
                 Log.debug('[data-contextid="' + this.contextid + '"] img.poster-img');
                 if (Number(source)) {
-                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] img.poster-img').forEach(img => {
+                    document.querySelectorAll(
+                        '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
+                    ).forEach(img => {
                         img.classList.add('hidden');
                     });
-                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] video').forEach(video => {
+                    document.querySelectorAll(
+                        '[data-contextid="' + this.contextid + '"] .videotime-embed video'
+                    ).forEach(video => {
                         video.classList.remove('hidden');
                     });
                 } else {
-                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] img.poster-img').forEach(img => {
+                    document.querySelectorAll(
+                        '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
+                    ).forEach(img => {
                         img.classList.remove('hidden');
                     });
-                    document.querySelectorAll('[data-contextid="' + this.contextid + '"] video').forEach(video => {
+                    document.querySelectorAll(
+                        '[data-contextid="' + this.contextid + '"] .videotime-embed video'
+                    ).forEach(video => {
+                        video.srcObject = null;
                         video.classList.add('hidden');
                     });
                 }
@@ -487,7 +548,7 @@ export default class VideoTime extends VideoTimeBase {
                 this.subscribeTo(source);
             }, 500);
         } else if (source) {
-            this.remoteFeed = new Subscribe(this.contextid, this.iceservers, this.roomid, this.server, this.peerid, source);
+            this.remoteFeed = new Subscribe(this.contextid, this.iceservers, this.roomid, this.server, this.peerid);
             this.remoteFeed.remoteVideo = document.getElementById(this.elementId);
             this.remoteFeed.remoteAudio = document.getElementById(this.elementId).parentNode.querySelector('audio');
             this.remoteFeed.muteAudio = room.publish && (room.publish.feed === source);
@@ -505,6 +566,8 @@ export default class VideoTime extends VideoTimeBase {
 const handleClick = function(e) {
     const button = e.target.closest(
         '[data-roomid] [data-action="publish"], [data-roomid] [data-action="unpublish"],'
+        + '[data-roomid] [data-action="close"], '
+        + '[data-roomid] [data-action="switch"], '
         + '[data-roomid] [data-action="mute"], [data-roomid] [data-action="unmute"]'
     );
     if (button) {
@@ -526,6 +589,16 @@ const handleClick = function(e) {
                 room.publish.shareCamera();
             }
             room.publish.startConnection();
+            document
+                .getElementById('video-controls-' + (type || 'camera'))
+                .parentNode
+                .classList
+                .remove('hidden');
+            document
+                .getElementById('video-controls-' + (type || 'camera'))
+                .parentNode
+                .classList
+                .add('selected');
         } else {
             if ((action == 'mute') || (action == 'unmute')) {
                 button.classList.add('hidden');

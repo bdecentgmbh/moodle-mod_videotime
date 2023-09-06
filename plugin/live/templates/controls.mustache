@@ -36,29 +36,28 @@
 
 }}
 {{# instance }}
-<div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}} data-roomid="{{ roomid }}" data-contextid="{{ contextid }}">
-    <div class="">
-        {{# posterurl }}
-            <img src="{{ posterurl }}" class="poster-img w-100">
-        {{/ posterurl }}
+<div class="videotime-local-stream justify-content-center" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}">
+    {{# types }}
+    <div class="{{ type }} hidden position-relative">
+        <div class="bg-info mt-2 p-1">
+            <a href="#" class="card-link m-0 p-1" data-action="switch" data-type="{{ type }}" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
+                <i class="icon fa fa-toggle-on bg-secondary rounded-circle m-0 p-2"></i>
+                <i class="icon fa fa-toggle-off bg-secondary rounded-circle m-0 p-2"></i>
+            </a>
+            <a href="#" class="card-link hidden m-0 p-1" data-action="mute" data-type="{{ type }}" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} mute, block_deft {{/ str }}"><i class="icon fa fa-microphone bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link m-0 p-1" data-action="unmute" data-type="{{ type }}" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} unmute, block_deft {{/ str }}"><i class="icon fa fa-microphone-slash bg-warning rounded-circle m-0 p-2"></i></a>
+            <a href="#" class="card-link m-0 p-1" data-action="close" data-type="{{ type }}" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
+                <i class="icon fa fa-sign-out bg-secondary rounded-circle m-0 p-2"></i>
+            </a>
+        </div>
         <video class="w-100"
-            id="video-controls-camera"
+            id="video-controls-{{ type }}"
             autoplay
-            controls {{# playsinline }} playsinline {{/ playsinline }}
+            {{# playsinline }} playsinline {{/ playsinline }}
+            <a href="#" class="card-link hidden m-0 p-1" data-action="mute" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} mute, block_deft {{/ str }}"><i class="icon fa fa-microphone bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link m-0 p-1" data-action="unmute" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} unmute, block_deft {{/ str }}"><i class="icon fa fa-microphone-slash bg-warning rounded-circle m-0 p-2"></i></a>
         >
         </video>
     </div>
-    <div class="display">
-        {{# posterurl }}
-            <img src="{{ posterurl }}" class="poster-img w-100">
-        {{/ posterurl }}
-        <video class="w-100"
-            id="video-controls-display"
-            autoplay
-            controls {{# playsinline }} playsinline {{/ playsinline }}
-        >
-        </video>
-    </div>
+    {{/ types }}
     <div class="videotime-control hidden">
         <div class="text-center">
             <a href="#" class="card-link m-0 p-1" data-action="publish" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
@@ -70,7 +69,6 @@
             <a href="#" class="card-link m-0 p-1" data-action="publish" data-type="display" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} sharevideo, block_deft {{/ str }}">
                 <i class="icon fa fa-television bg-secondary rounded-circle m-0 p-2"></i>
             </a>
-            <a href="#" class="card-link hidden m-0 p-1" data-action="mute" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} mute, block_deft {{/ str }}"><i class="icon fa fa-microphone bg-secondary rounded-circle m-0 p-2"></i></a><a href="#" class="card-link m-0 p-1" data-action="unmute" data-roomid="{{ roomid }}" data-contextid="{{ contextid }}" title="{{# str }} unmute, block_deft {{/ str }}"><i class="icon fa fa-microphone-slash bg-warning rounded-circle m-0 p-2"></i></a>
         </div>
     </div>
 </div>
