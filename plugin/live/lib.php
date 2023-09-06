@@ -257,10 +257,18 @@ function videotimeplugin_live_setup_page($instance, $cm) {
     $bc = new block_contents();
     $bc->title = get_string('sharedvideo', 'videotimeplugin_live');
     $bc->attributes['class'] = 'block block_book_toc';
-    $bc->content = $OUTPUT->render_from_template('videotimeplugin_live/controls', [
-        'contextid' => $context->id,
-        'instance' => $instance,
-    ]);
+    if (get_config('block_deft', 'enablevideo')) {
+        $bc->content = $OUTPUT->render_from_template('videotimeplugin_live/controls', [
+            'contextid' => $context->id,
+            'instance' => $instance,
+            'types' => [
+                ['type' => 'camera'],
+                ['type' => 'display'],
+            ],
+        ]);
+    } else {
+        $bc->content = get_string('enabledeftvideo', 'videotimeplugin_live');
+    }
 
     $defaultregion = $PAGE->blocks->get_default_region();
     $PAGE->blocks->add_fake_block($bc, $defaultregion);

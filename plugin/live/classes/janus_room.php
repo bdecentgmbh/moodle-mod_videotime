@@ -86,11 +86,24 @@ class janus_room extends janus_room_base {
         $this->roomid = $record->roomid ?? 0;
         $this->secret = $record->secret ?? '';
         $this->server = $record->server ?? '';
-        $this->session = new janus();
-        $this->audiobridge = $this->session->attach('janus.plugin.audiobridge');
-        $this->textroom = $this->session->attach('janus.plugin.textroom');
-        $this->videoroom = $this->session->attach('janus.plugin.videoroom');
 
         $this->init_room();
+    }
+
+    /**
+     * Check room availabity and create if necessary
+     */
+    protected function init_room() {
+        $exists = [
+            'request' => 'exists',
+            'room' => $this->roomid,
+        ];
+
+        $response = $this->videoroom_send($exists);
+        if (!$response->plugindata->data->exists) {
+            return $this->create_room();
+        }
+
+        $this->set_token();
     }
 }
