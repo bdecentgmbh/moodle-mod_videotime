@@ -41,11 +41,15 @@ class Publish extends PublishBase {
             methodname: 'videotimeplugin_live_join_room'
         }])[0].then(response => {
             this.feed = response.id;
+
+            return response;
         }).catch(Notification.exception);
     }
 
     /**
      * Publish current video feed
+     *
+     * @returns {Promise}
      */
     publishFeed() {
         return Ajax.call([{
@@ -62,6 +66,8 @@ class Publish extends PublishBase {
 
     /**
      * Stop video feed
+     *
+     * @returns {Promise}
      */
     unpublish() {
         document.querySelectorAll('#video-controls-camera, #video-controls-display').forEach(video => {
@@ -261,16 +267,6 @@ class Publish extends PublishBase {
         });
 
         this.videoInput = displayInput.then(videoStream => {
-            if (videoInput) {
-                videoInput.then(videoStream => {
-                    if (videoStream) {
-                        videoStream.getTracks().forEach(track => {
-                            Log.debug(track); //track.stop();
-                        });
-                    }
-                    return videoStream;
-                }).catch(Notification.exception);
-            }
             this.tracks = this.tracks || {};
             videoStream.getTracks().forEach(track => {
                 this.tracks[track.id] = 'display';
@@ -292,7 +288,9 @@ class Publish extends PublishBase {
                         track.stop();
                     });
                 }
-            });
+
+                return videoStream;
+            }).catch(Notification.exception);
 
             return videoStream;
         }).catch((e) => {
@@ -302,6 +300,11 @@ class Publish extends PublishBase {
         });
     }
 
+    /**
+     * Process tracks from current video stream and adjust publicatioin
+     *
+     * @param {array} tracks Additional tracks to add
+     */
     processStream(tracks) {
         this.videoInput.then(videoStream => {
             this.tracks = this.tracks || {};
@@ -393,6 +396,15 @@ class Publish extends PublishBase {
 }
 
 export default class VideoTime extends VideoTimeBase {
+    /**
+     * Initialize player plugin
+     *
+     * @param {int} contextid
+     * @param {string} token Deft token
+     * @param {int} peerid Peer id for audio room participant
+     *
+     * @returns {bool}
+     */
     initialize(contextid, token, peerid) {
         Log.debug("Initializing Video Time " + this.elementId);
 
@@ -447,12 +459,89 @@ export default class VideoTime extends VideoTimeBase {
     }
 
     /**
+     * Get video element
+     *
+     * @returns {HTMLMediaElement}
+     */
+    getPlayer() {
+        return document.getElementById(this.elementId);
+    }
+
+    /**
      * Register player events to respond to user interaction and play progress.
      */
     addListeners() {
+        const player = this.getPlayer();
+
         document.querySelector('body').removeEventListener('click', handleClick);
         document.querySelector('body').addEventListener('click', handleClick);
-        return;
+
+        if (!player) {
+            Log.debug('Player was not properly initialized for course module ' + this.cmId);
+            return;
+        }
+
+        // Fire view event in Moodle on first play only.
+        player.addEventListener('play', () => {
+            if (this.hasPro) {
+                this.startWatchInterval();
+            }
+            this.view();
+            return true;
+        });
+
+        // Features beyond this point are for pro only.
+        if (!this.hasPro) {
+            return;
+        }
+
+        // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
+
+        // Catch all events where video plays.
+        player.addEventListener('play', function() {
+            this.playing = true;
+            Log.debug('VIDEO_TIME play');
+        }.bind(this));
+        player.addEventListener('playing', function() {
+            this.playing = true;
+            Log.debug('VIDEO_TIME playing');
+        }.bind(this));
+
+        // Catch all events where video stops.
+        player.addEventListener('pause', function() {
+            this.playing = false;
+            Log.debug('VIDEO_TIME pause');
+        }.bind(this));
+        player.addEventListener('stalled', function() {
+            this.playing = false;
+            Log.debug('VIDEO_TIME stalled');
+        }.bind(this));
+        player.addEventListener('suspend', function() {
+            this.playing = false;
+            Log.debug('VIDEO_TIME suspend');
+        }.bind(this));
+        player.addEventListener('abort', function() {
+            this.playing = false;
+            Log.debug('VIDEO_TIME abort');
+        }.bind(this));
+
+        // Always update internal values for percent and current time watched.
+        player.addEventListener('timeupdate', function(event) {
+            this.percent = 1;
+            this.currentTime = player.currentTime;
+            this.plugins.forEach(plugin => {
+                if (typeof plugin.setCurrentTime == 'function') {
+                    plugin.getSessions().then(session => {
+                        plugin.setCurrentTime(session.id, event.seconds);
+                        return session;
+                    }).catch(Notification.exception);
+                }
+            });
+        }.bind(this));
+
+        // Initiate video finish procedure.
+        player.addEventListener('ended', this.handleEnd.bind(this));
+        player.addEventListener('pause', this.handlePause.bind(this));
     }
 
     /**
@@ -461,7 +550,6 @@ export default class VideoTime extends VideoTimeBase {
      * @param {int} source Feed to subscribe
      */
     subscribeTo(source) {
-        Log.debug(source);
         const room = rooms[String(this.contextid)];
         document.querySelectorAll('[data-contextid="' + this.contextid + '"][data-action="publish"]').forEach(button => {
             if (source == Number(this.peerid)) {
@@ -477,7 +565,6 @@ export default class VideoTime extends VideoTimeBase {
                 button.classList.remove('hidden');
             }
         });
-        Log.debug(source);
 
         if (this.remoteFeed && !this.remoteFeed.creatingSubscription && !this.remoteFeed.restart) {
             const update = {
@@ -503,7 +590,7 @@ export default class VideoTime extends VideoTimeBase {
                     this.remoteFeed.audioTrack.enabled = !this.remoteFeed.muteAudio;
                 }
 
-                if (room.publish  && this.remoteFeed.current == room.publish.feed) {
+                if (room.publish && this.remoteFeed.current == room.publish.feed) {
                     room.publish.handleClose();
                     room.publish = null;
                 }
@@ -561,6 +648,15 @@ export default class VideoTime extends VideoTimeBase {
             });
         }
     }
+
+    /**
+     * Get duration of video
+     *
+     * @returns {Promise}
+     */
+    getDuration() {
+        return Promise.resolve(this.currentTime);
+    }
 }
 
 const handleClick = function(e) {
@@ -581,7 +677,7 @@ const handleClick = function(e) {
             type = button.getAttribute('data-type');
         e.stopPropagation();
         e.preventDefault();
-        if ((action == 'publish')  && (!room.publish || room.publish.restart)) {
+        if ((action == 'publish') && (!room.publish || room.publish.restart)) {
             room.publish = new Publish(contextid, iceServers, roomid, server, peerid);
             if (type == 'display') {
                 room.publish.shareDisplay();
@@ -640,6 +736,11 @@ class Subscribe extends SubscribeBase {
         }])[0];
     }
 
+    /**
+     * Attach audio stream to media element
+     *
+     * @param {HTMLMediaElement} audioStream Stream to attach
+     */
     attachAudio(audioStream) {
         Janus.attachMediaStream(
             this.remoteVideo.parentNode.querySelector('audio'),
@@ -651,6 +752,11 @@ class Subscribe extends SubscribeBase {
         });
     }
 
+    /**
+     * Attach video stream to media element
+     *
+     * @param {HTMLMediaElement} videoStream Stream to attach
+     */
     attachVideo(videoStream) {
         Janus.attachMediaStream(
             this.remoteVideo,
