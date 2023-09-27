@@ -8,6 +8,7 @@
  */
 
 import Ajax from "core/ajax";
+import Config from "core/config";
 import VideoTimeBase from "mod_videotime/videotime";
 import Janus from 'block_deft/janus-gateway';
 import Log from "core/log";
@@ -16,7 +17,8 @@ import PublishBase from "block_deft/publish";
 import SubscribeBase from "block_deft/subscribe";
 import Socket from "videotimeplugin_live/socket";
 
-var rooms = {};
+var rooms = {},
+    wstoken;
 
 class Publish extends PublishBase {
     /**
@@ -283,8 +285,6 @@ class Publish extends PublishBase {
             currentDisplay.then(videoStream => {
                 if (videoStream) {
                     videoStream.getTracks().forEach(track => {
-                        Log.debug('stop track');
-                        Log.debug(track);
                         track.stop();
                     });
                 }
@@ -411,51 +411,109 @@ export default class VideoTime extends VideoTimeBase {
         this.contextid = contextid;
         this.peerid = peerid;
 
-        Ajax.call([{
-            methodname: 'videotimeplugin_live_get_room',
-            args: {contextid: contextid},
-            done: (response) => {
-                const socket = new Socket(contextid, token);
+        if (this.instance.token) {
+            wstoken = this.instance.token;
+        }
 
-                this.iceservers = JSON.parse(response.iceservers);
-                this.roomid = response.roomid;
-                this.server = response.server;
+        this.getRoom().then(response => {
+            const socket = new Socket(contextid, token);
 
-                rooms[String(contextid)] = {
-                    contextid: contextid,
-                    peerid: peerid,
-                    roomid: response.roomid,
-                    server: response.server,
-                    iceServers: JSON.parse(response.iceservers)
-                };
-                this.roomid = response.roomid;
+            this.iceservers = JSON.parse(response.iceservers);
+            this.roomid = response.roomid;
+            this.server = response.server;
 
-                document.querySelector('[data-contextid="' + this.contextid + '"] .videotime-control').classList.remove('hidden');
+            rooms[String(contextid)] = {
+                contextid: contextid,
+                peerid: peerid,
+                roomid: response.roomid,
+                server: response.server,
+                iceServers: JSON.parse(response.iceservers)
+            };
+            this.roomid = response.roomid;
 
-                socket.subscribe(() => {
-                    Ajax.call([{
-                        methodname: 'videotimeplugin_live_get_feed',
-                        args: {contextid: contextid},
-                        done: (response) => {
-                            const room = rooms[String(contextid)];
-                            if (room.publish && room.publish.restart) {
-                                if (response.feed == peerid) {
-                                    this.unpublish();
-                                }
-                                room.publish = null;
-                            }
-                            this.subscribeTo(Number(response.feed));
-                        },
-                        fail: Notification.exception
-                    }]);
-                });
-            },
-            fail: Notification.exception
-        }]);
+            document.querySelectorAll('[data-contextid="' + this.contextid + '"] .videotime-control').forEach(control => {
+                control.classList.remove('hidden');
+            });
+
+            socket.subscribe(() => {
+                this.getFeed().then(response => {
+                    const room = rooms[String(contextid)];
+                    if (room.publish && room.publish.restart) {
+                        if (response.feed == peerid) {
+                            this.unpublish();
+                        }
+                        room.publish = null;
+                    }
+                    this.subscribeTo(Number(response.feed));
+
+                    return response;
+                }).catch(Notification.exception);
+            });
+
+            return response;
+        }).catch(Notification.exception);
 
         this.addListeners();
 
         return true;
+    }
+
+    /**
+     * Fetch room info
+     *
+     * @returns {Promise}
+     */
+    getRoom() {
+        if (wstoken) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', wstoken);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_live_get_room');
+            data.set('contextid', this.contextid);
+
+            return fetch(url).then((response) => {
+                if (!response.ok) {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
+
+        return Ajax.call([{
+            methodname: 'videotimeplugin_live_get_room',
+            args: {contextid: this.contextid},
+            fail: Notification.exception
+        }])[0];
+    }
+
+    /**
+     * Fetch current feed
+     *
+     * @returns {Promise}
+     */
+    getFeed() {
+        if (wstoken) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', wstoken);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_live_get_feed');
+            data.set('contextid', this.contextid);
+
+            return fetch(url).then((response) => {
+                if (!response.ok) {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            });
+        }
+
+        return Ajax.call([{
+            methodname: 'videotimeplugin_live_get_feed',
+            args: {contextid: this.contextid},
+            fail: Notification.exception
+        }])[0];
     }
 
     /**
@@ -599,7 +657,6 @@ export default class VideoTime extends VideoTimeBase {
                     this.remoteFeed.handleClose();
                     this.remoteFeed = null;
                 }
-                Log.debug('[data-contextid="' + this.contextid + '"] img.poster-img');
                 if (Number(source)) {
                     document.querySelectorAll(
                         '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
@@ -720,6 +777,26 @@ class Subscribe extends SubscribeBase {
      */
     register(pluginHandle) {
         // Try a registration
+        if (wstoken) {
+            const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
+                data = url.searchParams;
+            data.set('wstoken', wstoken);
+            data.set('moodlewsrestformat', 'json');
+            data.set('wsfunction', 'videotimeplugin_live_join_room');
+            data.set('handle', pluginHandle.getId());
+            data.set('id', Number(this.contextid));
+            data.set('plugin', pluginHandle.plugin);
+            data.set('room', this.roomid);
+            data.set('feed', this.feed);
+            data.set('session', pluginHandle.session.getSessionId());
+            return fetch(url).then((response) => {
+                if (!response.ok) {
+                    Notification.exeption('Web service error');
+                }
+                return response.json();
+            }).catch(Notification.exception);
+        }
+
         return Ajax.call([{
             args: {
                 handle: pluginHandle.getId(),
