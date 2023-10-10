@@ -34,7 +34,23 @@ use videotimeplugin_live\janus_room;
  * @copyright  2023 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class publish_feed extends \block_deft\external\publish_feed {
+class publish_feed extends external_api {
+
+    /**
+     * Get parameter definition for raise hand
+     *
+     * @return external_function_parameters
+     */
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters(
+            [
+                'id' => new external_value(PARAM_INT, 'Peer id for user session'),
+                'publish' => new external_value(PARAM_BOOL, 'Whhether to publish or not', VALUE_DEFAULT, true),
+                'room' => new external_value(PARAM_INT, 'Room id being joined'),
+            ]
+        );
+    }
+
     /**
      * Publish feed
      *
@@ -129,5 +145,16 @@ class publish_feed extends \block_deft\external\publish_feed {
         return [
             'status' => true,
         ];
+    }
+
+    /**
+     * Get return definition for hand_raise
+     *
+     * @return external_single_structure
+     */
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'status' => new external_value(PARAM_BOOL, 'Whether changed'),
+        ]);
     }
 }

@@ -176,12 +176,13 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
-    $moduleinstance = [
+    $moduleinstance = (array) $moduleinstance + [
         'height' => 0,
         'maxheight' => 0,
         'maxwidth' => 0,
         'width' => 0,
-    ] + (array) $moduleinstance;
+        'vimeo_url' => '',
+    ];
 
     $moduleinstance = (object) $moduleinstance;
 

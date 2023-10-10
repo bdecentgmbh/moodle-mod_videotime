@@ -24,11 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['deft:moderate'] = 'Moderate venue';
-$string['deft:sharevideo'] = 'Share video';
 $string['enabledeftvideo'] = 'The Video Time live player requires the
 admin to install Deft response block and enable video bridging in the
 site settings';
+$string['live:moderate'] = 'Moderate video';
+$string['live:sharevideo'] = 'Share video';
 $string['livefeed'] = 'Live feed';
 $string['livefeed_help'] = 'Live feed can be supplied by a teacher';
 $string['mediafile_help'] = 'Upload an audio or video file to use';

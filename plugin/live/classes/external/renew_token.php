@@ -31,7 +31,20 @@ use core_external\external_value;
  * @copyright  2023 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renew_token extends \block_deft\external\renew_token {
+class renew_token extends external_api {
+
+    /**
+     * Get parameter definition for renew_token.
+     *
+     * @return external_function_parameters
+     */
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters(
+            [
+                'contextid' => new external_value(PARAM_INT, 'Block context id'),
+            ]
+        );
+    }
 
     /**
      * Get new token
@@ -54,5 +67,16 @@ class renew_token extends \block_deft\external\renew_token {
         return [
             'token' => $token,
         ];
+    }
+
+    /**
+     * Get return definition for renew_token
+     *
+     * @return external_single_structure
+     */
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'token' => new external_value(PARAM_ALPHANUM, 'Valid authentication token for deftly.us'),
+        ]);
     }
 }

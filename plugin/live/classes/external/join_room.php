@@ -36,7 +36,26 @@ use videotimeplugin_live\janus_room;
  * @copyright  2023 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class join_room extends \block_deft\external\join_room {
+class join_room extends external_api {
+
+    /**
+     * Get parameter definition for raise hand
+     *
+     * @return external_function_parameters
+     */
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters(
+            [
+                'handle' => new external_value(PARAM_INT, 'Plugin handle id'),
+                'id' => new external_value(PARAM_INT, 'Peer id for user session'),
+                'plugin' => new external_value(PARAM_TEXT, 'Janus plugin name'),
+                'ptype' => new external_value(PARAM_BOOL, 'Whether video pubisher', VALUE_DEFAULT, false),
+                'room' => new external_value(PARAM_INT, 'Room id being joined'),
+                'session' => new external_value(PARAM_INT, 'Janus session id'),
+                'feed' => new external_value(PARAM_INT, 'Initial feed', VALUE_DEFAULT, 0),
+            ]
+        );
+    }
 
     /**
      * Join room
@@ -113,5 +132,17 @@ class join_room extends \block_deft\external\join_room {
             'status' => true,
             'id' => (int) $feedid ?? 0,
         ];
+    }
+
+    /**
+     * Get return definition for hand_raise
+     *
+     * @return external_single_structure
+     */
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'status' => new external_value(PARAM_BOOL, 'Whether successful'),
+            'id' => new external_value(PARAM_INT, 'New video session id'),
+        ]);
     }
 }
