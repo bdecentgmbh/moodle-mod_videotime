@@ -62,7 +62,7 @@ class backup_videotimeplugin_vimeo_subplugin extends backup_subplugin {
 
         // Set source to populate the data.
         $subplugintablesettings->set_source_table('videotimeplugin_vimeo',
-                array('videotime' => backup::VAR_ACTIVITYID));
+                ['videotime' => backup::VAR_ACTIVITYID]);
 
         return $subplugin;
     }

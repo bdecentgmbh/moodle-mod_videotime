@@ -38,7 +38,7 @@ class backup_videotimetab_chapter_subplugin extends backup_subplugin {
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
         $subplugintablesettings = new backup_nested_element('videotimetab_chapter',
-                null, array('videotime'));
+                null, ['videotime']);
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
@@ -46,7 +46,7 @@ class backup_videotimetab_chapter_subplugin extends backup_subplugin {
 
         // Set source to populate the data.
         $subplugintablesettings->set_source_table('videotimetab_chapter',
-                array('videotime' => backup::VAR_ACTIVITYID));
+                ['videotime' => backup::VAR_ACTIVITYID]);
 
         return $subplugin;
     }

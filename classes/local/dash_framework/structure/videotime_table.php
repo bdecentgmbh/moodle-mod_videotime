@@ -85,21 +85,21 @@ class videotime_table extends table {
 
         $fields = [
             new field('id', new lang_string('pluginname', 'videotime'), $this, null, [
-                new identifier_attribute()
+                new identifier_attribute(),
             ]),
             new field('name', new lang_string('activity_name', 'videotime'), $this, 'vt.name'),
             new field('url', new lang_string('videotimeurl', 'videotime'), $this, 'vt.id', [
-                new moodle_url_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])])
+                new moodle_url_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])]),
             ]),
             new field('link', new lang_string('videotimelink', 'videotime'), $this, 'vt.id', [
                 new moodle_url_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])]),
-                new link_attribute(['label' => get_string('view')])
+                new link_attribute(['label' => get_string('view')]),
             ]),
             new field('video_description', new lang_string('video_description', 'videotime'), $this, 'vt.id', [
-                new notes_attribute()
+                new notes_attribute(),
             ]),
             new field('intro', new lang_string('moduleintro'), $this, 'vt.id', [
-                new intro_attribute()
+                new intro_attribute(),
             ]),
 
         ];
@@ -107,27 +107,27 @@ class videotime_table extends table {
         if (videotime_has_pro()) {
             $fields = array_merge($fields, [
                 new field('unique_visitors', new lang_string('totaluniquevisitors', 'videotime'), $this, 'vt.id', [
-                    new unique_visitors_attribute()
+                    new unique_visitors_attribute(),
                 ]),
                 new field('views', new lang_string('totalviews', 'videotime'), $this, 'vt.id', [
-                    new views_attribute()
+                    new views_attribute(),
                 ]),
                 new field('average_view_time', new lang_string('averageviewtime', 'videotime'), $this, 'vt.id', [
                     new average_view_time_attribute(),
-                    new time_attribute()
+                    new time_attribute(),
                 ]),
                 new field('percentage_of_video_finished', new lang_string(
                     'percentageofvideofinished', 'videotime'), $this, 'vt.id', [
-                        new percentage_of_video_finished_attribute()
+                        new percentage_of_video_finished_attribute(),
                     ]
                 ),
                 new field('firstsession', new lang_string('firstsession', 'videotime'), $this, 'vt.id', [
                     new first_session_attribute(),
-                    new date_attribute()
+                    new date_attribute(),
                 ]),
                 new field('lastsession', new lang_string('lastsession', 'videotime'), $this, 'vt.id', [
                     new last_session_attribute(),
-                    new date_attribute()
+                    new date_attribute(),
                 ]),
             ]);
         }
@@ -136,30 +136,30 @@ class videotime_table extends table {
             $fields = array_merge($fields, [
                 new field('videocreated', new lang_string('videocreated', 'videotime'), $this, 'vt.id', [
                     new video_created_attribute(),
-                    new date_attribute()
+                    new date_attribute(),
                 ]),
                 new field('preview_url', new lang_string('preview_picture_url', 'videotime'), $this, 'vt.id', [
                     new image_url_attribute(),
-                    new video_preview_attribute()
+                    new video_preview_attribute(),
                 ]),
                 new field('preview_image', new lang_string('preview_picture', 'videotime'), $this, 'vt.id', [
                     new video_preview_attribute(),
-                    new image_attribute()
+                    new image_attribute(),
                 ]),
                 new field('preview_image_linked', new lang_string('preview_picture_linked', 'videotime'), $this, 'vt.id', [
                     new video_preview_attribute(),
                     new image_attribute(),
-                    new linked_data_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])])
+                    new linked_data_attribute(['url' => new moodle_url('/mod/videotime/view.php', ['v' => 'vt_id'])]),
                 ]),
                 new field('completion_on_view_time', new lang_string('completion_on_view', 'videotime'), $this, null, [
-                    new bool_attribute()
+                    new bool_attribute(),
                 ]),
                 new field('completion_on_view_time_second', new lang_string('completion_on_view_seconds', 'videotime'), $this),
                 new field('completion_on_finish', new lang_string('completion_on_finish', 'videotime'), $this, null, [
-                    new bool_attribute()
+                    new bool_attribute(),
                 ]),
                 new field('completion_on_percent', new lang_string('completion_on_percent', 'videotime'), $this, null, [
-                    new bool_attribute()
+                    new bool_attribute(),
                 ]),
                 new field('completion_on_percent_value', new lang_string('completion_on_percent_value', 'videotime'), $this, null),
             ]);

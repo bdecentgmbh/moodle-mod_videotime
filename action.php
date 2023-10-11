@@ -39,11 +39,11 @@ $userid = required_param('userid', PARAM_INT);
 
 if ($id) {
     $cm             = get_coursemodule_from_id('videotime', $id, 0, false, MUST_EXIST);
-    $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $moduleinstance = $DB->get_record('videotime', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
 } else if ($v) {
-    $moduleinstance = $DB->get_record('videotime', array('id' => $n), '*', MUST_EXIST);
-    $course         = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', ['id' => $n], '*', MUST_EXIST);
+    $course         = $DB->get_record('course', ['id' => $moduleinstance->course], '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
     throw new moodle_exception('invalidcoursemodule', 'mod_videotime');
@@ -65,7 +65,7 @@ $PAGE->set_url('/mod/videotime/action.php', [
     'v' => $v,
     'action' => $action,
     'return' => $return,
-    'userid' => $userid
+    'userid' => $userid,
 ]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -77,7 +77,7 @@ switch ($action) {
         $task = new \videotimeplugin_pro\task\delete_session_data();
         $task->set_custom_data([
             'user_id' => $userid,
-            'module_id' => $cm->id
+            'module_id' => $cm->id,
         ]);
         break;
 }
