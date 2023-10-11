@@ -42,5 +42,5 @@ $functions = [
         'type'          => 'write',
         'ajax'          => true,
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE, 'local_mobile'],
-    ]
+    ],
 ];

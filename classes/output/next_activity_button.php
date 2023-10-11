@@ -180,7 +180,7 @@ class next_activity_button implements \templatable, \renderable {
             'availability_info' => $this->availabilityinfo,
             'availability_title' => videotime_is_totara() ? strip_tags($this->availabilityinfo) : null,
             'is_restricted' => $this->isrestricted,
-            'instance' => $this->moduleinstance->to_record()
+            'instance' => $this->moduleinstance->to_record(),
         ];
     }
 

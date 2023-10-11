@@ -28,5 +28,5 @@ $observers = [
     [
         'eventname' => '\core\event\admin_settings_changed',
         'callback'  => '\mod_videotime\event\settings_observer::changed',
-    ]
+    ],
 ];

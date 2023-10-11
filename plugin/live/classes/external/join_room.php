@@ -105,8 +105,8 @@ class join_room extends external_api {
             if ($feed) {
                 $message['streams'] = [
                     [
-                        'feed' => $feed
-                    ]
+                        'feed' => $feed,
+                    ],
                 ];
             } else {
                 require_capability('block/deft:sharevideo', $context);

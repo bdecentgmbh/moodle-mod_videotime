@@ -32,7 +32,7 @@ $functions = [
         'description' => 'Get currect video feed',
         'type' => 'read',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
     'videotimeplugin_live_get_room' => [
@@ -41,7 +41,7 @@ $functions = [
         'description' => 'Get currect room parameters for module',
         'type' => 'read',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
     'videotimeplugin_live_join_room' => [
@@ -50,7 +50,7 @@ $functions = [
         'description' => 'Join Janus room',
         'type' => 'write',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
     'videotimeplugin_live_publish_feed' => [
@@ -59,7 +59,7 @@ $functions = [
         'description' => 'Publish a video feed',
         'type' => 'write',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
     'videotimeplugin_live_renew_token' => [
@@ -68,6 +68,6 @@ $functions = [
         'description' => 'Get new token to access message service',
         'type' => 'read',
         'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 ];

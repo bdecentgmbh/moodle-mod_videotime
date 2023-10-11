@@ -38,7 +38,7 @@ class videotimetab extends \core\plugininfo\base {
      * @return moodle_url
      */
     public static function get_manage_url() {
-        return new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'));
+        return new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimetab']);
     }
 
     /**

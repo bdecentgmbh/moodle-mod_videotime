@@ -87,7 +87,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'resume_playback',
             'preview_picture',
             'show_description_in_player',
-            'enabletabs'
+            'enabletabs',
         ]);
 
         // Build the tree.
@@ -99,7 +99,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         $this->add_subplugin_structure('videotimeplugin', $module, true);
 
         // Define sources.
-        $module->set_source_table('videotime', array('id' => backup::VAR_ACTIVITYID));
+        $module->set_source_table('videotime', ['id' => backup::VAR_ACTIVITYID]);
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.

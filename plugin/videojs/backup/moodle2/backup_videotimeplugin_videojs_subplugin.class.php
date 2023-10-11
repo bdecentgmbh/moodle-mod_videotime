@@ -55,7 +55,7 @@ class backup_videotimeplugin_videojs_subplugin extends backup_subplugin {
 
         // Set source to populate the data.
         $subplugintablesettings->set_source_table('videotimeplugin_videojs',
-                array('videotime' => backup::VAR_ACTIVITYID));
+                ['videotime' => backup::VAR_ACTIVITYID]);
 
         return $subplugin;
     }

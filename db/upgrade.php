@@ -511,7 +511,7 @@ function xmldb_videotime_upgrade($oldversion) {
         // Launch change of default for field controls.
         $dbman->change_field_default($table, $field);
 
-        $DB->set_field('videotime', 'controls', 1, array('controls' => 0));
+        $DB->set_field('videotime', 'controls', 1, ['controls' => 0]);
 
         // Videotime savepoint reached.
         upgrade_mod_savepoint(true, 2022022100, 'videotime');
@@ -560,7 +560,7 @@ function xmldb_videotime_upgrade($oldversion) {
 
     if ($oldversion < 2022022802) {
 
-        $DB->set_field('videotime', 'controls', 1, array('controls' => 0));
+        $DB->set_field('videotime', 'controls', 1, ['controls' => 0]);
 
         // Videotime savepoint reached.
         upgrade_mod_savepoint(true, 2022022802, 'videotime');
@@ -569,11 +569,11 @@ function xmldb_videotime_upgrade($oldversion) {
     if ($oldversion < 2022030104) {
         // Assign view_report to editing teacher if assigned to non editing teacher.
         $context = context_system::instance();
-        $roles = $DB->get_records_menu('role', array(), '', 'shortname, id');
-        $capabilities = $DB->get_records_menu('role_capabilities', array(
+        $roles = $DB->get_records_menu('role', [], '', 'shortname, id');
+        $capabilities = $DB->get_records_menu('role_capabilities', [
             'contextid' => $context->id,
-            'capability' => 'mod/videotime:view_report'
-        ), '', 'roleid, permission');
+            'capability' => 'mod/videotime:view_report',
+        ], '', 'roleid, permission');
         if (
             key_exists('editingteacher', $roles)
             && !key_exists($roles['editingteacher'], $capabilities)

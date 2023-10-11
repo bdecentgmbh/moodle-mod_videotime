@@ -86,7 +86,7 @@ class texttrack extends \core_search\base_mod {
      * @param array    $options
      * @return \core_search\document
      */
-    public function get_document($record, $options = array()) {
+    public function get_document($record, $options = []) {
 
         try {
             $cm = $this->get_cm($this->get_module_name(), $record->moduleinstanceid, $record->course);
@@ -139,12 +139,12 @@ class texttrack extends \core_search\base_mod {
         $record = $DB->get_record_sql('SELECT te.*, tr.lang, tr.videotime
                                          FROM {videotimetab_texttrack_text} te
                                          JOIN {videotimetab_texttrack_track} tr ON te.track = tr.id
-                                        WHERE te.id = :itemid', array('itemid' => $itemid));
+                                        WHERE te.id = :itemid', ['itemid' => $itemid]);
 
-        $url = new \moodle_url('/mod/videotime/view.php', array(
+        $url = new \moodle_url('/mod/videotime/view.php', [
             'id' => $contextmodule->instanceid,
             'q' => optional_param('q', '', PARAM_TEXT),
-        ));
+        ]);
 
         if (!empty($record)) {
             $url->param('time', $record->starttime);
@@ -180,7 +180,7 @@ class texttrack extends \core_search\base_mod {
 
         $contextmodule = \context::instance_by_id($doc->get('contextid'));
 
-        $docparams = array('id' => $contextmodule->instanceid);
+        $docparams = ['id' => $contextmodule->instanceid];
 
         return new \moodle_url('/mod/videotime/view.php', $docparams);
     }

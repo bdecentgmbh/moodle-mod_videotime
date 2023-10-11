@@ -47,7 +47,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         $instance = $this->get_instance();
-        if ($record = $DB->get_record('videotimetab_information', array('videotime' => $instance->id))) {
+        if ($record = $DB->get_record('videotimetab_information', ['videotime' => $instance->id])) {
             $cm = get_coursemodule_from_instance('videotime', $instance->id, $instance->course);
             $context = context_module::instance($cm->id);
             return format_text(file_rewrite_pluginfile_urls(
@@ -80,12 +80,12 @@ class tab extends \mod_videotime\local\tabs\tab {
             'editor',
             'information',
             get_string('information', 'videotimetab_information'),
-            array('rows' => 10),
-            array(
+            ['rows' => 10],
+            [
                 'maxfiles' => EDITOR_UNLIMITED_FILES,
                 'noclean' => true,
                 'subdirs' => true,
-            )
+            ]
         );
         $mform->setType('information', PARAM_RAW);
         $mform->disabledIf('information', 'enable_information');
@@ -104,9 +104,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         if (empty($data->enable_information)) {
-            $DB->delete_records('videotimetab_information', array(
+            $DB->delete_records('videotimetab_information', [
                 'videotime' => $data->id,
-            ));
+            ]);
         } else {
             $cm = get_coursemodule_from_instance('videotime', $data->id, $data->course);
             $text = file_save_draft_area_files(
@@ -115,21 +115,21 @@ class tab extends \mod_videotime\local\tabs\tab {
                 'videotimetab_information',
                 'text',
                 0,
-                array('subdirs' => true),
+                ['subdirs' => true],
                 $data->information['text']
             );
-            if ($record = $DB->get_record('videotimetab_information', array('videotime' => $data->id))) {
+            if ($record = $DB->get_record('videotimetab_information', ['videotime' => $data->id])) {
                 $record->text = $text;
                 $record->format = $data->information['format'];
                 $record->name = $data->informationtab_name ?? '';
                 $DB->update_record('videotimetab_information', $record);
             } else {
-                $DB->insert_record('videotimetab_information', array(
+                $DB->insert_record('videotimetab_information', [
                     'videotime' => $data->id,
                     'text' => $text,
                     'format' => $data->information['format'],
                     'name' => $data->informationtab_name,
-                ));
+                ]);
             }
         }
     }
@@ -142,9 +142,9 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        $DB->delete_records('videotimetab_information', array(
+        $DB->delete_records('videotimetab_information', [
             'videotime' => $id,
-        ));
+        ]);
     }
 
     /**
@@ -158,17 +158,17 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         if (empty($instance)) {
             $defaultvalues['enable_information'] = get_config('videotimetab_information', 'default');
-        } else if ($record = $DB->get_record('videotimetab_information', array('videotime' => $instance))) {
+        } else if ($record = $DB->get_record('videotimetab_information', ['videotime' => $instance])) {
             $defaultvalues['enable_information'] = 1;
             $cm = get_coursemodule_from_instance('videotime', $record->videotime, $COURSE->id);
             $context = context_module::instance($cm->id);
             $draftitemid = file_get_submitted_draft_itemid('information');
-            $defaultvalues['information'] = array(
+            $defaultvalues['information'] = [
                 'text' => file_prepare_draft_area($draftitemid, $context->id,
                     'videotimetab_information', 'text', 0, [], $record->text),
                 'format' => $record->format,
                 'itemid' => $draftitemid,
-            );
+            ];
             $defaultvalues['informationtab_name'] = $record->name;
         } else {
             $defaultvalues['enable_information'] = 0;
@@ -181,7 +181,7 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @return array
      */
     public static function get_config_file_areas(): array {
-        return array('text');
+        return ['text'];
     }
 
     /**
@@ -193,9 +193,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         $record = $this->get_instance()->to_record();
-        return $this->is_enabled() && $DB->record_exists('videotimetab_information', array(
-            'videotime' => $record->id
-        ));
+        return $this->is_enabled() && $DB->record_exists('videotimetab_information', [
+            'videotime' => $record->id,
+        ]);
     }
 
     /**

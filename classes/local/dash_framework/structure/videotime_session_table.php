@@ -86,22 +86,22 @@ class videotime_session_table extends table {
     public function get_fields(): array {
         $fields = [
             new field('id', new lang_string('pluginname', 'videotime'), $this, null, [
-                new identifier_attribute()
+                new identifier_attribute(),
             ]),
             new field('time', new lang_string('watch_time', 'videotime'), $this, 'SUM(time)', [
-                new time_attribute()
+                new time_attribute(),
             ]),
             new field('state', new lang_string('state_finished', 'videotime'), $this, 'MAX(vtn.state)', [
-                new bool_attribute()
+                new bool_attribute(),
             ]),
             new field('timestarted', new lang_string('timestarted', 'videotime'), $this, 'MIN(vtn.timecreated)', [
-                new date_attribute()
+                new date_attribute(),
             ]),
             new field('percent_watch', new lang_string('watch_percent', 'videotime'), $this, 'MAX(percent_watch)', [
-                new percent_attribute()
+                new percent_attribute(),
             ]),
             new field('current_watch_time', new lang_string('currentwatchtime', 'videotime'), $this, 'MAX(current_watch_time)', [
-                new time_attribute()
+                new time_attribute(),
             ]),
         ];
 
@@ -110,7 +110,7 @@ class videotime_session_table extends table {
                 new field('watched_time', new lang_string('watchedtime', 'videotime'), $this, 'MAX(
                     CASE WHEN vtn.current_watch_time - vtn.start_time > 1 THEN vtn.current_watch_time ELSE 0 END
                 )', [
-                    new time_attribute()
+                    new time_attribute(),
                 ]),
                 new field('time_left', new lang_string('timeleft', 'videotime'), $this, 'MIN(
                     CASE WHEN vtn.current_watch_time - vtn.start_time > 1
@@ -118,17 +118,17 @@ class videotime_session_table extends table {
                          ELSE vvv.duration
                      END
                 )', [
-                    new time_attribute()
+                    new time_attribute(),
                 ]),
                 new field('status', new lang_string('activitystatus', 'videotime'), $this, 'MAX(cmc.completionstate)', [
-                    new completion_status_attribute()
+                    new completion_status_attribute(),
                 ]),
                 new field('timecompleted', new lang_string('timecompleted', 'videotime'), $this, 'CASE
                          WHEN MAX(cmc.completionstate) > 0
                          THEN MAX(cmc.timemodified)
                          ELSE NULL
                          END', [
-                    new date_attribute()
+                    new date_attribute(),
                 ]),
             ];
             $fields = array_merge($fields, $addfields);

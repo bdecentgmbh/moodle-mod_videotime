@@ -60,7 +60,7 @@ function videotimeplugin_live_update_instance($moduleinstance, $mform = null) {
             $record['id'] = $DB->insert_record('videotimeplugin_live', $record);
         }
     } else {
-        $DB->delete_records('videotimeplugin_live', array('videotime' => $moduleinstance->id));
+        $DB->delete_records('videotimeplugin_live', ['videotime' => $moduleinstance->id]);
     }
 }
 
@@ -73,7 +73,7 @@ function videotimeplugin_live_update_instance($moduleinstance, $mform = null) {
 function videotimeplugin_live_delete_instance($id) {
     global $DB;
 
-    $DB->delete_records('videotimeplugin_live', array('videotime' => $id));
+    $DB->delete_records('videotimeplugin_live', ['videotime' => $id]);
     \block_deft\janus_room::remove('videotimeplugin_live', $id);
 
     return true;
@@ -98,7 +98,7 @@ function videotimeplugin_live_load_settings($instance) {
 
     $instance = (array) $instance;
     if (
-        $record = $DB->get_record('videotimeplugin_live', array('videotime' => $instance['id']))
+        $record = $DB->get_record('videotimeplugin_live', ['videotime' => $instance['id']])
     ) {
         unset($record->id);
         unset($record->videotime);
@@ -189,7 +189,7 @@ function videotimeplugin_live_data_preprocessing(array &$defaultvalues, int $ins
     if (empty($instance)) {
         $settings = (array) get_config('videotimeplugin_live');
     } else {
-        $settings = (array) $DB->get_record('videotimeplugin_live', array('videotime' => $instance));
+        $settings = (array) $DB->get_record('videotimeplugin_live', ['videotime' => $instance]);
         $defaultvalues['livefeed'] = !empty($settings['id']);
         unset($settings['id']);
         unset($settings['videotime']);

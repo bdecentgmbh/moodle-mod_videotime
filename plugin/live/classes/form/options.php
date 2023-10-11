@@ -190,7 +190,7 @@ class options extends moodleform {
 
             $element = $mform->createElement('static', $fieldname . '_forced', '', get_string('option_forced', 'videotime', [
                 'option' => $label,
-                'value' => $value
+                'value' => $value,
             ]));
             if ($group) {
                 $group[] = $element;

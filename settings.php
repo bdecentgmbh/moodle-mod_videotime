@@ -54,11 +54,11 @@ if ($ADMIN->fulltree) {
         new lang_string('enabletabs_help', 'videotime'), 0));
 
     $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaulttabsize', 'videotime'),
-                get_string('defaulttabsize_help', 'videotime'), 'videotime-size-6', array(
+                get_string('defaulttabsize_help', 'videotime'), 'videotime-size-6', [
             'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
             'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
             'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
-    )));
+    ]));
 
     $settings->add(new admin_setting_configcheckbox(
         'videotime/mobileiframe',
@@ -96,7 +96,7 @@ $ADMIN->add('modvideotimefolder', new admin_category('videotimetabplugins',
     new lang_string('videotimetabplugins', 'videotime'), !$module->is_enabled()));
 $ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplugins',
     get_string('managevideotimetabplugins', 'videotime'),
-    new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimetab'))));
+    new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimetab'])));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimetab') as $plugin) {
     $plugin->load_settings($ADMIN, 'videotimetabplugins', $hassiteconfig);
@@ -106,7 +106,7 @@ $ADMIN->add('modvideotimefolder', new admin_category('videotimepluginplugins',
     new lang_string('subplugintype_videotimeplugin_plural', 'videotime'), !$module->is_enabled()));
 $ADMIN->add('videotimepluginplugins', new admin_externalpage('managevideotimepluginplugins',
     get_string('managevideotimepluginplugins', 'videotime'),
-    new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => 'videotimeplugin'))));
+    new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimeplugin'])));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimeplugin') as $plugin) {
     $plugin->load_settings($ADMIN, 'videotimepluginplugins', $hassiteconfig);

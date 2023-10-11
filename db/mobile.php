@@ -38,7 +38,7 @@ $addons = [
                 'offlinefunctions' => [
                     'mobile_course_view' => [],
                 ],
-                'init' => 'view_init'
+                'init' => 'view_init',
             ],
         ],
         'lang' => [

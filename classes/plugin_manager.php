@@ -58,7 +58,7 @@ class plugin_manager {
      * @param string $subtype - only videotimetab implemented
      */
     public function __construct($subtype) {
-        $this->pageurl = new moodle_url('/mod/videotime/adminmanageplugins.php', array('subtype' => $subtype));
+        $this->pageurl = new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => $subtype]);
         $this->subtype = $subtype;
     }
 
@@ -71,8 +71,8 @@ class plugin_manager {
     public function get_sorted_plugins_list() {
         $names = core_component::get_plugin_list($this->subtype);
 
-        $result = array();
-        $disabled = array();
+        $result = [];
+        $disabled = [];
 
         foreach ($names as $name => $path) {
             $classname = '\\' . $this->subtype . '_' . $name . '\\tab';
@@ -122,9 +122,9 @@ class plugin_manager {
         }
 
         return $OUTPUT->action_icon(new moodle_url($url,
-                array('action' => $action, 'plugin' => $plugin, 'sesskey' => sesskey())),
-                new pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
-                null, array('title' => $alt)) . ' ';
+                ['action' => $action, 'plugin' => $plugin, 'sesskey' => sesskey()]),
+                new pix_icon($icon, $alt, 'moodle', ['title' => $alt]),
+                null, ['title' => $alt]) . ' ';
     }
 
     /**
@@ -140,11 +140,15 @@ class plugin_manager {
         $this->view_header();
         $table = new flexible_table($this->subtype . 'pluginsadminttable');
         $table->define_baseurl($this->pageurl);
-        $table->define_columns(array('pluginname', 'version', 'hideshow', 'order',
-                'settings', 'status', 'uninstall'));
-        $table->define_headers(array(get_string($this->subtype . 'pluginname', 'videotime'),
-                get_string('version'), get_string('hideshow', 'videotime'),
-                get_string('order'), get_string('settings'), get_string('status'), get_string('uninstallplugin', 'core_admin')));
+        $table->define_columns([
+            'pluginname', 'version', 'hideshow', 'order', 'settings', 'status', 'uninstall',
+        ]);
+        $table->define_headers([
+            get_string($this->subtype . 'pluginname', 'videotime'),
+            get_string('version'), get_string('hideshow', 'videotime'),
+            get_string('order'), get_string('settings'), get_string('status'),
+            get_string('uninstallplugin', 'core_admin'),
+        ]);
         $table->set_attribute('id', $this->subtype . 'plugins');
         $table->set_attribute('class', 'admintable generaltable');
         $table->setup();
@@ -153,7 +157,7 @@ class plugin_manager {
         $shortsubtype = substr($this->subtype, strlen('videotime'));
 
         foreach ($plugins as $idx => $plugin) {
-            $row = array();
+            $row = [];
             $class = '';
 
             $row[] = get_string('pluginname', $this->subtype . '_' . $plugin);
@@ -177,7 +181,7 @@ class plugin_manager {
             if (!$idx == 0) {
                 $movelinks .= $this->format_icon_link('moveup', $plugin, 't/up', get_string('up'));
             } else {
-                $movelinks .= $OUTPUT->spacer(array('width' => 16));
+                $movelinks .= $OUTPUT->spacer(['width' => 16]);
             }
             if ($idx != count($plugins) - 1) {
                 $movelinks .= $this->format_icon_link('movedown', $plugin, 't/down', get_string('down'));
@@ -187,7 +191,7 @@ class plugin_manager {
             $exists = file_exists($CFG->dirroot . '/mod/videotime/' . $shortsubtype . '/' . $plugin . '/settings.php');
             if ($row[1] != '' && $exists) {
                 $row[] = html_writer::link(new moodle_url('/admin/settings.php',
-                        array('section' => $this->subtype . '_' . $plugin)), get_string('settings'));
+                        ['section' => $this->subtype . '_' . $plugin]), get_string('settings'));
             } else {
                 $row[] = '&nbsp;';
             }

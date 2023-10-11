@@ -42,7 +42,7 @@ trait get_videotime {
      */
     public static function get_videotime_parameters() {
         return new external_function_parameters([
-            'cmid' => new external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED)
+            'cmid' => new external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED),
         ]);
     }
 
@@ -54,7 +54,7 @@ trait get_videotime {
      */
     public static function get_videotime($cmid) {
         $params = external_api::validate_parameters(self::get_videotime_parameters(), [
-            'cmid' => $cmid
+            'cmid' => $cmid,
         ]);
 
         $context = \context_module::instance($params['cmid']);

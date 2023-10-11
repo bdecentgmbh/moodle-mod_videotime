@@ -196,7 +196,7 @@ function videotime_add_instance($moduleinstance, $mform = null) {
 
     // Plugins may need to use context now, so we need to make sure all needed info is already in db.
     $cmid = $moduleinstance->coursemodule;
-    $DB->set_field('course_modules', 'instance', $moduleinstance->id, array('id' => $cmid));
+    $DB->set_field('course_modules', 'instance', $moduleinstance->id, ['id' => $cmid]);
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
         $classname = "\\videotimetab_$name\\tab";
         $classname::save_settings($moduleinstance);
@@ -284,7 +284,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
 function videotime_delete_instance($id) {
     global $DB;
 
-    $exists = $DB->get_record('videotime', array('id' => $id));
+    $exists = $DB->get_record('videotime', ['id' => $id]);
     if (!$exists) {
         return false;
     }
@@ -301,7 +301,7 @@ function videotime_delete_instance($id) {
         component_callback("videotimeplugin_$name", 'delete_instance', [$id]);
     }
 
-    $DB->delete_records('videotime', array('id' => $id));
+    $DB->delete_records('videotime', ['id' => $id]);
 
     return true;
 }
@@ -318,7 +318,7 @@ function videotime_process_video_description($moduleinstance) {
         $videodescription = $moduleinstance->video_description;
         $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
             'mod_videotime', 'video_description', 0,
-            array('subdirs' => true), $videodescription['text']);
+            ['subdirs' => true], $videodescription['text']);
         $moduleinstance->video_description_format = $videodescription['format'];
     }
     return $moduleinstance;
@@ -405,7 +405,7 @@ function videotime_update_completion($cmid) {
 
     $cm = get_coursemodule_from_id('videotime', $cmid, 0, false, MUST_EXIST);
     $course = get_course($cm->course);
-    $moduleinstance = $DB->get_record('videotime', array('id' => $cm->instance), '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
 
     $completion = new \completion_info($course);
     // Update completion status only if any extra criteria is set on the activity.
@@ -428,7 +428,7 @@ function videotime_update_completion($cmid) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -463,10 +463,10 @@ function videotime_view(videotime_instance $videotime, $course, $cm, $context) {
     global $USER;
 
     // Trigger course_module_viewed event.
-    $params = array(
+    $params = [
         'context' => $context,
         'objectid' => $videotime->id,
-    );
+    ];
 
     $event = \mod_videotime\event\course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
@@ -554,14 +554,14 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
         has_capability('mod/videotime:addinstance', $PAGE->cm->context)
     ) {
         $node = navigation_node::create(get_string('embed_options', 'mod_videotime'),
-            new moodle_url('/mod/videotime/options.php', array('id' => $PAGE->cm->id)),
+            new moodle_url('/mod/videotime/options.php', ['id' => $PAGE->cm->id]),
             navigation_node::TYPE_SETTING, null, 'mod_videotime_options',
             new pix_icon('t/play', ''));
         $videtimenode->add_node($node, $beforekey);
     }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('report'),
-            new moodle_url('/mod/videotime/report.php', array('id' => $PAGE->cm->id)),
+            new moodle_url('/mod/videotime/report.php', ['id' => $PAGE->cm->id]),
             navigation_node::TYPE_SETTING, null, 'mod_videotime_report',
             new pix_icon('t/grades', ''));
         $videtimenode->add_node($node, $beforekey);

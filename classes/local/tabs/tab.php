@@ -147,7 +147,7 @@ abstract class tab {
             'label' => $this->get_label(),
             'active' => $this->get_active(),
             'persistent' => $this->get_persistent(),
-            'tabcontent' => $this->get_tab_content()
+            'tabcontent' => $this->get_tab_content(),
         ];
     }
 
@@ -199,7 +199,7 @@ abstract class tab {
      * @return array
      */
     public static function get_config_file_areas(): array {
-        return array();
+        return [];
     }
 
     /**
@@ -231,7 +231,7 @@ abstract class tab {
 
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
         if (is_null($this->record)) {
-            $this->record = $DB->get_record("videotimetab_$name", array('videotime' => $this->get_instance()->id));
+            $this->record = $DB->get_record("videotimetab_$name", ['videotime' => $this->get_instance()->id]);
         }
         return $this->record;
     }

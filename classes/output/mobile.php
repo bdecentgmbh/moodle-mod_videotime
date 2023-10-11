@@ -63,7 +63,7 @@ class mobile {
 
         require_capability('mod/videotime:view', $context);
 
-        $videotime = $DB->get_record('videotime', array('id' => $cm->instance));
+        $videotime = $DB->get_record('videotime', ['id' => $cm->instance]);
 
         $videotime->name = format_string($videotime->name);
         list($videotime->intro, $videotime->introformat) =
@@ -73,13 +73,13 @@ class mobile {
             'id' => $cm->id,
             'token' => self::create_service_token($context),
         ]);
-        $data = array(
+        $data = [
             'instance' => $videotime,
             'cmid' => $cm->id,
             'has_pro' => videotime_has_pro(),
             'iframe' => !empty(get_config('videotime', 'mobileiframe')),
             'url' => $url->out(false),
-        );
+        ];
 
         if (empty(get_config('videotime', 'mobileiframe'))) {
             $js = file_get_contents($CFG->dirroot . '/mod/videotime/appjs/videotime.js');
@@ -109,7 +109,7 @@ class mobile {
 
         return [
             'javascript' => file_get_contents($CFG->dirroot . '/mod/videotime/appjs/player.js') .
-                file_get_contents("$CFG->dirroot/mod/videotime/appjs/view_init.js")
+                file_get_contents("$CFG->dirroot/mod/videotime/appjs/view_init.js"),
         ];
 
     }
@@ -124,7 +124,7 @@ class mobile {
     public static function create_service_token($context) {
         global $DB;
 
-        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE), '*', MUST_EXIST);
+        $service = $DB->get_record('external_services', ['shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE], '*', MUST_EXIST);
         return external_generate_token_for_current_user($service)->token;
     }
 }

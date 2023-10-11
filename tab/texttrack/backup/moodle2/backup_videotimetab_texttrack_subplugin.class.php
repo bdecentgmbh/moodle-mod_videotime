@@ -38,7 +38,7 @@ class backup_videotimetab_texttrack_subplugin extends backup_subplugin {
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
         $subplugintablesettings = new backup_nested_element('videotimetab_texttrack',
-                null, array('text', 'format', 'videotime'));
+                null, ['text', 'format', 'videotime']);
         $subpluginelementtrack = new backup_nested_element('videotimetab_texttrack_track');
         $subpluginelementtext = new backup_nested_element('videotimetab_texttrack_text');
 
@@ -48,7 +48,7 @@ class backup_videotimetab_texttrack_subplugin extends backup_subplugin {
 
         // Set source to populate the data.
         $subplugintablesettings->set_source_table('videotimetab_texttrack',
-                array('videotime' => backup::VAR_ACTIVITYID));
+                ['videotime' => backup::VAR_ACTIVITYID]);
 
         return $subplugin;
     }

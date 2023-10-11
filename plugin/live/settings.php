@@ -60,7 +60,7 @@ if ($ADMIN->fulltree) {
 
     $options = [
         'accepted_types' => [
-            '.png', '.jpg', '.gif', '.webp', '.tiff', '.svg'
+            '.png', '.jpg', '.gif', '.webp', '.tiff', '.svg',
         ],
     ];
     $settings->add(new admin_setting_configstoredfile(

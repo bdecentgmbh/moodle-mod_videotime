@@ -97,7 +97,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setType('vimeo_url', PARAM_URL);
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('activity_name', 'mod_videotime'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('activity_name', 'mod_videotime'), ['size' => '64']);
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -122,8 +122,14 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         // Video Time video description.
         $mform->addElement('editor', 'video_description', get_string('video_description', 'videotime'),
-            array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
-            'noclean' => true, 'context' => $this->context, 'subdirs' => true));
+            ['rows' => 10],
+            [
+                'maxfiles' => EDITOR_UNLIMITED_FILES,
+                'noclean' => true,
+                'context' => $this->context,
+                'subdirs' => true,
+            ],
+        );
         $mform->setType('video_description', PARAM_RAW); // No XSS prevention here, users must be trusted.
         $mform->addHelpButton('video_description', 'video_description', 'videotime');
 
@@ -175,8 +181,12 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform = $this->_form;
         $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
 
-        $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
-            'noclean' => true, 'context' => $this->context, 'subdirs' => true));
+        $mform->addElement('editor', 'introeditor', $label, ['rows' => 10], [
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'noclean' => true,
+            'context' => $this->context,
+            'subdirs' => true,
+        ]);
         $mform->setType('introeditor', PARAM_RAW); // No XSS prevention here, users must be trusted.
         if ($required) {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
@@ -207,7 +217,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
             $mform->setType('completion_on_view_time_second', PARAM_INT);
-            $mform->addGroup($group, 'completion_on_view', '', array(' '), false);
+            $mform->addGroup($group, 'completion_on_view', '', [' '], false);
             $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
 
             $group = [];
@@ -216,7 +226,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $group[] =& $mform->createElement('text', 'completion_on_percent_value', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'percent_label', '', '%');
             $mform->setType('completion_on_percent_value', PARAM_INT);
-            $mform->addGroup($group, 'completion_on_percent', '', array(' '), false);
+            $mform->addGroup($group, 'completion_on_percent', '', [' '], false);
             $mform->disabledIf('completion_on_percent_value', 'completion_on_percent', 'notchecked');
 
             $mform->addElement('advcheckbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));

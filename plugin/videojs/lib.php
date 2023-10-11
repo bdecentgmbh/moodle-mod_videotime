@@ -94,7 +94,7 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
 function videotimeplugin_videojs_delete_instance($id) {
     global $DB;
 
-    $DB->delete_records('videotimeplugin_videojs', array('videotime' => $id));
+    $DB->delete_records('videotimeplugin_videojs', ['videotime' => $id]);
 
     return true;
 }
@@ -128,7 +128,7 @@ function videotimeplugin_videojs_load_settings($instance) {
 
     if (
         !mod_videotime_get_vimeo_id_from_link($instance['vimeo_url'])
-        && $record = $DB->get_record('videotimeplugin_videojs', array('videotime' => $instance['id']))
+        && $record = $DB->get_record('videotimeplugin_videojs', ['videotime' => $instance['id']])
     ) {
         unset($record->id);
         unset($record->videotime);
@@ -286,7 +286,7 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
     if ($context->contextlevel == CONTEXT_SYSTEM && $filearea == 'audioimage' ) {
 
         // Extract the filename / filepath from the $args array.

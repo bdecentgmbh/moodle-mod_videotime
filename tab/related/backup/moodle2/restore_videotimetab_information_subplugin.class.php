@@ -42,7 +42,7 @@ class restore_videotimetab_related_subplugin extends restore_subplugin {
      */
     protected function define_videotime_subplugin_structure() {
 
-        $paths = array();
+        $paths = [];
 
         $elename = $this->get_namefor('');
         $elepath = $this->get_pathfor('/videotimetab_related');
