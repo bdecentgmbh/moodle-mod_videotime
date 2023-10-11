@@ -55,10 +55,10 @@ class restore_videotime_activity_task extends restore_activity_task {
      * processed by the link decoder
      */
     public static function define_decode_contents() {
-        $contents = array();
+        $contents = [];
 
-        $contents[] = new restore_decode_content('videotime', array('intro'), 'videotime');
-        $contents[] = new restore_decode_content('videotime', array('video_description'), 'videotime');
+        $contents[] = new restore_decode_content('videotime', ['intro'], 'videotime');
+        $contents[] = new restore_decode_content('videotime', ['video_description'], 'videotime');
 
         return $contents;
     }
@@ -68,7 +68,7 @@ class restore_videotime_activity_task extends restore_activity_task {
      * to the activity to be executed by the link decoder
      */
     public static function define_decode_rules() {
-        return array();
+        return [];
     }
 
     /**
@@ -76,7 +76,7 @@ class restore_videotime_activity_task extends restore_activity_task {
      * videotime logs. It must return one array of restore_log_rule objects
      */
     public static function define_restore_log_rules() {
-        $rules = array();
+        $rules = [];
 
         $rules[] = new restore_log_rule('videotime', 'add', 'view.php?id={course_module}', '{videotime}');
         $rules[] = new restore_log_rule('videotime', 'update', 'view.php?id={course_module}', '{videotime}');
@@ -93,7 +93,7 @@ class restore_videotime_activity_task extends restore_activity_task {
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      */
     public static function define_restore_log_rules_for_course() {
-        $rules = array();
+        $rules = [];
 
         $rules[] = new restore_log_rule('videotime', 'view all', 'index.php?id={course}', null);
 

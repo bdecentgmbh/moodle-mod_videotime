@@ -27,6 +27,7 @@ namespace mod_videotime\external;
 defined('MOODLE_INTERNAL') || die();
 
 use external_api;
+use external_value;
 use mod_videotime\videotime_instance;
 
 require_once($CFG->libdir.'/externallib.php');
@@ -43,8 +44,8 @@ trait get_videotime {
      * @return external_function_parameters
      */
     public static function get_videotime_parameters() {
-        return new \external_function_parameters([
-            'cmid' => new \external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED)
+        return new external_function_parameters([
+            'cmid' => new external_value(PARAM_INT, 'Course module ID', VALUE_REQUIRED),
         ]);
     }
 
@@ -56,7 +57,7 @@ trait get_videotime {
      */
     public static function get_videotime($cmid) {
         $params = external_api::validate_parameters(self::get_videotime_parameters(), [
-            'cmid' => $cmid
+            'cmid' => $cmid,
         ]);
 
         $context = \context_module::instance($params['cmid']);

@@ -49,7 +49,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB, $OUTPUT;
 
         $instance = $this->get_instance();
-        if ($record = $DB->get_record('videotimetab_chat', array('videotime' => $instance->id))) {
+        if ($record = $DB->get_record('videotimetab_chat', ['videotime' => $instance->id])) {
             $cm = get_coursemodule_from_instance('videotime', $instance->id, $instance->course);
             $context = context_module::instance($cm->id);
             $main = new output\main($context, $record);
@@ -82,17 +82,17 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         if (empty($data->enable_chat)) {
-            $DB->delete_records('videotimetab_chat', array(
+            $DB->delete_records('videotimetab_chat', [
                 'videotime' => $data->id,
-            ));
-        } else if ($record = $DB->get_record('videotimetab_chat', array('videotime' => $data->id))) {
+            ]);
+        } else if ($record = $DB->get_record('videotimetab_chat', ['videotime' => $data->id])) {
             $record->name = $data->chattab_name;
             $DB->update_record('videotimetab_chat', $record);
         } else {
-            $DB->insert_record('videotimetab_chat', array(
+            $DB->insert_record('videotimetab_chat', [
                 'videotime' => $data->id,
                 'name' => $data->chattab_name,
-            ));
+            ]);
         }
     }
 
@@ -104,9 +104,9 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        $DB->delete_records('videotimetab_chat', array(
+        $DB->delete_records('videotimetab_chat', [
             'videotime' => $id,
-        ));
+        ]);
     }
 
     /**
@@ -121,11 +121,11 @@ class tab extends \mod_videotime\local\tabs\tab {
         if (empty($instance)) {
             $defaultvalues['enable_chat'] = get_config('videotimetab_chat', 'default');
         } else {
-            $defaultvalues['enable_chat'] = $DB->record_exists('videotimetab_chat', array('videotime' => $instance));
+            $defaultvalues['enable_chat'] = $DB->record_exists('videotimetab_chat', ['videotime' => $instance]);
         }
         if (empty($instance)) {
             $defaultvalues['enable_chat'] = get_config('videotimetab_chat', 'default');
-        } else if ($record = $DB->get_record('videotimetab_chat', array('videotime' => $instance))) {
+        } else if ($record = $DB->get_record('videotimetab_chat', ['videotime' => $instance])) {
             $defaultvalues['enable_chat'] = 1;
             $defaultvalues['chattab_name'] = $record->name;
         } else {
@@ -142,9 +142,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         $record = $this->get_instance()->to_record();
-        return $this->is_enabled() && $DB->record_exists('videotimetab_chat', array(
-            'videotime' => $record->id
-        ));
+        return $this->is_enabled() && $DB->record_exists('videotimetab_chat', [
+            'videotime' => $record->id,
+        ]);
     }
 
     /**

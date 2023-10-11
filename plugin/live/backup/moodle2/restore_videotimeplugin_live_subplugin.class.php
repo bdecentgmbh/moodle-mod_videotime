@@ -42,7 +42,7 @@ class restore_videotimeplugin_live_subplugin extends restore_subplugin {
      */
     protected function define_videotime_subplugin_structure() {
 
-        $paths = array();
+        $paths = [];
 
         $elename = $this->get_namefor('');
         $elepath = $this->get_pathfor('/live_settings');

@@ -50,18 +50,18 @@ class videotimeplugin extends \core\plugininfo\base {
 
         switch ($this->name) {
             case 'pro':
-                $info = array(
+                $info = [
                     'maturity' => MATURITY_RC,
                     'release' => '1.8 RC',
-                    'version' => 2023100900,
-                );
+                    'version' => 2023100901,
+                ];
                 break;
             case 'repository':
-                $info = array(
+                $info = [
                     'maturity' => MATURITY_RC,
                     'release' => '1.8 RC',
-                    'version' => 2023100900,
-                );
+                    'version' => 2023100901,
+                ];
                 break;
         }
         if (!empty($info) && $this->versiondb < $info['version']) {
