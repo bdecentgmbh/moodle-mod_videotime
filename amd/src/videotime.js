@@ -132,6 +132,16 @@ define([
     };
 
     /**
+     * Get pause state
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getPaused = function() {
+        return this.player.getPaused();
+    };
+
+
+    /**
      * Register player events to respond to user interaction and play progress.
      */
     VideoTime.prototype.addListeners = function() {
@@ -325,7 +335,10 @@ define([
         }
 
         this.watchInterval = setInterval(function() {
-            if (this.playing) {
+            this.getPaused().then(paused => {
+                if (paused) {
+                    return;
+                }
                 this.time += this.playbackRate;
 
                 this.getSession().then(function(session) {
@@ -337,7 +350,7 @@ define([
                     }
                     return true;
                 }.bind(this)).catch(Notification.exception);
-            }
+            });
         }.bind(this), 1000);
     };
 
