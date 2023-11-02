@@ -112,7 +112,7 @@ class provider implements
         }
 
         // Fetch all users with videotime peer data.
-        $sql = "SELECT vs.user_id
+        $sql = "SELECT p.userid
                   FROM {course_modules} cm
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {videotime} v ON v.id = cm.instance
@@ -143,12 +143,12 @@ class provider implements
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        $sql = "SELECT vs.id,
+        $sql = "SELECT p.id,
                        cm.id AS cmid,
                        p.timecreated,
                        p.timemodified,
                        p.mute,
-                       p.state,
+                       p.status
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
@@ -189,7 +189,7 @@ class provider implements
         $peers->close();
 
         // The data for the last activity won't have been written yet, so make sure to write it now!
-        if (!empty($peers)) {
+        if (!empty($peerdata)) {
             $context = \context_module::instance($lastcmid);
             self::export_peer_data_for_user($peerdata, $context, $user);
         }
@@ -203,12 +203,12 @@ class provider implements
      * @param \stdClass $user the user record
      */
     protected static function export_peer_data_for_user(array $peerdata, \context_module $context, \stdClass $user) {
-        // Fetch the generic module data for the videotiome activity.
+        // Fetch the generic module data for the videotime activity.
         $contextdata = helper::get_context_data($context, $user);
 
         // Merge with videotime data and write it.
         $contextdata = (object)array_merge((array)$contextdata, $peerdata);
-        writer::with_context($context)->export_data([], $contextdata);
+        writer::with_context($context)->export_data([get_string('privacy:path', 'videotimeplugin_live')], $contextdata);
 
         // Write generic module intro files.
         helper::export_context_files($context, $user);
