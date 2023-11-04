@@ -93,7 +93,7 @@ class provider implements
 
         $params = [
             'component' => 'videotimetab_chat',
-            'contextlevel' => CONTEXT_BLOCK,
+            'contextid' => $context->id,
         ];
 
         $sql = "SELECT userid as userid
