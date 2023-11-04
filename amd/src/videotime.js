@@ -155,15 +155,11 @@ define([
             if (!this.played) {
                 if (this.hasPro) {
                     // Getting a new session on first play.
-                    this.getSession().then(() => {
-                        this.view();
-                        this.startWatchInterval();
-                        return true;
-                    }).catch(Notification.exception);
-                } else {
-                    // Free version can still mark completion on video time view.
-                    this.view();
+                    this.getSession();
+                    this.startWatchInterval();
                 }
+                this.view();
+                this.played = true;
             }
             return true;
         });
@@ -474,19 +470,19 @@ define([
      */
     VideoTime.prototype.getSession = function() {
         if (this.session) {
-            return Promise.resolve(this.session);
+            return this.session;
         }
 
-        return new Promise((resolve) => {
-            Ajax.call([{
-                methodname: 'videotimeplugin_pro_get_new_session',
-                args: {cmid: this.cmId}
-            }])[0].then(function(response) {
-                this.session = response;
-                resolve(response);
-                return true;
-            }.bind(this)).fail(Notification.exception);
+        this.session = Ajax.call([{
+            methodname: 'videotimeplugin_pro_get_new_session',
+            args: {cmid: this.cmId}
+        }])[0].fail((e) => {
+            this.session = null;
+            Notification.exception(e);
+            return e;
         });
+
+        return this.session;
     };
 
     /**
