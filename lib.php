@@ -699,15 +699,6 @@ function videotime_get_coursemodule_info($coursemodule) {
 }
 
 /**
- * Get icon mapping for font-awesome.
- */
-function mod_videotime_get_fontawesome_icon_map() {
-    return [
-        'mod_videotime:i/lock' => 'fa-lock',
-    ];
-}
-
-/**
  * Get shortened version of description for display.
  *
  * @param string $description
