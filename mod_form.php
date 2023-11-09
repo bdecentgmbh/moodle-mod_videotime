@@ -42,7 +42,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG, $COURSE, $PAGE, $DB;
+        global $CFG, $COURSE, $PAGE, $DB, $USER;
 
         $mform = $this->_form;
 
@@ -62,13 +62,23 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $api = new \videotimeplugin_repository\api();
             } catch (\videotimeplugin_repository\exception\api_not_configured $e) {
                 $needssetup = true;
+            }
+
+            $needsauthorization = $needssetup;
+            try {
+                if (
+                    !$needssetup &&
+                    !has_capability('videotimeplugin/repository:browsevideos', \context_system::instance())
+                ) {
+                    $api = new \videotimeplugin_repository\api($USER->id);
+                }
             } catch (\videotimeplugin_repository\exception\api_not_authenticated $e) {
-                $needssetup = true;
+                $needsauthorization = true;
             }
 
             $group = [];
             $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
-            if (!$needssetup) {
+            if (!$needsauthorization) {
                 $group[] = $mform->createElement('button', 'pull_from_vimeo', get_string('pull_from_vimeo', 'videotime'));
             }
             $mform->addGroup($group, 'vimeo_url_group', get_string('vimeo_url', 'videotime'), null, false);
@@ -76,10 +86,15 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->setType('vimeo_url_group', PARAM_RAW);
 
             $group = [];
-            if (!$needssetup) {
+            if (!$needsauthorization) {
                 $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
                 $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
-            } else if (is_siteadmin()) {
+            } else if (!$needssetup) {
+                $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
+                $group[] = $mform->createElement('html',
+                    html_writer::link(new moodle_url('/mod/videotime/plugin/repository/authorize.php'),
+                        get_string('authorizevimeoaccess', 'videotimeplugin_repository')));
+            } else if ($needssetup && is_siteadmin()) {
                 $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
                 $group[] = $mform->createElement('html',
                     html_writer::link(new moodle_url('/mod/videotime/plugin/repository/overview.php'),
