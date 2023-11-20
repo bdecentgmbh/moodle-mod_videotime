@@ -159,8 +159,8 @@ class tab extends \mod_videotime\local\tabs\tab {
                         'lang' => $texttrack['language'],
                         'uri' => $texttrack['uri'],
                         'type' => $texttrack['type'],
-                        $texttrack['link']],
-                    );
+                        $texttrack['link'],
+                    ]);
                     foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
                         $text['track'] = $trackid;
                         $DB->insert_record('videotimetab_texttrack_text', $text);
