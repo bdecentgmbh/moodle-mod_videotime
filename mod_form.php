@@ -76,7 +76,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             try {
                 if (
                     !$needssetup &&
-                    !has_capability('videotimeplugin/repository:browsevideos', \context_system::instance())
+                    has_capability('videotimeplugin/repository:browseownvideos', \context_system::instance())
                 ) {
                     $api = new \videotimeplugin_repository\api($USER->id);
                 }
