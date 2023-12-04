@@ -90,7 +90,7 @@ class behat_mod_videotime extends behat_base {
      */
     protected function get_videotime_by_name(string $name): stdClass {
         global $DB;
-        return $DB->get_record('videotime', array('name' => $name), '*', MUST_EXIST);
+        return $DB->get_record('videotime', ['name' => $name], '*', MUST_EXIST);
     }
 
     /**

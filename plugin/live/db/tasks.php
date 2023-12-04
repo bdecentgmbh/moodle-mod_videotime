@@ -15,20 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
- *
- * @package     videotimetab_block
- * @copyright   2021 gmbh <https://bdecent.de>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Task definition for videotimeplugin_live.
+ * @copyright 2023 bdecent gmbh <https://bdecent.de>
+ * @package   videotimeplugin_live
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'videotimetab_block';
-$plugin->release = '1.5';
-$plugin->version = 2021051900;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = [
-    'videotime' => 2023011200,
+$tasks = [
+    [
+        'classname' => '\videotimeplugin_live\task\cleanup',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0,
+    ],
 ];

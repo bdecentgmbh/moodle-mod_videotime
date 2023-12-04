@@ -75,7 +75,7 @@ class provider implements
                    AND userid = :userid";
         $params = [
             'component' => 'videotimetab_chat',
-            'userid' => $userid
+            'userid' => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
@@ -93,7 +93,7 @@ class provider implements
 
         $params = [
             'component' => 'videotimetab_chat',
-            'contextlevel' => CONTEXT_BLOCK,
+            'contextid' => $context->id,
         ];
 
         $sql = "SELECT userid as userid

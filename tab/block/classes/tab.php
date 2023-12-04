@@ -70,7 +70,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         // We do not want to try editing or the course page.
         if ($PAGE->user_is_editing()) {
-            $url = new moodle_url('/mod/videotime/view.php', array('id' => $instance->get_cm()->id));
+            $url = new moodle_url('/mod/videotime/view.php', ['id' => $instance->get_cm()->id]);
             return  $OUTPUT->render_from_template('videotimetab_block/edit_label', [
                 'id' => $instance->id,
                 'url' => $url->out(),
@@ -80,7 +80,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         $page = new \moodle_page();
         $page->set_cm($instance->get_cm());
         $page->set_context($instance->get_context());
-        $page->set_url('/mod/videotime/view.php', array('id' => $instance->get_cm()->id));
+        $page->set_url('/mod/videotime/view.php', ['id' => $instance->get_cm()->id]);
         $page->set_title('title');
         $page->set_heading('heading');
         $page->set_activity_record($instance->to_record());
@@ -125,9 +125,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         $record = $this->get_instance()->to_record();
-        return $this->is_enabled() && $DB->record_exists('videotimetab_block', array(
-            'videotime' => $record->id
-        ));
+        return $this->is_enabled() && $DB->record_exists('videotimetab_block', [
+            'videotime' => $record->id,
+        ]);
     }
 
     /**
@@ -139,17 +139,17 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         if (empty($data->enable_block)) {
-            $DB->delete_records('videotimetab_block', array(
+            $DB->delete_records('videotimetab_block', [
                 'videotime' => $data->id,
-            ));
-        } else if ($record = $DB->get_record('videotimetab_block', array('videotime' => $data->id))) {
+            ]);
+        } else if ($record = $DB->get_record('videotimetab_block', ['videotime' => $data->id])) {
             $record->name = $data->blocktab_name;
             $DB->update_record('videotimetab_block', $record);
         } else {
-            $DB->insert_record('videotimetab_block', array(
+            $DB->insert_record('videotimetab_block', [
                 'videotime' => $data->id,
                 'name' => $data->blocktab_name,
-            ));
+            ]);
         }
     }
 
@@ -161,9 +161,9 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        $DB->delete_records('videotimetab_block', array(
+        $DB->delete_records('videotimetab_block', [
             'videotime' => $id,
-        ));
+        ]);
     }
 
     /**
@@ -177,7 +177,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         if (empty($instance)) {
             $defaultvalues['enable_block'] = get_config('videotimetab_block', 'default');
-        } else if ($record = $DB->get_record('videotimetab_block', array('videotime' => $instance))) {
+        } else if ($record = $DB->get_record('videotimetab_block', ['videotime' => $instance])) {
             $defaultvalues['enable_block'] = 1;
             $defaultvalues['blocktab_name'] = $record->name;
         } else {
