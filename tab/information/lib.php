@@ -36,7 +36,7 @@ use mod_videotime\videotime_instance;
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotimetab_information_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function videotimetab_information_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;

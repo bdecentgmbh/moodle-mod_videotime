@@ -52,7 +52,7 @@ class lib_test extends advanced_testcase {
     public function test_videotime_core_calendar_provide_event_action() {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
-        $videotime = $this->getDataGenerator()->create_module('videotime', array('course' => $course->id));
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $videotime->id,
@@ -75,7 +75,7 @@ class lib_test extends advanced_testcase {
     public function test_videotime_core_calendar_provide_event_action_in_hidden_section() {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
-        $videotime = $this->getDataGenerator()->create_module('videotime', array('course' => $course->id));
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
 
         // Enrol a student in the course.
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -103,7 +103,7 @@ class lib_test extends advanced_testcase {
     public function test_videotime_core_calendar_provide_event_action_for_user() {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
-        $videotime = $this->getDataGenerator()->create_module('videotime', array('course' => $course->id));
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
 
         // Enrol a student in the course.
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -134,7 +134,7 @@ class lib_test extends advanced_testcase {
 
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
-        $videotime = $this->getDataGenerator()->create_module('videotime', array('course' => $course->id));
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $videotime->id,
@@ -160,9 +160,9 @@ class lib_test extends advanced_testcase {
         $CFG->enablecompletion = 1;
 
         // Create the activity.
-        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
-        $videotime = $this->getDataGenerator()->create_module('videotime', array('course' => $course->id),
-            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id],
+            ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]);
 
         // Get some additional data.
         $cm = get_coursemodule_from_instance('videotime', $videotime->id);
@@ -191,9 +191,9 @@ class lib_test extends advanced_testcase {
         $CFG->enablecompletion = 1;
 
         // Create the activity.
-        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
-        $videotime = $this->getDataGenerator()->create_module('videotime', array('course' => $course->id),
-            array('completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS));
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id],
+            ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]);
 
         // Enrol a student in the course.
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');

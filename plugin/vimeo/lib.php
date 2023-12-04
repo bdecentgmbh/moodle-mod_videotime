@@ -66,7 +66,7 @@ function videotimeplugin_vimeo_update_instance($moduleinstance, $mform = null) {
 function videotimeplugin_vimeo_delete_instance($id) {
     global $DB;
 
-    $DB->delete_records('videotimeplugin_vimeo', array('videotime' => $id));
+    $DB->delete_records('videotimeplugin_vimeo', ['videotime' => $id]);
 
     return true;
 }
@@ -99,7 +99,7 @@ function videotimeplugin_vimeo_load_settings($instance) {
 
     $instance = (array) $instance;
     if (
-        $record = $DB->get_record('videotimeplugin_vimeo', array('videotime' => $instance['id']))
+        $record = $DB->get_record('videotimeplugin_vimeo', ['videotime' => $instance['id']])
     ) {
         unset($record->id);
         unset($record->videotime);

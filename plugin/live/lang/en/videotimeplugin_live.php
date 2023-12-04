@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cleanuptask'] = 'Cleanup task for Video Time Live player';
 $string['enabledeftvideo'] = 'The Video Time live player requires the
 admin to install Deft response block and enable video bridging in the
 site settings';
@@ -35,5 +36,11 @@ $string['mediafile_help'] = 'Upload an audio or video file to use';
 $string['pluginname'] = 'Video Time Live Player';
 $string['posterimage'] = 'Poster image';
 $string['posterimage_desc'] = 'An image image to display when session video is not available';
-$string['privacy:metadata'] = 'The Video Time Live Player plugin does not store any personal data.';
+$string['privacy:metadata:videotimeplugin_live_peer'] = 'Temporary data for state of user\'s connection';
+$string['privacy:metadata:videotimeplugin_live_peer:mute'] = 'Whether muted';
+$string['privacy:metadata:videotimeplugin_live_peer:status'] = 'Whether connection was closed';
+$string['privacy:metadata:videotimeplugin_live_peer:timecreated'] = 'Time connection started';
+$string['privacy:metadata:videotimeplugin_live_peer:timemodified'] = 'Last time connection data modified';
+$string['privacy:metadata:videotimeplugin_live_peer:userid'] = 'The user id for the connection';
+$string['privacy:path'] = 'Live player session status';
 $string['sharedvideo'] = 'Shared video';

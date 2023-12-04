@@ -57,7 +57,7 @@ class external_test extends advanced_testcase {
             'course' => $this->course->id,
             'autoplay' => 1,
             'vimeo_embed' => 'https://vimeo.com/347119375',
-            'responsive' => 1
+            'responsive' => 1,
         ]);
         $this->student = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id);

@@ -82,9 +82,9 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         $record = $this->get_instance()->to_record();
-        return $this->is_enabled() && $DB->record_exists('videotimetab_chapter', array(
-            'videotime' => $record->id
-        ));
+        return $this->is_enabled() && $DB->record_exists('videotimetab_chapter', [
+            'videotime' => $record->id,
+        ]);
     }
 
     /**
@@ -96,14 +96,14 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB;
 
         if (empty($data->enable_chapter)) {
-            $DB->delete_records('videotimetab_chapter', array(
+            $DB->delete_records('videotimetab_chapter', [
                 'videotime' => $data->id,
-            ));
+            ]);
         } else {
-            if (!$record = $DB->get_record('videotimetab_chapter', array('videotime' => $data->id))) {
-                $DB->insert_record('videotimetab_chapter', array(
+            if (!$record = $DB->get_record('videotimetab_chapter', ['videotime' => $data->id])) {
+                $DB->insert_record('videotimetab_chapter', [
                     'videotime' => $data->id,
-                ));
+                ]);
             }
         }
     }
@@ -116,9 +116,9 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        $DB->delete_records('videotimetab_chapter', array(
+        $DB->delete_records('videotimetab_chapter', [
             'videotime' => $id,
-        ));
+        ]);
     }
 
     /**
@@ -132,7 +132,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         if (empty($instance)) {
             $defaultvalues['enable_chapter'] = get_config('videotimetab_chapter', 'default');
-        } else if ($record = $DB->get_record('videotimetab_chapter', array('videotime' => $instance))) {
+        } else if ($record = $DB->get_record('videotimetab_chapter', ['videotime' => $instance])) {
             $defaultvalues['enable_chapter'] = 1;
         } else {
             $defaultvalues['enable_chapter'] = 0;

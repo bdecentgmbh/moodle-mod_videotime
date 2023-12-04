@@ -116,7 +116,7 @@ class videotime_instance implements \renderable, \templatable {
         'pip',
         'dnt',
         'width',
-        'preventfastforwarding'
+        'preventfastforwarding',
     ];
 
     /**
@@ -401,7 +401,7 @@ class videotime_instance implements \renderable, \templatable {
 
             $newelement = $mform->createElement('static', $fieldname . '_forced', '', get_string('option_forced', 'videotime', [
                 'option' => $label,
-                'value' => $value
+                'value' => $value,
             ]));
             if ($group) {
                 $group[] = $newelement;
@@ -423,7 +423,7 @@ class videotime_instance implements \renderable, \templatable {
         return [
             self::NORMAL_MODE => get_string('normal_mode', 'videotime'),
             self::LABEL_MODE => get_string('label_mode', 'videotime'),
-            self::PREVIEW_MODE => get_string('preview_mode', 'videotime')
+            self::PREVIEW_MODE => get_string('preview_mode', 'videotime'),
         ];
     }
 
