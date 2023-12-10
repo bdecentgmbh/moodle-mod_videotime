@@ -48,21 +48,35 @@
 <div {{^responsive}}class="vimeo-container justify-content-center"{{/responsive}} data-roomid="{{ roomid }}" data-contextid="{{ contextid }}">
     <div class="videotime-embed video-resize">
         {{# posterurl }}
-            <img src="{{ posterurl }}" class="poster-img w-100">
+            <img
+                src="{{ posterurl }}"
+                class="poster-img {{# responsive }} w-100 {{/ responsive }}"
+                {{^ responsive }} height="{{ height }}" width="{{ width }}" {{/ responsive }}
+            >
         {{/ posterurl }}
-        <video class="w-100 hidden"
+        <video class="{{# responsive }}w-100 {{/ responsive }} hidden"
             id="video-embed-{{uniqueid}}"
             autoplay
-            controls {{# playsinline }} playsinline {{/ playsinline }}
+            {{^ responsive }} height="{{ height }}" width="{{ width }}" {{/ responsive }}
+            {{# controls }} controls {{/ controls }}
+            {{# playsinline }} playsinline {{/ playsinline }}
             muted
         >
         </video>
-        <audio class="w-100"
+        <audio
             id="audio-embed-{{uniqueid}}"
+            {{# responsive }} class="w-100" {{/ responsive }}
+            {{^ responsive }} width="{{ width }}" class="d-flex" {{/ responsive }}
             autoplay
-            controls {{# playsinline }} playsinline {{/ playsinline }}
+            {{# controls }} controls {{/ controls }}
+            muted
+            {{# playsinline }} playsinline {{/ playsinline }}
         >
         </audio>
+        <div>
+            <button class="" data-audio="enable">{{# str }} enableaudio, videotimeplugin_live {{/ str }}</button>
+            <button class="hidden" data-audio="disable">{{# str }} disableaudio, videotimeplugin_live {{/ str }}</button>
+        </div>
     </div>
     <div class="vimeo-video-description">
         {{{video_description}}}
@@ -70,12 +84,13 @@
 </div>
 {{/ instance }}
 {{#js}}
-    require(['videotimeplugin_live/videotime'], function(VideoTime) {
+    require(['videotimeplugin_live/audioswitch', 'videotimeplugin_live/videotime'], function(AudioSwitch, VideoTime) {
         var v = new VideoTime('video-embed-{{uniqueid}}', {{cmid}}, {{haspro}}, {{interval}}, {{{instance}}});
         v.initialize(
             {{ contextid }},
             '{{ token }}',
             {{ peerid }}
         );
+        AudioSwitch.init();
     });
 {{/js}}

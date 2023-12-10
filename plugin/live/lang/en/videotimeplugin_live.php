@@ -25,6 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cleanuptask'] = 'Cleanup task for Video Time Live player';
+$string['disableaudio'] = 'Disable audio';
+$string['enableaudio'] = 'Enable audio';
 $string['enabledeftvideo'] = 'The Video Time live player requires the
 admin to install Deft response block and enable video bridging in the
 site settings';

@@ -86,6 +86,7 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
             'token' => $socket->get_token(),
             'video' => true,
         ];
+        $data = $data + (array)json_decode($data['instance']);
 
         return $data;
     }

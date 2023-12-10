@@ -48,19 +48,11 @@ class options extends moodleform {
      */
     private static $optionfields = [
         'autoplay',
-        'byline',
         'height',
-        'muted',
         'playsinline',
-        'portrait',
         'responsive',
-        'speed',
-        'title',
-        'autopause',
-        'background',
         'controls',
         'pip',
-        'dnt',
         'width',
     ];
 
@@ -114,12 +106,6 @@ class options extends moodleform {
         $mform->addHelpButton('controls', 'option_controls', 'videotime');
         $mform->setDefault('controls', get_config('videotime', 'controls'));
         self::create_additional_field_form_elements('controls', $mform);
-
-        $mform->addElement('advcheckbox', 'muted', get_string('option_muted', 'videotime'));
-        $mform->setType('muted', PARAM_BOOL);
-        $mform->addHelpButton('muted', 'option_muted', 'videotime');
-        $mform->setDefault('muted', get_config('videotime', 'muted'));
-        self::create_additional_field_form_elements('muted', $mform);
 
         $mform->addElement('advcheckbox', 'playsinline', get_string('option_playsinline', 'videotime'));
         $mform->setType('playsinline', PARAM_BOOL);

@@ -210,6 +210,7 @@ function videotimeplugin_videojs_embed_player($instance) {
 
     if (
         empty(get_config('videotimeplugin_videojs', 'enabled'))
+        || empty($instance->vimeo_url)
         || mod_videotime_get_vimeo_id_from_link($instance->vimeo_url)
     ) {
         return null;
