@@ -26,9 +26,9 @@ namespace mod_videotime;
 
 use cm_info;
 use core_component;
-use core_external\external_description;
-use core_external\external_single_structure;
-use core_external\external_value;
+use external_description;
+use external_single_structure;
+use external_value;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
