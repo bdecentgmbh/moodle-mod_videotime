@@ -74,7 +74,9 @@ function videotimeplugin_live_delete_instance($id) {
     global $DB;
 
     $DB->delete_records('videotimeplugin_live', ['videotime' => $id]);
-    \block_deft\janus_room::remove('videotimeplugin_live', $id);
+    if (class_exists('\\block_deft\\janus_room')) {
+        \block_deft\janus_room::remove('videotimeplugin_live', $id);
+    }
 
     return true;
 }
