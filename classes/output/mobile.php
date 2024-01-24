@@ -27,7 +27,6 @@ namespace mod_videotime\output;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
-require_once($CFG->dirroot . '/lib/externallib.php');
 
 use context_module;
 use moodle_url;
