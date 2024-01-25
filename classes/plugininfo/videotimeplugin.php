@@ -45,6 +45,7 @@ class videotimeplugin extends \core\plugininfo\base {
      * @return array|null
      */
     public function available_updates() {
+        global $CFG;
 
         $updates = parent::available_updates();
 
@@ -60,8 +61,12 @@ class videotimeplugin extends \core\plugininfo\base {
                 $info = [
                     'maturity' => MATURITY_RC,
                     'release' => '1.8 RC 2',
-                    'version' => 2023101101,
                 ];
+                if ($CFG->branch < 403) {
+                    $info['version'] = 2023101101;
+                } else {
+                    $info['version'] = 2024012400;
+                }
                 break;
         }
         if (!empty($info) && $this->versiondb < $info['version']) {
