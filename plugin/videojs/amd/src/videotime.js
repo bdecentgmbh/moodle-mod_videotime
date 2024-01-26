@@ -25,7 +25,7 @@ export default class VideoTime extends VideoTimeBase {
                 sources: [{type: instance.type, src: instance.vimeo_url}],
                 loop: Number(instance.option_loop),
                 fluid: Number(instance.responsive),
-                playbackRates: instance.speed
+                playbackRates: Number(instance.speed)
                     ? [0.5, 0.75, 1, 1.25, 1.5, 2]
                     : [1],
                 muted: Number(instance.muted)
