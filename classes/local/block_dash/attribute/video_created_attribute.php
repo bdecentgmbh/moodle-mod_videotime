@@ -51,7 +51,7 @@ class video_created_attribute extends abstract_field_attribute {
             $video = \videotimeplugin_repository\video::create($videorecord, $instance->get_context());
             if ($createdtime = \DateTime::createFromFormat(
                 \DateTime::ISO8601,
-                $video->get_record()->created_time, new \DateTimeZone('UTC'))
+                $video->get_record()->created_time ?? '', new \DateTimeZone('UTC'))
             ) {
                 $createdtime->setTimezone(\core_date::get_user_timezone_object());
                 return $createdtime->getTimestamp();
