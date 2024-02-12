@@ -374,7 +374,13 @@ define([
     VideoTime.prototype.setCurrentTime = function(sessionId, currentTime) {
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_set_session_current_time',
-            args: {"session_id": sessionId, "current_time": currentTime}
+            args: {"session_id": sessionId, "current_time": currentTime},
+            fail: function(e) {
+                Log.debug(e);
+                document.querySelectorAll('.videotime-server-error').forEach(warning => {
+                    warning.classList.remove('hidden');
+                });
+            }
         }])[0];
     };
 

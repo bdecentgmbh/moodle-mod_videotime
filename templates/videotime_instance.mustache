@@ -46,6 +46,9 @@
     <div id="next-activity-button">
         {{{next_activity_button_html}}}
     </div>
+    <div class="videotime-server-error alert alert-warning alert-block fade in alert-dismissible hidden">
+        {{# str }} servererror, videotime {{/ str }}
+    </div>
 
     {{^tabshtml}}
         {{> mod_videotime/vimeo_embed }}

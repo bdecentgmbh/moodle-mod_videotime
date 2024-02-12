@@ -231,6 +231,7 @@ $string['search:activity'] = 'VideoTime - activity information';
 $string['search:texttrack'] = 'VideoTime - text track information';
 $string['search_help'] = 'Search name, description, albums, tags...';
 $string['seconds'] = 'Seconds';
+$string['servererror'] = 'There is a server connection problem. Time may not be tracked properly.';
 $string['session_not_found'] = 'User session not found.';
 $string['set_client_id_and_secret'] = 'Set Client ID and Secret';
 $string['settings'] = 'Video Time settings';
