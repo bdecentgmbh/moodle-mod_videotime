@@ -227,11 +227,11 @@ define([
         }.bind(this));
 
         this.player.getPlaybackRate().then(function(playbackRate) {
-            this.playbackRate = playbackRate;
+            this.playbackRate = playbackRate || 1;
         }.bind(this)).catch(Notification.exception);
 
         this.player.on('playbackratechange', function(event) {
-            this.playbackRate = event.playbackRate;
+            this.playbackRate = event.playbackRate || 1;
         }.bind(this));
 
         // Always update internal values for percent and current time watched.
@@ -338,7 +338,7 @@ define([
                 this.time += this.playbackRate;
 
                 this.getSession().then(function(session) {
-                    if (this.time % this.interval === 0) {
+                    if (this.time / this.playbackRate % this.interval === 0) {
                         Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
                         this.recordWatchTime(session.id, this.time);
                         this.setPercent(session.id, this.percent);
