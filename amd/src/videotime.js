@@ -36,6 +36,7 @@ define([
         this.played = false;
 
         this.playing = false;
+        this.intervalcount = 0;
         this.time = 0;
         this.percent = 0;
         this.currentTime = 0;
@@ -336,9 +337,10 @@ define([
                     return;
                 }
                 this.time += this.playbackRate;
+                this.intervalcount += 1;
 
                 this.getSession().then(function(session) {
-                    if (this.time / this.playbackRate % this.interval === 0) {
+                    if (this.intervalcount % this.interval === 0) {
                         Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
                         this.recordWatchTime(session.id, this.time);
                         this.setPercent(session.id, this.percent);
