@@ -233,26 +233,6 @@ function videotimeplugin_videojs_add_form_fields($mform, $formclass) {
             $mform->createElement('filemanager', 'mediafile', get_string('mediafile', 'videotimeplugin_videojs'), null, [
                 'subdirs' => 0,
                 'maxfiles' => 1,
-                'accepted_types' => [
-                    '.flac',
-                    '.mp3',
-                    '.mp4',
-                    '.mov',
-                    '.movie',
-                    '.m3u',
-                    '.m3u8',
-                    '.m4a',
-                    '.m4v',
-                    '.mp4',
-                    '.mpeg',
-                    '.ogg',
-                    '.oga',
-                    '.ogv',
-                    '.wav',
-                    '.webm',
-                    '.wma',
-                    '.wmv',
-                ],
             ]),
             'name'
         );
@@ -361,4 +341,46 @@ function videotimeplugin_videojs_config_file_areas() {
         'mediafile',
         'poster',
     ];
+}
+
+/**
+ * Validates the form input
+ *
+ * @param array $data submitted data
+ * @param array $files submitted files
+ * @return array eventual errors indexed by the field name
+ */
+function videotimeplugin_videojs_validation($data, $files) {
+    $acceptedtypes = [
+        'audio/flac',
+        'audio/mp3',
+        'audio/ogg',
+        'audio/wav',
+        'video/mp4',
+        'video/mpeg',
+        'video/ogg',
+        'video/quicktime',
+        'video/wav',
+        'video/webm',
+    ];
+    if (
+        in_array(resourcelib_guess_url_mimetype($data['vimeo_url']), $acceptedtypes)
+        || mod_videotime_get_vimeo_id_from_link($data['vimeo_url'])
+        || resourcelib_get_extension($data['vimeo_url'] == 'm3u8')
+    ) {
+        return [];
+    }
+    foreach ($files as $file) {
+        if (
+            !$file->is_directory()
+            && ($file->get_itemid() == $data['mediafile'])
+        ) {
+            if (in_array($file->get_mimetype(), $acceptedtypes)) {
+                return [];
+            }
+            return ['mediafile' => get_string('invalidmediafile', 'videotimeplugin_videojs')];
+        }
+
+    }
+    return ['vimeo_url' => get_string('required')];
 }

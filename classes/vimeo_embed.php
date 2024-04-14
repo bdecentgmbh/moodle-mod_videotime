@@ -52,6 +52,11 @@ class vimeo_embed implements \renderable, \templatable {
     protected $record = null;
 
     /**
+     * @var $uniqueid Unique id for element
+     */
+    protected $uniqueid = null;
+
+    /**
      * Constructor
      *
      * @param \stdClass $instancerecord
