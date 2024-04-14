@@ -295,6 +295,10 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
         }
 
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            $errors += component_callback("videotimeplugin_$name", 'validation', [$data, $files], []);
+        }
+
         return $errors;
     }
 
