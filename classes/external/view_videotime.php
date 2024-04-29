@@ -63,6 +63,10 @@ trait view_videotime {
             'cmid' => $cmid,
         ]);
 
+        if (empty($cmid)) {
+            return null;
+        }
+
         $cm = get_coursemodule_from_id('videotime', $params['cmid']);
         $course = get_course($cm->course);
 
