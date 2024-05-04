@@ -364,7 +364,8 @@ function videotimeplugin_videojs_validation($data, $files) {
         'video/webm',
     ];
     if (
-        in_array(resourcelib_guess_url_mimetype($data['vimeo_url']), $acceptedtypes)
+        !empty($data['livefeed'])
+        || in_array(resourcelib_guess_url_mimetype($data['vimeo_url']), $acceptedtypes)
         || mod_videotime_get_vimeo_id_from_link($data['vimeo_url'])
         || (resourcelib_get_extension($data['vimeo_url']) == 'm3u8')
     ) {
