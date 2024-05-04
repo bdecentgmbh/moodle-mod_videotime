@@ -44,6 +44,15 @@ use videotimetab_chat\socket;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
+    /**
+     * @var $context Module context
+     */
+    protected $context = null;
+
+    /**
+     * @var $socket Deft socket
+     */
+    protected $socket = null;
 
     /**
      * Constructor.
