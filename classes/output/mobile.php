@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/lib/externallib.php');
 
 use context_module;
 use moodle_url;
+use core_external\util;
 
 /**
  * Mobile output class for Video Time.
@@ -67,7 +68,7 @@ class mobile {
 
         $videotime->name = format_string($videotime->name);
         list($videotime->intro, $videotime->introformat) =
-            external_format_text($videotime->intro, $videotime->introformat, $context->id, 'mod_videotime', 'intro');
+            util::format_text($videotime->intro, $videotime->introformat, $context->id, 'mod_videotime', 'intro');
 
         $url = new moodle_url('/mod/videotime/player.php', [
             'id' => $cm->id,
@@ -125,6 +126,6 @@ class mobile {
         global $DB;
 
         $service = $DB->get_record('external_services', ['shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE], '*', MUST_EXIST);
-        return external_generate_token_for_current_user($service)->token;
+        return util::generate_token_for_current_user($service)->token;
     }
 }
