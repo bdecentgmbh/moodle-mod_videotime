@@ -131,7 +131,6 @@ class custom_completion extends activity_custom_completion {
     public function get_sort_order(): array {
         return [
             'completionview',
-            'completionusegrade',
             'completion_on_view_time_second',
             'completion_on_finish',
             'completion_on_percent_value',

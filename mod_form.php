@@ -236,9 +236,6 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->setType('completion_hide_detail', PARAM_BOOL);
 
             return ['completion_on_view', 'completion_on_percent', 'completion_on_finish', 'completion_hide_detail'];
-        } else {
-            // Remove completion on grade since grade settings are not displayed for free version.
-            $mform->removeElement('completionusegrade');
         }
 
         return [];

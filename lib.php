@@ -45,7 +45,7 @@ function videotime_supports($feature) {
     }
     switch ($feature) {
         case FEATURE_GRADE_HAS_GRADE:
-            return true;
+            return videotime_has_pro();
         case FEATURE_GROUPS:
             return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
