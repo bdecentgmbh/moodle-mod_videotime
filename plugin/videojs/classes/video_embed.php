@@ -56,7 +56,11 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
-        $mimetype = resourcelib_guess_url_mimetype($this->record->vimeo_url);
+	if (substr($this->record->vimeo_url, -5) == '.m3u8') {
+            $mimetype = 'video/x-mpegURL';
+	} else {
+            $mimetype = resourcelib_guess_url_mimetype($this->record->vimeo_url);
+	}
 
         $context = context_module::instance($this->get_cm()->id);
         $fs = get_file_storage();

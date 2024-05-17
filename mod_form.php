@@ -267,11 +267,20 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $fs = get_file_storage();
+            $files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile']);
             if (empty($data['livefeed']) && (
                 empty($data['mediafile'])
-                || !$files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile'])
+                || !$files
             )) {
                 $errors['vimeo_url'] = get_string('required');
+            }
+            foreach ($files as $file) {
+                if (
+                    !$file->is_directory()
+	            && substr($file->get_filename(), -5) == '.m3u8'
+                ) {
+                    unset($errors['mediafile']);
+                }
             }
         } else if (!filter_var($data['vimeo_url'], FILTER_VALIDATE_URL)) {
             $errors['vimeo_url'] = get_string('vimeo_url_invalid', 'videotime');

@@ -1,8 +1,0 @@
-.videotime-local-stream .fa-toggle-on,
-.videotime-local-stream .selected .fa-toggle-off {
-    display: none;
-}
-
-.videotime-local-stream .selected .fa-toggle-on {
-    display: inline;
-}
