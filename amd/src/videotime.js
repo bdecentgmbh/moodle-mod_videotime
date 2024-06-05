@@ -65,54 +65,78 @@ define([
         let instance = this.instance;
         Log.debug('Initializing Video Time ' + this.elementId);
 
-            Log.debug('Initializing Vimeo player with options:');
-            Log.debug(instance);
-            this.player = new Vimeo(this.elementId, {
-                autopause: Number(instance.autopause),
-                autoplay: Number(instance.autoplay),
-                background: Number(instance.background),
-                byline: Number(instance.byline),
-                color: instance.color,
-                controls: Number(instance.controls),
-                dnt: Number(instance.dnt),
-                height: instance.height,
-                loop: Number(instance.option_loop),
-                maxheight: instance.maxheight,
-                maxwidth: instance.maxwidth,
-                muted: Number(instance.muted),
-                portrait: instance.portrait,
-                pip: Number(instance.pip),
-                playsinline: instance.playsinline,
-                responsive: Number(instance.responsive),
-                speed: instance.speed,
-                title: Number(instance.title),
-                transparent: Number(instance.transparent),
-                url: instance.vimeo_url,
-                width: instance.width
-            });
+        Log.debug('Initializing Vimeo player with options:');
+        Log.debug(instance);
+        this.player = new Vimeo(this.elementId, {
+            autopause: Number(instance.autopause),
+            autoplay: Number(instance.autoplay),
+            background: Number(instance.background),
+            byline: Number(instance.byline),
+            color: instance.color,
+            controls: Number(instance.controls),
+            dnt: Number(instance.dnt),
+            height: instance.height,
+            loop: Number(instance.option_loop),
+            maxheight: instance.maxheight,
+            maxwidth: instance.maxwidth,
+            muted: Number(instance.muted),
+            portrait: instance.portrait,
+            pip: Number(instance.pip),
+            playsinline: instance.playsinline,
+            responsive: Number(instance.responsive),
+            speed: instance.speed,
+            title: Number(instance.title),
+            transparent: Number(instance.transparent),
+            url: instance.vimeo_url,
+            width: instance.width
+        });
 
-            let url = new URL(window.location.href),
-                q = url.searchParams.get('q'),
-                starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
-            if (starttime) {
-                this.setStartTime(starttime[0]).then(function() {
-                    if (q && window.find) {
-                        window.find(q);
-                    }
-                    return true;
-                }).catch(Notification.exception);
-            } else if (q && window.find) {
-                window.find(q);
-            }
+        let url = new URL(window.location.href),
+            q = url.searchParams.get('q'),
+            starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
+        if (starttime) {
+            this.setStartTime(starttime[0]).then(function() {
+                if (q && window.find) {
+                    window.find(q);
+                }
+                return true;
+            }).catch(Notification.exception);
+        } else if (q && window.find) {
+            window.find(q);
+        }
 
-            this.addListeners();
+        this.handleStartTime();
 
-            for (let i = 0; i < this.plugins.length; i++) {
-                const plugin = this.plugins[i];
-                plugin.initialize(this, instance);
-            }
+        this.addListeners();
 
-            return true;
+        for (let i = 0; i < this.plugins.length; i++) {
+            const plugin = this.plugins[i];
+            plugin.initialize(this, instance);
+        }
+
+        return true;
+    };
+
+    VideoTime.prototype.handleStartTime = function() {
+        const url = new URL(window.location.href),
+            q = url.searchParams.get('q'),
+            starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
+        if (q && window.find) {
+            window.find(q);
+        }
+        if (starttime) {
+            return this.setStartTime(starttime[0]);
+        }
+        return this.player.getCurrentTime();
+    };
+
+    /**
+     * Get pause state
+     *
+     * @return {Promise}
+     */
+    VideoTime.prototype.getPaused = function() {
+        return this.player.getPaused();
     };
 
     /**
@@ -336,20 +360,21 @@ define([
         }
 
         this.watchInterval = setInterval(function() {
-            if (this.playing) {
-                this.time += this.playbackRate;
-
-                this.getSession().then(function(session) {
-                    if (this.time / this.playbackRate % this.interval === 0) {
-                        Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
-                        this.recordWatchTime(session.id, this.time);
-                        this.setPercent(session.id, this.percent);
-                        this.setCurrentTime(session.id, this.currentTime);
-                    }
-                    return true;
-                }.bind(this)).catch(Notification.exception);
-            }
+            this.getPaused().then(paused => {
+                if (!paused) {
+                    this.time += this.playbackRate;
+                }
+            });
         }.bind(this), 1000);
+
+        this.watchInterval = setInterval(function() {
+            this.getSession().then(session => {
+                Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
+                this.recordWatchTime(session.id, this.time);
+                this.setPercent(session.id, this.percent);
+                this.setCurrentTime(session.id, this.currentTime);
+            }).catch(Notification.exception);
+        }.bind(this), this.interval);
     };
 
     /**
