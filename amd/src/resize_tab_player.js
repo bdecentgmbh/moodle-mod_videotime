@@ -114,19 +114,22 @@ const mousemoveHandler = (e) => {
  *
  * @param {event} e mouse event
  */
-const cueVideo = (e) => {
+const cueVideo = async(e) => {
     if (e.target.closest('[data-action="cue"]')) {
-        let starttime = e.target.closest('a').getAttribute('data-start'),
+        const starttime = e.target.closest('a').getAttribute('data-start'),
             time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+)?)/),
             iframe = e.target.closest('.videotimetabs').querySelector('.vimeo-embed iframe'),
             player = new Player(iframe);
         e.preventDefault();
         e.stopPropagation();
         if (time) {
-            player
-                .setCurrentTime(3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]))
-                .then(player.play.bind(player))
-                .catch(Notification.exception);
+            try {
+                await player
+                    .setCurrentTime(3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]));
+                player.play();
+            } catch (e) {
+                Notification.exception(e);
+            }
         }
     }
 };
