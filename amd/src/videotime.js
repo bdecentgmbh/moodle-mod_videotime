@@ -241,7 +241,7 @@ define([
             if (event.seconds === event.duration) {
                 this.plugins.forEach(plugin => {
                     if (typeof plugin.setCurrentTime == 'function') {
-                        const session = plugin.getSessions();
+                        const session = plugin.getSession();
                         plugin.setCurrentTime(session.id, event.seconds);
                     }
                 });

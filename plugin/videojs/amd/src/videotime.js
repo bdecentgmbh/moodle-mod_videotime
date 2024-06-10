@@ -18,7 +18,7 @@ export default class VideoTime extends VideoTimeBase {
     initialize() {
         Log.debug("Initializing Video Time " + this.elementId);
 
-        let instance = this.instance,
+        const instance = this.instance,
             options = {
                 autoplay: Number(instance.autoplay),
                 controls: Number(instance.controls),
@@ -69,23 +69,7 @@ export default class VideoTime extends VideoTimeBase {
             return true;
         });
 
-        let url = new URL(window.location.href),
-            q = url.searchParams.get("q"),
-            starttime = (url.searchParams.get("time") || "").match(
-                /^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/
-            );
-        if (starttime) {
-            this.setStartTime(starttime[0])
-                .then(function() {
-                    if (q && window.find) {
-                        window.find(q);
-                    }
-                    return true;
-                })
-                .catch(Notification.exception);
-        } else if (q && window.find) {
-            window.find(q);
-        }
+        this.handleStartTime();
 
         this.addListeners();
 
@@ -107,22 +91,24 @@ export default class VideoTime extends VideoTimeBase {
                 $(tabs)
                     .find('[data-action="cue"]')
                     .each(
-                        function(index, anchor) {
+                        async function(index, anchor) {
                             let starttime = anchor.getAttribute("data-start"),
                                 time = starttime.match(
                                     /((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/
                                 );
                             if (time) {
-                                this.player
-                                    .addCuePoint(
+                                try {
+                                    await this.player.addCuePoint(
                                         3600 * Number(time[3] || 0) +
                                             60 * Number(time[5] || 0) +
                                             Number(time[6]),
                                         {
                                             starttime: starttime
                                         }
-                                    )
-                                    .catch(Notification.exeception);
+                                    );
+                                } catch (e) {
+                                    Notification.exception(e);
+                                }
                             }
                         }.bind(this)
                     );
@@ -271,7 +257,7 @@ export default class VideoTime extends VideoTimeBase {
      * @param {string} starttime
      * @returns {Promise}
      */
-    setStartTime(starttime) {
+    async setStartTime(starttime) {
         let time = starttime.match(
             /((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/
         );
@@ -280,10 +266,10 @@ export default class VideoTime extends VideoTimeBase {
                 3600 * Number(time[3] || 0) +
                 60 * Number(time[5] || 0) +
                 Number(time[6]);
-            return this.player.currentTime(this.resumeTime);
+            return await this.player.currentTime(this.resumeTime);
         }
         Log.debug("Set start time:" + starttime);
-        return this.player.currentTime();
+        return await this.player.currentTime();
     }
 
     /**
@@ -333,5 +319,15 @@ export default class VideoTime extends VideoTimeBase {
             resolve(this.player.currentTime());
             return true;
         });
+    }
+
+    /**
+     * Get pause state
+     *
+     * @return {bool}
+     */
+    getPaused() {
+        const paused = this.player.paused();
+        return paused;
     }
 }
