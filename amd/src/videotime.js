@@ -235,17 +235,34 @@ define([
         }.bind(this));
 
         // Always update internal values for percent and current time watched.
-        this.player.on('timeupdate', async function(event) {
-            this.percent = event.percent;
-            this.currentTime = event.seconds;
-            if (event.seconds === event.duration) {
-                this.plugins.forEach(plugin => {
-                    if (typeof plugin.setCurrentTime == 'function') {
-                        const session = plugin.getSession();
-                        plugin.setCurrentTime(session.id, event.seconds);
-                    }
-                });
-            }
+        this.player.on('timeupdate', function(event) {
+            setTimeout(async() => {
+                var preventUpdate = false;
+                if (event.seconds === event.duration) {
+                    this.plugins.forEach(async(plugin) => {
+                        if (typeof plugin.setCurrentTime == 'function') {
+                            const session = plugin.getSession();
+                            plugin.setCurrentTime(session.id, event.seconds);
+                        }
+                    });
+                }
+                if (Number(this.instance.preventfastforwarding)) {
+                    const playbackRate = await this.getPlaybackRate();
+                    this.plugins.forEach((plugin) => {
+                        if (
+                                (typeof plugin.watchTime != 'undefined')
+                                && (event.seconds > plugin.watchTime + plugin.fastForwardBuffer * playbackRate)
+                        ) {
+                            preventUpdate = true;
+                        }
+                    });
+                }
+                if (preventUpdate) {
+                    return;
+                }
+                this.percent = event.percent;
+                this.currentTime = event.seconds;
+            }, 100);
         }.bind(this));
 
         // Initiate video finish procedure.
