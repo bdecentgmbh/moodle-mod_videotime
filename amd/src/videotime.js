@@ -270,18 +270,35 @@ define([
 
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
-            this.percent = event.percent;
-            this.currentTime = event.seconds;
-            if (event.seconds === event.duration) {
-                this.plugins.forEach(plugin => {
-                    if (typeof plugin.setCurrentTime == 'function') {
-                        plugin.getSessions().then(session => {
-                            plugin.setCurrentTime(session.id, event.seconds);
-                            return session;
-                        }).catch(Notification.exception);
-                    }
-                });
-            }
+            setTimeout(() => {
+                var preventUpdate = false;
+                if (event.seconds === event.duration) {
+                    this.plugins.forEach((plugin) => {
+                        if (typeof plugin.setCurrentTime == 'function') {
+                            plugin.getSession().then(session => {
+                                plugin.setCurrentTime(session.id, event.seconds);
+                            }).catch(Notification.exception);
+                        }
+                    });
+                }
+                if (Number(this.instance.preventfastforwarding)) {
+                    this.getPlaybackRate().then(playbackRate => {
+                        this.plugins.forEach((plugin) => {
+                            if (
+                                    (typeof plugin.watchTime != 'undefined')
+                                    && (event.seconds > plugin.watchTime + plugin.fastForwardBuffer * playbackRate)
+                            ) {
+                                preventUpdate = true;
+                            }
+                        });
+                    }).catch(Notification.exception);
+                }
+                if (preventUpdate) {
+                    return;
+                }
+                this.percent = event.percent;
+                this.currentTime = event.seconds;
+            }, 100);
         }.bind(this));
 
         // Initiate video finish procedure.
