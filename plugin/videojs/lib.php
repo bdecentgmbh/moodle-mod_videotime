@@ -151,18 +151,7 @@ function videotimeplugin_videojs_load_settings($instance) {
             }
         }
         if (!empty($instance['vimeo_url'])) {
-            // Regex for standard youtube link.
-            $link = '(youtube(-nocookie)?\.com/(?:watch\?v=|v/))';
-            // Regex for shortened youtube link.
-            $shortlink = '((youtu|y2u)\.be/)';
-
-            // Initial part of link.
-            $start = '~^https?://(www\.)?(' . $link . '|' . $shortlink . ')';
-            // Middle bit: Video key value.
-            $middle = '([a-z0-9\-_]+)';
-            $regex = $start . $middle . core_media_player_external::END_LINK_REGEX_PART;
-
-            if (preg_match($regex, $instance['vimeo_url'])) {
+            if (videotimeplugin_videojs_youtube($instance['vimeo_url'])) {
                 $instance['type'] = 'video/youtube';
             } else {
                 $instance['type'] = resourcelib_guess_url_mimetype($instance['vimeo_url']);
@@ -173,6 +162,27 @@ function videotimeplugin_videojs_load_settings($instance) {
     }
 
     return  (array) get_config('videotimeplugin_videojs') + (array) $instance;
+}
+
+/**
+ * Check whether url is valid youtube resource
+ *
+ * @param string $url URL to check
+ * @return bool Whether it matches youtube format
+ */
+function videotimeplugin_videojs_youtube($url) {
+    // Regex for standard youtube link.
+    $link = '(youtube(-nocookie)?\.com/(?:watch\?v=|v/))';
+    // Regex for shortened youtube link.
+    $shortlink = '((youtu|y2u)\.be/)';
+
+    // Initial part of link.
+    $start = '~^https?://(www\.)?(' . $link . '|' . $shortlink . ')';
+    // Middle bit: Video key value.
+    $middle = '([a-z0-9\-_]+)';
+    $regex = $start . $middle . core_media_player_external::END_LINK_REGEX_PART;
+
+    return !empty(preg_match($regex, $url));
 }
 
 /**
@@ -368,6 +378,7 @@ function videotimeplugin_videojs_validation($data, $files) {
         || in_array(resourcelib_guess_url_mimetype($data['vimeo_url']), $acceptedtypes)
         || mod_videotime_get_vimeo_id_from_link($data['vimeo_url'])
         || (resourcelib_get_extension($data['vimeo_url']) == 'm3u8')
+        || videotimeplugin_videojs_youtube($data['vimeo_url'])
     ) {
         return [];
     }
