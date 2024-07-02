@@ -489,7 +489,7 @@ class videotime_instance implements \renderable, \templatable {
             'instance' => $this->to_record(),
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
-            'player' => $output->render($embeddedplayer),
+            'player' => empty($embeddedplayer) ? '' : $output->render($embeddedplayer),
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
