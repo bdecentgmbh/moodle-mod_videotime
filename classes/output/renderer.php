@@ -62,7 +62,7 @@ class renderer extends plugin_renderer_base {
             if (method_exists($widget, 'get_component_name')) {
                 $component = $widget->get_component_name();
             } else {
-                $component = 'videotime';
+                $component = 'mod_videotime';
             }
 
             if (method_exists($widget, 'get_template_name')) {
