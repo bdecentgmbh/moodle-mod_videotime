@@ -38,6 +38,7 @@ $event = \mod_videotime\event\course_module_instance_list_viewed::create([
 ]);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
+$usesections = course_format_uses_sections($course->format);
 
 $PAGE->set_url('/mod/videotime/index.php', ['id' => $id]);
 $PAGE->set_title(format_string($course->fullname));
@@ -61,8 +62,9 @@ $table->attributes['class'] = 'generaltable mod_index';
 if ($course->format == 'weeks') {
     $table->head  = [get_string('week'), get_string('name')];
     $table->align = ['center', 'left'];
-} else if ($course->format == 'topics') {
-    $table->head  = [get_string('topic'), get_string('name')];
+} else if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+    $table->head  = [$strsectionname, get_string('name')];
     $table->align = ['center', 'left', 'left', 'left'];
 } else {
     $table->head  = [get_string('name')];
@@ -71,7 +73,7 @@ if ($course->format == 'weeks') {
 
 if (videotime_has_pro() && has_capability('mod/videotime:view_report', $coursecontext)) {
     // Header for viewing report links.
-    $table->head[] = '';
+    $table->head[] = get_string('view_report', 'videotime');
 }
 
 foreach ($videotimes as $videotime) {
@@ -86,15 +88,23 @@ foreach ($videotimes as $videotime) {
             format_string($videotime->name, true));
     }
 
-    if ($course->format == 'weeks' || $course->format == 'topics') {
-        $data = [$videotime->section, $link];
+    if ($course->format == 'weeks') {
+        $data = [
+            $videotime->section,
+            $link,
+        ];
+    } else if ($usesections) {
+        $data = [
+            get_section_name($course, $videotime->section),
+            $link,
+        ];
     } else {
         $data = [$link];
     }
 
     if (videotime_has_pro() && has_capability('mod/videotime:view_report', $coursecontext)) {
         $url = new moodle_url('/mod/videotime/report.php', ['id' => $videotime->coursemodule]);
-        $data[] = \html_writer::link($url, get_string('view_report', 'videotime'));
+        $data[] = \html_writer::link($url, $DB->get_field(\videotimeplugin_pro\session::TABLE, 'COUNT(DISTINCT uuid)', ['module_id' => $videotime->coursemodule]) . ' ' . get_string('views', 'videotime'));
     }
 
     $table->data[] = $data;
