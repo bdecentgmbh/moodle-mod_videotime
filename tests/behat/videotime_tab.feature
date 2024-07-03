@@ -1,4 +1,4 @@
-@mod @mod_videotime
+@mod @mod_videotime @mod_videotime_tab
 Feature: Configure videotime tabs
   In order to use a video assignment I need to place information in tabs
   As an teacher
