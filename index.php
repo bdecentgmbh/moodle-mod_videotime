@@ -104,7 +104,11 @@ foreach ($videotimes as $videotime) {
 
     if (videotime_has_pro() && has_capability('mod/videotime:view_report', $coursecontext)) {
         $url = new moodle_url('/mod/videotime/report.php', ['id' => $videotime->coursemodule]);
-        $data[] = \html_writer::link($url, $DB->get_field(\videotimeplugin_pro\session::TABLE, 'COUNT(DISTINCT uuid)', ['module_id' => $videotime->coursemodule]) . ' ' . get_string('views', 'videotime'));
+        $data[] = \html_writer::link($url, $DB->get_field(
+            \videotimeplugin_pro\session::TABLE,
+            'COUNT(DISTINCT uuid)',
+            ['module_id' => $videotime->coursemodule]
+        ) . ' ' . get_string('views', 'videotime'));
     }
 
     $table->data[] = $data;
