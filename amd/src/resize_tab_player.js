@@ -25,7 +25,7 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
         var self = this;
         let observer = new ResizeObserver(self.resize),
         mutationobserver = new MutationObserver(self.resize);
-        mutationobserver.observe(document.querySelector('#page-content'), {subtree: true, childList: true});
+        mutationobserver.observe(document.body, {subtree: true, childList: true});
         document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach((container) => {
             observer.observe(container);
         });
