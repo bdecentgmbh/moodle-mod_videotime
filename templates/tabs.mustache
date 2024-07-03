@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_videotime/tab_pane
+    @template mod_videotime/tabs
 
     This template for tab panel
 
@@ -42,8 +42,8 @@
     <div class="instance-container videotime-small-view mb-2"></div>
     <ul class="nav nav-tabs nav-pills nav-justified" id="videotimetabs-{{ id }}" role="tablist">
         {{#tabs}}
-            <li class="nav-item">
-                <a class="nav-link {{#active}}active{{/active}}" id="{{name}}-{{id}}-tab" data-toggle="tab" href="#{{name}}-{{id}}" role="tab" aria-controls="{{name}}-{{id}}" aria-selected="true">{{{label}}}</a>
+            <li class="nav-item {{#active}}active{{/active}}" id="{{name}}-{{id}}-tab" data-toggle="tab" role="tab" aria-controls="{{name}}-{{id}}" data-target="#{{name}}-{{id}}">
+                <a href="#{{name}}-{{id}}">{{{label}}}</a>
             </li>
         {{/tabs}}
     </ul>
