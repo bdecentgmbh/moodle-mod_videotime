@@ -816,5 +816,16 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023011205, 'videotime');
     }
 
+    if ($oldversion < 2024050602) {
+        $pluginman = core_plugin_manager::instance();
+
+        $progress = new progress_trace_buffer(new text_progress_trace(), true);
+        $pluginman->uninstall_plugin('videotimetab_chat', $progress);
+        $progress->finished();
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2024050602, 'videotime');
+    }
+
     return true;
 }
