@@ -22,16 +22,16 @@ Feature: Add file to Video Time
 
   @javascript @_file_upload
   Scenario: Upload MP4
-  Given I am logged in as "teacher"
-  And I am on the "Video1" "videotime activity editing" page
-  And I upload "mod/videotime/plugin/videojs/tests/fixtures/test.mp4" file to "Media file" filemanager
-  When I press "Save and display"
-  Then I should not see "Editing"
+    Given I am logged in as "teacher"
+    And I am on the "Video1" "videotime activity editing" page
+    And I upload "mod/videotime/plugin/videojs/tests/fixtures/test.mp4" file to "Media file" filemanager
+    When I press "Save and display"
+    Then I should not see "Editing"
 
   @javascript @_file_upload
   Scenario: Upload WebM
-  Given I am logged in as "teacher"
-  And I am on the "Video1" "videotime activity editing" page
-  And I upload "mod/videotime/plugin/videojs/tests/fixtures/test.webm" file to "Media file" filemanager
-  When I press "Save and display"
-  Then I should not see "Editing"
+    Given I am logged in as "teacher"
+    And I am on the "Video1" "videotime activity editing" page
+    And I upload "mod/videotime/plugin/videojs/tests/fixtures/test.webm" file to "Media file" filemanager
+    When I press "Save and display"
+    Then I should not see "Editing"
