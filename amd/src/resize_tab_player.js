@@ -57,14 +57,20 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
                 return;
             }
 
-            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance').forEach(() => {
-                let instance = container.closest('.videotimetabs').querySelector('.videotime-tab-instance'),
-                    content = container.closest('.videotimetabs').querySelector('.tab-content');
+            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance').forEach((instance) => {
+                let content = container.closest('.videotimetabs').querySelector('.tab-content'),
+                    i = 0;
                 Object.assign(instance.style, {
                     top: container.offsetTop + 'px',
                     left: container.offsetLeft + 'px',
                     maxWidth: container.offsetWidth + 'px',
                     width: container.offsetWidth + 'px'
+                });
+                container.closest('.videotimetabs').querySelectorAll('ul .nav-link, ul .nav-item').forEach(tab => {
+                    i++;
+                    if (tab.classList.contains('active')) {
+                        instance.setAttribute('data-tab', i);
+                    }
                 });
                 container.style.minHeight = instance.offsetHeight + 5 + 'px';
                 container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
