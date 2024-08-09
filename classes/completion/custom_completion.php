@@ -135,6 +135,8 @@ class custom_completion extends activity_custom_completion {
             'completion_on_finish',
             'completion_on_percent_value',
             'completion_hide_detail',
+            'completionpassgrade',
+            'completionusegrade',
         ];
     }
 }
