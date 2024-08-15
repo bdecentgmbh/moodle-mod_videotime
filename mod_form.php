@@ -152,7 +152,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         // Add fields from extensions.
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
-            component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this)]);
+            component_callback("videotimeplugin_$name", 'add_form_fields', [$mform, get_class($this), $this->get_suffix()]);
         }
 
         // Add standard buttons.
@@ -210,32 +210,39 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform =& $this->_form;
 
         if (videotime_has_pro()) {
+            $suffix = $this->get_suffix();
+
             // Completion on view and seconds.
             $group = [];
-            $group[] =& $mform->createElement('advcheckbox', 'completion_on_view_time', '',
+            $group[] =& $mform->createElement('advcheckbox', 'completion_on_view_time' . $suffix, '',
                 get_string('completion_on_view', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
             $mform->setType('completion_on_view_time_second', PARAM_INT);
-            $mform->addGroup($group, 'completion_on_view', '', [' '], false);
+            $mform->addGroup($group, 'completion_on_view' . $suffix, '', [' '], false);
             $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
 
             $group = [];
-            $group[] =& $mform->createElement('advcheckbox', 'completion_on_percent', '',
+            $group[] =& $mform->createElement('advcheckbox', 'completion_on_percent' . $suffix, '',
                 get_string('completion_on_percent', 'videotime') . ':&nbsp;');
             $group[] =& $mform->createElement('text', 'completion_on_percent_value', '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'percent_label', '', '%');
             $mform->setType('completion_on_percent_value', PARAM_INT);
-            $mform->addGroup($group, 'completion_on_percent', '', [' '], false);
+            $mform->addGroup($group, 'completion_on_percent' . $suffix, '', [' '], false);
             $mform->disabledIf('completion_on_percent_value', 'completion_on_percent', 'notchecked');
 
-            $mform->addElement('advcheckbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));
-            $mform->setType('completion_on_finish', PARAM_BOOL);
+            $mform->addElement('advcheckbox', 'completion_on_finish' . $suffix, '', get_string('completion_on_finish', 'videotime'));
+            $mform->setType('completion_on_finish' . $suffix, PARAM_BOOL);
 
-            $mform->addElement('advcheckbox', 'completion_hide_detail', '', get_string('completion_hide_detail', 'videotime'));
+            $mform->addElement('advcheckbox', 'completion_hide_detail' . $suffix, '', get_string('completion_hide_detail', 'videotime'));
             $mform->setType('completion_hide_detail', PARAM_BOOL);
 
-            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish', 'completion_hide_detail'];
+            return [
+                'completion_on_finish' . $suffix,
+                'completion_hide_detail' . $suffix,
+                'completion_on_view' . $suffix,
+                'completion_on_percent' . $suffix,
+            ];
         }
 
         return [];
@@ -248,10 +255,11 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
+        $suffix = $this->get_suffix();
         return (
-            (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second'] != 0)) ||
-            !empty($data['completion_on_finish'] ||
-            (!empty($data['completion_on_percent']) && $data['completion_on_percent_value']));
+            (!empty($data['completion_on_view_time' . $suffix]) && $data['completion_on_view_time_second'] != 0)) ||
+            !empty($data['completion_on_finish' . $suffix] ||
+            (!empty($data['completion_on_percent'] . $suffix) && $data['completion_on_percent_value']));
     }
 
     /**
@@ -265,6 +273,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         global $USER;
 
         $errors = parent::validation($data, $files);
+        $suffix = $this->get_suffix();
 
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $fs = get_file_storage();
@@ -279,14 +288,14 @@ class mod_videotime_mod_form extends moodleform_mod {
         }
 
         // Make sure seconds are set if completion on view time is enabled.
-        if (isset($data['completion_on_view_time']) && $data['completion_on_view_time']) {
+        if (isset($data['completion_on_view_time' . $suffix]) && $data['completion_on_view_time' . $suffix]) {
             if (isset($data['completion_on_view_time_second']) && !$data['completion_on_view_time_second']) {
                 $errors['completion_on_view_time_second'] = get_string('required');
             }
         }
 
         // Make sure percent value is set if completion on percent is enabled.
-        if (isset($data['completion_on_percent']) && $data['completion_on_percent']) {
+        if (isset($data['completion_on_percent' . $suffix]) && $data['completion_on_percent' . $suffix]) {
             if (isset($data['completion_on_percent_value']) && !$data['completion_on_percent_value']) {
                 $errors['completion_on_percent_value'] = get_string('required');
             }
@@ -325,5 +334,16 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $classname::data_preprocessing($defaultvalues, $this->current->instance);
             }
         }
+    }
+
+
+    /**
+      * Completion suffix
+     */
+    public function get_suffix(): string {
+        if (method_exists(parent::class, 'get_suffix')) {
+            return parent::get_suffix();
+        }
+        return '';
     }
 }
