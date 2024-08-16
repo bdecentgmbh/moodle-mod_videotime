@@ -272,6 +272,8 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->vimeo_url = '';
     }
 
+    $moduleinstance->viewpercentgrade = $moduleinstance->viewpercentgrade ?? 0;
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
