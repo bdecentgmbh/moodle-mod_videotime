@@ -231,10 +231,20 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addGroup($group, 'completion_on_percent' . $suffix, '', [' '], false);
             $mform->disabledIf('completion_on_percent_value', 'completion_on_percent', 'notchecked');
 
-            $mform->addElement('advcheckbox', 'completion_on_finish' . $suffix, '', get_string('completion_on_finish', 'videotime'));
+            $mform->addElement(
+                'advcheckbox',
+                'completion_on_finish' . $suffix,
+                '',
+                get_string('completion_on_finish', 'videotime')
+            );
             $mform->setType('completion_on_finish' . $suffix, PARAM_BOOL);
 
-            $mform->addElement('advcheckbox', 'completion_hide_detail' . $suffix, '', get_string('completion_hide_detail', 'videotime'));
+            $mform->addElement(
+                'advcheckbox',
+                'completion_hide_detail' . $suffix,
+                '',
+                get_string('completion_hide_detail', 'videotime')
+            );
             $mform->setType('completion_hide_detail', PARAM_BOOL);
 
             return [
@@ -338,7 +348,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
 
     /**
-      * Completion suffix
+     * Completion suffix
      */
     public function get_suffix(): string {
         if (method_exists(parent::class, 'get_suffix')) {
