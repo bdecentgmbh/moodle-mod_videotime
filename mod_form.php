@@ -228,10 +228,20 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->addGroup($group, 'completion_on_percent', '', [' '], false);
             $mform->disabledIf('completion_on_percent_value', 'completion_on_percent', 'notchecked');
 
-            $mform->addElement('advcheckbox', 'completion_on_finish', '', get_string('completion_on_finish', 'videotime'));
-            $mform->setType('completion_on_finish', PARAM_BOOL);
+            $mform->addElement(
+                'advcheckbox',
+                'completion_on_finish' . $suffix,
+                '',
+                get_string('completion_on_finish', 'videotime')
+            );
+            $mform->setType('completion_on_finish' . $suffix, PARAM_BOOL);
 
-            $mform->addElement('advcheckbox', 'completion_hide_detail', '', get_string('completion_hide_detail', 'videotime'));
+            $mform->addElement(
+                'advcheckbox',
+                'completion_hide_detail' . $suffix,
+                '',
+                get_string('completion_hide_detail', 'videotime')
+            );
             $mform->setType('completion_hide_detail', PARAM_BOOL);
 
             return ['completion_on_view', 'completion_on_percent', 'completion_on_finish', 'completion_hide_detail'];
