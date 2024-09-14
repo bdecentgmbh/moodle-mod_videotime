@@ -686,8 +686,14 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getPlaybackRate = function() {
-        return this.player.getPlaybackRate();
+    VideoTime.prototype.getPlaybackRate = async function() {
+        try {
+            const playbackRate = await this.player.getPlaybackRate();
+            return playbackRate;
+        } catch (e) {
+            Log.debug(e);
+            return 0;
+        }
     };
 
     /**
@@ -714,8 +720,12 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getCurrentPosition = function() {
-        return this.player.getCurrentTime();
+    VideoTime.prototype.getCurrentPosition = async function() {
+        let position = await this.player.getCurrentTime();
+        this.plugins.forEach(async plugin => {
+            position = await plugin.getCurrentPosition(position);
+        });
+        return position;
     };
 
     return VideoTime;

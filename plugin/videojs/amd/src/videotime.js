@@ -94,6 +94,9 @@ define([
         return true;
     };
 
+    /**
+     * Register player events to respond to user interaction and play progress.
+     */
     VideoTime.prototype.addListeners = function () {
         // If this is a tab play set time cues and listener.
         $($("#" + this.elementId).closest(".videotimetabs")).each(
@@ -295,11 +298,17 @@ define([
         });
     };
 
-    VideoTime.prototype.getCurrentPosition = function () {
-        return new Promise(resolve => {
-            resolve(this.player.currentTime());
-            return true;
+    /**
+     * Get current time of player
+     *
+     * @returns {Promise}
+     */
+    VideoTime.prototype.getCurrentPosition = async function () {
+        let position = await this.player.currentTime();
+        this.plugins.forEach(plugin => {
+            position = plugin.getCurrentPosition(position);
         });
+        return position;
     };
 
     return VideoTime;
