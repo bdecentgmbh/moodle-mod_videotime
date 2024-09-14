@@ -151,7 +151,7 @@ define([
     /**
      * Register player events to respond to user interaction and play progress.
      */
-    VideoTime.prototype.addListeners = function() {
+    VideoTime.prototype.addListeners = async function() {
         if (!this.player) {
             Log.debug('Player was not properly initialized for course module ' + this.cmId);
             return;
@@ -260,9 +260,7 @@ define([
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
-        this.player.getPlaybackRate().then(function(playbackRate) {
-            this.playbackRate = playbackRate;
-        }.bind(this)).catch(Notification.exception);
+        this.playbackRate = await this.getPlaybackRate();
 
         this.player.on('playbackratechange', function(event) {
             this.playbackRate = event.playbackRate;
@@ -686,8 +684,14 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getPlaybackRate = function() {
-        return this.player.getPlaybackRate();
+    VideoTime.prototype.getPlaybackRate = async function() {
+        try {
+            const playbackRate = await this.player.getPlaybackRate();
+            return playbackRate;
+        } catch (e) {
+            Log.debug(e);
+            return 0;
+        }
     };
 
     /**
@@ -714,8 +718,12 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getCurrentPosition = function() {
-        return this.player.getCurrentTime();
+    VideoTime.prototype.getCurrentPosition = async function() {
+        let position = await this.player.getCurrentTime();
+        this.plugins.forEach(async plugin => {
+            position = await plugin.getCurrentPosition(position);
+        });
+        return position;
     };
 
     return VideoTime;
