@@ -84,7 +84,7 @@ export default class VideoTime extends VideoTimeBase {
     /**
      * Register player events to respond to user interaction and play progress.
      */
-    addListeners() {
+    async addListeners() {
         // If this is a tab play set time cues and listener.
         $($("#" + this.elementId).closest(".videotimetabs")).each(
             function(i, tabs) {
@@ -314,11 +314,12 @@ export default class VideoTime extends VideoTimeBase {
      *
      * @returns {Promise}
      */
-    getCurrentPosition() {
-        return new Promise(resolve => {
-            resolve(this.player.currentTime());
-            return true;
+    async getCurrentPosition() {
+        let position = await this.player.currentTime();
+        this.plugins.forEach(plugin => {
+            position = plugin.getCurrentPosition(position);
         });
+        return position;
     }
 
     /**

@@ -655,7 +655,11 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.getCurrentPosition = async function() {
-        return await this.player.getCurrentTime();
+        let position = await this.player.getCurrentTime();
+        this.plugins.forEach(async plugin => {
+            position = await plugin.getCurrentPosition(position);
+        });
+        return position;
     };
 
     return VideoTime;
