@@ -54,7 +54,6 @@ use mod_videotime\local\dash_framework\structure\videotime_table;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class videotime_sessions_data_source extends abstract_data_source {
-
     /**
      * Constructor.
      *
@@ -140,7 +139,6 @@ class videotime_sessions_data_source extends abstract_data_source {
         if (class_exists('\core_course\customfield\course_handler')) {
             $handler = \core_course\customfield\course_handler::create();
             foreach ($handler->get_fields() as $field) {
-
                 $alias = 'c_f_' . strtolower($field->get('shortname'));
                 $select = $alias . '.value';
 
@@ -149,14 +147,22 @@ class videotime_sessions_data_source extends abstract_data_source {
                         $definitions[] = new bool_filter($alias, $select, $field->get_formatted_name());
                         break;
                     case 'date':
-                        $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
-                            $field->get_formatted_name()));
+                        $filtercollection->add_filter(new date_filter(
+                            $alias,
+                            $select,
+                            date_filter::DATE_FUNCTION_FLOOR,
+                            $field->get_formatted_name()
+                        ));
                         break;
                     case 'textarea':
                         break;
                     default:
-                        $filtercollection->add_filter(new customfield_filter($alias, $select, $field,
-                            $field->get_formatted_name()));
+                        $filtercollection->add_filter(new customfield_filter(
+                            $alias,
+                            $select,
+                            $field,
+                            $field->get_formatted_name()
+                        ));
                         break;
                 }
             }
@@ -164,7 +170,6 @@ class videotime_sessions_data_source extends abstract_data_source {
             global $DB;
 
             foreach ($DB->get_records('course_info_field') as $field) {
-
                 $alias = 'c_f_' . strtolower($field->shortname);
                 $select = $alias . '.data';
 
@@ -173,14 +178,22 @@ class videotime_sessions_data_source extends abstract_data_source {
                         $definitions[] = new bool_filter($alias, $select, $field->fullname);
                         break;
                     case 'date':
-                        $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
-                            $field->fullname));
+                        $filtercollection->add_filter(new date_filter(
+                            $alias,
+                            $select,
+                            date_filter::DATE_FUNCTION_FLOOR,
+                            $field->fullname
+                        ));
                         break;
                     case 'textarea':
                         break;
                     default:
-                        $filtercollection->add_filter(new customfield_filter($alias, $select, $field,
-                            $field->fullname));
+                        $filtercollection->add_filter(new customfield_filter(
+                            $alias,
+                            $select,
+                            $field,
+                            $field->fullname
+                        ));
                         break;
                 }
             }

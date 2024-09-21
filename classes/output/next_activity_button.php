@@ -40,8 +40,7 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @copyright   2019 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class next_activity_button implements \templatable, \renderable {
-
+class next_activity_button implements \renderable, \templatable {
     /**
      * @var \cm_info
      */
@@ -221,8 +220,10 @@ class next_activity_button implements \templatable, \renderable {
 
             // Only add activities that aren't in stealth mode.
             if (videotime_is_totara()) {
-                if (!$cm->visibleoncoursepage || ($cm->visible &&
-                        ($section = $modinfo->get_section_info($cm->sectionnum)) && !$section->visible)) {
+                if (
+                    !$cm->visibleoncoursepage || ($cm->visible &&
+                        ($section = $modinfo->get_section_info($cm->sectionnum)) && !$section->visible)
+                ) {
                     continue;
                 }
             }

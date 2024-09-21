@@ -34,7 +34,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_feed extends external_api {
-
     /**
      * Get parameter definition for send_signal.
      *
@@ -78,13 +77,15 @@ class get_feed extends external_api {
 
         $data = json_decode($record->data) ?? new stdClass();
 
-        if (empty($data->feed || !$DB->get_record(
-            'videotimeplugin_live_peer',
-            [
+        if (
+            empty($data->feed || !$DB->get_record(
+                'videotimeplugin_live_peer',
+                [
                 'id' => $data->feed,
                 'status' => 0,
-            ]
-        ))) {
+                ]
+            ))
+        ) {
             return [
                 'feed' => 0,
             ];

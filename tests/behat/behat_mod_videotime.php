@@ -27,7 +27,7 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Mink\Exception\ExpectationException;
 
 /**
  * Steps definitions for users.
@@ -38,7 +38,6 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_mod_videotime extends behat_base {
-
     /**
      * Convert page names to URLs for steps like 'When I am on the "[page name]" page'.
      *
@@ -74,8 +73,10 @@ class behat_mod_videotime extends behat_base {
 
         switch (strtolower($type)) {
             case 'embed options':
-                return new moodle_url('/mod/videotime/options.php',
-                        ['id' => $this->get_cm_by_videotime_name($identifier)->id]);
+                return new moodle_url(
+                    '/mod/videotime/options.php',
+                    ['id' => $this->get_cm_by_videotime_name($identifier)->id]
+                );
 
             default:
                 throw new Exception("Unrecognised Video Time page type '{$type}'.");

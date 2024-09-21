@@ -29,7 +29,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_videotime_activity_structure_step extends backup_activity_structure_step {
-
     /**
      * Annotate files from plugin configuration
      * @param backup_nested_element $videotime the backup structure of the activity
@@ -61,7 +60,7 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
     protected function define_structure() {
         global $CFG;
 
-        require_once($CFG->dirroot.'/mod/videotime/lib.php');
+        require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
         // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
@@ -110,6 +109,5 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
 
         // Return the root element (videotime), wrapped into standard activity structure.
         return $this->prepare_activity_structure($module);
-
     }
 }

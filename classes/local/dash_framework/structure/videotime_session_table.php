@@ -61,7 +61,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package mod_videotime
  */
 class videotime_session_table extends table {
-
     /**
      * Build a new table.
      */
