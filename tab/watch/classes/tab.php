@@ -36,7 +36,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package videotimetab_watch
  */
 class tab extends \mod_videotime\local\tabs\tab {
-
     /**
      * Get tab panel content
      *

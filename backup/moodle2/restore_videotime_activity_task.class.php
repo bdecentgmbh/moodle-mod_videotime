@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_st
  * provides all the settings and steps to perform one * complete restore of the activity
  */
 class restore_videotime_activity_task extends restore_activity_task {
-
     /**
      * Define (add) particular settings this activity can have
      */

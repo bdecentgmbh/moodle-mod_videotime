@@ -28,7 +28,6 @@
  * Provides the step to perform back up of sublugin data
  */
 class backup_videotimetab_information_subplugin extends backup_subplugin {
-
     /**
      * Defined suplugin structure step
      */
@@ -37,16 +36,21 @@ class backup_videotimetab_information_subplugin extends backup_subplugin {
         // Create XML elements.
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
-        $subplugintablesettings = new backup_nested_element('videotimetab_information',
-                null, ['text', 'format', 'videotime', 'name']);
+        $subplugintablesettings = new backup_nested_element(
+            'videotimetab_information',
+            null,
+            ['text', 'format', 'videotime', 'name']
+        );
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
         $subpluginwrapper->add_child($subplugintablesettings);
 
         // Set source to populate the data.
-        $subplugintablesettings->set_source_table('videotimetab_information',
-                ['videotime' => backup::VAR_ACTIVITYID]);
+        $subplugintablesettings->set_source_table(
+            'videotimetab_information',
+            ['videotime' => backup::VAR_ACTIVITYID]
+        );
 
         return $subplugin;
     }

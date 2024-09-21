@@ -38,7 +38,6 @@ require_once($CFG->dirroot.'/mod/videotime/lib.php');
  * Get videotime instance object for cm.
  */
 trait get_videotime {
-
     /**
      * Describes the parameters for get_videotime.
      *

@@ -33,11 +33,18 @@ function xmldb_videotime_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2018080205) {
-
         // Define field completion_on_view_time to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_view_time', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
-            'timemodified');
+        $field = new xmldb_field(
+            'completion_on_view_time',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'timemodified'
+        );
 
         // Conditionally launch add field completion_on_view_time.
         if (!$dbman->field_exists($table, $field)) {
@@ -46,8 +53,16 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_view_time_second to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_view_time_second', XMLDB_TYPE_INTEGER, '10', null, null, null, null,
-            'completion_on_view_time');
+        $field = new xmldb_field(
+            'completion_on_view_time_second',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            null,
+            null,
+            null,
+            'completion_on_view_time'
+        );
 
         // Conditionally launch add field completion_on_view_time_second.
         if (!$dbman->field_exists($table, $field)) {
@@ -56,8 +71,16 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_finish to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_finish', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
-            'completion_on_view_time_second');
+        $field = new xmldb_field(
+            'completion_on_finish',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completion_on_view_time_second'
+        );
 
         // Conditionally launch add field completion_on_finish.
         if (!$dbman->field_exists($table, $field)) {
@@ -69,11 +92,18 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018080213) {
-
         // Define field completion_on_percent to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_percent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
-            'completion_on_finish');
+        $field = new xmldb_field(
+            'completion_on_percent',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completion_on_finish'
+        );
 
         // Conditionally launch add field completion_on_percent.
         if (!$dbman->field_exists($table, $field)) {
@@ -82,8 +112,16 @@ function xmldb_videotime_upgrade($oldversion) {
 
         // Define field completion_on_percent_value to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_on_percent_value', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0',
-            'completion_on_percent');
+        $field = new xmldb_field(
+            'completion_on_percent_value',
+            XMLDB_TYPE_INTEGER,
+            '3',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completion_on_percent'
+        );
 
         // Conditionally launch add field completion_on_percent_value.
         if (!$dbman->field_exists($table, $field)) {
@@ -95,11 +133,18 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018080215) {
-
         // Define field autoplay to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('autoplay', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
-            'completion_on_percent_value');
+        $field = new xmldb_field(
+            'autoplay',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completion_on_percent_value'
+        );
 
         // Conditionally launch add field autoplay.
         if (!$dbman->field_exists($table, $field)) {
@@ -219,7 +264,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2018080218) {
-
         // Define field responsive to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('responsive', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'width');
@@ -234,7 +278,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019031901) {
-
         // Define field label_mode to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('label_mode', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'responsive');
@@ -249,7 +292,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019071200) {
-
         // Define field viewpercentgrade to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('viewpercentgrade', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'label_mode');
@@ -264,7 +306,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019082800) {
-
         // Define field next_activity_button to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('next_activity_button', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'viewpercentgrade');
@@ -288,7 +329,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019082801) {
-
         // Define field resume_playback to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('resume_playback', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'next_activity_id');
@@ -303,7 +343,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019082901) {
-
         // Define field next_activity_auto to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('next_activity_auto', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'next_activity_id');
@@ -318,7 +357,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019100201) {
-
         // Define field preview_image to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('preview_image', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'resume_playback');
@@ -333,7 +371,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019101000) {
-
         // Define field show_description to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('show_description', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'preview_image');
@@ -384,7 +421,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019101100) {
-
         // Rename field preview_image on table videotime to preview_picture.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('preview_image', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'resume_playback');
@@ -397,7 +433,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019101502) {
-
         // Define field columns to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('columns', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'show_viewed_duration');
@@ -412,7 +447,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021021300) {
-
         // Define field preventfastforwarding to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('preventfastforwarding', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'columns');
@@ -427,11 +461,18 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021051906) {
-
         // Define field completion_hide_detail to be added to videotime.
         $table = new xmldb_table('videotime');
-        $field = new xmldb_field('completion_hide_detail', XMLDB_TYPE_INTEGER, '1', null,
-            XMLDB_NOTNULL, null, '0', 'completion_on_percent_value');
+        $field = new xmldb_field(
+            'completion_hide_detail',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completion_on_percent_value'
+        );
 
         // Conditionally launch add field completion_hide_detail.
         if (!$dbman->field_exists($table, $field)) {
@@ -443,7 +484,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021081000) {
-
         // Define field enabletabs to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('enabletabs', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'preventfastforwarding');
@@ -503,7 +543,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022022100) {
-
         // Changing the default of field controls on table videotime to 1.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('controls', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'background');
@@ -518,7 +557,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022022800) {
-
         // Changing nullability of field height on table videotime to not null.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('height', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'color');
@@ -559,7 +597,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022022802) {
-
         $DB->set_field('videotime', 'controls', 1, ['controls' => 0]);
 
         // Videotime savepoint reached.
@@ -580,8 +617,13 @@ function xmldb_videotime_upgrade($oldversion) {
             && key_exists('teacher', $roles)
             && $capabilities[$roles['teacher']] === (string)CAP_ALLOW
         ) {
-            assign_capability('mod/videotime:view_report', CAP_ALLOW,
-                    $roles['editingteacher'], $context->id, true);
+            assign_capability(
+                'mod/videotime:view_report',
+                CAP_ALLOW,
+                $roles['editingteacher'],
+                $context->id,
+                true
+            );
         }
 
         // Videotime savepoint reached.
@@ -589,7 +631,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022040801) {
-
         // Define field show_description_in_player to be added to videotime.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field('show_description_in_player', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'show_description');
@@ -791,7 +832,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023011205) {
-
         // Changing the default of field show_description_in_player on table videotime to 1.
         $table = new xmldb_table('videotime');
         $field = new xmldb_field(

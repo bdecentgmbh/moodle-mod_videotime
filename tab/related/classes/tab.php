@@ -38,7 +38,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package videotimetab_related
  */
 class tab extends \mod_videotime\local\tabs\tab {
-
     /**
      * Get tab panel content
      *
@@ -90,8 +89,12 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @param moodle_form $mform form to modify
      */
     public static function add_form_fields($mform) {
-        $mform->addElement('advcheckbox', 'enable_related', get_string('pluginname', 'videotimetab_related'),
-            get_string('showtab', 'videotime'));
+        $mform->addElement(
+            'advcheckbox',
+            'enable_related',
+            get_string('pluginname', 'videotimetab_related'),
+            get_string('showtab', 'videotime')
+        );
         $mform->setDefault('enable_related', get_config('videotimetab_related', 'default'));
         $mform->disabledIf('enable_related', 'enabletabs');
 
@@ -183,8 +186,15 @@ class tab extends \mod_videotime\local\tabs\tab {
             $context = context_module::instance($cm->id);
             $draftitemid = file_get_submitted_draft_itemid('relatedinformation');
             $defaultvalues['relatedinformation'] = [
-                'text' => file_prepare_draft_area($draftitemid, $context->id,
-                    'videotimetab_related', 'text', 0, [], $record->text),
+                'text' => file_prepare_draft_area(
+                    $draftitemid,
+                    $context->id,
+                    'videotimetab_related',
+                    'text',
+                    0,
+                    [],
+                    $record->text
+                ),
                 'format' => $record->format,
                 'itemid' => $draftitemid,
             ];

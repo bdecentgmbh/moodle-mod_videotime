@@ -40,7 +40,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package videotimetab_chapter
  */
 class tab extends \mod_videotime\local\tabs\tab {
-
     /**
      * Get tab panel content
      *
@@ -66,8 +65,12 @@ class tab extends \mod_videotime\local\tabs\tab {
      * @param moodle_form $mform form to modify
      */
     public static function add_form_fields($mform) {
-        $mform->addElement('advcheckbox', 'enable_chapter', get_string('pluginname', 'videotimetab_chapter'),
-            get_string('showtab', 'videotime'));
+        $mform->addElement(
+            'advcheckbox',
+            'enable_chapter',
+            get_string('pluginname', 'videotimetab_chapter'),
+            get_string('showtab', 'videotime')
+        );
         $mform->setDefault('enable_chapter', get_config('videotimetab_chapter', 'default'));
         $mform->disabledIf('enable_chapter', 'enabletabs');
     }

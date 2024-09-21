@@ -38,7 +38,6 @@ use core_component;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class texttrack extends \core_search\base_mod {
-
     /**
      * Returns recordset containing required data for indexing text tracks.
      *
@@ -46,11 +45,14 @@ class texttrack extends \core_search\base_mod {
      * @param \context|null $context Optional context to restrict scope of returned results
      * @return moodle_recordset|null Recordset (or null if no results)
      */
-    public function get_document_recordset($modifiedfrom = 0, \context $context = null) {
+    public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
 
-        list ($contextjoin, $contextparams) = $this->get_context_restriction_sql(
-                $context, 'videotime', 'v');
+         [$contextjoin, $contextparams] = $this->get_context_restriction_sql(
+             $context,
+             'videotime',
+             'v'
+         );
         if ($contextjoin === null) {
             return null;
         }

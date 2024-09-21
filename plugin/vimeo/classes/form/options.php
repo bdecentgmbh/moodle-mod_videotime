@@ -43,7 +43,6 @@ require_once("$CFG->libdir/formslib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class options extends moodleform {
-
     /**
      * @var array Vimeo embed option fields.
      */
@@ -77,9 +76,14 @@ class options extends moodleform {
         $instance = $this->_customdata['instance'];
 
         if (!videotime_has_pro()) {
-            $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro1'),
-                html_writer::img('https://link.bdecent.de/videotimepro1/image.jpg', '',
-                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
+            $mform->addElement('static', '', '', html_writer::link(
+                new moodle_url('https://link.bdecent.de/videotimepro1'),
+                html_writer::img(
+                    'https://link.bdecent.de/videotimepro1/image.jpg',
+                    '',
+                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']
+                )
+            ));
         }
 
         $mform->addElement('header', 'embed_options', get_string('embed_options', 'videotime'));
@@ -198,9 +202,14 @@ class options extends moodleform {
         $this->add_action_buttons();
 
         if (!videotime_has_pro()) {
-            $mform->addElement('static', '', '', html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro2'),
-                html_writer::img('https://link.bdecent.de/videotimepro2/image.jpg', '',
-                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px'])));
+            $mform->addElement('static', '', '', html_writer::link(
+                new moodle_url('https://link.bdecent.de/videotimepro2'),
+                html_writer::img(
+                    'https://link.bdecent.de/videotimepro2/image.jpg',
+                    '',
+                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']
+                )
+            ));
         }
     }
 

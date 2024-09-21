@@ -44,7 +44,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package mod_videotime
  */
 class videotime_instance implements \renderable, \templatable {
-
     /** const int */
     const NORMAL_MODE = 0;
 
@@ -127,7 +126,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return videotime_instance
      * @throws \dml_exception
      */
-    public static function instance_by_id($id, $token = '') : videotime_instance {
+    public static function instance_by_id($id, $token = ''): videotime_instance {
         global $DB;
 
         $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], "*, '{$token}' AS token", MUST_EXIST));
@@ -202,7 +201,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return array
      * @throws \dml_exception
      */
-    public function get_force_settings() : array {
+    public function get_force_settings(): array {
         if (is_null($this->forcesettings)) {
             $config = get_config('videotime', 'forced');
             $this->forcesettings = $config ? array_fill_keys(explode(',', $config), true) : [];
@@ -227,7 +226,7 @@ class videotime_instance implements \renderable, \templatable {
      * @return bool
      * @throws \dml_exception
      */
-    public function is_field_forced($fieldname) : bool {
+    public function is_field_forced($fieldname): bool {
         return isset($this->get_force_settings()[$fieldname])
             && $this->get_force_settings()[$fieldname];
     }
@@ -241,11 +240,14 @@ class videotime_instance implements \renderable, \templatable {
      */
     public function get_forced_value($fieldname) {
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $plugin) {
-            if (!empty(component_callback(
-                "videotimeplugin_$plugin", 'forced_settings',
-                [$this->record, $this->forcesettings],
-                $this->forcesettings
-            )[$fieldname])) {
+            if (
+                !empty(component_callback(
+                    "videotimeplugin_$plugin",
+                    'forced_settings',
+                    [$this->record, $this->forcesettings],
+                    $this->forcesettings
+                )[$fieldname])
+            ) {
                 return get_config("videotimeplugin_$plugin", $fieldname);
             }
         }
@@ -310,8 +312,14 @@ class videotime_instance implements \renderable, \templatable {
             && !class_exists('core\\output\\activity_header')
             && $PAGE->pagetype != $pagecourseid
         ) {
-            $record->intro  = file_rewrite_pluginfile_urls($record->intro, 'pluginfile.php', $this->get_context()->id,
-                'mod_videotime', 'intro', null);
+            $record->intro  = file_rewrite_pluginfile_urls(
+                $record->intro,
+                'pluginfile.php',
+                $this->get_context()->id,
+                'mod_videotime',
+                'intro',
+                null
+            );
             $record->intro = format_text($record->intro, $record->introformat, [
                 'noclean' => true,
             ]);
@@ -320,8 +328,14 @@ class videotime_instance implements \renderable, \templatable {
             $record->intro = '';
         }
 
-        $record->video_description = file_rewrite_pluginfile_urls($record->video_description, 'pluginfile.php',
-            $this->get_context()->id, 'mod_videotime', 'video_description', 0);
+        $record->video_description = file_rewrite_pluginfile_urls(
+            $record->video_description,
+            'pluginfile.php',
+            $this->get_context()->id,
+            'mod_videotime',
+            'video_description',
+            0
+        );
         $record->video_description = format_text($record->video_description, $record->video_description_format, [
             'noclean' => true,
         ]);
@@ -351,8 +365,10 @@ class videotime_instance implements \renderable, \templatable {
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             $advanced = array_merge($advanced, explode(',', get_config("videotimeplugin_$name", 'advanced')));
         }
-        $forced = array_fill_keys(array_filter(array_merge(explode(',', get_config('videotimeplugin_pro', 'forced'))
-            , explode(',', get_config('videotimeplugin_repository', 'forced')))), true);
+        $forced = array_fill_keys(array_filter(array_merge(
+            explode(',', get_config('videotimeplugin_pro', 'forced')),
+            explode(',', get_config('videotimeplugin_repository', 'forced'))
+        )), true);
         if (!empty($instance)) {
             foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
                 $forced = component_callback(
@@ -368,7 +384,6 @@ class videotime_instance implements \renderable, \templatable {
             $mform->setAdvanced($fieldname);
         }
         if (key_exists($fieldname, $forced)) {
-
             if (in_array($fieldname, self::$optionfields)) {
                 $label = get_string('option_' . $fieldname, 'videotime');
             } else {

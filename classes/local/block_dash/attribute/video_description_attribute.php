@@ -48,8 +48,14 @@ class video_description_attribute extends abstract_field_attribute {
 
         $summary = '';
         if ($data && $course = $DB->get_record('course', ['id' => $data])) {
-            $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php',
-                \context_course::instance($course->id)->id, 'course', 'summary', null);
+            $summary = file_rewrite_pluginfile_urls(
+                $course->summary,
+                'pluginfile.php',
+                \context_course::instance($course->id)->id,
+                'course',
+                'summary',
+                null
+            );
             $summary = format_text($summary, $course->summaryformat);
         }
 

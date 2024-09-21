@@ -40,8 +40,7 @@ require_once("$CFG->dirroot/webservice/tests/helpers.php");
  * @group mod_videotime_external_test
  * @covers \mod_videotime\external\external
  */
-class external_test extends advanced_testcase {
-
+final class external_test extends advanced_testcase {
     /** @var stdClass */
     private $course;
 
@@ -65,13 +64,14 @@ class external_test extends advanced_testcase {
         parent::setUp();
     }
 
-    public function tearDown() : void {
+    public function tearDown(): void {
         $this->course = null;
         $this->videotimeinstance = null;
         $this->student = null;
+        parent::tearDown();
     }
 
-    public function test_get_videotime() {
+    public function test_get_videotime(): void {
         $this->resetAfterTest();
 
         $this->setUser($this->student);
@@ -81,7 +81,7 @@ class external_test extends advanced_testcase {
         $this->assertEquals(1, $instance->responsive);
     }
 
-    public function test_view_videotime() {
+    public function test_view_videotime(): void {
         $this->resetAfterTest();
 
         $this->setUser($this->student);

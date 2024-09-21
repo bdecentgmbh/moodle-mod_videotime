@@ -31,14 +31,13 @@ use external_function_parameters;
 use external_value;
 use mod_videotime\videotime_instance;
 
-require_once($CFG->libdir.'/externallib.php');
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 /**
  * Set VideoTime activity as viewed, trigger view event, etc.
  */
 trait view_videotime {
-
     /**
      * Describes the parameters for view_videotime.
      *

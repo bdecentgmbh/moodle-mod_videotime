@@ -67,8 +67,8 @@ class mobile {
         $videotime = $DB->get_record('videotime', ['id' => $cm->instance]);
 
         $videotime->name = format_string($videotime->name);
-        list($videotime->intro, $videotime->introformat) =
-            util::format_text($videotime->intro, $videotime->introformat, $context->id, 'mod_videotime', 'intro');
+        [$videotime->intro, $videotime->introformat] =
+            external_format_text($videotime->intro, $videotime->introformat, $context->id, 'mod_videotime', 'intro');
 
         $url = new moodle_url('/mod/videotime/player.php', [
             'id' => $cm->id,
@@ -112,7 +112,6 @@ class mobile {
             'javascript' => file_get_contents($CFG->dirroot . '/mod/videotime/appjs/player.js') .
                 file_get_contents("$CFG->dirroot/mod/videotime/appjs/view_init.js"),
         ];
-
     }
 
     /**
