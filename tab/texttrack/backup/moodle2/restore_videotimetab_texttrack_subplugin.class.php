@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_st
  * needed to restore one videotimetab_texttrack subplugin.
  */
 class restore_videotimetab_texttrack_subplugin extends restore_subplugin {
-
     /**
      * Define subplugin structure
      *
@@ -62,6 +61,5 @@ class restore_videotimetab_texttrack_subplugin extends restore_subplugin {
         $oldvideotime = $data->videotime;
         $data->videotime = $this->get_new_parentid('videotime');
         $DB->insert_record('videotimetab_texttrack', $data);
-
     }
 }

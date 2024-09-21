@@ -27,36 +27,64 @@ use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('defaultsettings', new lang_string('default', 'videotime') . ' ' .
         new lang_string('settings'), ''));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_live/autoplay', new lang_string('option_autoplay', 'videotime'),
-        new lang_string('option_autoplay_help', 'videotime'), '1'));
+        'videotimeplugin_live/autoplay',
+        new lang_string('option_autoplay', 'videotime'),
+        new lang_string('option_autoplay_help', 'videotime'),
+        '1'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_live/responsive', new lang_string('option_responsive', 'videotime'),
-        new lang_string('option_responsive_help', 'videotime'), '1'));
+        'videotimeplugin_live/responsive',
+        new lang_string('option_responsive', 'videotime'),
+        new lang_string('option_responsive_help', 'videotime'),
+        '1'
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_live/height', new lang_string('option_height', 'videotime'),
-        new lang_string('option_height_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_live/height',
+        new lang_string('option_height', 'videotime'),
+        new lang_string('option_height_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_live/width', new lang_string('option_width', 'videotime'),
-        new lang_string('option_width_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_live/width',
+        new lang_string('option_width', 'videotime'),
+        new lang_string('option_width_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
     $settings->add(
-        new admin_setting_configcheckbox('videotimeplugin_live/controls', new lang_string('option_controls', 'videotime'),
-        new lang_string('option_controls_help', 'videotime'), '1'));
-
-    $settings->add(new admin_setting_configcheckbox('videotimeplugin_live/muted', new lang_string('option_muted', 'videotime'),
-        new lang_string('option_muted_help', 'videotime'), '0'));
+        new admin_setting_configcheckbox(
+            'videotimeplugin_live/controls',
+            new lang_string('option_controls', 'videotime'),
+            new lang_string('option_controls_help', 'videotime'),
+            '1'
+        )
+    );
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_live/playsinline', new lang_string('option_playsinline', 'videotime'),
-        new lang_string('option_playsinline_help', 'videotime'), '1'));
+        'videotimeplugin_live/muted',
+        new lang_string('option_muted', 'videotime'),
+        new lang_string('option_muted_help', 'videotime'),
+        '0'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_live/playsinline',
+        new lang_string('option_playsinline', 'videotime'),
+        new lang_string('option_playsinline_help', 'videotime'),
+        '1'
+    ));
 
     $options = [
         'accepted_types' => [
