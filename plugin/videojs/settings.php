@@ -27,43 +27,76 @@ use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('defaultsettings', get_string('default', 'videotime') . ' ' .
         get_string('settings'), ''));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_videojs/autoplay', get_string('option_autoplay', 'videotime'),
-        get_string('option_autoplay_help', 'videotime'), '1'));
+        'videotimeplugin_videojs/autoplay',
+        get_string('option_autoplay', 'videotime'),
+        get_string('option_autoplay_help', 'videotime'),
+        '1'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_videojs/responsive', get_string('option_responsive', 'videotime'),
-        get_string('option_responsive_help', 'videotime'), '1'));
+        'videotimeplugin_videojs/responsive',
+        get_string('option_responsive', 'videotime'),
+        get_string('option_responsive_help', 'videotime'),
+        '1'
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_videojs/height', get_string('option_height', 'videotime'),
-        get_string('option_height_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_videojs/height',
+        get_string('option_height', 'videotime'),
+        get_string('option_height_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_videojs/width', get_string('option_width', 'videotime'),
-        get_string('option_width_help', 'videotime'), '', PARAM_INT));
-
-    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/controls', get_string('option_controls', 'videotime'),
-        get_string('option_controls_help', 'videotime'), '1'));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_videojs/width',
+        get_string('option_width', 'videotime'),
+        get_string('option_width_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_videojs/option_loop', get_string('option_loop', 'videotime'),
-        get_string('option_loop_help', 'videotime'), '0'));
-
-    $settings->add(new admin_setting_configcheckbox('videotimeplugin_videojs/muted', get_string('option_muted', 'videotime'),
-        get_string('option_muted_help', 'videotime'), '0'));
-
-    $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_videojs/playsinline', get_string('option_playsinline', 'videotime'),
-        get_string('option_playsinline_help', 'videotime'), '1'));
+        'videotimeplugin_videojs/controls',
+        get_string('option_controls', 'videotime'),
+        get_string('option_controls_help', 'videotime'),
+        '1'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_videojs/speed', get_string('option_speed', 'videotime'),
-        get_string('option_speed_help', 'videotime'), '1'));
+        'videotimeplugin_videojs/option_loop',
+        get_string('option_loop', 'videotime'),
+        get_string('option_loop_help', 'videotime'),
+        '0'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_videojs/muted',
+        get_string('option_muted', 'videotime'),
+        get_string('option_muted_help', 'videotime'),
+        '0'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_videojs/playsinline',
+        get_string('option_playsinline', 'videotime'),
+        get_string('option_playsinline_help', 'videotime'),
+        '1'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_videojs/speed',
+        get_string('option_speed', 'videotime'),
+        get_string('option_speed_help', 'videotime'),
+        '1'
+    ));
 
     $options = [
         'accepted_types' => [

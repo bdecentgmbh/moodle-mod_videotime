@@ -41,7 +41,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comment extends \comment {
-
     /** @var int itemid is used to associate with commenting content */
     private $itemid;
 

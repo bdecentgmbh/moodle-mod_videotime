@@ -39,19 +39,18 @@ use core_privacy\local\request\writer;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        // The block_deft block stores user provided data.
-        \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\core_userlist_provider,
-        // The block_deft block provides data directly to core.
-        \core_privacy\local\request\plugin\provider {
-
+    // The block_deft block stores user provided data.
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\metadata\provider,
+    // The block_deft block provides data directly to core.
+    \core_privacy\local\request\plugin\provider {
     /**
      * Returns meta data about this system.
      *
      * @param collection $collection
      * @return collection
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_external_location_link('lti_client', [
             'context' => 'privacy:metadata:lti_client:context',
@@ -66,7 +65,7 @@ class provider implements
      * @param int $userid
      * @return contextlist
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         $sql = "SELECT contextid

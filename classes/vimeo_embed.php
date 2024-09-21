@@ -40,7 +40,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package mod_videotime
  */
 class vimeo_embed implements \renderable, \templatable {
-
     /**
      * @var $cm Course module
      */
