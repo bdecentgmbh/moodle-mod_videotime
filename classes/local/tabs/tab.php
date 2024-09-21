@@ -38,7 +38,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package mod_videotime
  */
 abstract class tab {
-
     /**
      * @var videotime_instance
      */
@@ -162,8 +161,12 @@ abstract class tab {
             return;
         }
 
-        $mform->addElement('advcheckbox', "enable_$name", get_string('pluginname', "videotimetab_$name"),
-            get_string('showtab', 'videotime'));
+        $mform->addElement(
+            'advcheckbox',
+            "enable_$name",
+            get_string('pluginname', "videotimetab_$name"),
+            get_string('showtab', 'videotime')
+        );
         $mform->setDefault("enable_$name", get_config("videotimetab_$name", 'default'));
         $mform->disabledIf("enable_$name", 'enabletabs');
     }

@@ -25,8 +25,8 @@
 use mod_videotime\output\next_activity_button;
 use mod_videotime\videotime_instance;
 
-require(__DIR__.'/../../config.php');
-require_once(__DIR__.'/lib.php');
+require(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 // Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
@@ -51,7 +51,8 @@ $token = required_param('token', PARAM_TEXT);
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
-if ($user = $DB->get_record_sql("
+if (
+    $user = $DB->get_record_sql("
     SELECT u.*
       FROM {user} u
       JOIN {external_tokens} t ON t.userid = u.id
@@ -62,7 +63,8 @@ if ($user = $DB->get_record_sql("
     'contextid' => $context->id,
     'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
     'token' => $token,
-])) {
+    ])
+) {
     \core\session\manager::login_user($user);
 } else {
     require_login($course, true, $cm);

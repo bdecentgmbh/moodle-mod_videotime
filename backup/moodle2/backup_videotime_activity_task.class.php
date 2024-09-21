@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/backup_videotime_ste
  * Provides the steps to perform one complete backup of the Label instance
  */
 class backup_videotime_activity_task extends backup_activity_task {
-
     /**
      * No specific settings for this activity
      */

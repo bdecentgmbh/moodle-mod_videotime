@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Video Time Chapter tab';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
 $string['label'] = 'Chapters';
+$string['pluginname'] = 'Video Time Chapter tab';
 $string['privacy:metadata'] = 'The Video Time Chapter tab plugin does not store any personal data.';
 $string['upgradeplugin'] = 'This plugin requires installation of Video Time Pro to enable.';

@@ -296,9 +296,8 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
-    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea == 'audioimage' ) {
-
+function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea == 'audioimage') {
         // Extract the filename / filepath from the $args array.
         $filename = array_pop($args);
         if (!$args) {
@@ -324,10 +323,11 @@ function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $
 
     require_login($course, true, $cm);
 
-    if (in_array($filearea, [
+    if (
+        in_array($filearea, [
         'mediafile', 'poster',
-    ])) {
-
+        ])
+    ) {
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/videotimeplugin_videojs/$filearea/$relativepath";
@@ -395,7 +395,6 @@ function videotimeplugin_videojs_validation($data, $files) {
             }
             return ['mediafile' => get_string('invalidmediafile', 'videotimeplugin_videojs')];
         }
-
     }
     return ['vimeo_url' => get_string('required')];
 }
