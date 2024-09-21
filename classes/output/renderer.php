@@ -34,7 +34,6 @@ use renderable;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
-
     /**
      * Overrides the parent so that templatable widgets are handled even without their explicit render method.
      *
@@ -46,7 +45,7 @@ class renderer extends plugin_renderer_base {
 
         $namespacedclassname = get_class($widget);
         $plainclassname = preg_replace('/^.*\\\/', '', $namespacedclassname);
-        $rendermethod = 'render_'.$plainclassname;
+        $rendermethod = 'render_' . $plainclassname;
 
         if (method_exists($this, $rendermethod)) {
             // Explicit rendering method exists, fall back to the default behaviour.
@@ -72,7 +71,6 @@ class renderer extends plugin_renderer_base {
             }
 
             return parent::render_from_template($component . '/' . $templatename, $data);
-
         } else {
             return parent::render($widget);
         }

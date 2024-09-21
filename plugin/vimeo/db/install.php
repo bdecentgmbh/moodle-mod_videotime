@@ -232,7 +232,6 @@ function xmldb_videotimeplugin_vimeo_install() {
 
     // Conditionally launch create table for videotime_session.
     if (!$dbman->table_exists('videotime_pro') && !$dbman->table_exists('videotimeplugin_pro')) {
-
         // Remove pro fields from main table.
         // Define field label_mode to be dropped from videotime.
         $table = new xmldb_table('videotime');

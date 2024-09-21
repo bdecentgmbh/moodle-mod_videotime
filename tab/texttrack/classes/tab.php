@@ -36,7 +36,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package videotimetab_texttrack
  */
 class tab extends \mod_videotime\local\tabs\tab {
-
     /**
      * Get tab panel content
      *
@@ -71,11 +70,11 @@ class tab extends \mod_videotime\local\tabs\tab {
         $matches = [];
         preg_match_all('/([.:0-9]+)  *-->  *([.:0-9]+)(.*?)^$/ms', $track . '\n', $matches);
 
-        return array_map(function($starttime, $endtime, $text) {
+        return array_map(function ($starttime, $endtime, $text) {
             return [
                 'starttime' => $starttime,
                 'endtime' => $endtime,
-                'lines' => array_map(function($text) {
+                'lines' => array_map(function ($text) {
                     return ['text' => $text];
                 }, explode("\n", $text)),
                 'text' => $text,
@@ -106,7 +105,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         foreach ($DB->get_records('videotimetab_texttrack_track', ['videotime' => $record->id]) as $track) {
             $captions = $DB->get_records('videotimetab_texttrack_text', ['track' => $track->id], 'starttime, endtime');
             foreach ($captions as $caption) {
-                $caption->lines = array_map(function($text) {
+                $caption->lines = array_map(function ($text) {
                     return ['text' => $text];
                 }, explode("\n", $caption->text));
                 $caption->starttimedisplay = preg_replace('/\\..*/', '', $caption->starttime);
@@ -143,8 +142,8 @@ class tab extends \mod_videotime\local\tabs\tab {
             return;
         }
 
-        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id',  'videotime = ?', [$record->id])) {
-            list($sql, $params) = $DB->get_in_or_equal($trackids);
+        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id', 'videotime = ?', [$record->id])) {
+            [$sql, $params] = $DB->get_in_or_equal($trackids);
             $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
             $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $record->id]);
         }
@@ -159,8 +158,8 @@ class tab extends \mod_videotime\local\tabs\tab {
                         'lang' => $texttrack['language'],
                         'uri' => $texttrack['uri'],
                         'type' => $texttrack['type'],
-                        $texttrack['link']],
-                    );
+                        'link' => $texttrack['link'],
+                    ]);
                     foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
                         $text['track'] = $trackid;
                         $DB->insert_record('videotimetab_texttrack_text', $text);
@@ -202,8 +201,8 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
-        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id',  'videotime = ?', [$id])) {
-            list($sql, $params) = $DB->get_in_or_equal($trackids);
+        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id', 'videotime = ?', [$id])) {
+            [$sql, $params] = $DB->get_in_or_equal($trackids);
             $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
             $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $record->id]);
         }

@@ -111,7 +111,6 @@ class mobile {
             'javascript' => file_get_contents($CFG->dirroot . '/mod/videotime/appjs/player.js') .
                 file_get_contents("$CFG->dirroot/mod/videotime/appjs/view_init.js"),
         ];
-
     }
 
     /**

@@ -37,7 +37,6 @@ use videotimeplugin_live\janus_room;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class join_room extends external_api {
-
     /**
      * Get parameter definition for raise hand
      *

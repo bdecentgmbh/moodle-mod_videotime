@@ -35,7 +35,6 @@ use videotimeplugin_live\janus_room;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class publish_feed extends external_api {
-
     /**
      * Get parameter definition for raise hand
      *
@@ -76,14 +75,16 @@ class publish_feed extends external_api {
             ]
         );
 
-        if (!$DB->get_record_select(
-            'videotimeplugin_live_peer',
-            "id = :id AND status = 0 AND sessionid IN (SELECT id FROM {sessions} WHERE sid = :sid)",
-            [
+        if (
+            !$DB->get_record_select(
+                'videotimeplugin_live_peer',
+                "id = :id AND status = 0 AND sessionid IN (SELECT id FROM {sessions} WHERE sid = :sid)",
+                [
                 'id' => $id,
                 'sid' => session_id(),
-            ]
-        )) {
+                ]
+            )
+        ) {
             return [
                 'status' => false,
             ];

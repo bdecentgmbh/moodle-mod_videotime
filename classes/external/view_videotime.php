@@ -38,7 +38,6 @@ require_once($CFG->dirroot.'/mod/videotime/lib.php');
  * Set VideoTime activity as viewed, trigger view event, etc.
  */
 trait view_videotime {
-
     /**
      * Describes the parameters for view_videotime.
      *

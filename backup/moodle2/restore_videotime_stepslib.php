@@ -29,7 +29,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_videotime_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * Defines the structure to be restored.
      *
@@ -38,7 +37,7 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
     protected function define_structure() {
         global $CFG;
 
-        require_once($CFG->dirroot.'/mod/videotime/lib.php');
+        require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
         $paths = [];
         $userinfo = $this->get_setting_value('userinfo');

@@ -33,8 +33,7 @@ use mod_videotime\videotime_instance;
  * @group videotimeplugin_vimeo
  * @covers \mod_videotime\videotime_instance
  */
-class force_settings_test extends advanced_testcase {
-
+final class force_settings_test extends advanced_testcase {
     /**
      * @var stdClass $course
      */
@@ -52,7 +51,8 @@ class force_settings_test extends advanced_testcase {
     /**
      * Set up
      */
-    public function setUp() : void {
+    public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->course = $this->getDataGenerator()->create_course();
@@ -67,16 +67,17 @@ class force_settings_test extends advanced_testcase {
     /**
      * Tear down data
      */
-    public function tearDown() : void {
+    public function tearDown(): void {
         $this->course = null;
         $this->instancerecord = null;
         $this->videotimeinstance = null;
+        parent::tearDown();
     }
 
     /**
      * Force setting test
      */
-    public function test_disable_options() {
+    public function test_disable_options(): void {
         $this->assertIsArray($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));
 
@@ -95,7 +96,7 @@ class force_settings_test extends advanced_testcase {
     /**
      * Force setting test
      */
-    public function test_enable_options() {
+    public function test_enable_options(): void {
         $this->assertIsArray($this->videotimeinstance->get_force_settings());
         $this->assertFalse(in_array(1, $this->videotimeinstance->get_force_settings()));
 

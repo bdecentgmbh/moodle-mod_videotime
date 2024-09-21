@@ -73,10 +73,10 @@ function videotime_supports($feature) {
  * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function videotime_grade_item_update($videotime, $grades=null) {
+function videotime_grade_item_update($videotime, $grades = null) {
     global $CFG;
 
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     if (!videotime_has_pro()) {
         return null;
@@ -112,9 +112,9 @@ function videotime_grade_item_update($videotime, $grades=null) {
  * @param int $userid specific user only, 0 means all
  * @param bool $nullifnone
  */
-function videotime_update_grades($videotime, $userid=0, $nullifnone=true) {
+function videotime_update_grades($videotime, $userid = 0, $nullifnone = true) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     if (!videotime_has_pro() || !$videotime->viewpercentgrade) {
         return null;
@@ -318,9 +318,15 @@ function videotime_process_video_description($moduleinstance) {
     if (isset($moduleinstance->video_description['itemid'])) {
         $modcontext = context_module::instance($moduleinstance->coursemodule);
         $videodescription = $moduleinstance->video_description;
-        $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
-            'mod_videotime', 'video_description', 0,
-            ['subdirs' => true], $videodescription['text']);
+        $moduleinstance->video_description = file_save_draft_area_files(
+            $videodescription['itemid'],
+            $modcontext->id,
+            'mod_videotime',
+            'video_description',
+            0,
+            ['subdirs' => true],
+            $videodescription['text']
+        );
         $moduleinstance->video_description_format = $videodescription['format'];
     }
     return $moduleinstance;
@@ -337,7 +343,7 @@ function videotime_process_video_description($moduleinstance) {
 function videotime_update_completion($cmid) {
     global $DB, $CFG;
 
-    require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->libdir . '/completionlib.php');
 
     $cm = get_coursemodule_from_id('videotime', $cmid, 0, false, MUST_EXIST);
     $course = get_course($cm->course);
@@ -345,7 +351,8 @@ function videotime_update_completion($cmid) {
 
     $completion = new \completion_info($course);
     // Update completion status only if any extra criteria is set on the activity.
-    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish ||
+    if (
+        $completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish ||
         $moduleinstance->completion_on_percent)
     ) {
         $completion->update_state($cm, COMPLETION_COMPLETE);
@@ -364,7 +371,7 @@ function videotime_update_completion($cmid) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
+function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -373,7 +380,6 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
     require_login($course, true, $cm);
 
     if ($filearea == 'video_description' || $filearea == 'intro') {
-
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/mod_videotime/$filearea/$relativepath";
@@ -457,7 +463,7 @@ function videotime_has_repository() {
 function videotime_is_totara() {
     global $CFG;
     return file_exists("$CFG->dirroot/totara");
-};
+}
 
 /**
  * This function extends the settings navigation block for the site.
@@ -489,17 +495,25 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
         $PAGE->cm &&
         has_capability('mod/videotime:addinstance', $PAGE->cm->context)
     ) {
-        $node = navigation_node::create(get_string('embed_options', 'mod_videotime'),
+        $node = navigation_node::create(
+            get_string('embed_options', 'mod_videotime'),
             new moodle_url('/mod/videotime/options.php', ['id' => $PAGE->cm->id]),
-            navigation_node::TYPE_SETTING, null, 'mod_videotime_options',
-            new pix_icon('t/play', ''));
+            navigation_node::TYPE_SETTING,
+            null,
+            'mod_videotime_options',
+            new pix_icon('t/play', '')
+        );
         $videtimenode->add_node($node, $beforekey);
     }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
-        $node = navigation_node::create(get_string('report'),
+        $node = navigation_node::create(
+            get_string('report'),
             new moodle_url('/mod/videotime/report.php', ['id' => $PAGE->cm->id]),
-            navigation_node::TYPE_SETTING, null, 'mod_videotime_report',
-            new pix_icon('t/grades', ''));
+            navigation_node::TYPE_SETTING,
+            null,
+            'mod_videotime_report',
+            new pix_icon('t/grades', '')
+        );
         $videtimenode->add_node($node, $beforekey);
     }
 
@@ -526,8 +540,14 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get('coursereports');
     if (videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
         $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
-        $node->add(get_string('pluginname', 'videotime'), $url, navigation_node::TYPE_SETTING, null, null,
-            new pix_icon('i/report', ''));
+        $node->add(
+            get_string('pluginname', 'videotime'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            new pix_icon('i/report', '')
+        );
     }
 }
 
@@ -540,7 +560,6 @@ function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
     try {
-
         $instance = videotime_instance::instance_by_id($cm->instance);
 
         // Ensure we are on the course view page. This was throwing an error when viewing the module
@@ -704,9 +723,11 @@ function mod_videotime_get_vimeo_id_from_link($link) {
  * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
-function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
-                                                     \core_calendar\action_factory $factory,
-                                                     int $userid = 0) {
+function mod_videotime_core_calendar_provide_event_action(
+    calendar_event $event,
+    \core_calendar\action_factory $factory,
+    int $userid = 0
+) {
     global $USER;
 
     if (empty($userid)) {
