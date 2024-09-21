@@ -71,7 +71,7 @@ class main implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        $responses = array_map(function($option) {
+        $responses = array_map(function ($option) {
             return ['option' => $option];
         }, array_filter($this->config->option ?? []));
 

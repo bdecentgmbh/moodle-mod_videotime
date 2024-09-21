@@ -27,7 +27,6 @@ use core\event\base;
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class video_started extends base {
-
     /**
      * Set all required data properties:
      *
@@ -86,5 +85,4 @@ class video_started extends base {
     public function get_description() {
         return "The user with id '$this->userid' started live video in videotime with id '$this->objectid'.";
     }
-
 }
