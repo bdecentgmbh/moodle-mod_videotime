@@ -37,8 +37,7 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  *
  * @package mod_videotime
  */
-class tabs implements \templatable, \renderable {
-
+class tabs implements \renderable, \templatable {
     /**
      * @var tab[]
      */

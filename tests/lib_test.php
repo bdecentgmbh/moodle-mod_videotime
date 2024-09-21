@@ -42,21 +42,24 @@ require_once($CFG->dirroot . '/mod/videotime/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers ::mod_videotime_core_calendar_provide_event_action
  */
-class lib_test extends advanced_testcase {
-
+final class lib_test extends advanced_testcase {
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
     }
 
-    public function test_videotime_core_calendar_provide_event_action() {
+    public function test_videotime_core_calendar_provide_event_action(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $videotime->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+        $event = $this->create_action_event(
+            $course->id,
+            $videotime->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED
+        );
 
         // Create an action factory.
         $factory = new \core_calendar\action_factory();
@@ -72,7 +75,7 @@ class lib_test extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_videotime_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_videotime_core_calendar_provide_event_action_in_hidden_section(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
@@ -81,8 +84,11 @@ class lib_test extends advanced_testcase {
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $videotime->id,
-                \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+        $event = $this->create_action_event(
+            $course->id,
+            $videotime->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED
+        );
 
         // Set sections 0 as hidden.
         set_section_visible($course->id, 0, 0);
@@ -100,7 +106,7 @@ class lib_test extends advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_videotime_core_calendar_provide_event_action_for_user() {
+    public function test_videotime_core_calendar_provide_event_action_for_user(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
@@ -109,8 +115,11 @@ class lib_test extends advanced_testcase {
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $videotime->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+        $event = $this->create_action_event(
+            $course->id,
+            $videotime->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED
+        );
 
         // Now, log out.
         $this->setUser();
@@ -129,7 +138,7 @@ class lib_test extends advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_videotime_core_calendar_provide_event_action_as_non_user() {
+    public function test_videotime_core_calendar_provide_event_action_as_non_user(): void {
         global $CFG;
 
         // Create the activity.
@@ -137,8 +146,11 @@ class lib_test extends advanced_testcase {
         $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $videotime->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+        $event = $this->create_action_event(
+            $course->id,
+            $videotime->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED
+        );
 
         // Log out the user and set force login to true.
         \core\session\manager::init_empty_session();
@@ -154,22 +166,28 @@ class lib_test extends advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_videotime_core_calendar_provide_event_action_already_completed() {
+    public function test_videotime_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
 
         // Create the activity.
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
-        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id],
-            ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]);
+        $videotime = $this->getDataGenerator()->create_module(
+            'videotime',
+            ['course' => $course->id],
+            ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]
+        );
 
         // Get some additional data.
         $cm = get_coursemodule_from_instance('videotime', $videotime->id);
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $videotime->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+        $event = $this->create_action_event(
+            $course->id,
+            $videotime->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED
+        );
 
         // Mark the activity as completed.
         $completion = new completion_info($course);
@@ -185,15 +203,18 @@ class lib_test extends advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_videotime_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_videotime_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
 
         // Create the activity.
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
-        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id],
-            ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]);
+        $videotime = $this->getDataGenerator()->create_module(
+            'videotime',
+            ['course' => $course->id],
+            ['completion' => 2, 'completionview' => 1, 'completionexpected' => time() + DAYSECS]
+        );
 
         // Enrol a student in the course.
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -202,8 +223,11 @@ class lib_test extends advanced_testcase {
         $cm = get_coursemodule_from_instance('videotime', $videotime->id);
 
         // Create a calendar event.
-        $event = $this->create_action_event($course->id, $videotime->id,
-            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
+        $event = $this->create_action_event(
+            $course->id,
+            $videotime->id,
+            \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED
+        );
 
         // Mark the activity as completed for the student.
         $completion = new completion_info($course);

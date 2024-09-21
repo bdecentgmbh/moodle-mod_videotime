@@ -28,7 +28,6 @@
  * Provides the step to perform back up of sublugin data
  */
 class backup_videotimeplugin_videojs_subplugin extends backup_subplugin {
-
     /**
      * Defined suplugin structure step
      */
@@ -54,8 +53,10 @@ class backup_videotimeplugin_videojs_subplugin extends backup_subplugin {
         $subpluginwrapper->add_child($subplugintablesettings);
 
         // Set source to populate the data.
-        $subplugintablesettings->set_source_table('videotimeplugin_videojs',
-                ['videotime' => backup::VAR_ACTIVITYID]);
+        $subplugintablesettings->set_source_table(
+            'videotimeplugin_videojs',
+            ['videotime' => backup::VAR_ACTIVITYID]
+        );
 
         return $subplugin;
     }

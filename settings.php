@@ -27,38 +27,63 @@ use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
-$ADMIN->add('modsettings', new admin_category('modvideotimefolder',
-    new lang_string('pluginname', 'videotime'), $module->is_enabled() === false));
+$ADMIN->add('modsettings', new admin_category(
+    'modvideotimefolder',
+    new lang_string('pluginname', 'videotime'),
+    $module->is_enabled() === false
+));
 
-$settings = new admin_settingpage('generalsettings', get_string('generalsettings', 'videotime'),
-    'moodle/site:config');
+$settings = new admin_settingpage(
+    'generalsettings',
+    get_string('generalsettings', 'videotime'),
+    'moodle/site:config'
+);
 
 if ($ADMIN->fulltree) {
-
     if (!videotime_has_pro()) {
-        $settings->add(new admin_setting_heading('pro', '',
-            html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro3'),
-            html_writer::img('https://link.bdecent.de/videotimepro3/image.jpg', '',
-                ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
+        $settings->add(new admin_setting_heading(
+            'pro',
+            '',
+            html_writer::link(
+                new moodle_url('https://link.bdecent.de/videotimepro3'),
+                html_writer::img(
+                    'https://link.bdecent.de/videotimepro3/image.jpg',
+                    '',
+                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']
+                )
+            )
+        ));
     }
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotime/show_description_in_player', new lang_string('default', 'videotime') . ' ' .
+        'videotime/show_description_in_player',
+        new lang_string('default', 'videotime') . ' ' .
         new lang_string('show_description_in_player', 'videotime'),
-        new lang_string('show_description_in_player_help', 'videotime'), 1));
+        new lang_string('show_description_in_player_help', 'videotime'),
+        1
+    ));
 
-    $settings->add(new admin_setting_configcheckbox('videotime/enabletabs', new lang_string('default', 'videotime') . ' ' .
+    $settings->add(new admin_setting_configcheckbox(
+        'videotime/enabletabs',
+        new lang_string('default', 'videotime') . ' ' .
         new lang_string('enabletabs', 'videotime'),
-        new lang_string('enabletabs_help', 'videotime'), 0));
+        new lang_string('enabletabs_help', 'videotime'),
+        0
+    ));
 
-    $settings->add(new admin_setting_configselect('videotime/defaulttabsize', get_string('defaulttabsize', 'videotime'),
-                get_string('defaulttabsize_help', 'videotime'), 'videotime-size-6', [
+    $settings->add(new admin_setting_configselect(
+        'videotime/defaulttabsize',
+        get_string('defaulttabsize', 'videotime'),
+        get_string('defaulttabsize_help', 'videotime'),
+        'videotime-size-6',
+        [
             'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
             'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
             'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
-    ]));
+        ]
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
         'videotime/mobileiframe',
@@ -68,10 +93,18 @@ if ($ADMIN->fulltree) {
     ));
 
     if (!videotime_has_pro()) {
-        $settings->add(new admin_setting_heading('pro2', '',
-            html_writer::link(new moodle_url('https://link.bdecent.de/videotimepro4'),
-            html_writer::img('https://link.bdecent.de/videotimepro4/image.jpg', '',
-                ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']))));
+        $settings->add(new admin_setting_heading(
+            'pro2',
+            '',
+            html_writer::link(
+                new moodle_url('https://link.bdecent.de/videotimepro4'),
+                html_writer::img(
+                    'https://link.bdecent.de/videotimepro4/image.jpg',
+                    '',
+                    ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']
+                )
+            )
+        ));
     }
 }
 
@@ -84,29 +117,42 @@ if (videotime_has_pro() && videotime_has_repository()) {
         'authenticate',
         get_string('authenticate_vimeo', 'videotime'),
         new moodle_url('/mod/videotime/plugin/repository/authenticate.php'),
-        'moodle/site:config', false));
+        'moodle/site:config',
+        false
+    ));
 
     $ADMIN->add('modvideotimefolder', new admin_externalpage(
         'overview',
         get_string('vimeo_overview', 'videotime'),
-        new moodle_url('/mod/videotime/plugin/repository/overview.php')));
+        new moodle_url('/mod/videotime/plugin/repository/overview.php')
+    ));
 }
 
-$ADMIN->add('modvideotimefolder', new admin_category('videotimetabplugins',
-    new lang_string('videotimetabplugins', 'videotime'), !$module->is_enabled()));
-$ADMIN->add('videotimetabplugins', new admin_externalpage('managevideotimetabplugins',
+$ADMIN->add('modvideotimefolder', new admin_category(
+    'videotimetabplugins',
+    new lang_string('videotimetabplugins', 'videotime'),
+    !$module->is_enabled()
+));
+$ADMIN->add('videotimetabplugins', new admin_externalpage(
+    'managevideotimetabplugins',
     get_string('managevideotimetabplugins', 'videotime'),
-    new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimetab'])));
+    new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimetab'])
+));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimetab') as $plugin) {
     $plugin->load_settings($ADMIN, 'videotimetabplugins', $hassiteconfig);
 }
 
-$ADMIN->add('modvideotimefolder', new admin_category('videotimepluginplugins',
-    new lang_string('subplugintype_videotimeplugin_plural', 'videotime'), !$module->is_enabled()));
-$ADMIN->add('videotimepluginplugins', new admin_externalpage('managevideotimepluginplugins',
+$ADMIN->add('modvideotimefolder', new admin_category(
+    'videotimepluginplugins',
+    new lang_string('subplugintype_videotimeplugin_plural', 'videotime'),
+    !$module->is_enabled()
+));
+$ADMIN->add('videotimepluginplugins', new admin_externalpage(
+    'managevideotimepluginplugins',
     get_string('managevideotimepluginplugins', 'videotime'),
-    new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimeplugin'])));
+    new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimeplugin'])
+));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('videotimeplugin') as $plugin) {
     $plugin->load_settings($ADMIN, 'videotimepluginplugins', $hassiteconfig);

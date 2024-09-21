@@ -27,10 +27,13 @@ use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
-$setting = new admin_setting_configcheckbox('videotimetab_related/default',
-                   new lang_string('default', 'videotimetab_related'),
-                   new lang_string('default_help', 'videotimetab_related'), 1);
+$setting = new admin_setting_configcheckbox(
+    'videotimetab_related/default',
+    new lang_string('default', 'videotimetab_related'),
+    new lang_string('default_help', 'videotimetab_related'),
+    1
+);
 
 $settings->add($setting);

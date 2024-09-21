@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/mod/videotime/backup/moodle2/restore_videotime_st
  * needed to restore one videotimetab_chapter subplugin.
  */
 class restore_videotimetab_chapter_subplugin extends restore_subplugin {
-
     /**
      * Define subplugin structure
      *

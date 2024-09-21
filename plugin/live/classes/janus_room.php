@@ -43,8 +43,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class janus_room extends janus_room_base {
-
-
     /**
      * @var Plugin component using room
      */
@@ -55,7 +53,7 @@ class janus_room extends janus_room_base {
      *
      * @param int $id Instance id
      */
-    public function __construct (int $id) {
+    public function __construct(int $id) {
         global $DB, $USER;
 
         if (!get_config('block_deft', 'enablebridge')) {
@@ -65,10 +63,12 @@ class janus_room extends janus_room_base {
         $this->session = new janus();
         $this->itemid = $id;
 
-        if (!$record = $DB->get_record('block_deft_room', [
+        if (
+            !$record = $DB->get_record('block_deft_room', [
             'itemid' => $id,
             'component' => $this->component,
-        ])) {
+            ])
+        ) {
             $records = $DB->get_records('block_deft_room', ['itemid' => null]);
             if ($record = reset($records)) {
                 $record->itemid = $this->itemid;
