@@ -73,6 +73,7 @@ class custom_completion extends activity_custom_completion {
                     !$videotime->completion_on_percent ||
                     (($sessions->get_percent() * 100) >= $videotime->completion_on_percent_value)
                 );
+                break;
             default:
                 $status = false;
                 break;
