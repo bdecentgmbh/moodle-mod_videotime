@@ -54,6 +54,11 @@ class mod_videotime_mod_form extends moodleform_mod {
                     ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']
                 )
             ));
+        } else {
+            $PAGE->requires->js_call_amd(
+                'mod_videotime/mod_form',
+                'init'
+            );
         }
 
         // Adding the "general" fieldset, where all the common settings are showed.
