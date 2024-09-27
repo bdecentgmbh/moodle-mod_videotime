@@ -241,46 +241,64 @@ class mod_videotime_mod_form extends moodleform_mod {
             $group = [];
             $group[] =& $mform->createElement(
                 'advcheckbox',
-                'completion_on_view_time' . $suffix,
+                $this->get_suffixed_name('completion_on_view_time'),
                 '',
                 get_string('completion_on_view', 'videotime') . ':&nbsp;'
             );
-            $group[] =& $mform->createElement('text', 'completion_on_view_time_second', '', ['size' => 3]);
+            $group[] =& $mform->createElement(
+                'text',
+                $this->get_suffixed_name('completion_on_view_time_second'),
+                '',
+                ['size' => 3]
+            );
             $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
-            $mform->setType('completion_on_view_time_second', PARAM_INT);
-            $mform->addGroup($group, 'completion_on_view', '', [' '], false);
-            $mform->disabledIf('completion_on_view_time_second', 'completion_on_view_time', 'notchecked');
+            $mform->setType($this->get_suffixed_name('completion_on_view_time_second'), PARAM_INT);
+            $mform->addGroup($group, $this->get_suffixed_name('completion_on_view_time_group'), '', [' '], false);
+            $mform->disabledIf(
+                $this->get_suffixed_name('completion_on_view_time_second'),
+                $this->get_suffixed_name('completion_on_view_time'),
+                'notchecked'
+            );
 
             $group = [];
             $group[] =& $mform->createElement(
                 'advcheckbox',
-                'completion_on_percent' . $suffix,
+                $this->get_suffixed_name('completion_on_percent'),
                 '',
                 get_string('completion_on_percent', 'videotime') . ':&nbsp;'
             );
-            $group[] =& $mform->createElement('text', 'completion_on_percent_value', '', ['size' => 3]);
+            $group[] =& $mform->createElement('text', $this->get_suffixed_name('completion_on_percent_value'), '', ['size' => 3]);
             $group[] =& $mform->createElement('static', 'percent_label', '', '%');
-            $mform->setType('completion_on_percent_value', PARAM_INT);
-            $mform->addGroup($group, 'completion_on_percent', '', [' '], false);
-            $mform->disabledIf('completion_on_percent_value', 'completion_on_percent', 'notchecked');
+            $mform->setType($this->get_suffixed_name('completion_on_percent_value'), PARAM_INT);
+            $mform->addGroup($group, $this->get_suffixed_name('completion_on_percent_group'), '', [' '], false);
+            $mform->disabledIf(
+                $this->get_suffixed_name('completion_on_percent_value'),
+                $this->get_suffixed_name('completion_on_percent'),
+                'notchecked'
+            );
 
             $mform->addElement(
                 'advcheckbox',
-                'completion_on_finish' . $suffix,
+                $this->get_suffixed_name('completion_on_finish'),
                 '',
                 get_string('completion_on_finish', 'videotime')
             );
-            $mform->setType('completion_on_finish' . $suffix, PARAM_BOOL);
+            $mform->setType($this->get_suffixed_name('completion_on_finish'), PARAM_BOOL);
 
             $mform->addElement(
                 'advcheckbox',
-                'completion_hide_detail' . $suffix,
+                $this->get_suffixed_name('completion_hide_detail'),
                 '',
                 get_string('completion_hide_detail', 'videotime')
             );
-            $mform->setType('completion_hide_detail', PARAM_BOOL);
+            $mform->setType($this->get_suffixed_name('completion_hide_detail'), PARAM_BOOL);
 
-            return ['completion_on_view', 'completion_on_percent', 'completion_on_finish', 'completion_hide_detail'];
+            return [
+                $this->get_suffixed_name('completion_on_finish'),
+                $this->get_suffixed_name('completion_hide_detail'),
+                $this->get_suffixed_name('completion_on_view_time_group'),
+                $this->get_suffixed_name('completion_on_percent_group'),
+            ];
         }
 
         return [];
@@ -294,9 +312,13 @@ class mod_videotime_mod_form extends moodleform_mod {
      */
     public function completion_rule_enabled($data) {
         return (
-            (!empty($data['completion_on_view_time']) && $data['completion_on_view_time_second'] != 0)) ||
-            !empty($data['completion_on_finish'] ||
-            (!empty($data['completion_on_percent']) && $data['completion_on_percent_value']));
+            (!empty($data[$this->get_suffixed_name('completion_on_view_time')]) &&
+            $data[$this->get_suffixed_name('completion_on_view_time_second')] != 0)) ||
+            !empty($data[$this->get_suffixed_name('completion_on_finish')] ||
+            (
+                !empty($data[$this->get_suffixed_name('completion_on_percent')])
+                && $data[$this->get_suffixed_name('completion_on_percent_value')])
+            );
     }
 
     /**
@@ -326,16 +348,28 @@ class mod_videotime_mod_form extends moodleform_mod {
         }
 
         // Make sure seconds are set if completion on view time is enabled.
-        if (isset($data['completion_on_view_time']) && $data['completion_on_view_time']) {
-            if (isset($data['completion_on_view_time_second']) && !$data['completion_on_view_time_second']) {
-                $errors['completion_on_view_time_second'] = get_string('required');
+        if (
+            isset($data[$this->get_suffixed_name('completion_on_view_time')])
+            && $data[$this->get_suffixed_name('completion_on_view_time')]
+        ) {
+            if (
+                isset($data[$this->get_suffixed_name('completion_on_view_time_second')])
+                && !$data[$this->get_suffixed_name('completion_on_view_time_second')]
+            ) {
+                $errors[$this->get_suffixed_name('completion_on_view_time_second')] = get_string('required');
             }
         }
 
         // Make sure percent value is set if completion on percent is enabled.
-        if (isset($data['completion_on_percent']) && $data['completion_on_percent']) {
-            if (isset($data['completion_on_percent_value']) && !$data['completion_on_percent_value']) {
-                $errors['completion_on_percent_value'] = get_string('required');
+        if (
+            isset($data[$this->get_suffixed_name('completion_on_percent')])
+            && $data[$this->get_suffixed_name('completion_on_percent')]
+        ) {
+            if (
+                isset($data[$this->get_suffixed_name('completion_on_percent_value')]) &&
+                !$data[$this->get_suffixed_name('completion_on_percent_value')]
+            ) {
+                $errors[$this->get_suffixed_name('completion_on_percent_value')] = get_string('required');
             }
         }
 
@@ -352,6 +386,8 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @param  array $defaultvalues
      */
     public function data_preprocessing(&$defaultvalues) {
+        parent::data_preprocessing($defaultvalues);
+
         // Editing existing instance.
         if ($this->current->instance) {
             $draftitemid = file_get_submitted_draft_itemid('video_description');
@@ -377,6 +413,57 @@ class mod_videotime_mod_form extends moodleform_mod {
             foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
                 $classname = "\\videotimetab_$name\\tab";
                 $classname::data_preprocessing($defaultvalues, $this->current->instance);
+            }
+        }
+    }
+
+    /**
+     * Completion suffix
+     */
+    public function get_suffix(): string {
+        if (method_exists(parent::class, 'get_suffix')) {
+            return parent::get_suffix();
+        }
+        return '';
+    }
+
+    /**
+     * Completion condition with suffix
+     *
+     * @param string $name Name without suffix
+     * @return string
+     */
+    public function get_suffixed_name($name): string {
+        return $name . $this->get_suffix();
+    }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        // Turn off completion settings if the checkboxes aren't ticked.
+        $suffix = $this->get_suffix();
+        if (!empty($data->completionunlocked)) {
+            $suffix = $this->get_suffix();
+            $completion = $data->{'completion' . $suffix};
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{'completion_on_finish' . $suffix}) || !$autocompletion) {
+                $data->{'completion_on_finish' . $suffix} = 0;
+            }
+            if (empty($data->{'completion_on_percent_value' . $suffix}) || !$autocompletion) {
+                $data->{'completion_on_percent' . $suffix} = 0;
+            }
+            if (empty($data->{'completion_on_view_time_second' . $suffix}) || !$autocompletion) {
+                $data->{'completion_on_view_time' . $suffix} = 0;
+            }
+            if (empty($data->{'completion_hide_detail' . $suffix}) || !$autocompletion) {
+                $data->{'completion_hide_detail' . $suffix} = 0;
             }
         }
     }
