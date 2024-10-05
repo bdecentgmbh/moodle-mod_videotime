@@ -45,10 +45,24 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
 
     if (
         empty(get_config('videotimeplugin_videojs', 'enabled'))
-        || !empty($moduleinstance->vimeo_url)
-        && mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
     ) {
         return;
+    }
+
+    $context = context_module::instance($moduleinstance->coursemodule);
+
+    if (
+        !empty($moduleinstance->vimeo_url)
+    ) {
+        $fs = get_file_storage();
+        foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'mediafile') as $file) {
+            $file->delete();
+        }
+        if (
+            mod_videotime_get_vimeo_id_from_link($moduleinstance->vimeo_url)
+        ) {
+            return;
+        }
     }
 
     if ($record = $DB->get_record('videotimeplugin_videojs', ['videotime' => $moduleinstance->id])) {
@@ -61,8 +75,6 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
     }
 
     if (!empty($mform) && $data = $mform->get_data()) {
-        $context = context_module::instance($moduleinstance->coursemodule);
-
         if (get_class($mform) == 'videotimeplugin_videojs\form\options') {
             file_save_draft_area_files(
                 $data->poster,
@@ -272,6 +284,12 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
         );
         $defaultvalues['mediafile'] = $draftitemid;
 
+        // Do not load a url if we have a file.
+        $fs = get_file_storage();
+        if (count($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'mediafile', 0)) > 1) {
+            $defaultvalues['vimeo_url'] = '';
+        }
+
         $draftitemid = file_get_submitted_draft_itemid('poster');
         file_prepare_draft_area(
             $draftitemid,
@@ -361,6 +379,8 @@ function videotimeplugin_videojs_config_file_areas() {
  * @return array eventual errors indexed by the field name
  */
 function videotimeplugin_videojs_validation($data, $files) {
+    global $USER;
+
     $acceptedtypes = [
         'audio/flac',
         'audio/mp3',
@@ -380,7 +400,11 @@ function videotimeplugin_videojs_validation($data, $files) {
         || (resourcelib_get_extension($data['vimeo_url']) == 'm3u8')
         || videotimeplugin_videojs_youtube($data['vimeo_url'])
     ) {
-        return [];
+        $fs = get_file_storage();
+        if (count($fs->get_area_files(\context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile'])) < 2) {
+            return [];
+        }
+        return ['vimeo_url' => get_string('fileorurl', 'videotimeplugin_videojs')];
     }
     foreach ($files as $file) {
         if (
