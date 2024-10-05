@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['audioimage'] = 'Default audio image';
 $string['audioimage_desc'] = 'Default image to display for audio files when no poster image is provided for activity in embed options';
+$string['fileorurl'] = 'Use a file or url, not both';
 $string['invalidmediafile'] = "In valid media file";
 $string['mediafile'] = 'Media file';
 $string['mediafile_help'] = 'Upload an audio or video file to use';
