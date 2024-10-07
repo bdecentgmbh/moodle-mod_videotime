@@ -404,7 +404,7 @@ function videotimeplugin_videojs_validation($data, $files) {
         if (count($fs->get_area_files(\context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile'])) < 2) {
             return [];
         }
-        return ['vimeo_url' => get_string('fileorurl', 'videotimeplugin_videojs')];
+        return ['mediafile' => get_string('fileorurl', 'videotimeplugin_videojs')];
     }
     foreach ($files as $file) {
         if (
