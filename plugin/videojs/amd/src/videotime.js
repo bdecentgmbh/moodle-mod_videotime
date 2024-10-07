@@ -317,7 +317,9 @@ export default class VideoTime extends VideoTimeBase {
     async getCurrentPosition() {
         let position = await this.player.currentTime();
         this.plugins.forEach(plugin => {
-            position = plugin.getCurrentPosition(position);
+            if (plugin.getCurrentPosition) {
+                position = plugin.getCurrentPosition(position);
+            }
         });
         return position;
     }
