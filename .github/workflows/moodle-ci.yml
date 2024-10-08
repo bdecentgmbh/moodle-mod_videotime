@@ -29,10 +29,10 @@ jobs:
       matrix:
         include:
           - php: '8.3'
-            moodle-branch: 'master'
+            moodle-branch: 'main'
             database: 'pgsql'
           - php: '8.2'
-            moodle-branch: 'master'
+            moodle-branch: 'main'
             database: 'mariadb'
           - php: '8.3'
             moodle-branch: 'MOODLE_404_STABLE'
@@ -107,12 +107,12 @@ jobs:
         run: moodle-plugin-ci mustache
 
       - name: Grunt
-        if: ${{ matrix.moodle-branch == 'MOODLE_403_STABLE' }}
+        if: ${{ matrix.moodle-branch == 'MOODLE_404_STABLE' }}
         run: moodle-plugin-ci grunt
 
       - name: PHPUnit tests
         if: ${{ always() }}
-        run: moodle-plugin-ci phpunit
+        run: moodle-plugin-ci phpunit --coverage-text
 
       - name: Behat features
         if: ${{ always() }}

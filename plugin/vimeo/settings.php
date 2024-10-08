@@ -27,37 +27,72 @@ use mod_videotime\videotime_instance;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/videotime/lib.php');
+require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('defaultsettings', new lang_string('default', 'videotime') . ' ' .
         new lang_string('settings'), ''));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/responsive', new lang_string('option_responsive', 'videotime'),
-        new lang_string('option_responsive_help', 'videotime'), '1'));
+        'videotimeplugin_vimeo/responsive',
+        new lang_string('option_responsive', 'videotime'),
+        new lang_string('option_responsive_help', 'videotime'),
+        '1'
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/height', new lang_string('option_height', 'videotime'),
-        new lang_string('option_height_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_vimeo/height',
+        new lang_string('option_height', 'videotime'),
+        new lang_string('option_height_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/maxheight', new lang_string('option_maxheight', 'videotime'),
-        new lang_string('option_maxheight_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_vimeo/maxheight',
+        new lang_string('option_maxheight', 'videotime'),
+        new lang_string('option_maxheight_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/maxwidth', new lang_string('option_maxwidth', 'videotime'),
-        new lang_string('option_maxwidth_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_vimeo/maxwidth',
+        new lang_string('option_maxwidth', 'videotime'),
+        new lang_string('option_maxwidth_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/width', new lang_string('option_width', 'videotime'),
-        new lang_string('option_width_help', 'videotime'), '', PARAM_INT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_vimeo/width',
+        new lang_string('option_width', 'videotime'),
+        new lang_string('option_width_help', 'videotime'),
+        '',
+        PARAM_INT
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/autoplay', new lang_string('option_autoplay', 'videotime'),
-        new lang_string('option_autoplay_help', 'videotime'), 1));
+        'videotimeplugin_vimeo/autoplay',
+        new lang_string('option_autoplay', 'videotime'),
+        new lang_string('option_autoplay_help', 'videotime'),
+        1
+    ));
 
-    $settings->add(new admin_setting_configcheckbox('videotimeplugin_vimeo/byline', new lang_string('option_byline', 'videotime'),
-        new lang_string('option_byline_help', 'videotime'), 1));
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_vimeo/byline',
+        new lang_string('option_byline', 'videotime'),
+        new lang_string('option_byline_help', 'videotime'),
+        1
+    ));
 
-    $settings->add(new admin_setting_configtext('videotimeplugin_vimeo/color', new lang_string('option_color', 'videotime'),
-        new lang_string('option_color_help', 'videotime'), '00adef', PARAM_TEXT));
+    $settings->add(new admin_setting_configtext(
+        'videotimeplugin_vimeo/color',
+        new lang_string('option_color', 'videotime'),
+        new lang_string('option_color_help', 'videotime'),
+        '00adef',
+        PARAM_TEXT
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_vimeo/controls',
@@ -67,31 +102,53 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/option_loop', new lang_string('option_loop', 'videotimeplugin_vimeo'),
-        new lang_string('option_loop_help', 'videotimeplugin_vimeo'), '0'));
-
-    $settings->add(new admin_setting_configcheckbox('videotimeplugin_vimeo/muted', new lang_string('option_muted', 'videotime'),
-        new lang_string('option_muted_help', 'videotime'), '0'));
-
-    $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/playsinline', new lang_string('option_playsinline', 'videotime'),
-        new lang_string('option_playsinline_help', 'videotime'), '1'));
+        'videotimeplugin_vimeo/option_loop',
+        new lang_string('option_loop', 'videotimeplugin_vimeo'),
+        new lang_string('option_loop_help', 'videotimeplugin_vimeo'),
+        '0'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/portrait', new lang_string('option_portrait', 'videotime'),
-        new lang_string('option_portrait_help', 'videotime'), '1'));
+        'videotimeplugin_vimeo/muted',
+        new lang_string('option_muted', 'videotime'),
+        new lang_string('option_muted_help', 'videotime'),
+        '0'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/speed', new lang_string('option_speed', 'videotime'),
-        new lang_string('option_speed_help', 'videotime'), '1'));
+        'videotimeplugin_vimeo/playsinline',
+        new lang_string('option_playsinline', 'videotime'),
+        new lang_string('option_playsinline_help', 'videotime'),
+        '1'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/title', new lang_string('option_title', 'videotime'),
-        new lang_string('option_title_help', 'videotime'), '1'));
+        'videotimeplugin_vimeo/portrait',
+        new lang_string('option_portrait', 'videotime'),
+        new lang_string('option_portrait_help', 'videotime'),
+        '1'
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
-        'videotimeplugin_vimeo/transparent', new lang_string('option_transparent', 'videotime'),
-        new lang_string('option_transparent_help', 'videotime'), '1'));
+        'videotimeplugin_vimeo/speed',
+        new lang_string('option_speed', 'videotime'),
+        new lang_string('option_speed_help', 'videotime'),
+        '1'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_vimeo/title',
+        new lang_string('option_title', 'videotime'),
+        new lang_string('option_title_help', 'videotime'),
+        '1'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_vimeo/transparent',
+        new lang_string('option_transparent', 'videotime'),
+        new lang_string('option_transparent_help', 'videotime'),
+        '1'
+    ));
 
     $settings->add(new admin_setting_heading('forcedhdr', new lang_string('forcedsettings', 'videotime'), ''));
 
@@ -134,7 +191,7 @@ if ($ADMIN->fulltree) {
             'maxwidth',
             'muted',
             'option_loop',
-            'playsinline' ,
+            'playsinline',
             'portrait',
             'title',
             'transparent',

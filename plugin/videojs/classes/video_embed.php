@@ -43,7 +43,6 @@ require_once("$CFG->libdir/resourcelib.php");
  * @package videotimeplugin_videojs
  */
 class video_embed extends vimeo_embed implements \renderable, \templatable {
-
     /**
      * Function to export the renderer data in a format that is suitable for a
      * mustache template. This means:

@@ -23,10 +23,11 @@
  */
 
 use mod_videotime\videotime_instance;
+use videotimeplugin_pro\output\user_report;
 use videotimeplugin_pro\session;
 
-require(__DIR__.'/../../config.php');
-require_once(__DIR__.'/lib.php');
+require(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 global $USER;
 
@@ -75,11 +76,19 @@ $groupmode = groups_get_activity_groupmode($cm);
 if ($groupmode) {
     ob_start();
     groups_get_activity_group($cm, true);
-    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/videotime/report.php?id='.$id);
+    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/videotime/report.php?id=' . $id);
     $groupselector = ob_get_contents();
     ob_end_clean();
 } else {
     $groupselector = '';
+}
+
+if ($userid = optional_param('userid', null, PARAM_INT)) {
+    $userreport = new user_report($cm, $userid);
+    echo $OUTPUT->header();
+    echo $OUTPUT->render($userreport);
+    echo $OUTPUT->footer();
+    die();
 }
 
 $table = new \videotimeplugin_pro\sessions_report_table($cm->id, $download);

@@ -36,7 +36,6 @@ use templatable;
  * @package videotimeplugin_vimeo
  */
 class video_embed extends vimeo_embed_base implements renderable, templatable {
-
     /**
      * Returns the moodle component name.
      *
