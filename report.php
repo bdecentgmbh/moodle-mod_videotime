@@ -23,6 +23,7 @@
  */
 
 use mod_videotime\videotime_instance;
+use videotimeplugin_pro\output\user_report;
 use videotimeplugin_pro\session;
 
 require(__DIR__ . '/../../config.php');
@@ -80,6 +81,14 @@ if ($groupmode) {
     ob_end_clean();
 } else {
     $groupselector = '';
+}
+
+if ($userid = optional_param('userid', null, PARAM_INT)) {
+    $userreport = new user_report($cm, $userid);
+    echo $OUTPUT->header();
+    echo $OUTPUT->render($userreport);
+    echo $OUTPUT->footer();
+    die();
 }
 
 $table = new \videotimeplugin_pro\sessions_report_table($cm->id, $download);

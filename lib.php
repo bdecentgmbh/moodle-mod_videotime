@@ -650,6 +650,13 @@ function videotime_get_coursemodule_info($coursemodule) {
         }
     }
 
+    if ($instance->timeclose) {
+        $result->customdata['timeclose'] = $instance->timeclose;
+    }
+    if ($instance->timeopen) {
+        $result->customdata['timeopen'] = $instance->timeopen;
+    }
+
     return $result;
 }
 
