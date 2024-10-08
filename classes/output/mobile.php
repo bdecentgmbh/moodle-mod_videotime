@@ -66,7 +66,7 @@ class mobile {
         $videotime = $DB->get_record('videotime', ['id' => $cm->instance]);
 
         $videotime->name = format_string($videotime->name);
-        list($videotime->intro, $videotime->introformat) =
+        [$videotime->intro, $videotime->introformat] =
             external_format_text($videotime->intro, $videotime->introformat, $context->id, 'mod_videotime', 'intro');
 
         $url = new moodle_url('/mod/videotime/player.php', [

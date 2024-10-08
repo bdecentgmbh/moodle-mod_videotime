@@ -26,7 +26,7 @@ namespace mod_videotime\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/externallib.php');
+require_once($CFG->libdir . '/externallib.php');
 
 use external_api;
 

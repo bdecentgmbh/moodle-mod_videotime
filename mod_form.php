@@ -317,8 +317,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             !empty($data[$this->get_suffixed_name('completion_on_finish')] ||
             (
                 !empty($data[$this->get_suffixed_name('completion_on_percent')])
-                && $data[$this->get_suffixed_name('completion_on_percent_value')])
-            );
+                && $data[$this->get_suffixed_name('completion_on_percent_value')]));
     }
 
     /**
