@@ -59,7 +59,6 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  * @package mod_videotime
  */
 class videotime_table extends table {
-
     /**
      * Build a new table.
      */
@@ -118,10 +117,11 @@ class videotime_table extends table {
                     new time_attribute(),
                 ]),
                 new field('percentage_of_video_finished', new lang_string(
-                    'percentageofvideofinished', 'videotime'), $this, 'vt.id', [
+                    'percentageofvideofinished',
+                    'videotime'
+                ), $this, 'vt.id', [
                         new percentage_of_video_finished_attribute(),
-                    ]
-                ),
+                    ]),
                 new field('firstsession', new lang_string('firstsession', 'videotime'), $this, 'vt.id', [
                     new first_session_attribute(),
                     new date_attribute(),

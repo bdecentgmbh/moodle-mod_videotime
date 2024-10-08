@@ -31,14 +31,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_videotime_generator extends testing_module_generator {
-
     /**
      * Create instance
      *
      * @param stdClass $record
      * @param array $options
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG;
         require_once($CFG->dirroot . '/lib/resourcelib.php');
 
@@ -87,5 +86,24 @@ class mod_videotime_generator extends testing_module_generator {
         ];
 
         return parent::create_instance($record, (array)$options);
+    }
+
+    /**
+     * Create session
+     *
+     * @param stdClass $cmid
+     * @param array $options
+     */
+    public function create_session($cmid, ?array $options = null) {
+        global $USER;
+
+        $session = \videotimeplugin_pro\session::create_new(
+            $cmid,
+            $options['user_id'] ?? $USER->id,
+            $options['start'] ?? 0,
+            $options['uuid'] ?? 'vimeo-embed-' . dechex(rand(0, 8 ** 13))
+        );
+
+        return $session;
     }
 }

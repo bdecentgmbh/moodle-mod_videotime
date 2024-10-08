@@ -25,8 +25,8 @@
 use mod_videotime\videotime_instance;
 use videotimeplugin_pro\session;
 
-require(__DIR__.'/../../config.php');
-require_once(__DIR__.'/lib.php');
+require(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 global $USER;
 
