@@ -52,7 +52,7 @@ require_login($course, true, $cm);
 
 $modulecontext = context_module::instance($cm->id);
 
-require_capability('mod/videotime:addinstance', $modulecontext);
+require_capability('moodle/course:manageactivities', $modulecontext);
 
 $PAGE->set_url('/mod/videotime/options.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
