@@ -25,8 +25,8 @@
 use mod_videotime\output\next_activity_button;
 use mod_videotime\videotime_instance;
 
-require(__DIR__.'/../../config.php');
-require_once(__DIR__.'/lib.php');
+require(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 
 global $USER;
 

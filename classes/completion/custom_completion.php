@@ -31,7 +31,6 @@ use core_completion\activity_custom_completion;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
-
     /**
      * Fetches the completion state for a given completion rule.
      *
@@ -49,13 +48,13 @@ class custom_completion extends activity_custom_completion {
         $sessions = \videotimeplugin_pro\module_sessions::get($this->cm->id, $this->userid);
 
         switch ($rule) {
-            case 'completion_on_view_time_second':
+            case 'completion_on_view_time':
                 $status = $sessions->get_total_time() >= $videotime->completion_on_view_time_second;
                 break;
             case 'completion_on_finish':
                 $status = $sessions->is_finished();
                 break;
-            case 'completion_on_percent_value':
+            case 'completion_on_percent':
                 $status = $videotime->completion_on_percent &&
                     (($sessions->get_percent() * 100) >= $videotime->completion_on_percent_value);
                 break;
@@ -73,6 +72,7 @@ class custom_completion extends activity_custom_completion {
                     !$videotime->completion_on_percent ||
                     (($sessions->get_percent() * 100) >= $videotime->completion_on_percent_value)
                 );
+                break;
             default:
                 $status = false;
                 break;
@@ -93,9 +93,9 @@ class custom_completion extends activity_custom_completion {
         }
 
         return [
-            'completion_on_view_time_second',
+            'completion_on_view_time',
             'completion_on_finish',
-            'completion_on_percent_value',
+            'completion_on_percent',
             'completion_hide_detail',
         ];
     }
@@ -106,8 +106,8 @@ class custom_completion extends activity_custom_completion {
      * @return array
      */
     public function get_custom_rule_descriptions(): array {
-        $timespent = format_time($this->cm->customdata['customcompletionrules']['completion_on_view_time_second'] ?? 0);
-        $percentspent = $this->cm->customdata['customcompletionrules']['completion_on_percent_value'] ?? 0;
+        $timespent = format_time($this->cm->customdata['customcompletionrules']['completion_on_view_time'] ?? 0);
+        $percentspent = $this->cm->customdata['customcompletionrules']['completion_on_percent'] ?? 0;
 
         // Only return general description if we are hiding the details.
         if (!empty($this->cm->customdata['customcompletionrules']['completion_hide_detail'])) {
@@ -117,9 +117,9 @@ class custom_completion extends activity_custom_completion {
         }
 
         return [
-            'completion_on_view_time_second' => get_string('completiondetail:_on_view_time', 'videotime', $timespent),
+            'completion_on_view_time' => get_string('completiondetail:_on_view_time', 'videotime', $timespent),
             'completion_on_finish' => get_string('completiondetail:_on_finish', 'videotime'),
-            'completion_on_percent_value' => get_string('completiondetail:_on_percent', 'videotime', $percentspent),
+            'completion_on_percent' => get_string('completiondetail:_on_percent', 'videotime', $percentspent),
         ];
     }
 
@@ -131,9 +131,9 @@ class custom_completion extends activity_custom_completion {
     public function get_sort_order(): array {
         return [
             'completionview',
-            'completion_on_view_time_second',
             'completion_on_finish',
-            'completion_on_percent_value',
+            'completion_on_percent',
+            'completion_on_view_time',
             'completion_hide_detail',
             'completionpassgrade',
             'completionusegrade',
