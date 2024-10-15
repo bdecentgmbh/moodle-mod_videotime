@@ -497,7 +497,7 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
 
     if (
         $PAGE->cm &&
-        has_capability('mod/videotime:addinstance', $PAGE->cm->context)
+        has_capability('moodle/course:manageactivities', $PAGE->cm->context)
     ) {
         $node = navigation_node::create(
             get_string('embed_options', 'mod_videotime'),
