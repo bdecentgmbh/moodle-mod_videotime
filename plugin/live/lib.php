@@ -167,7 +167,8 @@ function videotimeplugin_live_add_form_fields($mform, $formclass) {
     if (
         !empty(get_config('videotimeplugin_live', 'enabled'))
         && !empty(get_config('block_deft', 'enableupdating'))
-        && $formclass === 'mod_videotime_mod_form') {
+        && $formclass === 'mod_videotime_mod_form'
+    ) {
         $mform->insertElementBefore(
             $mform->createElement('advcheckbox', 'livefeed', get_string('livefeed', 'videotimeplugin_live')),
             'name'
@@ -219,7 +220,7 @@ function videotimeplugin_live_pluginfile($course, $cm, $context, $filearea, $arg
         return false;
     }
 
-    if ($filearea !== 'poster' ) {
+    if ($filearea !== 'poster') {
         return false;
     }
 

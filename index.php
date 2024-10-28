@@ -22,9 +22,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__.'/../../config.php');
+require(__DIR__ . '/../../config.php');
 
-require_once(__DIR__.'/lib.php');
+require_once(__DIR__ . '/lib.php');
 
 $id = required_param('id', PARAM_INT);
 
@@ -63,7 +63,7 @@ if ($course->format == 'weeks') {
     $table->head  = [get_string('week'), get_string('name')];
     $table->align = ['center', 'left'];
 } else if ($usesections) {
-    $strsectionname = get_string('sectionname', 'format_'.$course->format);
+    $strsectionname = get_string('sectionname', 'format_' . $course->format);
     $table->head  = [$strsectionname, get_string('name')];
     $table->align = ['center', 'left', 'left', 'left'];
 } else {
@@ -81,11 +81,13 @@ foreach ($videotimes as $videotime) {
         $link = html_writer::link(
             new moodle_url('/mod/videotime/view.php', ['id' => $videotime->coursemodule]),
             format_string($videotime->name, true),
-            ['class' => 'dimmed']);
+            ['class' => 'dimmed']
+        );
     } else {
         $link = html_writer::link(
             new moodle_url('/mod/videotime/view.php', ['id' => $videotime->coursemodule]),
-            format_string($videotime->name, true));
+            format_string($videotime->name, true)
+        );
     }
 
     if ($course->format == 'weeks') {

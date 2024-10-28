@@ -35,7 +35,6 @@ use mod_videotime\videotime_instance;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class average_view_time_attribute extends abstract_field_attribute {
-
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format

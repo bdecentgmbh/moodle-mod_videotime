@@ -32,7 +32,6 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renew_token extends external_api {
-
     /**
      * Get parameter definition for renew_token.
      *

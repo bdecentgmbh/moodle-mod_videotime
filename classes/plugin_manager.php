@@ -45,7 +45,6 @@ require_once($CFG->dirroot . '/mod/videotime/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_manager {
-
     /** @var object the url of the manage plugin page */
     private $pageurl;
     /** @var string any error from the current action */
@@ -114,17 +113,22 @@ class plugin_manager {
         $url = $this->pageurl;
 
         if ($action === 'delete') {
-            $url = core_plugin_manager::instance()->get_uninstall_url($this->subtype.'_'.$plugin, 'manage');
+            $url = core_plugin_manager::instance()->get_uninstall_url($this->subtype . '_' . $plugin, 'manage');
             if (!$url) {
                 return '&nbsp;';
             }
             return html_writer::link($url, get_string('uninstallplugin', 'core_admin'));
         }
 
-        return $OUTPUT->action_icon(new moodle_url($url,
-                ['action' => $action, 'plugin' => $plugin, 'sesskey' => sesskey()]),
-                new pix_icon($icon, $alt, 'moodle', ['title' => $alt]),
-                null, ['title' => $alt]) . ' ';
+        return $OUTPUT->action_icon(
+            new moodle_url(
+                $url,
+                ['action' => $action, 'plugin' => $plugin, 'sesskey' => sesskey()]
+            ),
+            new pix_icon($icon, $alt, 'moodle', ['title' => $alt]),
+            null,
+            ['title' => $alt]
+        ) . ' ';
     }
 
     /**
@@ -164,7 +168,7 @@ class plugin_manager {
             $row[] = get_config($this->subtype . '_' . $plugin, 'version');
 
             $classname = '\\' . $this->subtype . '_' . $plugin . '\\tab';
-            $visible = !empty(get_config($this->subtype . '_' .$plugin, 'enabled')) &&
+            $visible = !empty(get_config($this->subtype . '_' . $plugin, 'enabled')) &&
                 (!class_exists($classname) || empty($classname::added_dependencies())) &&
                 (($plugin != 'repository') || videotime_has_pro());
 
@@ -190,8 +194,10 @@ class plugin_manager {
 
             $exists = file_exists($CFG->dirroot . '/mod/videotime/' . $shortsubtype . '/' . $plugin . '/settings.php');
             if ($row[1] != '' && $exists) {
-                $row[] = html_writer::link(new moodle_url('/admin/settings.php',
-                        ['section' => $this->subtype . '_' . $plugin]), get_string('settings'));
+                $row[] = html_writer::link(new moodle_url(
+                    '/admin/settings.php',
+                    ['section' => $this->subtype . '_' . $plugin]
+                ), get_string('settings'));
             } else {
                 $row[] = '&nbsp;';
             }

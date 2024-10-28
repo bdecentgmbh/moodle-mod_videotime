@@ -33,7 +33,6 @@ function xmldb_videotimetab_information_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2022030100) {
-
         // Define field name to be added to videotimetab_information.
         $table = new xmldb_table('videotimetab_information');
         $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, null, null, null, 'format');

@@ -228,7 +228,7 @@ define([
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
-        this.playbackRate = await this.player.getPlaybackRate();
+        this.playbackRate = await this.getPlaybackRate();
 
         this.player.on('playbackratechange', function(event) {
             this.playbackRate = event.playbackRate;
@@ -621,7 +621,13 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.getPlaybackRate = async function() {
-        return await this.player.getPlaybackRate();
+        try {
+            const playbackRate = await this.player.getPlaybackRate();
+            return playbackRate;
+        } catch (e) {
+            Log.debug(e);
+            return 0;
+        }
     };
 
     /**
@@ -649,7 +655,13 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.getCurrentPosition = async function() {
-        return await this.player.getCurrentTime();
+        let position = await this.player.getCurrentTime();
+        this.plugins.forEach(async plugin => {
+            if (plugin.getCurrentPosition) {
+                position = await plugin.getCurrentPosition(position);
+            }
+        });
+        return position;
     };
 
     return VideoTime;

@@ -28,7 +28,6 @@
  * Provides the step to perform back up of sublugin data
  */
 class backup_videotimetab_texttrack_subplugin extends backup_subplugin {
-
     /**
      * Defined suplugin structure step
      */
@@ -37,8 +36,11 @@ class backup_videotimetab_texttrack_subplugin extends backup_subplugin {
         // Create XML elements.
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
-        $subplugintablesettings = new backup_nested_element('videotimetab_texttrack',
-                null, ['text', 'format', 'videotime']);
+        $subplugintablesettings = new backup_nested_element(
+            'videotimetab_texttrack',
+            null,
+            ['text', 'format', 'videotime']
+        );
         $subpluginelementtrack = new backup_nested_element('videotimetab_texttrack_track');
         $subpluginelementtext = new backup_nested_element('videotimetab_texttrack_text');
 
@@ -47,8 +49,10 @@ class backup_videotimetab_texttrack_subplugin extends backup_subplugin {
         $subpluginwrapper->add_child($subplugintablesettings);
 
         // Set source to populate the data.
-        $subplugintablesettings->set_source_table('videotimetab_texttrack',
-                ['videotime' => backup::VAR_ACTIVITYID]);
+        $subplugintablesettings->set_source_table(
+            'videotimetab_texttrack',
+            ['videotime' => backup::VAR_ACTIVITYID]
+        );
 
         return $subplugin;
     }

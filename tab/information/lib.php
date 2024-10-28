@@ -45,7 +45,6 @@ function videotimetab_information_pluginfile($course, $cm, $context, $filearea, 
     require_login($course, true, $cm);
 
     if ($filearea == 'text') {
-
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/videotimetab_information/$filearea/$relativepath";

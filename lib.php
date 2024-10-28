@@ -73,10 +73,10 @@ function videotime_supports($feature) {
  * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function videotime_grade_item_update($videotime, $grades=null) {
+function videotime_grade_item_update($videotime, $grades = null) {
     global $CFG;
 
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     if (!videotime_has_pro()) {
         return null;
@@ -112,9 +112,9 @@ function videotime_grade_item_update($videotime, $grades=null) {
  * @param int $userid specific user only, 0 means all
  * @param bool $nullifnone
  */
-function videotime_update_grades($videotime, $userid=0, $nullifnone=true) {
+function videotime_update_grades($videotime, $userid = 0, $nullifnone = true) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     if (!videotime_has_pro() || !$videotime->viewpercentgrade) {
         return null;
@@ -272,6 +272,8 @@ function videotime_update_instance($moduleinstance, $mform = null) {
         $moduleinstance->vimeo_url = '';
     }
 
+    $moduleinstance->viewpercentgrade = $moduleinstance->viewpercentgrade ?? 0;
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
@@ -316,78 +318,18 @@ function videotime_process_video_description($moduleinstance) {
     if (isset($moduleinstance->video_description['itemid'])) {
         $modcontext = context_module::instance($moduleinstance->coursemodule);
         $videodescription = $moduleinstance->video_description;
-        $moduleinstance->video_description = file_save_draft_area_files($videodescription['itemid'], $modcontext->id,
-            'mod_videotime', 'video_description', 0,
-            ['subdirs' => true], $videodescription['text']);
+        $moduleinstance->video_description = file_save_draft_area_files(
+            $videodescription['itemid'],
+            $modcontext->id,
+            'mod_videotime',
+            'video_description',
+            0,
+            ['subdirs' => true],
+            $videodescription['text']
+        );
         $moduleinstance->video_description_format = $videodescription['format'];
     }
     return $moduleinstance;
-}
-
-/**
- * Obtains the automatic completion state for this forum based on any conditions
- * in forum settings.
- *
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
- * @throws \dml_exception
- */
-function videotime_get_completion_state($course, $cm, $userid, $type) {
-    global $DB;
-
-    // Get forum details.
-    $videotime = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
-
-    // Completion settings are pro features.
-    if (!videotime_has_pro()) {
-        return $type;
-    }
-
-    $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
-
-    if (!$videotime->completion_on_view_time && !$videotime->completion_on_finish && !$videotime->completion_on_percent) {
-        // Completion options are not enabled so just return $type.
-        return $type;
-    }
-
-    if (videotime_has_pro()) {
-        $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $user->id);
-    }
-
-    // Check if watch time is required.
-    if ($videotime->completion_on_view_time) {
-        // If time was never set return false.
-        if (!$videotime->completion_on_view_time_second) {
-            return false;
-        }
-        // Check if total session time is over the required duration.
-        if (videotime_has_pro() && $sessions->get_total_time() < $videotime->completion_on_view_time_second) {
-            return false;
-        }
-    }
-
-    if ($videotime->completion_on_percent) {
-        // If percent value was never set return false.
-        if (!$videotime->completion_on_percent_value) {
-            return false;
-        }
-        // Check if watch percentage is met.
-        if (videotime_has_pro() && ($sessions->get_percent() * 100) < $videotime->completion_on_percent_value) {
-            return false;
-        }
-    }
-
-    // Check if video completion is required.
-    if (videotime_has_pro() && $videotime->completion_on_finish) {
-        if (!$sessions->is_finished()) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 /**
@@ -401,7 +343,7 @@ function videotime_get_completion_state($course, $cm, $userid, $type) {
 function videotime_update_completion($cmid) {
     global $DB, $CFG;
 
-    require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->libdir . '/completionlib.php');
 
     $cm = get_coursemodule_from_id('videotime', $cmid, 0, false, MUST_EXIST);
     $course = get_course($cm->course);
@@ -409,7 +351,8 @@ function videotime_update_completion($cmid) {
 
     $completion = new \completion_info($course);
     // Update completion status only if any extra criteria is set on the activity.
-    if ($completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish ||
+    if (
+        $completion->is_enabled($cm) && ($moduleinstance->completion_on_view_time || $moduleinstance->completion_on_finish ||
         $moduleinstance->completion_on_percent)
     ) {
         $completion->update_state($cm, COMPLETION_COMPLETE);
@@ -428,7 +371,7 @@ function videotime_update_completion($cmid) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
+function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -437,7 +380,6 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
     require_login($course, true, $cm);
 
     if ($filearea == 'video_description' || $filearea == 'intro') {
-
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/mod_videotime/$filearea/$relativepath";
@@ -521,7 +463,7 @@ function videotime_has_repository() {
 function videotime_is_totara() {
     global $CFG;
     return file_exists("$CFG->dirroot/totara");
-};
+}
 
 /**
  * This function extends the settings navigation block for the site.
@@ -551,19 +493,27 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
 
     if (
         $PAGE->cm &&
-        has_capability('mod/videotime:addinstance', $PAGE->cm->context)
+        has_capability('moodle/course:manageactivities', $PAGE->cm->context)
     ) {
-        $node = navigation_node::create(get_string('embed_options', 'mod_videotime'),
+        $node = navigation_node::create(
+            get_string('embed_options', 'mod_videotime'),
             new moodle_url('/mod/videotime/options.php', ['id' => $PAGE->cm->id]),
-            navigation_node::TYPE_SETTING, null, 'mod_videotime_options',
-            new pix_icon('t/play', ''));
+            navigation_node::TYPE_SETTING,
+            null,
+            'mod_videotime_options',
+            new pix_icon('t/play', '')
+        );
         $videtimenode->add_node($node, $beforekey);
     }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
-        $node = navigation_node::create(get_string('report'),
+        $node = navigation_node::create(
+            get_string('report'),
             new moodle_url('/mod/videotime/report.php', ['id' => $PAGE->cm->id]),
-            navigation_node::TYPE_SETTING, null, 'mod_videotime_report',
-            new pix_icon('t/grades', ''));
+            navigation_node::TYPE_SETTING,
+            null,
+            'mod_videotime_report',
+            new pix_icon('t/grades', '')
+        );
         $videtimenode->add_node($node, $beforekey);
     }
 
@@ -590,8 +540,14 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get('coursereports');
     if (videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
         $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
-        $node->add(get_string('pluginname', 'videotime'), $url, navigation_node::TYPE_SETTING, null, null,
-            new pix_icon('i/report', ''));
+        $node->add(
+            get_string('pluginname', 'videotime'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            new pix_icon('i/report', '')
+        );
     }
 }
 
@@ -604,7 +560,6 @@ function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
     try {
-
         $instance = videotime_instance::instance_by_id($cm->instance);
 
         // Ensure we are on the course view page. This was throwing an error when viewing the module
@@ -684,15 +639,22 @@ function videotime_get_coursemodule_info($coursemodule) {
             $result->customdata['customcompletionrules']['completion_hide_detail'] = $instance->completion_hide_detail;
         } else {
             if ($instance->completion_on_view_time) {
-                $result->customdata['customcompletionrules']['completion_on_view_time_second']
+                $result->customdata['customcompletionrules']['completion_on_view_time']
                     = $instance->completion_on_view_time_second;
             }
             if ($instance->completion_on_percent) {
-                $result->customdata['customcompletionrules']['completion_on_percent_value']
+                $result->customdata['customcompletionrules']['completion_on_percent']
                     = $instance->completion_on_percent_value;
             }
             $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
         }
+    }
+
+    if ($instance->timeclose) {
+        $result->customdata['timeclose'] = $instance->timeclose;
+    }
+    if ($instance->timeopen) {
+        $result->customdata['timeopen'] = $instance->timeopen;
     }
 
     return $result;
@@ -768,9 +730,11 @@ function mod_videotime_get_vimeo_id_from_link($link) {
  * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
  * @return \core_calendar\local\event\entities\action_interface|null
  */
-function mod_videotime_core_calendar_provide_event_action(calendar_event $event,
-                                                     \core_calendar\action_factory $factory,
-                                                     int $userid = 0) {
+function mod_videotime_core_calendar_provide_event_action(
+    calendar_event $event,
+    \core_calendar\action_factory $factory,
+    int $userid = 0
+) {
     global $USER;
 
     if (empty($userid)) {
