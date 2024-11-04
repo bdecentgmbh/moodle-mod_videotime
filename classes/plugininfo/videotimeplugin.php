@@ -52,15 +52,15 @@ class videotimeplugin extends \core\plugininfo\base {
             case 'pro':
                 $info = [
                     'maturity' => MATURITY_STABLE,
-                    'release' => '1.8.2',
-                    'version' => 2024050602,
+                    'release' => '1.8.3',
+                    'version' => 2024050603,
                 ];
                 break;
             case 'repository':
                 $info = [
                     'maturity' => MATURITY_STABLE,
-                    'release' => '1.8.2',
-                    'version' => 2024050601,
+                    'release' => '1.8.3',
+                    'version' => 2024050602,
                 ];
                 break;
         }

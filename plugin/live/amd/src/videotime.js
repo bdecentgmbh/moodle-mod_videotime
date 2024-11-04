@@ -27,25 +27,30 @@ class Publish extends PublishBase {
      * @param {object} pluginHandle
      * @return {Promise}
      */
-    register(pluginHandle) {
+    async register(pluginHandle) {
         // Try a registration
-        return Ajax.call([{
-            args: {
-                handle: pluginHandle.getId(),
-                id: Number(this.contextid),
-                plugin: pluginHandle.plugin,
-                room: this.roomid,
-                ptype: this.ptype == 'publish',
-                session: pluginHandle.session.getSessionId()
-            },
-            contextid: this.contextid,
-            fail: Notification.exception,
-            methodname: 'videotimeplugin_live_join_room'
-        }])[0].then(response => {
+        try {
+            const response = await Ajax.call([{
+                args: {
+                    handle: pluginHandle.getId(),
+                    id: Number(this.contextid),
+                    plugin: pluginHandle.plugin,
+                    room: this.roomid,
+                    ptype: this.ptype == 'publish',
+                    session: pluginHandle.session.getSessionId()
+                },
+                contextid: this.contextid,
+                fail: Notification.exception,
+                methodname: 'videotimeplugin_live_join_room'
+            }])[0];
             this.feed = response.id;
 
             return response;
-        }).catch(Notification.exception);
+        } catch (e) {
+            Notification.exception(e);
+        }
+
+        return null;
     }
 
     /**
@@ -98,34 +103,67 @@ class Publish extends PublishBase {
         this.janus.destroy();
 
         [
-            this.currentCamera || Promise.resolve(null),
-            this.currentDisplay || Promise.resolve(null),
-        ].forEach(videoInput => {
-            videoInput.then(videoStream => {
-                if (videoStream) {
-                    videoStream.getTracks().forEach(track => {
-                        track.enabled = false;
-                        track.stop();
-                    });
-                }
-
-                return null;
-            }).catch(Notification.exception);
+            this.currentCamera || null,
+            this.currentDisplay || null,
+        ].forEach(async(videoInput) => {
+            if (!videoInput) {
+                return;
+            }
+            const videoStream = await videoInput;
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => {
+                    track.enabled = false;
+                    track.stop();
+                });
+            }
         });
     }
 
-    onLocalTrack(track, on) {
-        const remoteStream = new MediaStream([track]);
-        if (!on || (track.kind == 'audio')) {
+    async onLocalTrack(track, on) {
+        if (track.kind == 'audio') {
             return;
         }
-        remoteStream.mid = track.mid;
-        Log.debug(on);
-        Log.debug(remoteStream);
-        Janus.attachMediaStream(
-            document.getElementById('video-controls-' + this.tracks[track.id]),
-            remoteStream
-        );
+        if (on) {
+            const remoteStream = new MediaStream([track]);
+            remoteStream.mid = track.mid;
+
+            Janus.attachMediaStream(
+                document.getElementById('video-controls-' + this.tracks[track.id]),
+                remoteStream
+            );
+
+            return;
+        }
+        if (this.currentCamera) {
+            const videoStream = await this.currentCamera;
+            if (videoStream) {
+                videoStream.getTracks().forEach(current => {
+                    if (current.id == track.id) {
+                        this.currentCamera = null;
+                        document
+                            .getElementById('video-controls-' + this.tracks[track.id])
+                            .parentNode
+                            .classList
+                            .add('hidden');
+                    }
+                });
+            }
+        }
+        if (this.currentDisplay) {
+            const videoStream = await this.currentDisplay;
+            if (videoStream) {
+                videoStream.getTracks().forEach(current => {
+                    if (current.id == track.id) {
+                        this.currentDisplay = null;
+                        document
+                            .getElementById('video-controls-' + this.tracks[track.id])
+                            .parentNode
+                            .classList
+                            .add('hidden');
+                    }
+                });
+            }
+        }
     }
 
     handleClick(e) {
@@ -159,22 +197,13 @@ class Publish extends PublishBase {
                     break;
                 case 'mute':
                 case 'unmute':
-                    ((type == 'display') ? this.currentDisplay : this.currentCamera)
-                    .then(videoStream => {
-                        if (videoStream) {
-                            videoStream.getAudioTracks().forEach(track => {
-                                track.enabled = (action == 'unmute');
-                            });
-                        }
-                        return videoStream;
-                    }).catch(Notification.exception);
+                    this.muteAudio(action == 'mute', type);
                     break;
                 case 'publish':
-                    Log.debug(type);
                     if (type == 'display') {
-                        this.shareDisplay();
+                        this.videoInput = this.shareDisplay();
                     } else {
-                        this.shareCamera();
+                        this.videoInput = this.shareCamera();
                     }
                     document.querySelectorAll('#video-controls-camera, #video-controls-display').forEach(video => {
                         video.parentNode.classList.remove('selected');
@@ -221,92 +250,100 @@ class Publish extends PublishBase {
         return true;
     }
 
+    async muteAudio(mute, type) {
+        try {
+            const videoStream = await ((type == 'display') ? this.currentDisplay : this.currentCamera);
+            if (videoStream) {
+                videoStream.getAudioTracks().forEach(track => {
+                    track.enabled = (!mute);
+                });
+            }
+            return videoStream;
+        } catch (e) {
+            Notification.exception(e);
+        }
+
+        return null;
+    }
+
     /**
      * Set video source to user camera
      */
-    shareCamera() {
-        const videoInput = this.videoInput,
-            currentCamera = this.currentCamera || Promise.resolve(null);
+    async shareCamera() {
+        const videoInput = this.videoInput;
+        const currentCamera = this.currentCamera;
 
-        this.videoInput = currentCamera.then(videoStream => {
+        if (currentCamera) {
+            const videoStream = await currentCamera;
             if (videoStream) {
                 return videoStream;
-            } else {
-                const cameraInput = navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                });
-
-                this.currentCamera = cameraInput.catch(() => {
-                    return currentCamera;
-                });
-
-                return cameraInput.then(videoStream => {
-                    this.tracks = this.tracks || {};
-                    videoStream.getTracks().forEach(track => {
-                        this.tracks[track.id] = 'camera';
-                    });
-
-                    return videoStream;
-                }).catch((e) => {
-                    Log.debug(e);
-
-                    return videoInput;
-                });
             }
-        });
+        }
+
+        try {
+            this.currentCamera = navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
+            const videoStream = await this.currentCamera;
+            this.tracks = this.tracks || {};
+            videoStream.getTracks().forEach(track => {
+                this.tracks[track.id] = 'camera';
+            });
+            return videoStream;
+        } catch (e) {
+            Log.debug(e);
+        }
+
+        return videoInput;
     }
 
     /**
      * Set video source to display surface
      */
-    shareDisplay() {
+    async shareDisplay() {
         const videoInput = this.videoInput,
-            currentDisplay = this.currentDisplay || Promise.resolve(null),
+            currentDisplay = this.currentDisplay || null,
             displayInput = navigator.mediaDevices.getDisplayMedia({
             video: true,
             audio: true
         });
 
-        this.videoInput = displayInput.then(videoStream => {
+        this.videoInput = displayInput;
+        try {
+            const videoStream = await displayInput;
             this.tracks = this.tracks || {};
             videoStream.getTracks().forEach(track => {
                 this.tracks[track.id] = 'display';
             });
 
-            return videoStream;
-        }).catch((e) => {
-            Log.debug(e);
-
-            return videoInput;
-        });
-
-        this.currentDisplay = displayInput.then(videoStream => {
-            currentDisplay.then(videoStream => {
+            this.currentDisplay = displayInput;
+            if (currentDisplay) {
+                const videoStream = await currentDisplay;
                 if (videoStream) {
                     videoStream.getTracks().forEach(track => {
                         track.stop();
                     });
                 }
-
-                return videoStream;
-            }).catch(Notification.exception);
+            }
 
             return videoStream;
-        }).catch((e) => {
+        } catch (e) {
             Log.debug(e);
 
-            return currentDisplay;
-        });
+            return videoInput;
+        }
     }
 
     /**
      * Process tracks from current video stream and adjust publicatioin
      *
      * @param {array} tracks Additional tracks to add
+     * @returns {bool}
      */
-    processStream(tracks) {
-        this.videoInput.then(videoStream => {
+    async processStream(tracks) {
+        try {
+            const videoStream = await this.videoInput;
             this.tracks = this.tracks || {};
             if (videoStream) {
                 const audiotransceiver = this.getTransceiver('audio'),
@@ -389,9 +426,11 @@ class Publish extends PublishBase {
                     }
                 });
             }
+        } catch (e) {
+            Notification.exception(e);
+        }
 
-            return videoStream;
-        }).catch(Notification.exception);
+        return true;
     }
 }
 
@@ -405,17 +444,19 @@ export default class VideoTime extends VideoTimeBase {
      *
      * @returns {bool}
      */
-    initialize(contextid, token, peerid) {
+    async initialize(contextid, token, peerid) {
         Log.debug("Initializing Video Time " + this.elementId);
 
         this.contextid = contextid;
+        this.plugins = [];
         this.peerid = peerid;
 
         if (this.instance.token) {
             wstoken = this.instance.token;
         }
 
-        this.getRoom().then(response => {
+        try {
+            const response = await this.getRoom();
             const socket = new Socket(contextid, token);
 
             this.iceservers = JSON.parse(response.iceservers);
@@ -435,8 +476,9 @@ export default class VideoTime extends VideoTimeBase {
                 control.classList.remove('hidden');
             });
 
-            socket.subscribe(() => {
-                this.getFeed().then(response => {
+            socket.subscribe(async() => {
+                try {
+                    const response = await this.getFeed();
                     const room = rooms[String(contextid)];
                     if (room.publish && room.publish.restart) {
                         if (response.feed == peerid) {
@@ -445,13 +487,13 @@ export default class VideoTime extends VideoTimeBase {
                         room.publish = null;
                     }
                     this.subscribeTo(Number(response.feed));
-
-                    return response;
-                }).catch(Notification.exception);
+                } catch (e) {
+                    Notification.exception(e);
+                }
             });
-
-            return response;
-        }).catch(Notification.exception);
+        } catch (e) {
+            Notification.exception(e);
+        }
 
         this.addListeners();
 
@@ -463,7 +505,7 @@ export default class VideoTime extends VideoTimeBase {
      *
      * @returns {Promise}
      */
-    getRoom() {
+    async getRoom() {
         if (wstoken) {
             const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
                 data = url.searchParams;
@@ -472,15 +514,18 @@ export default class VideoTime extends VideoTimeBase {
             data.set('wsfunction', 'videotimeplugin_live_get_room');
             data.set('contextid', this.contextid);
 
-            return fetch(url).then((response) => {
+            try {
+                const response = await fetch(url);
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
-                return response.json();
-            });
+                return await response.json();
+            } catch (e) {
+                Notification.exception(e);
+            }
         }
 
-        return Ajax.call([{
+        return await Ajax.call([{
             methodname: 'videotimeplugin_live_get_room',
             args: {contextid: this.contextid},
             fail: Notification.exception
@@ -492,7 +537,7 @@ export default class VideoTime extends VideoTimeBase {
      *
      * @returns {Promise}
      */
-    getFeed() {
+    async getFeed() {
         if (wstoken) {
             const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
                 data = url.searchParams;
@@ -501,15 +546,18 @@ export default class VideoTime extends VideoTimeBase {
             data.set('wsfunction', 'videotimeplugin_live_get_feed');
             data.set('contextid', this.contextid);
 
-            return fetch(url).then((response) => {
+            try {
+                const response = fetch(url);
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
-                return response.json();
-            });
+                return await response.json();
+            } catch (e) {
+                Notification.exception(e);
+            }
         }
 
-        return Ajax.call([{
+        return await Ajax.call([{
             methodname: 'videotimeplugin_live_get_feed',
             args: {contextid: this.contextid},
             fail: Notification.exception
@@ -522,7 +570,9 @@ export default class VideoTime extends VideoTimeBase {
      * @returns {HTMLMediaElement}
      */
     getPlayer() {
-        return document.getElementById(this.elementId);
+        const player = document.getElementById(this.elementId);
+
+        return player;
     }
 
     /**
@@ -583,20 +633,6 @@ export default class VideoTime extends VideoTimeBase {
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
-        // Always update internal values for percent and current time watched.
-        player.addEventListener('timeupdate', function(event) {
-            this.percent = 1;
-            this.currentTime = player.currentTime;
-            this.plugins.forEach(plugin => {
-                if (typeof plugin.setCurrentTime == 'function') {
-                    plugin.getSessions().then(session => {
-                        plugin.setCurrentTime(session.id, event.seconds);
-                        return session;
-                    }).catch(Notification.exception);
-                }
-            });
-        }.bind(this));
-
         // Initiate video finish procedure.
         player.addEventListener('ended', this.handleEnd.bind(this));
         player.addEventListener('pause', this.handlePause.bind(this));
@@ -625,63 +661,7 @@ export default class VideoTime extends VideoTimeBase {
         });
 
         if (this.remoteFeed && !this.remoteFeed.creatingSubscription && !this.remoteFeed.restart) {
-            const update = {
-                request: 'update',
-                subscribe: [{
-                    feed: Number(source)
-                }],
-                unsubscribe: [{
-                    feed: Number(this.remoteFeed.current)
-                }]
-            };
-
-            if (!source && this.remoteFeed.current) {
-                delete update.subscribe;
-            } else if (source && !this.remoteFeed.current) {
-                delete update.unsubscribe;
-            }
-
-            if (this.remoteFeed.current != source) {
-                this.remoteFeed.muteAudio = room.publish && (room.publish.feed === source);
-                this.remoteFeed.videoroom.send({message: update});
-                if (this.remoteFeed.audioTrack) {
-                    this.remoteFeed.audioTrack.enabled = !this.remoteFeed.muteAudio;
-                }
-
-                if (room.publish && this.remoteFeed.current == room.publish.feed) {
-                    room.publish.handleClose();
-                    room.publish = null;
-                }
-                this.remoteFeed.current = source;
-                if (!source && this.remoteFeed) {
-                    this.remoteFeed.handleClose();
-                    this.remoteFeed = null;
-                }
-                if (Number(source)) {
-                    document.querySelectorAll(
-                        '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
-                    ).forEach(img => {
-                        img.classList.add('hidden');
-                    });
-                    document.querySelectorAll(
-                        '[data-contextid="' + this.contextid + '"] .videotime-embed video'
-                    ).forEach(video => {
-                        video.classList.remove('hidden');
-                    });
-                } else {
-                    document.querySelectorAll(
-                        '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
-                    ).forEach(img => {
-                        img.classList.remove('hidden');
-                    });
-                    document.querySelectorAll(
-                        '[data-contextid="' + this.contextid + '"] .videotime-embed video'
-                    ).forEach(video => {
-                        video.srcObject = null;
-                        video.classList.add('hidden');
-                    });
-                }
-            }
+            this.updateSubscription(source);
         } else if (this.remoteFeed && this.remoteFeed.restart) {
             if (this.remoteFeed.current != source) {
                 this.remoteFeed = null;
@@ -706,13 +686,120 @@ export default class VideoTime extends VideoTimeBase {
         }
     }
 
+    updateSubscription(source) {
+        const room = rooms[String(this.contextid)];
+        const update = {
+            request: 'update',
+            subscribe: [{
+                feed: Number(source)
+            }],
+            unsubscribe: [{
+                feed: Number(this.remoteFeed.current)
+            }]
+        };
+
+        if (!source && this.remoteFeed.current) {
+            delete update.subscribe;
+        } else if (source && !this.remoteFeed.current) {
+            delete update.unsubscribe;
+        }
+
+        if (this.remoteFeed.current != source) {
+            this.remoteFeed.muteAudio = room.publish && (room.publish.feed === source);
+            this.remoteFeed.videoroom.send({message: update});
+            if (this.remoteFeed.audioTrack) {
+                this.remoteFeed.audioTrack.enabled = !this.remoteFeed.muteAudio;
+            }
+
+            if (room.publish && this.remoteFeed.current == room.publish.feed) {
+                room.publish.handleClose();
+                room.publish = null;
+            }
+            this.remoteFeed.current = source;
+            if (!source && this.remoteFeed) {
+                this.remoteFeed.handleClose();
+                this.remoteFeed = null;
+            }
+            if (Number(source)) {
+                document.querySelectorAll(
+                    '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
+                ).forEach(img => {
+                    img.classList.add('hidden');
+                });
+                document.querySelectorAll(
+                    '[data-contextid="' + this.contextid + '"] .videotime-embed video'
+                ).forEach(video => {
+                    video.classList.remove('hidden');
+                });
+            } else {
+                document.querySelectorAll(
+                    '[data-contextid="' + this.contextid + '"] .videotime-embed img.poster-img'
+                ).forEach(img => {
+                    img.classList.remove('hidden');
+                });
+                document.querySelectorAll(
+                    '[data-contextid="' + this.contextid + '"] .videotime-embed video'
+                ).forEach(video => {
+                    video.srcObject = null;
+                    video.classList.add('hidden');
+                });
+            }
+        }
+    }
+
     /**
      * Get duration of video
      *
-     * @returns {Promise}
+     * @returns {float}
      */
     getDuration() {
-        return Promise.resolve(this.currentTime);
+        return 0;
+    }
+
+    /**
+     * Get duration of video
+     *
+     * @returns {float}
+     */
+    getPlaybackRate() {
+        return 1;
+    }
+
+    /**
+     * Get pause state
+     *
+     * @return {bool}
+     */
+    getPaused() {
+        return true;
+    }
+
+    /**
+     * Record watch time for session.
+     */
+    recordWatchTime() {
+        return;
+    }
+
+    /**
+     * Set state on session.
+     */
+    setSessionState() {
+        return;
+    }
+
+    /**
+     * Set current watch time for video. Used for resuming.
+     */
+    setCurrentTime() {
+        return;
+    }
+
+    /**
+     * Set video watch percentage for session.
+     */
+    setPercent() {
+        return;
     }
 }
 
@@ -737,9 +824,9 @@ const handleClick = function(e) {
         if ((action == 'publish') && (!room.publish || room.publish.restart)) {
             room.publish = new Publish(contextid, iceServers, roomid, server, peerid);
             if (type == 'display') {
-                room.publish.shareDisplay();
+                room.publish.videoInput = room.publish.shareDisplay();
             } else {
-                room.publish.shareCamera();
+                room.publish.videoInput = room.publish.shareCamera();
             }
             room.publish.startConnection();
             document
@@ -775,7 +862,7 @@ class Subscribe extends SubscribeBase {
      * @param {object} pluginHandle
      * @return {Promise}
      */
-    register(pluginHandle) {
+    async register(pluginHandle) {
         // Try a registration
         if (wstoken) {
             const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
@@ -789,15 +876,18 @@ class Subscribe extends SubscribeBase {
             data.set('room', this.roomid);
             data.set('feed', this.feed);
             data.set('session', pluginHandle.session.getSessionId());
-            return fetch(url).then((response) => {
+            try {
+                const response = await fetch(url);
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
-                return response.json();
-            }).catch(Notification.exception);
+                return await response.json();
+            } catch (e) {
+                Notification.exception(e);
+            }
         }
 
-        return Ajax.call([{
+        return await Ajax.call([{
             args: {
                 handle: pluginHandle.getId(),
                 id: Number(this.contextid),
