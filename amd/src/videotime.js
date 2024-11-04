@@ -368,10 +368,10 @@ define([
     VideoTime.prototype.startWatchInterval = function() {
         this.plugins.forEach(plugin => {
             if (typeof plugin.startWatchInterval == 'function') {
-                this.watchInterval = true;
                 plugin.startWatchInterval();
             }
         });
+
         if (this.watchInterval) {
             return;
         }
