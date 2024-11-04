@@ -366,30 +366,9 @@ define([
     VideoTime.prototype.startWatchInterval = function() {
         this.plugins.forEach(plugin => {
             if (typeof plugin.startWatchInterval == 'function') {
-                this.watchInterval = true;
                 plugin.startWatchInterval();
             }
         });
-        if (this.watchInterval) {
-            return;
-        }
-
-        this.watchInterval = setInterval(function() {
-            this.getPaused().then(paused => {
-                if (!paused) {
-                    this.time += this.playbackRate;
-                }
-            });
-        }.bind(this), 1000);
-
-        this.watchInterval = setInterval(function() {
-            this.getSession().then(session => {
-                Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
-                this.recordWatchTime(session.id, this.time);
-                this.setPercent(session.id, this.percent);
-                this.setCurrentTime(session.id, this.currentTime);
-            }).catch(Notification.exception);
-        }.bind(this), this.interval);
     };
 
     /**
