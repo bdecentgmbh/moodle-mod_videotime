@@ -165,76 +165,6 @@ export default class VideoTime extends VideoTimeBase {
             return;
         }
 
-        // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
-
-        // Catch all events where video plays.
-        this.player.on(
-            "play",
-            function() {
-                this.playing = true;
-                Log.debug("VIDEO_TIME play");
-            }.bind(this)
-        );
-        this.player.on(
-            "playing",
-            function() {
-                this.playing = true;
-                Log.debug("VIDEO_TIME playing");
-            }.bind(this)
-        );
-
-        // Catch all events where video stops.
-        this.player.on(
-            "pause",
-            function() {
-                this.playing = false;
-                Log.debug("VIDEO_TIME pause");
-            }.bind(this)
-        );
-        this.player.on(
-            "stalled",
-            function() {
-                this.playing = false;
-                Log.debug("VIDEO_TIME stalled");
-            }.bind(this)
-        );
-        this.player.on(
-            "suspend",
-            function() {
-                this.playing = false;
-                Log.debug("VIDEO_TIME suspend");
-            }.bind(this)
-        );
-        this.player.on(
-            "abort",
-            function() {
-                this.playing = false;
-                Log.debug("VIDEO_TIME abort");
-            }.bind(this)
-        );
-
-        this.player.on(
-            "playbackrateschange",
-            function() {
-                this.playbackRate = this.player.playbackRate();
-            }.bind(this)
-        );
-
-        // Always update internal values for percent and current time watched.
-        this.player.on(
-            "timeupdate",
-            function() {
-                this.currentTime = this.player.currentTime();
-                this.percent = this.currentTime / this.player.duration();
-                Log.debug(
-                    "VIDEO_TIME timeupdate. Percent: " +
-                        this.percent +
-                        ". Current time: " +
-                        this.currentTime
-                );
-            }.bind(this)
-        );
-
         // Initiate video finish procedure.
         this.player.on("ended", this.handleEnd.bind(this));
         this.player.on("pause", this.handlePause.bind(this));
@@ -316,9 +246,9 @@ export default class VideoTime extends VideoTimeBase {
      */
     async getCurrentPosition() {
         let position = await this.player.currentTime();
-        this.plugins.forEach(plugin => {
+        this.plugins.forEach(async plugin => {
             if (plugin.getCurrentPosition) {
-                position = plugin.getCurrentPosition(position);
+                position = await plugin.getCurrentPosition(position);
             }
         });
         return position;
