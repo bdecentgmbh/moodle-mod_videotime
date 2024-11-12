@@ -614,11 +614,11 @@ define([
      * @param {string} starttime
      * @returns {Promise}
      */
-    VideoTime.prototype.setStartTime = function(starttime) {
+    VideoTime.prototype.setStartTime = async function(starttime) {
         let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
             this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
-            this.currentTime(this.resumeTime);
+            await this.setCurrentPosition(this.resumeTime);
         }
         return this.player.getCurrentTime();
     };
