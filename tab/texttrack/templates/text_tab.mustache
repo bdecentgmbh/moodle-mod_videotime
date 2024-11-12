@@ -63,13 +63,13 @@
     <div class="texttracks">
     {{# texttracks }}
         {{# captions }}
-        <div class="row texttracks"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
+        <div id="texttrack-{{ id }}" class="row texttracks"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
             <div class="col-3" style="max-width: 100px;">
                 <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttimedisplay}}</a>
             </div>
             <div class="col-9">
                 {{# lines }}
-                <div>{{ text }}</div>
+                <div>{{{ text }}}</div>
                 {{/ lines }}
             </div>
         </div>

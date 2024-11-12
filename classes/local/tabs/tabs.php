@@ -63,7 +63,7 @@ class tabs implements \renderable, \templatable {
         }
 
         if (!empty(get_config("videotimetab_watch", 'enabled'))) {
-            $this->set_active_tab('watch');
+            $this->set_active_tab(optional_param('active', 'watch', PARAM_ALPHA));
             $this->get_tab('watch')->set_persistent();
         }
     }

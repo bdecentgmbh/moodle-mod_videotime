@@ -566,7 +566,7 @@ define([
         const time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
             this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
-            this.currentTime(this.resumeTime);
+            await this.setCurrentPosition(this.resumeTime);
         }
         return await this.player.getCurrentTime();
     };
