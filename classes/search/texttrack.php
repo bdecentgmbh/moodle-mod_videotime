@@ -48,11 +48,15 @@ class texttrack extends \core_search\base_mod {
     public function get_document_recordset($modifiedfrom = 0, ?\context $context = null) {
         global $DB;
 
-         [$contextjoin, $contextparams] = $this->get_context_restriction_sql(
-             $context,
-             'videotime',
-             'v'
-         );
+        if (!get_config('videotimetab_texttrack', 'enabled')) {
+            return null;
+        }
+
+        [$contextjoin, $contextparams] = $this->get_context_restriction_sql(
+            $context,
+            'videotime',
+            'v'
+        );
         if ($contextjoin === null) {
             return null;
         }
@@ -71,6 +75,7 @@ class texttrack extends \core_search\base_mod {
                             END AS timemodified,
                            v.course, v.id AS moduleinstanceid
                   FROM {videotime} v
+                  JOIN {videotimetab_texttrack} t ON v.id = t.videotime
                   JOIN {videotimetab_texttrack_track} tr ON v.id = tr.videotime
                   JOIN {videotimetab_texttrack_text} te ON tr.id = te.track
              LEFT JOIN {videotime_vimeo_video} vv ON v.vimeo_url = vv.link
@@ -146,14 +151,15 @@ class texttrack extends \core_search\base_mod {
         $url = new \moodle_url('/mod/videotime/view.php', [
             'id' => $contextmodule->instanceid,
             'q' => optional_param('q', '', PARAM_TEXT),
+            'active' => 'texttrack',
         ]);
 
         if (!empty($record)) {
             $url->param('time', $record->starttime);
             $url->param('lang', $record->lang);
+            $url->set_anchor('texttrack-' . $record->id);
         }
 
-        $url->set_anchor('texttrack-' . $record->videotime);
         return $url;
     }
 

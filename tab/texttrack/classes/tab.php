@@ -102,10 +102,15 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $texttracks = [];
         $show = true;
+        $query = optional_param('q', '', PARAM_TEXT);
         foreach ($DB->get_records('videotimetab_texttrack_track', ['videotime' => $record->id]) as $track) {
             $captions = $DB->get_records('videotimetab_texttrack_text', ['track' => $track->id], 'starttime, endtime');
             foreach ($captions as $caption) {
-                $caption->lines = array_map(function ($text) {
+                $caption->lines = array_map(function ($text) use ($query) {
+                    $text = s($text);
+                    if ($query) {
+                        $text = str_replace($query, "<span class=\"text-secondary\">$query</span>", s($text));
+                    }
                     return ['text' => $text];
                 }, explode("\n", $caption->text));
                 $caption->starttimedisplay = preg_replace('/\\..*/', '', $caption->starttime);
@@ -142,14 +147,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             return;
         }
 
-        if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id', 'videotime = ?', [$record->id])) {
-            [$sql, $params] = $DB->get_in_or_equal($trackids);
-            $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
-            $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $record->id]);
-        }
-
         try {
             $transaction = $DB->start_delegated_transaction();
+
+            if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id', 'videotime = ?', [$record->id])) {
+                [$sql, $params] = $DB->get_in_or_equal($trackids);
+                $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
+                $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $record->id]);
+            }
 
             foreach ($request['body']['data'] as $texttrack) {
                 if ($texttrack['active']) {
