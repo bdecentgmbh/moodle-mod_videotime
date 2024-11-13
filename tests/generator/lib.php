@@ -34,8 +34,8 @@ class mod_videotime_generator extends testing_module_generator {
     /**
      * Create instance
      *
-     * @param ?stdClass $record
-     * @param ?array $options
+     * @param null|stdClass $record
+     * @param null|array $options
      */
     public function create_instance($record = null, ?array $options = null) {
         global $CFG;
@@ -91,8 +91,8 @@ class mod_videotime_generator extends testing_module_generator {
     /**
      * Create session
      *
-     * @param ?stdClass $cmid
-     * @param ?array $options
+     * @param null|stdClass $cmid
+     * @param null|array $options
      */
     public function create_session($cmid, ?array $options = null) {
         global $USER;
