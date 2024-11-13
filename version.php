@@ -28,4 +28,5 @@ $plugin->component = 'mod_videotime';
 $plugin->release = '1.8.3';
 $plugin->version = 2024050704;
 $plugin->requires = 2023042400;
+$plugin->supported = [402, 405];
 $plugin->maturity = MATURITY_STABLE;
