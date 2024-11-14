@@ -1,0 +1,4 @@
+[submodule "plugin/pro"]
+	path = plugin/pro
+	url = https://github.com/bdecentgmbh/moodle-mod_videotime_pro
+	branch = MOODLE_3X_STABLE
