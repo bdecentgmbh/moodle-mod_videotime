@@ -2,3 +2,7 @@
 	path = plugin/pro
 	url = https://github.com/bdecentgmbh/moodle-mod_videotime_pro
 	branch = MOODLE_3X_STABLE
+[submodule "plugin/repository"]
+	path = plugin/repository
+	url = https://github.com/bdecentgmbh/moodle-mod_videotime_repository
+	branch = MOODLE_3X_STABLE
