@@ -788,8 +788,8 @@ body.ie .video-image-preview .img-responsive {
     border-color: #5897fb;
 }
 
-body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-basis,
-body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-basis {
+body:not(.editing) .modtype_videotime.label_mode .activity-basis,
+body:not(.editing) .modtype_videotime.preview_mode .activity-basis {
     display: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
@@ -799,16 +799,16 @@ body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-basis
     border: none;
 }
 
-body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-icon,
-body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-name-area,
-body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-completion,
-body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-icon,
-body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-name-area,
-body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-completion {
+body:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-icon,
+body:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-name-area,
+body:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-completion,
+body:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-icon,
+body:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-name-area,
+body:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-completion {
     display: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
-body.format-topics:not(.editing) .modtype_videotime .activity-altcontent.activity-description {
+body:not(.editing) .modtype_videotime .activity-altcontent.activity-description {
     border: none;
 }
 
