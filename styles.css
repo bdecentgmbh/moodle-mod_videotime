@@ -797,12 +797,31 @@ body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-basis,
 body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-basis {
     display: none !important; /* stylelint-disable-line declaration-no-important */
 }
-.modtype_videotime.preview_mode .activity-item:not(.activityinline),
-.modtype_videotime.label_mode .activity-item:not(.activityinline) {
-    padding: 0;
+
+body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-icon,
+body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-name-area,
+body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-completion,
+body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-icon,
+body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-name-area,
+body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-completion {
+    display: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+body.format-topics:not(.editing) .modtype_videotime .activity-altcontent.activity-description {
     border: none;
 }
-.modtype_videotime.label_mode  .description .activity-altcontent .container-fluid {
+
+.modtype_videotime .activity-item .activity-altcontent img {
+    border-radius: 0;
+}
+
+.path-course-view ul.section:has(li.preview_mode.modtype_videotime):after {
+    clear: both;
+    display: table;
+    content: '';
+}
+
+.modtype_videotime.label_mode .activity-altcontent .container-fluid {
     padding: 0;
 }
 .modtype_videotime.label_mode  .description .course-description-item,
