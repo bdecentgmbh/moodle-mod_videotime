@@ -139,6 +139,9 @@ body.editing .activity.videotime.preview_mode .actions {
 .path-course-view li.activity.videotime.preview_mode {
     clear: none;
     float: left;
+    padding-top: 0;
+    margin-top: 0;
+    border-top: none;
 }
 
 
