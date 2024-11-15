@@ -136,10 +136,6 @@ body.editing .activity.videotime.preview_mode .actions {
     display: block;
 }
 
-.path-course-view li.activity.videotime.preview_mode > div {
-    padding: 0;
-}
-
 .path-course-view li.activity.videotime.preview_mode {
     clear: none;
     float: left;
@@ -152,10 +148,6 @@ body.editing .activity.videotime.preview_mode .actions {
 
 body.editing.path-course-view li.activity.videotime.preview_mode {
     width: 100%;
-}
-
-.path-course-view li.activity.videotime.preview_mode .panel {
-    min-height: 440px;
 }
 
 /** IE backwards compatibility **/
@@ -796,6 +788,12 @@ body.ie .video-image-preview .img-responsive {
 body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-basis,
 body.format-topics:not(.editing) .modtype_videotime.preview_mode .activity-basis {
     display: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.modtype_videotime.preview_mode .activity-item:not(.activityinline),
+.modtype_videotime.label_mode .activity-item:not(.activityinline) {
+    padding: 5px;
+    border: none;
 }
 
 body.format-topics:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-icon,
