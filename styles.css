@@ -796,7 +796,18 @@ body.ie .video-image-preview .img-responsive {
     padding: 0;
     border: none;
 }
-.modtype_videotime.label_mode  .description .activity-altcontent .container-fluid {
+
+.modtype_videotime .activity-item .activity-altcontent img {
+    border-radius: 0;
+}
+
+.path-course-view ul.section:has(li.preview_mode.modtype_videotime):after {
+    clear: both;
+    display: table;
+    content: '';
+}
+
+.modtype_videotime.label_mode .activity-altcontent .container-fluid {
     padding: 0;
 }
 .modtype_videotime.label_mode  .description .course-description-item,
