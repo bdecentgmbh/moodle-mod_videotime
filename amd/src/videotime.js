@@ -62,7 +62,7 @@ define([
     };
 
     VideoTime.prototype.initialize = function() {
-        let instance = this.instance;
+        var instance = this.instance;
         Log.debug('Initializing Video Time ' + this.elementId);
 
         Log.debug('Initializing Vimeo player with options:');
@@ -91,7 +91,7 @@ define([
             width: instance.width
         });
 
-        let url = new URL(window.location.href),
+        var url = new URL(window.location.href),
             q = url.searchParams.get('q'),
             starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
         if (starttime) {
@@ -109,7 +109,7 @@ define([
 
         this.addListeners();
 
-        for (let i = 0; i < this.plugins.length; i++) {
+        for (var i = 0; i < this.plugins.length; i++) {
             const plugin = this.plugins[i];
             plugin.initialize(this, instance);
         }
@@ -151,7 +151,7 @@ define([
     /**
      * Register player events to respond to user interaction and play progress.
      */
-    VideoTime.prototype.addListeners = async function() {
+    VideoTime.prototype.addListeners = function() {
         if (!this.player) {
             Log.debug('Player was not properly initialized for course module ' + this.cmId);
             return;
@@ -159,8 +159,8 @@ define([
 
         // If this is a tab play set time cues and listener.
         $($('#' + this.elementId).closest('.videotimetabs')).each(function(i, tabs) {
-           $(tabs).find('[data-action="cue"]').each(function(index, anchor) {
-                let starttime = anchor.getAttribute('data-start'),
+            $(tabs).find('[data-action="cue"]').each(function(index, anchor) {
+                var starttime = anchor.getAttribute('data-start'),
                     time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
                 if (time) {
                     this.player.addCuePoint(
@@ -188,17 +188,17 @@ define([
                         }
                     });
                 }
-            });
+            }.bind(this));
         }.bind(this));
 
         // Fire view event in Moodle on first play only.
-        this.player.on('play', () => {
+        this.player.on('play', function() {
             if (this.hasPro) {
                 this.startWatchInterval();
             }
             this.view();
             return true;
-        });
+        }.bind(this));
 
         // Features beyond this point are for pro only.
         if (!this.hasPro) {
@@ -206,13 +206,13 @@ define([
         }
 
         // If resume is present force seek the player to that point.
-        this.player.on("loaded", () => {
+        this.player.on("loaded", function() {
             if (!this.instance.resume_playback || !this.instance.resume_time || this.instance.resume_time <= 0) {
                 return true;
             }
 
-            return this.getDuration().then((duration) => {
-                let resumeTime = this.instance.resume_time;
+            return this.getDuration().then(function(duration) {
+                var resumeTime = this.instance.resume_time;
                 // Duration is often a little greater than a resume time at the end of the video.
                 // A user may have watched 100 seconds when the video ends, but the duration may be
                 // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
@@ -227,8 +227,8 @@ define([
                 Log.debug("VIDEO_TIME resuming at " + resumeTime);
                 this.setCurrentPosition(resumeTime);
                 return true;
-            }).fail(Notification.exception);
-        });
+            }.bind(this)).fail(Notification.exception);
+        }.bind(this));
 
         // Note: Vimeo player does not support multiple events in a single on() call. Each requires it's own function.
 
@@ -260,7 +260,9 @@ define([
             Log.debug('VIDEO_TIME abort');
         }.bind(this));
 
-        this.playbackRate = await this.getPlaybackRate();
+        this.player.getPlaybackRate().then(function(playbackRate) {
+            this.playbackRate = playbackRate;
+        }.bind(this)).catch(Notification.exception);
 
         this.player.on('playbackratechange', function(event) {
             this.playbackRate = event.playbackRate;
@@ -268,20 +270,20 @@ define([
 
         // Always update internal values for percent and current time watched.
         this.player.on('timeupdate', function(event) {
-            setTimeout(() => {
+            setTimeout(function() {
                 var preventUpdate = false;
                 if (event.seconds === event.duration) {
-                    this.plugins.forEach((plugin) => {
+                    this.plugins.forEach(function(plugin) {
                         if (typeof plugin.setCurrentTime == 'function') {
-                            plugin.getSession().then(session => {
+                            plugin.getSession().then(function(session) {
                                 plugin.setCurrentTime(session.id, event.seconds);
                             }).catch(Notification.exception);
                         }
                     });
                 }
                 if (Number(this.instance.preventfastforwarding)) {
-                    this.getPlaybackRate().then(playbackRate => {
-                        this.plugins.forEach((plugin) => {
+                    this.getPlaybackRate().then(function(playbackRate) {
+                        this.plugins.forEach(function(plugin) {
                             if (
                                     (typeof plugin.watchTime != 'undefined')
                                     && (event.seconds > plugin.watchTime + plugin.fastForwardBuffer * playbackRate)
@@ -296,7 +298,7 @@ define([
                 }
                 this.percent = event.percent;
                 this.currentTime = event.seconds;
-            }, 100);
+            }.bind(this), 100);
         }.bind(this));
 
         // Initiate video finish procedure.
@@ -308,7 +310,7 @@ define([
      * Handle pause
      */
     VideoTime.prototype.handlePause = function() {
-        this.plugins.forEach(plugin => {
+        this.plugins.forEach(function(plugin) {
             if (typeof plugin.handlePause == 'function') {
                 plugin.handlePause();
             }
@@ -322,7 +324,7 @@ define([
         this.playing = false;
         Log.debug('VIDEO_TIME ended');
         if (this.plugins.length > 2) {
-            this.plugins.forEach(plugin => {
+            this.plugins.forEach(function(plugin) {
                 if (typeof plugin.handleEnd == 'function') {
                     plugin.handleEnd();
                 }
@@ -330,17 +332,17 @@ define([
         } else {
             // This moved to pro plugin, but left for compatibility.
             this.getSession().then(function(session) {
-                this.setSessionState(session.id, 1).then(() => {
+                this.setSessionState(session.id, 1).then(function() {
                     return this.setPercent(session.id, 1);
-                }).then(() => {
+                }.bind(this)).then(function() {
                     return this.setCurrentTime(session.id, this.currentTime);
-                }).then(() => {
-                    return this.getNextActivityButtonData(session.id).then(response => {
-                        let data = JSON.parse(response.data);
+                }.bind(this)).then(function() {
+                    return this.getNextActivityButtonData(session.id).then(function(response) {
+                        var data = JSON.parse(response.data);
 
                         if (data.instance && parseInt(data.instance.next_activity_auto)) {
                             if (!data.is_restricted && data.hasnextcm) {
-                                let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
+                                var link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
                                 if ($('.path-course-view').length && link) {
                                     link.click();
                                 } else {
@@ -364,11 +366,32 @@ define([
      * Start interval that will periodically record user progress via Ajax.
      */
     VideoTime.prototype.startWatchInterval = function() {
-        this.plugins.forEach(plugin => {
+        this.plugins.forEach(function(plugin) {
             if (typeof plugin.startWatchInterval == 'function') {
+                this.watchInterval = true;
                 plugin.startWatchInterval();
             }
-        });
+        }.bind(this));
+        if (this.watchInterval) {
+            return;
+        }
+
+        this.watchInterval = setInterval(function() {
+            this.getPaused().then(function(paused) {
+                if (!paused) {
+                    this.time += this.playbackRate;
+                }
+            }.bind(this));
+        }.bind(this), 1000);
+
+        this.watchInterval = setInterval(function() {
+            this.getSession().then(function(session) {
+                Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
+                this.recordWatchTime(session.id, this.time);
+                this.setPercent(session.id, this.percent);
+                this.setCurrentTime(session.id, this.currentTime);
+            }.bind(this)).catch(Notification.exception);
+        }.bind(this), this.interval);
     };
 
     /**
@@ -387,7 +410,7 @@ define([
             data.set('wsfunction', 'videotimeplugin_pro_set_session_state');
             data.set('state', state);
             data.set('session_id', sessionId);
-            return fetch(url).then((response) => {
+            return fetch(url).then(function(response) {
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
@@ -418,7 +441,7 @@ define([
             data.set('wsfunction', 'videotimeplugin_pro_set_session_current_time');
             data.set('current_time', currentTime);
             data.set('session_id', sessionId);
-            return fetch(url).then((response) => {
+            return fetch(url).then(function(response) {
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
@@ -448,7 +471,7 @@ define([
             data.set('wsfunction', 'videotimeplugin_pro_set_percent');
             data.set('percent', percent);
             data.set('session_id', sessionId);
-            return fetch(url).then((response) => {
+            return fetch(url).then(function(response) {
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
@@ -478,7 +501,7 @@ define([
             data.set('wsfunction', 'videotimeplugin_pro_record_watch_time');
             data.set('session_id', sessionId);
             data.set('time', time);
-            return fetch(url).then((response) => {
+            return fetch(url).then(function(response) {
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
@@ -522,10 +545,10 @@ define([
         return Ajax.call([{
             methodname: 'mod_videotime_get_videotime',
             args: {cmid: this.cmId},
-            done: (response) => {
+            done: function(response) {
                 this.instance = response;
                 return this.instance;
-            },
+            }.bind(this),
             fail: Notification.exception
         }])[0];
     };
@@ -543,10 +566,10 @@ define([
         return Ajax.call([{
             methodname: 'videotimeplugin_pro_get_resume_time',
             args: {cmid: this.cmId},
-            done: (response) => {
+            done: function(response) {
                 this.resumeTime = response.seconds;
                 return this.resumeTime;
-            },
+            }.bind(this),
             fail: Notification.exception
         }])[0];
     };
@@ -565,7 +588,7 @@ define([
                 data.set('moodlewsrestformat', 'json');
                 data.set('wsfunction', 'videotimeplugin_pro_get_new_session');
                 data.set('cmid', this.cmId);
-                this.session = fetch(url).then((response) => {
+                this.session = fetch(url).then(function(response) {
                     if (!response.ok) {
                         Notification.exeption('Web service error');
                     }
@@ -591,11 +614,11 @@ define([
      * @param {string} starttime
      * @returns {Promise}
      */
-    VideoTime.prototype.setStartTime = async function(starttime) {
-        let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
+    VideoTime.prototype.setStartTime = function(starttime) {
+        var time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
             this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
-            await this.setCurrentPosition(this.resumeTime);
+            this.currentTime(this.resumeTime);
         }
         return this.player.getCurrentTime();
     };
@@ -613,7 +636,7 @@ define([
             data.set('moodlewsrestformat', 'json');
             data.set('wsfunction', 'mod_videotime_view_videotime');
             data.set('cmid', this.cmId);
-            return fetch(url).then((response) => {
+            return fetch(url).then(function(response) {
                 if (!response.ok) {
                     Notification.exeption('Web service error');
                 }
@@ -642,7 +665,7 @@ define([
                 && $(module).find('.vimeo-embed').length
                 && !$(module).find('.vimeo-embed iframe').length
             ) {
-                let instance = {
+                var instance = {
                     cmid: Number($(module).attr('id').replace('module-', '')),
                     haspro: true,
                     interval: this.interval,
@@ -663,14 +686,8 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getPlaybackRate = async function() {
-        try {
-            const playbackRate = await this.player.getPlaybackRate();
-            return playbackRate;
-        } catch (e) {
-            Log.debug(e);
-            return 0;
-        }
+    VideoTime.prototype.getPlaybackRate = function() {
+        return this.player.getPlaybackRate();
     };
 
     /**
@@ -697,14 +714,16 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getCurrentPosition = async function() {
-        let position = await this.player.getCurrentTime();
-        this.plugins.forEach(async plugin => {
-            if (plugin.getCurrentPosition) {
-                position = await plugin.getCurrentPosition(position);
-            }
-        });
-        return position;
+    VideoTime.prototype.getCurrentPosition = function() {
+        return this.player.getCurrentTime().then(function(position) {
+            this.plugins.forEach(function(plugin) {
+                if (plugin.getCurrentPosition) {
+                    position = plugin.getCurrentPosition(position);
+                }
+            });
+
+            return position;
+        }.bind(this));
     };
 
     return VideoTime;

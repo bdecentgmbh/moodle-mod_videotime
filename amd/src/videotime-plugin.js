@@ -12,16 +12,6 @@ define(['mod_videotime/videotime'], function(VideoTime) {
     };
 
     /**
-     * Get current time of player after validation
-     *
-     * @param {Number} position The current working value
-     * @returns {Number}
-     */
-    VideoTimePlugin.prototype.getCurrentPosition = function getCurrentPosition(position) {
-        return position;
-    };
-
-    /**
      * @param {VideoTime} videotime
      * @param {object} instance Prefetched VideoTime instance object.
      */

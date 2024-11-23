@@ -85,8 +85,9 @@ if ($groupmode) {
 
 if ($userid = optional_param('userid', null, PARAM_INT)) {
     $userreport = new user_report($cm, $userid);
+    $renderer = $PAGE->get_renderer('videotimeplugin_pro');
     echo $OUTPUT->header();
-    echo $OUTPUT->render($userreport);
+    echo $renderer->render($userreport);
     echo $OUTPUT->footer();
     die();
 }

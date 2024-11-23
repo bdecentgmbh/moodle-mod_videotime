@@ -23,13 +23,13 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
      */
     resizeTabPlayer.prototype.initialize = function() {
         var self = this;
-        let observer = new ResizeObserver(self.resize),
-        mutationobserver = new MutationObserver(self.resize);
+        var observer = new window.ResizeObserver(self.resize),
+        mutationobserver = new window.MutationObserver(self.resize);
         mutationobserver.observe(document.body, {subtree: true, childList: true});
-        document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach((container) => {
+        document.querySelectorAll('.instance-container, div.videotime-tab-instance').forEach(function(container) {
             observer.observe(container);
         });
-        document.querySelectorAll('.videotime-tab-instance').forEach((instance) => {
+        document.querySelectorAll('.videotime-tab-instance').forEach(function(instance) {
             instance.style.position = 'absolute';
         });
         self.resize();
@@ -51,14 +51,14 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
      * Adjust player position when the page configuration is changed
      */
     resizeTabPlayer.prototype.resize = function() {
-        document.querySelectorAll('.instance-container').forEach((container) => {
+        document.querySelectorAll('.instance-container').forEach(function(container) {
             if (!container.offsetWidth) {
                 // Ignore if it is not visible.
                 return;
             }
 
-            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance').forEach((instance) => {
-                let content = container.closest('.videotimetabs').querySelector('.tab-content'),
+            container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance').forEach(function(instance) {
+                var content = container.closest('.videotimetabs').querySelector('.tab-content'),
                     i = 0;
                 Object.assign(instance.style, {
                     top: container.offsetTop + 'px',
@@ -66,14 +66,14 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
                     maxWidth: container.offsetWidth + 'px',
                     width: container.offsetWidth + 'px'
                 });
-                container.closest('.videotimetabs').querySelectorAll('ul .nav-link, ul .nav-item').forEach(tab => {
+                container.closest('.videotimetabs').querySelectorAll('ul .nav-link, ul .nav-item').forEach(function(tab) {
                     i++;
                     if (tab.classList.contains('active')) {
                         instance.setAttribute('data-tab', i);
                     }
                 });
                 container.style.minHeight = instance.offsetHeight + 5 + 'px';
-                container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+                container.closest('.videotimetabs').querySelectorAll('.videotime-tab-instance-cover').forEach(function(cover) {
                     Object.assign(cover.style, {
                         height: content.offsetHeight + 'px',
                         left: content.offsetLeft + 'px',
@@ -89,7 +89,7 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
      * Reset handle when drag ends
      */
     resizeTabPlayer.prototype.dragendHandler = function() {
-        document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+        document.querySelectorAll('.videotime-tab-instance-cover').forEach(function(cover) {
             cover.style.display = 'none';
         });
     };
@@ -104,7 +104,7 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
             this.column = e.target.closest('.tab-pane').querySelector('.videotimetab-resize');
             e.stopPropagation();
             e.preventDefault();
-            document.querySelectorAll('.videotime-tab-instance-cover').forEach((cover) => {
+            document.querySelectorAll('.videotime-tab-instance-cover').forEach(function(cover) {
                 cover.style.display = 'block';
             });
         }
@@ -116,7 +116,7 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
      * @param {event} e mouse event
      */
     resizeTabPlayer.prototype.mousemoveHandler = function(e) {
-        document.querySelectorAll('.videotimetab-resize-handle').forEach((h) => {
+        document.querySelectorAll('.videotimetab-resize-handle').forEach(function(h) {
             if (h.closest('.tab-pane') && document.querySelector('.videotime-tab-instance-cover').style.display == 'block') {
                 this.column.style.width = e.pageX - this.column.getBoundingClientRect().left + 'px';
             }
@@ -130,7 +130,7 @@ define(['mod_videotime/player', 'core/notification'], function(Player, Notificat
      */
     resizeTabPlayer.prototype.cueVideo = function(e) {
         if (e.target.closest('[data-action="cue"]')) {
-            let starttime = e.target.closest('a').getAttribute('data-start'),
+            var starttime = e.target.closest('a').getAttribute('data-start'),
                 time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+)?)/),
                 iframe = e.target.closest('.videotimetabs').querySelector('.vimeo-embed iframe'),
                 player = new Player(iframe);
