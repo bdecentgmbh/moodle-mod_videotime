@@ -136,10 +136,6 @@ body.editing .activity.videotime.preview_mode .actions {
     display: block;
 }
 
-.path-course-view li.activity.videotime.preview_mode > div {
-    padding: 0;
-}
-
 .path-course-view li.activity.videotime.preview_mode {
     clear: none;
     display: inline-block;
@@ -155,7 +151,6 @@ body.editing .activity.videotime.preview_mode .actions {
 body.editing.path-course-view li.activity.videotime.preview_mode {
     width: 100%;
 }
-
 
 /** IE backwards compatibility **/
 body.ie .video-image-preview .img-responsive {
@@ -793,10 +788,34 @@ body.ie .video-image-preview .img-responsive {
 }
 
 .modtype_videotime.label_mode .activity-item:not(.activityinline) {
-    padding: 0;
+    padding: 5px;
     border: none;
 }
-.modtype_videotime.label_mode  .description .activity-altcontent .container-fluid {
+
+body:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-icon,
+body:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-name-area,
+body:not(.editing) .modtype_videotime.label_mode .activity-grid .activity-completion,
+body:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-icon,
+body:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-name-area,
+body:not(.editing) .modtype_videotime.preview_mode .activity-grid .activity-completion {
+    display: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+body:not(.editing) .modtype_videotime .activity-altcontent.activity-description {
+    border: none;
+}
+
+.modtype_videotime .activity-item .activity-altcontent img {
+    border-radius: 0;
+}
+
+.path-course-view ul.section:has(li.preview_mode.modtype_videotime):after {
+    clear: both;
+    display: table;
+    content: '';
+}
+
+.modtype_videotime.label_mode .activity-altcontent .container-fluid {
     padding: 0;
 }
 .modtype_videotime.label_mode  .description .course-description-item,
