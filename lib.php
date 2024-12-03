@@ -560,8 +560,6 @@ function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
     try {
-        $instance = videotime_instance::instance_by_id($cm->instance);
-
         // Ensure we are on the course view page. This was throwing an error when viewing the module
         // because OUTPUT was being used.
         if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
@@ -570,11 +568,17 @@ function videotime_cm_info_view(cm_info $cm) {
             }
         }
 
+        if ($cm->customdata['labelmode'] == videotime_instance::NORMAL_MODE) {
+            return;
+        }
+
         if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
             return;
         }
 
         $renderer = $PAGE->get_renderer('mod_videotime');
+
+        $instance = videotime_instance::instance_by_id($cm->instance);
 
         if ($instance->label_mode == videotime_instance::LABEL_MODE) {
             $instance->set_embed(true);
@@ -656,6 +660,8 @@ function videotime_get_coursemodule_info($coursemodule) {
     if ($instance->timeopen) {
         $result->customdata['timeopen'] = $instance->timeopen;
     }
+
+    $result->customdata['labelmode'] = $instance->label_mode;
 
     return $result;
 }
@@ -805,4 +811,26 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
     }
 
     return get_string($identifier, 'videotime', $modulename);
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function videotime_cm_info_dynamic(cm_info $cm) {
+    global $PAGE, $USER;
+
+    if (defined('BEHAT_SITE_RUNNING') || !$PAGE->has_set_url() || $PAGE->user_is_editing()) {
+        return;
+    }
+
+    if (
+        ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE)
+        || ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
+    ) {
+        $cm->set_no_view_link();
+    }
 }
