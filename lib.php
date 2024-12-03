@@ -817,21 +817,19 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
  * Sets dynamic information about a course module
  *
  * This function is called from cm_info when displaying the module
- * mod_subsection can be displayed inline on course page and therefore have no course link
  *
  * @param cm_info $cm
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
     global $PAGE;
 
-    if ($PAGE->user_is_editing()) {
+    if (!isloggedin() || empty($PAGE->course) || $PAGE->user_is_editing()) {
         return;
     }
 
     if (
         ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE)
-        ||
-        ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
+        || ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
     ) {
         $cm->set_no_view_link();
     }
