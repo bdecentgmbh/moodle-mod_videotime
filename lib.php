@@ -821,9 +821,9 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
  * @param cm_info $cm
  */
 function videotime_cm_info_dynamic(cm_info $cm) {
-    global $PAGE;
+    global $PAGE, $USER;
 
-    if (!isloggedin() || empty($PAGE->course) || $PAGE->user_is_editing()) {
+    if (defined('BEHAT_SITE_RUNNING') || !$PAGE->has_set_url() || $PAGE->user_is_editing()) {
         return;
     }
 
