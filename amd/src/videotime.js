@@ -268,6 +268,10 @@ define([
         // Initiate video finish procedure.
         this.player.on('ended', this.handleEnd.bind(this));
         this.player.on('pause', this.handlePause.bind(this));
+
+        // Interactive video listeners.
+        this.player.on('interactivehotspotclicked', this.hotspotViewed.bind(this));
+        this.player.on('interactiveoverlaypanelclicked', this.overlayViewed.bind(this));
     };
 
     VideoTime.prototype.resume = async function() {
@@ -296,6 +300,34 @@ define([
         this.plugins.forEach(plugin => {
             if (typeof plugin.handlePause == 'function') {
                 plugin.handlePause();
+            }
+        });
+    };
+
+    /**
+     * Handle interactive hotspot
+     *
+     * @param {Object} data Data from event
+     */
+    VideoTime.prototype.hotspotViewed = function(data) {
+        Log.debug(data);
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.hotspotViewed == 'function') {
+                plugin.hotspotViewed(data);
+            }
+        });
+    };
+
+    /**
+     * Handle interactive overlay
+     *
+     * @param {Object} data Data from event
+     */
+    VideoTime.prototype.overlayViewed = function(data) {
+        Log.debug(data);
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.overlayViewed == 'function') {
+                plugin.overlayViewed(data);
             }
         });
     };
