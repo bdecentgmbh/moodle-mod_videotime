@@ -629,6 +629,11 @@ define([
      * @returns {Promise}
      */
     VideoTime.prototype.view = function() {
+        if (this.hasViewed) {
+            return false;
+        }
+        this.hasViewed = true;
+
         if (this.instance.token) {
             const url = new URL(Config.wwwroot + '/webservice/rest/server.php'),
                 data = url.searchParams;
