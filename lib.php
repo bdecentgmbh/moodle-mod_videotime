@@ -810,3 +810,30 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
 
     return get_string($identifier, 'videotime', $modulename);
 }
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function videotime_cm_info_dynamic(cm_info $cm) {
+    global $PAGE, $USER;
+
+    if (
+        defined('BEHAT_SITE_RUNNING')
+        || !$PAGE->has_set_url()
+        || ($PAGE->pagetype == 'course-modedit')
+        || $PAGE->user_is_editing()
+    ) {
+        return;
+    }
+
+    if (
+        ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE)
+        || ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
+    ) {
+        $cm->set_no_view_link();
+    }
+}
