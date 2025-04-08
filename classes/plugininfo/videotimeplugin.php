@@ -53,20 +53,16 @@ class videotimeplugin extends \core\plugininfo\base {
             case 'pro':
                 $info = [
                     'maturity' => MATURITY_STABLE,
-                    'release' => '1.8.5',
-                    'version' => 2024050706,
+                    'release' => '1.9',
+                    'version' => 2025020700,
                 ];
                 break;
             case 'repository':
                 $info = [
                     'maturity' => MATURITY_STABLE,
-                    'release' => '1.8.4',
+                    'release' => '1.9',
+                    'version' => 2025020700,
                 ];
-                if ($CFG->branch < 403) {
-                    $info['version'] = 2024050603;
-                } else {
-                    $info['version'] = 2024050703;
-                }
                 break;
         }
         if (!empty($info) && $this->versiondb < $info['version']) {
