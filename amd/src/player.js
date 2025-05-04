@@ -1,4 +1,4 @@
-/*! @vimeo/player v2.26.0 | (c) 2025 Vimeo | MIT License | https://github.com/vimeo/player.js */
+/*! @vimeo/player v2.21.0 | (c) 2024 Vimeo | MIT License | https://github.com/vimeo/player.js */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -575,7 +575,7 @@
    * @return {boolean}
    */
   function isVimeoUrl(url) {
-    return /^(https?:)?\/\/((((player|www)\.)?vimeo\.com)|((player\.)?[a-zA-Z0-9-]+\.(videoji\.(hk|cn)|vimeo\.work)))(?=$|\/)/.test(url);
+    return /^(https?:)?\/\/((player|www)\.)?vimeo\.com(?=$|\/)/.test(url);
   }
 
   /**
@@ -585,20 +585,8 @@
    * @return {boolean}
    */
   function isVimeoEmbed(url) {
-    var expr = /^https:\/\/player\.((vimeo\.com)|([a-zA-Z0-9-]+\.(videoji\.(hk|cn)|vimeo\.work)))\/video\/\d+/;
+    var expr = /^https:\/\/player\.vimeo\.com\/video\/\d+/;
     return expr.test(url);
-  }
-  function getOembedDomain(url) {
-    var match = (url || '').match(/^(?:https?:)?(?:\/\/)?([^/?]+)/);
-    var domain = (match && match[1] || '').replace('player.', '');
-    var customDomains = ['.videoji.hk', '.vimeo.work', '.videoji.cn'];
-    for (var _i = 0, _customDomains = customDomains; _i < _customDomains.length; _i++) {
-      var customDomain = _customDomains[_i];
-      if (domain.endsWith(customDomain)) {
-        return domain;
-      }
-    }
-    return 'vimeo.com';
   }
 
   /**
@@ -1293,7 +1281,7 @@
   /**
    * @module lib/embed
    */
-  var oEmbedParameters = ['airplay', 'audio_tracks', 'audiotrack', 'autopause', 'autoplay', 'background', 'byline', 'cc', 'chapter_id', 'chapters', 'chromecast', 'color', 'colors', 'controls', 'dnt', 'end_time', 'fullscreen', 'height', 'id', 'interactive_params', 'keyboard', 'loop', 'maxheight', 'maxwidth', 'muted', 'play_button_position', 'playsinline', 'portrait', 'progress_bar', 'quality_selector', 'responsive', 'skipping_forward', 'speed', 'start_time', 'texttrack', 'title', 'transcript', 'transparent', 'unmute_button', 'url', 'vimeo_logo', 'volume', 'watch_full_video', 'width'];
+  var oEmbedParameters = ['airplay', 'audio_tracks', 'autopause', 'autoplay', 'background', 'byline', 'cc', 'chapters', 'chromecast', 'color', 'colors', 'controls', 'dnt', 'fullscreen', 'height', 'id', 'interactive_params', 'keyboard', 'loop', 'maxheight', 'maxwidth', 'muted', 'play_button_position', 'playsinline', 'portrait', 'progress_bar', 'quality_selector', 'responsive', 'speed', 'texttrack', 'title', 'transcript', 'transparent', 'url', 'vimeo_logo', 'volume', 'width'];
 
   /**
    * Get the 'data-vimeo'-prefixed attributes from an element as an object.
@@ -1350,8 +1338,7 @@
       if (!isVimeoUrl(videoUrl)) {
         throw new TypeError("\u201C".concat(videoUrl, "\u201D is not a vimeo.com url."));
       }
-      var domain = getOembedDomain(videoUrl);
-      var url = "https://".concat(domain, "/api/oembed.json?url=").concat(encodeURIComponent(videoUrl));
+      var url = "https://vimeo.com/api/oembed.json?url=".concat(encodeURIComponent(videoUrl));
       for (var param in params) {
         if (params.hasOwnProperty(param)) {
           url += "&".concat(param, "=").concat(encodeURIComponent(params[param]));

@@ -194,7 +194,7 @@ define([
         // Fire view event in Moodle on first play only.
         this.player.on('play', () => {
             if (this.hasPro) {
-                this.startWatchInterval();
+               this.startWatchInterval();
             }
             this.view();
             return true;
@@ -268,39 +268,6 @@ define([
             this.playbackRate = event.playbackRate;
         }.bind(this));
 
-        // Always update internal values for percent and current time watched.
-        this.player.on('timeupdate', function(event) {
-            setTimeout(() => {
-                var preventUpdate = false;
-                if (event.seconds === event.duration) {
-                    this.plugins.forEach((plugin) => {
-                        if (typeof plugin.setCurrentTime == 'function') {
-                            plugin.getSession().then(session => {
-                                plugin.setCurrentTime(session.id, event.seconds);
-                            }).catch(Notification.exception);
-                        }
-                    });
-                }
-                if (Number(this.instance.preventfastforwarding)) {
-                    this.getPlaybackRate().then(playbackRate => {
-                        this.plugins.forEach((plugin) => {
-                            if (
-                                    (typeof plugin.watchTime != 'undefined')
-                                    && (event.seconds > plugin.watchTime + plugin.fastForwardBuffer * playbackRate)
-                            ) {
-                                preventUpdate = true;
-                            }
-                        });
-                    }).catch(Notification.exception);
-                }
-                if (preventUpdate) {
-                    return;
-                }
-                this.percent = event.percent;
-                this.currentTime = event.seconds;
-            }, 100);
-        }.bind(this));
-
         // Initiate video finish procedure.
         this.player.on('ended', this.handleEnd.bind(this));
         this.player.on('pause', this.handlePause.bind(this));
@@ -323,43 +290,11 @@ define([
     VideoTime.prototype.handleEnd = function() {
         this.playing = false;
         Log.debug('VIDEO_TIME ended');
-        if (this.plugins.length > 2) {
-            this.plugins.forEach(plugin => {
-                if (typeof plugin.handleEnd == 'function') {
-                    plugin.handleEnd();
-                }
-            });
-        } else {
-            // This moved to pro plugin, but left for compatibility.
-            this.getSession().then(function(session) {
-                this.setSessionState(session.id, 1).then(() => {
-                    return this.setPercent(session.id, 1);
-                }).then(() => {
-                    return this.setCurrentTime(session.id, this.currentTime);
-                }).then(() => {
-                    return this.getNextActivityButtonData(session.id).then(response => {
-                        let data = JSON.parse(response.data);
-
-                        if (data.instance && parseInt(data.instance.next_activity_auto)) {
-                            if (!data.is_restricted && data.hasnextcm) {
-                                let link = $('.aalink[href="' + data.nextcm_url + '"] img').first();
-                                if ($('.path-course-view').length && link) {
-                                    link.click();
-                                } else {
-                                    window.location.href = data.nextcm_url;
-                                }
-                            }
-                        }
-
-                        return Templates.render('videotime/next_activity_button', JSON.parse(response.data))
-                            .then(function(html) {
-                                $('#next-activity-button').html(html);
-                                return true;
-                            });
-                    });
-                }).catch(Notification.exception);
-            }.bind(this)).catch(Notification.exception);
-        }
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.handleEnd == 'function') {
+                plugin.handleEnd();
+            }
+        });
     };
 
     /**
@@ -371,27 +306,6 @@ define([
                 plugin.startWatchInterval();
             }
         });
-
-        if (this.watchInterval) {
-            return;
-        }
-
-        this.watchInterval = setInterval(function() {
-            this.getPaused().then(paused => {
-                if (!paused) {
-                    this.time += this.playbackRate;
-                }
-            });
-        }.bind(this), 1000);
-
-        this.watchInterval = setInterval(function() {
-            this.getSession().then(session => {
-                Log.debug('VIDEO_TIME watch_time: ' + this.time + '. percent: ' + this.percent);
-                this.recordWatchTime(session.id, this.time);
-                this.setPercent(session.id, this.percent);
-                this.setCurrentTime(session.id, this.currentTime);
-            }).catch(Notification.exception);
-        }.bind(this), this.interval);
     };
 
     /**
@@ -614,11 +528,11 @@ define([
      * @param {string} starttime
      * @returns {Promise}
      */
-    VideoTime.prototype.setStartTime = async function(starttime) {
+    VideoTime.prototype.setStartTime = function(starttime) {
         let time = starttime.match(/((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/);
         if (time) {
             this.resumeTime = 3600 * Number(time[3] || 0) + 60 * Number(time[5] || 0) + Number(time[6]);
-            await this.setCurrentPosition(this.resumeTime);
+            return this.setCurrentPosition(this.resumeTime);
         }
         return this.player.getCurrentTime();
     };
@@ -691,14 +605,8 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getPlaybackRate = async function() {
-        try {
-            const playbackRate = await this.player.getPlaybackRate();
-            return playbackRate;
-        } catch (e) {
-            Log.debug(e);
-            return 0;
-        }
+    VideoTime.prototype.getPlaybackRate = function() {
+        return this.player.getPlaybackRate();
     };
 
     /**
@@ -725,11 +633,13 @@ define([
      *
      * @returns {Promise}
      */
-    VideoTime.prototype.getCurrentPosition = async function() {
-        let position = await this.player.getCurrentTime();
-        this.plugins.forEach(async plugin => {
+    VideoTime.prototype.getCurrentPosition = function() {
+        var position = this.player.getCurrentTime();
+        Log.debug(position);
+        this.plugins.forEach(plugin => {
+            Log.debug(position);
             if (plugin.getCurrentPosition) {
-                position = await plugin.getCurrentPosition(position);
+                position = plugin.getCurrentPosition(position);
             }
         });
         return position;

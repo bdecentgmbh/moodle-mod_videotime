@@ -1,8 +1,4 @@
 {
-  "subplugintypes": {
-    "videotimeplugin": "plugin",
-    "videotimetab": "tab"
-  },
   "plugintypes": {
     "videotimeplugin": "mod\/videotime\/plugin",
     "videotimetab": "mod\/videotime\/tab"

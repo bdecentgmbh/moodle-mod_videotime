@@ -85,9 +85,9 @@ if ($groupmode) {
 
 if ($userid = optional_param('userid', null, PARAM_INT)) {
     $userreport = new user_report($cm, $userid);
+    $renderer = $PAGE->get_renderer('mod_videotime');
     echo $OUTPUT->header();
-    echo $groupselector;
-    echo $OUTPUT->render($userreport);
+    echo $renderer->render($userreport);
     echo $OUTPUT->footer();
     die();
 }

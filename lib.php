@@ -333,6 +333,72 @@ function videotime_process_video_description($moduleinstance) {
 }
 
 /**
+ * Obtains the automatic completion state for this forum based on any conditions
+ * in forum settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ * @throws \dml_exception
+ */
+function videotime_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    // Get forum details.
+    $videotime = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
+
+    // Completion settings are pro features.
+    if (!videotime_has_pro()) {
+        return $type;
+    }
+
+    $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
+
+    if (!$videotime->completion_on_view_time && !$videotime->completion_on_finish && !$videotime->completion_on_percent) {
+        // Completion options are not enabled so just return $type.
+        return $type;
+    }
+
+    if (videotime_has_pro()) {
+        $sessions = \videotimeplugin_pro\module_sessions::get($cm->id, $user->id);
+    }
+
+    // Check if watch time is required.
+    if ($videotime->completion_on_view_time) {
+        // If time was never set return false.
+        if (!$videotime->completion_on_view_time_second) {
+            return false;
+        }
+        // Check if total session time is over the required duration.
+        if (videotime_has_pro() && $sessions->get_total_time() < $videotime->completion_on_view_time_second) {
+            return false;
+        }
+    }
+
+    if ($videotime->completion_on_percent) {
+        // If percent value was never set return false.
+        if (!$videotime->completion_on_percent_value) {
+            return false;
+        }
+        // Check if watch percentage is met.
+        if (videotime_has_pro() && ($sessions->get_percent() * 100) < $videotime->completion_on_percent_value) {
+            return false;
+        }
+    }
+
+    // Check if video completion is required.
+    if (videotime_has_pro() && $videotime->completion_on_finish) {
+        if (!$sessions->is_finished()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  *  Update completion info
  *
  * @param int $cmid
@@ -809,31 +875,4 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
     }
 
     return get_string($identifier, 'videotime', $modulename);
-}
-
-/**
- * Sets dynamic information about a course module
- *
- * This function is called from cm_info when displaying the module
- *
- * @param cm_info $cm
- */
-function videotime_cm_info_dynamic(cm_info $cm) {
-    global $PAGE, $USER;
-
-    if (
-        defined('BEHAT_SITE_RUNNING')
-        || !$PAGE->has_set_url()
-        || ($PAGE->pagetype == 'course-modedit')
-        || $PAGE->user_is_editing()
-    ) {
-        return;
-    }
-
-    if (
-        ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE)
-        || ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
-    ) {
-        $cm->set_no_view_link();
-    }
 }
