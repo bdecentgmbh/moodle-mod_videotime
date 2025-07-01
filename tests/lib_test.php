@@ -40,7 +40,8 @@ require_once($CFG->dirroot . '/mod/videotime/lib.php');
  * @package    mod_videotime
  * @copyright  2021 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::mod_videotime_core_calendar_provide_event_action
+ * @covers     ::mod_videotime_core_calendar_provide_event_action
+ * @group      mod_videotime
  */
 final class lib_test extends advanced_testcase {
     public function setUp(): void {

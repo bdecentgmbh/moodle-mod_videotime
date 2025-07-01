@@ -85,8 +85,11 @@ if ($form->is_cancelled()) {
     }
     $moduleinstance = ['coursemodule' => $cm->id] + array_intersect($defaults, [
         'vimeo_url' => true,
-    ]) + (array) $data + (array) $moduleinstance->to_record() + $defaults;
-    videotime_update_instance((object) $moduleinstance, $form);
+    ]) + (array) $data + array_diff((array) $moduleinstance->to_record(), [
+        'intro' => true,
+        'introformat' => true,
+    ]) + $defaults;
+    videotime_update_instance((object) $moduleinstance);
     redirect($returnurl);
 }
 
