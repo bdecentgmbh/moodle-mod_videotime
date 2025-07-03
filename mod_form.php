@@ -74,16 +74,12 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $needssetup = true;
             }
 
-            $group = [];
-            $group[] = $mform->createElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
-            if (!$needssetup) {
-                $group[] = $mform->createElement('button', 'pull_from_vimeo', get_string('pull_from_vimeo', 'videotime'));
-            }
-            $mform->addGroup($group, 'vimeo_url_group', get_string('vimeo_url', 'videotime'), null, false);
-            $mform->addHelpButton('vimeo_url_group', 'vimeo_url', 'videotime');
-            $mform->setType('vimeo_url_group', PARAM_RAW);
+            $mform->addElement('text', 'vimeo_url', get_string('vimeo_url', 'videotime'));
+            $mform->addHelpButton('vimeo_url', 'vimeo_url', 'videotime');
 
             $group = [];
+            $group[] = $mform->createElement('submit', 'pullmetadata', get_string('pull_from_vimeo', 'videotime'));
+            $mform->registerNoSubmitButton('pullmetadata');
             if (!$needssetup) {
                 $group[] = $mform->createElement('static', 'choose_video_label', '', '- or -');
                 $group[] = $mform->createElement('button', 'choose_video', get_string('choose_video', 'videotime'));
@@ -189,6 +185,17 @@ class mod_videotime_mod_form extends moodleform_mod {
                     ['width' => '100%', 'class' => 'img-responsive', 'style' => 'max-width:700px']
                 )
             ));
+        }
+    }
+
+    /**
+     * Allow plugins to modify form after data loaded
+     */
+    public function definition_after_data() {
+        $mform = $this->_form;
+
+        foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+            component_callback("videotimeplugin_$name", 'definition_after_data', [$mform, $this->context]);
         }
     }
 
@@ -447,6 +454,7 @@ class mod_videotime_mod_form extends moodleform_mod {
      */
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
+
         // Turn off completion settings if the checkboxes aren't ticked.
         $suffix = $this->get_suffix();
         if (!empty($data->completionunlocked)) {
