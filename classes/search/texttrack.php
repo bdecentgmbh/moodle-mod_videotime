@@ -118,7 +118,7 @@ class texttrack extends \core_search\base_mod {
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $record->course);
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
-        $doc->set('modified', $record->timemodified);
+        $doc->set('modified', $record->timemodified ?: 0);
 
         return $doc;
     }
