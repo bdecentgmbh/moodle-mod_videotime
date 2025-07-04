@@ -122,7 +122,7 @@ class restore_videotime_activity_task extends restore_activity_task {
         );
         $updaterequired = false;
 
-        if (!empty($options->next_activity_id)) {
+        if ($options->next_activity_id > 0) {
             $updaterequired = true;
             if ($newitem = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $options->next_activity_id)) {
                 $options->next_activity_id = $newitem->newitemid;
