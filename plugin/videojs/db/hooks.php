@@ -15,21 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Hook callbacks for videotimeplugin_videojs
  *
- * @package     videotimeplugin_videojs
- * @copyright   2018 bdecent gmbh <https://bdecent.de>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    videotimeplugin_videojs
+ * @copyright  2025 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'videotimeplugin_videojs';
-$plugin->release = '1.8.1';
-$plugin->version = 2023011204;
-$plugin->requires = 2015111610;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = [
-    'videotime' => 2023011200,
-    'media_videojs' => 2015111600,
+$callbacks = [
+    [
+        'hook' => mod_videotime\hook\dndupload_register::class,
+        'callback' => 'videotimeplugin_videojs\video_embed::dndupload_register',
+    ],
+    [
+        'hook' => mod_videotime\hook\dndupload_handle::class,
+        'callback' => 'videotimeplugin_videojs\video_embed::dndupload_handle',
+    ],
 ];

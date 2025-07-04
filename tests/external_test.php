@@ -36,7 +36,7 @@ require_once("$CFG->dirroot/webservice/tests/helpers.php");
 /**
  * Class external_test
  *
- * @group videotime
+ * @group mod_videotime
  * @group mod_videotime_external_test
  * @covers \mod_videotime\external\external
  */
