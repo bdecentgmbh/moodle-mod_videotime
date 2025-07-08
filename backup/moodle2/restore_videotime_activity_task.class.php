@@ -98,4 +98,42 @@ class restore_videotime_activity_task extends restore_activity_task {
 
         return $rules;
     }
+
+    /**
+     * Re-map the dependency and activitylink information
+     * If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a
+     * lesson, or a backup/restore of a single lesson. We have no way to determine which and whether this is the
+     * same site and/or course. Therefore we try and retrieve a mapping, but fallback to the original value if one
+     * was not found. We then test to see whether the value found is valid for the course being restored into.
+     */
+    public function after_restore() {
+        global $DB;
+
+        if (!videotime_has_pro()) {
+            return;
+        }
+
+        $options = $DB->get_record_sql(
+            "SELECT p.id, v.course, p.next_activity_id
+               FROM {videotime} v
+               JOIN {videotimeplugin_pro} p ON p.videotime = v.id
+              WHERE v.id = :id",
+            ['id' => $this->get_activityid()]
+        );
+        $updaterequired = false;
+
+        if ($options->next_activity_id > 0) {
+            $updaterequired = true;
+            if ($newitem = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $options->next_activity_id)) {
+                $options->next_activity_id = $newitem->newitemid;
+            }
+            if (!$DB->record_exists('course_modules', array('id' => $options->next_activity_id, 'course' => $options->course))) {
+                $options->next_activity_id = 0;
+            }
+        }
+
+        if ($updaterequired) {
+            $DB->update_record('videotimeplugin_pro', $options);
+        }
+    }
 }
