@@ -55,7 +55,7 @@ final class dndupload_register {
     /**
      * Register an extension to handle
      *
-     * @return context_module The meeting module context
+     * @param string $ext Extension
      */
     public function register_handler(string $ext) {
         $this->extensions[] = $ext;
