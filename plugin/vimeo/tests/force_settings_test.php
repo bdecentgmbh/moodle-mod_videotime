@@ -31,6 +31,7 @@ use mod_videotime\videotime_instance;
  * Class fore_settings_test
  *
  * @group videotimeplugin_vimeo
+ * @group mod_videotime
  * @covers \mod_videotime\videotime_instance
  */
 final class force_settings_test extends advanced_testcase {

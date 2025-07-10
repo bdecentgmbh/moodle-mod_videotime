@@ -25,6 +25,7 @@
 namespace mod_videotime\plugininfo;
 
 use core\update\info;
+use moodle_url;
 
 /**
  * Plugin version and other meta-data are defined here.
@@ -33,6 +34,14 @@ use core\update\info;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class videotimeplugin extends \core\plugininfo\base {
+    /**
+     * Return URL used for management of plugins of this type.
+     * @return moodle_url
+     */
+    public static function get_manage_url() {
+        return new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimeplugin']);
+    }
+
     /**
      * If there are updates for this plugin available, returns them.
      *
@@ -52,15 +61,15 @@ class videotimeplugin extends \core\plugininfo\base {
             case 'pro':
                 $info = [
                     'maturity' => MATURITY_STABLE,
-                    'release' => '1.8.3',
-                    'version' => 2024050603,
+                    'release' => '1.9',
+                    'version' => 2025020700,
                 ];
                 break;
             case 'repository':
                 $info = [
                     'maturity' => MATURITY_STABLE,
-                    'release' => '1.8.3',
-                    'version' => 2024050602,
+                    'release' => '1.9',
+                    'version' => 2025020700,
                 ];
                 break;
         }

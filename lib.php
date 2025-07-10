@@ -806,3 +806,67 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
 
     return get_string($identifier, 'videotime', $modulename);
 }
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function videotime_cm_info_dynamic(cm_info $cm) {
+    global $PAGE, $USER;
+
+    if (
+        defined('BEHAT_SITE_RUNNING')
+        || !$PAGE->has_set_url()
+        || ($PAGE->pagetype == 'course-modedit')
+        || $PAGE->user_is_editing()
+    ) {
+        return;
+    }
+
+    if (
+        ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE)
+        || ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
+    ) {
+        $cm->set_no_view_link();
+    }
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ *
+ * @return array containing details of the files / types the mod can handle
+ */
+function videotime_dndupload_register(): array {
+    global $CFG;
+
+    if ($CFG->branch < 404) {
+        return [];
+    }
+
+    $hook = new \mod_videotime\hook\dndupload_register();
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
+    return ['files' => array_map(function($extension) {
+        return [
+            'extension' => $extension,
+            'message' => get_string('dnduploadvideotime', 'videotime'),
+        ];
+    }, $hook->get_extensions())];
+}
+
+/**
+ * Handle a file that has been uploaded
+ *
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function videotime_dndupload_handle($uploadinfo): int {
+    global $CFG;
+
+    $hook = new \mod_videotime\hook\dndupload_handle($uploadinfo);
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+    return $hook->get_instanceid();
+}
