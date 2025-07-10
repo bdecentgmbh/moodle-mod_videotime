@@ -39,9 +39,11 @@ final class dndupload_handle {
 
     /**
      * Constructor for the hook
+     *
+     * @param stdClass $uploadinfo upload data
      */
     public function __construct(
-        /** @var $uploadinfo upload data */
+        /** @var stdClass $uploadinfo upload data */
         protected readonly stdClass $uploadinfo
     ) {
         $this->context = context_module::instance($this->uploadinfo->coursemodule);
@@ -104,7 +106,7 @@ final class dndupload_handle {
     /**
      * Get the instance id
      *
-     * @return ?int
+     * @param ?int $instanceid Instance id
      */
     public function set_instanceid(?int $instanceid) {
         $this->instanceid = $instanceid;
