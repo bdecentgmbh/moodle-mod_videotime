@@ -1,0 +1,7 @@
+[submodule "plugin/pro"]
+	path = plugin/pro
+	url = git@github.com:bdecentgmbh/moodle-mod_videotime_pro
+	branch = MOODLE_402_STABLE
+[submodule "plugin/repository"]
+	path = plugin/repository
+	url = git@github.com:bdecentgmbh/moodle-mod_videotime_repository
