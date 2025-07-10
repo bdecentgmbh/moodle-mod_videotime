@@ -656,6 +656,9 @@ function videotime_get_coursemodule_info($coursemodule) {
     if ($instance->timeopen) {
         $result->customdata['timeopen'] = $instance->timeopen;
     }
+    if ($instance->label_mode) {
+        $result->customdata['label_mode'] = $instance->label_mode;
+    }
 
     return $result;
 }
@@ -822,6 +825,8 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         || !$PAGE->has_set_url()
         || ($PAGE->pagetype == 'course-modedit')
         || $PAGE->user_is_editing()
+        || empty($cm->customdata)
+        || empty($cm->customdata['labelmode'])
     ) {
         return;
     }
