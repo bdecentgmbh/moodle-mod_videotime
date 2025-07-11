@@ -560,8 +560,6 @@ function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
 
     try {
-        $instance = videotime_instance::instance_by_id($cm->instance);
-
         // Ensure we are on the course view page. This was throwing an error when viewing the module
         // because OUTPUT was being used.
         if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
@@ -570,11 +568,17 @@ function videotime_cm_info_view(cm_info $cm) {
             }
         }
 
+        if ($cm->customdata['labelmode'] == videotime_instance::NORMAL_MODE) {
+            return;
+        }
+
         if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
             return;
         }
 
         $renderer = $PAGE->get_renderer('mod_videotime');
+
+        $instance = videotime_instance::instance_by_id($cm->instance);
 
         if ($instance->label_mode == videotime_instance::LABEL_MODE) {
             $instance->set_embed(true);
@@ -656,6 +660,8 @@ function videotime_get_coursemodule_info($coursemodule) {
     if ($instance->timeopen) {
         $result->customdata['timeopen'] = $instance->timeopen;
     }
+
+    $result->customdata['labelmode'] = $instance->label_mode;
 
     return $result;
 }
@@ -805,4 +811,68 @@ function mod_videotime_core_calendar_get_event_action_string(string $eventtype):
     }
 
     return get_string($identifier, 'videotime', $modulename);
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function videotime_cm_info_dynamic(cm_info $cm) {
+    global $PAGE, $USER;
+
+    if (
+        defined('BEHAT_SITE_RUNNING')
+        || !$PAGE->has_set_url()
+        || ($PAGE->pagetype == 'course-modedit')
+        || $PAGE->user_is_editing()
+    ) {
+        return;
+    }
+
+    if (
+        ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE)
+        || ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE)
+    ) {
+        $cm->set_no_view_link();
+    }
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ *
+ * @return array containing details of the files / types the mod can handle
+ */
+function videotime_dndupload_register(): array {
+    global $CFG;
+
+    if ($CFG->branch < 404) {
+        return [];
+    }
+
+    $hook = new \mod_videotime\hook\dndupload_register();
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
+    return ['files' => array_map(function($extension) {
+        return [
+            'extension' => $extension,
+            'message' => get_string('dnduploadvideotime', 'videotime'),
+        ];
+    }, $hook->get_extensions())];
+}
+
+/**
+ * Handle a file that has been uploaded
+ *
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function videotime_dndupload_handle($uploadinfo): int {
+    global $CFG;
+
+    $hook = new \mod_videotime\hook\dndupload_handle($uploadinfo);
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+    return $hook->get_instanceid();
 }

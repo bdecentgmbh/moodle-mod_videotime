@@ -135,7 +135,7 @@ $ADMIN->add('modvideotimefolder', new admin_category(
 ));
 $ADMIN->add('videotimetabplugins', new admin_externalpage(
     'managevideotimetabplugins',
-    get_string('managevideotimetabplugins', 'videotime'),
+    new lang_string('managevideotimetabplugins', 'videotime'),
     new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimetab'])
 ));
 
@@ -150,7 +150,7 @@ $ADMIN->add('modvideotimefolder', new admin_category(
 ));
 $ADMIN->add('videotimepluginplugins', new admin_externalpage(
     'managevideotimepluginplugins',
-    get_string('managevideotimepluginplugins', 'videotime'),
+    new lang_string('managevideotimepluginplugins', 'videotime'),
     new moodle_url('/mod/videotime/adminmanageplugins.php', ['subtype' => 'videotimeplugin'])
 ));
 
