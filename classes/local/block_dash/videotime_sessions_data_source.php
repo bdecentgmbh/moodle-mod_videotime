@@ -43,7 +43,7 @@ use local_dash\data_grid\filter\course_field_filter;
 use local_dash\data_grid\filter\customfield_filter;
 use local_dash\data_grid\filter\my_enrolled_courses_condition;
 use local_dash\data_grid\filter\parent_role_condition;
-use local_dash\local\dash_framework\structure\course_table;
+use dashaddon_courses\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_session_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
