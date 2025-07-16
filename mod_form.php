@@ -116,11 +116,9 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
         // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
+        $this->standard_intro_elements();
+        // Change the help button string.
+        $mform->addHelpButton('showdescription', 'showdescription', 'videotime');
 
         $mform->addElement(
             'advcheckbox',
@@ -189,43 +187,10 @@ class mod_videotime_mod_form extends moodleform_mod {
     public function definition_after_data() {
         $mform = $this->_form;
 
+        parent::definition_after_data();
+
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             component_callback("videotimeplugin_$name", 'definition_after_data', [$mform, $this->context]);
-        }
-    }
-
-    /**
-     * Add an editor for an activity's introduction field.
-     *
-     * NOTE: Copied from parent classes to change showdescription string.
-     *
-     * @param null $customlabel Override default label for editor
-     * @throws coding_exception
-     */
-    protected function standard_intro_elements($customlabel = null) {
-        global $CFG;
-
-        $required = $CFG->requiremodintro;
-
-        $mform = $this->_form;
-        $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
-
-        $mform->addElement('editor', 'introeditor', $label, ['rows' => 10], [
-            'maxfiles' => EDITOR_UNLIMITED_FILES,
-            'noclean' => true,
-            'context' => $this->context,
-            'subdirs' => true,
-        ]);
-        $mform->setType('introeditor', PARAM_RAW); // No XSS prevention here, users must be trusted.
-        if ($required) {
-            $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
-        }
-
-        // If the 'show description' feature is enabled, this checkbox appears below the intro.
-        // We want to hide that when using the singleactivity course format because it is confusing.
-        if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
-            $mform->addHelpButton('showdescription', 'showdescription', 'videotime');
         }
     }
 
@@ -459,7 +424,6 @@ class mod_videotime_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
 
         // Turn off completion settings if the checkboxes aren't ticked.
-        $suffix = $this->get_suffix();
         if (!empty($data->completionunlocked)) {
             $suffix = $this->get_suffix();
             $completion = $data->{'completion' . $suffix};
