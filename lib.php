@@ -44,17 +44,17 @@ function videotime_supports($feature) {
         return MOD_PURPOSE_CONTENT;
     }
     switch ($feature) {
+        case FEATURE_COMPLETION_HAS_RULES:
+            return videotime_has_pro();
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
         case FEATURE_GRADE_HAS_GRADE:
             return videotime_has_pro();
         case FEATURE_GROUPS:
             return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS:
-            return true;
         case FEATURE_MOD_INTRO:
             return true;
         case FEATURE_BACKUP_MOODLE2:
-            return true;
-        case FEATURE_COMPLETION_HAS_RULES:
             return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
@@ -557,7 +557,7 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  * @param cm_info $cm Course module information
  */
 function videotime_cm_info_view(cm_info $cm) {
-    global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
+    global $OUTPUT, $PAGE, $USER;
 
     try {
         $instance = videotime_instance::instance_by_id($cm->instance);
@@ -576,11 +576,14 @@ function videotime_cm_info_view(cm_info $cm) {
 
         $renderer = $PAGE->get_renderer('mod_videotime');
 
-        if ($instance->label_mode == videotime_instance::LABEL_MODE) {
+
+        if ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE) {
+            $instance = videotime_instance::instance_by_id($cm->instance);
             $instance->set_embed(true);
             $content = $renderer->render($instance);
             $cm->set_extra_classes('label_mode');
-        } else if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
+        } else if ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE) {
+            $instance = videotime_instance::instance_by_id($cm->instance);
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
@@ -643,8 +646,7 @@ function videotime_get_coursemodule_info($coursemodule) {
                     = $instance->completion_on_view_time_second;
             }
             if ($instance->completion_on_percent) {
-                $result->customdata['customcompletionrules']['completion_on_percent']
-                    = $instance->completion_on_percent_value;
+                $result->customdata['customcompletionrules']['completion_on_percent'] = $instance->completion_on_percent_value;
             }
             $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
         }
@@ -691,17 +693,7 @@ function videotime_get_excerpt($description, $maxlength = 150) {
  * @throws dml_exception
  */
 function mod_videotime_treat_as_label(cm_info $mod) {
-    global $DB;
-
-    if ($mod->modname != 'videotime') {
-        return false;
-    }
-
-    if ($instance = $DB->get_record('videotime', ['id' => $mod->instance])) {
-        return $instance->label_mode == 1;
-    }
-
-    return false;
+    return ($mod->modname != 'videotime') && ($mod->customdata['labelmode'] == 1);
 }
 
 /**
