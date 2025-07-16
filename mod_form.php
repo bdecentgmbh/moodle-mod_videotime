@@ -116,16 +116,16 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEANHTML);
         }
 
-        $mform->addRule('name', null, 'required', null, 'client');
+        if (!videotime_has_repository()) {
+            $mform->addRule('name', null, 'required', null, 'client');
+        }
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
         // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
+        $this->standard_intro_elements();
+        // Change the help button string.
+        $mform->addHelpButton('showdescription', 'showdescription', 'videotime');
 
         $mform->addElement(
             'advcheckbox',
@@ -194,43 +194,10 @@ class mod_videotime_mod_form extends moodleform_mod {
     public function definition_after_data() {
         $mform = $this->_form;
 
+        parent::definition_after_data();
+
         foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
             component_callback("videotimeplugin_$name", 'definition_after_data', [$mform, $this->context]);
-        }
-    }
-
-    /**
-     * Add an editor for an activity's introduction field.
-     *
-     * NOTE: Copied from parent classes to change showdescription string.
-     *
-     * @param null $customlabel Override default label for editor
-     * @throws coding_exception
-     */
-    protected function standard_intro_elements($customlabel = null) {
-        global $CFG;
-
-        $required = $CFG->requiremodintro;
-
-        $mform = $this->_form;
-        $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
-
-        $mform->addElement('editor', 'introeditor', $label, ['rows' => 10], [
-            'maxfiles' => EDITOR_UNLIMITED_FILES,
-            'noclean' => true,
-            'context' => $this->context,
-            'subdirs' => true,
-        ]);
-        $mform->setType('introeditor', PARAM_RAW); // No XSS prevention here, users must be trusted.
-        if ($required) {
-            $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
-        }
-
-        // If the 'show description' feature is enabled, this checkbox appears below the intro.
-        // We want to hide that when using the singleactivity course format because it is confusing.
-        if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('advcheckbox', 'showdescription', get_string('showdescription'));
-            $mform->addHelpButton('showdescription', 'showdescription', 'videotime');
         }
     }
 
@@ -252,17 +219,20 @@ class mod_videotime_mod_form extends moodleform_mod {
                 '',
                 get_string('completion_on_view', 'videotime') . ':&nbsp;'
             );
-            $group[] =& $mform->createElement(
-                'text',
-                $this->get_suffixed_name('completion_on_view_time_second'),
-                '',
-                ['size' => 3]
-            );
-            $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
-            $mform->setType($this->get_suffixed_name('completion_on_view_time_second'), PARAM_INT);
             $mform->addGroup($group, $this->get_suffixed_name('completion_on_view_time_group'), '', [' '], false);
             $mform->disabledIf(
+                $this->get_suffixed_name('completion_on_view_time_second[number]'),
+                $this->get_suffixed_name('completion_on_view_time'),
+                'notchecked'
+            );
+            $mform->addElement(
+                'duration',
                 $this->get_suffixed_name('completion_on_view_time_second'),
+                ''
+            );
+            $mform->setType($this->get_suffixed_name('completion_on_view_time_second'), PARAM_INT);
+            $mform->disabledIf(
+                $this->get_suffixed_name('completion_on_view_time_second[timeunit]'),
                 $this->get_suffixed_name('completion_on_view_time'),
                 'notchecked'
             );
@@ -339,6 +309,10 @@ class mod_videotime_mod_form extends moodleform_mod {
         global $USER;
 
         $errors = parent::validation($data, $files);
+
+        if (empty($data['name'] && empty($data['pullmetadata']))) {
+            $errors['name'] = get_string('required');
+        }
 
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $fs = get_file_storage();
@@ -456,7 +430,6 @@ class mod_videotime_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
 
         // Turn off completion settings if the checkboxes aren't ticked.
-        $suffix = $this->get_suffix();
         if (!empty($data->completionunlocked)) {
             $suffix = $this->get_suffix();
             $completion = $data->{'completion' . $suffix};
