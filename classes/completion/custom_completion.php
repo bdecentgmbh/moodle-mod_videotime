@@ -56,12 +56,12 @@ class custom_completion extends activity_custom_completion {
                 break;
             case 'completion_on_percent':
                 $status = !empty($rules['completion_on_percent']) &&
-                    (($sessions->get_percent() * 100) >= $rules['completion_on_percent_value'] ?? 0);
+                    (($sessions->get_percent() * 100) >= ($rules['completion_on_percent'] ?? 0));
                 break;
             case 'completion_hide_detail':
                 // Check whether any enabled condition is incomplete.
                 $status = empty($rules['completion_on_view_time']) ||
-                    $sessions->get_total_time() >= $rules['completion_on_view_time_second'] ?? 0;
+                    $sessions->get_total_time() >= $rules['completion_on_view_time'] ?? 0;
 
                 $status = $status && (
                     empty($rules['completion_on_finish']) ||

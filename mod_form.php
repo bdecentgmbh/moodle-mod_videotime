@@ -116,7 +116,9 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEANHTML);
         }
 
-        $mform->addRule('name', null, 'required', null, 'client');
+        if (!videotime_has_repository()) {
+            $mform->addRule('name', null, 'required', null, 'client');
+        }
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'activity_name', 'mod_videotime');
 
@@ -217,17 +219,20 @@ class mod_videotime_mod_form extends moodleform_mod {
                 '',
                 get_string('completion_on_view', 'videotime') . ':&nbsp;'
             );
-            $group[] =& $mform->createElement(
-                'text',
-                $this->get_suffixed_name('completion_on_view_time_second'),
-                '',
-                ['size' => 3]
-            );
-            $group[] =& $mform->createElement('static', 'seconds', '', get_string('seconds', 'videotime'));
-            $mform->setType($this->get_suffixed_name('completion_on_view_time_second'), PARAM_INT);
             $mform->addGroup($group, $this->get_suffixed_name('completion_on_view_time_group'), '', [' '], false);
             $mform->disabledIf(
+                $this->get_suffixed_name('completion_on_view_time_second[number]'),
+                $this->get_suffixed_name('completion_on_view_time'),
+                'notchecked'
+            );
+            $mform->addElement(
+                'duration',
                 $this->get_suffixed_name('completion_on_view_time_second'),
+                ''
+            );
+            $mform->setType($this->get_suffixed_name('completion_on_view_time_second'), PARAM_INT);
+            $mform->disabledIf(
+                $this->get_suffixed_name('completion_on_view_time_second[timeunit]'),
                 $this->get_suffixed_name('completion_on_view_time'),
                 'notchecked'
             );
@@ -304,6 +309,10 @@ class mod_videotime_mod_form extends moodleform_mod {
         global $USER;
 
         $errors = parent::validation($data, $files);
+
+        if (empty($data['name'] && empty($data['pullmetadata']))) {
+            $errors['name'] = get_string('required');
+        }
 
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $fs = get_file_storage();

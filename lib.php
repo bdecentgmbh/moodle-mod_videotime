@@ -646,8 +646,7 @@ function videotime_get_coursemodule_info($coursemodule) {
                     = $instance->completion_on_view_time_second;
             }
             if ($instance->completion_on_percent) {
-                $result->customdata['customcompletionrules']['completion_on_percent']
-                    = $instance->completion_on_percent_value;
+                $result->customdata['customcompletionrules']['completion_on_percent'] = $instance->completion_on_percent_value;
             }
             $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
         }
