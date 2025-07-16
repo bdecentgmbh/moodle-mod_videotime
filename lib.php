@@ -729,6 +729,8 @@ function videotime_get_coursemodule_info($coursemodule) {
         $result->customdata['timeopen'] = $instance->timeopen;
     }
 
+    $result->customdata['labelmode'] = $instance->label_mode;
+
     return $result;
 }
 
