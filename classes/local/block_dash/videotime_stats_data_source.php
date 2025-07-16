@@ -61,7 +61,11 @@ class videotime_stats_data_source extends abstract_data_source {
      */
     public function __construct(context $context) {
         $this->add_table(new videotime_table());
-        $this->add_table(new course_table());
+        if (class_exists(course_table::class)) {
+            $this->add_table(new course_table());
+        } else {
+            $this->add_table(new local_dash\local\dash_framework\structure\course_table());
+        }
         parent::__construct($context);
     }
 
