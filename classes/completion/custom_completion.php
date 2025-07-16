@@ -43,34 +43,34 @@ class custom_completion extends activity_custom_completion {
         $this->validate_rule($rule);
 
         // Get videotime details.
-        $videotime = $DB->get_record('videotime', ['id' => $this->cm->instance], '*', MUST_EXIST);
 
         $sessions = \videotimeplugin_pro\module_sessions::get($this->cm->id, $this->userid);
+        $rules = $this->cm->customdata['customcompletionrules'];
 
         switch ($rule) {
             case 'completion_on_view_time':
-                $status = $sessions->get_total_time() >= $videotime->completion_on_view_time_second;
+                $status = $sessions->get_total_time() >= $rules['completion_on_view_time'] ?? 0;
                 break;
             case 'completion_on_finish':
                 $status = $sessions->is_finished();
                 break;
             case 'completion_on_percent':
-                $status = $videotime->completion_on_percent &&
-                    (($sessions->get_percent() * 100) >= $videotime->completion_on_percent_value);
+                $status = !empty($rules['completion_on_percent']) &&
+                    (($sessions->get_percent() * 100) >= $rules['completion_on_percent_value'] ?? 0);
                 break;
             case 'completion_hide_detail':
                 // Check whether any enabled condition is incomplete.
-                $status = !$videotime->completion_on_view_time ||
-                    $sessions->get_total_time() >= $videotime->completion_on_view_time_second;
+                $status = empty($rules['completion_on_view_time']) ||
+                    $sessions->get_total_time() >= $rules['completion_on_view_time_second'] ?? 0;
 
                 $status = $status && (
-                    !$videotime->completion_on_finish ||
+                    empty($rules['completion_on_finish']) ||
                     $sessions->is_finished()
                 );
 
                 $status = $status && (
-                    !$videotime->completion_on_percent ||
-                    (($sessions->get_percent() * 100) >= $videotime->completion_on_percent_value)
+                    empty($rules['completion_on_percent']) ||
+                    (($sessions->get_percent() * 100) >= $rules['completion_on_percent_value'])
                 );
                 break;
             default:
@@ -129,6 +129,12 @@ class custom_completion extends activity_custom_completion {
      * @return array
      */
     public function get_sort_order(): array {
+        if (!videotime_has_pro()) {
+            return [
+                'completionview',
+            ];
+        }
+
         return [
             'completionview',
             'completion_on_finish',
