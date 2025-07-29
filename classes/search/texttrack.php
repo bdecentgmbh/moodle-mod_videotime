@@ -49,7 +49,7 @@ class texttrack extends \core_search\base_mod {
         global $DB;
 
         if (!get_config('videotimetab_texttrack', 'enabled')) {
-            return null;
+            return $DB->get_recordset_select('videotime', 'FALSE');
         }
 
         [$contextjoin, $contextparams] = $this->get_context_restriction_sql(
@@ -118,7 +118,7 @@ class texttrack extends \core_search\base_mod {
         $doc->set('contextid', $context->id);
         $doc->set('courseid', $record->course);
         $doc->set('owneruserid', \core_search\manager::NO_OWNER_ID);
-        $doc->set('modified', $record->timemodified);
+        $doc->set('modified', $record->timemodified ?: 0);
 
         return $doc;
     }
