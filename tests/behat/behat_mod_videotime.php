@@ -36,6 +36,7 @@ use Behat\Mink\Exception\ExpectationException;
  * @category   test
  * @copyright  2023 bdecent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      mod_videotime
  */
 class behat_mod_videotime extends behat_base {
     /**

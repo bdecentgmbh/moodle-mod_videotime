@@ -89,7 +89,6 @@ $string['deletesessiondata'] = 'Delete session data';
 $string['discover_videos'] = 'Discover Vimeo videos';
 $string['discovering_videos'] = 'Discovering {$a->count} videos';
 $string['display_options'] = 'Display options';
-$string['dnduploadvideotime'] = 'Create Video Time activity';
 $string['dnt'] = 'Do not track';
 $string['done'] = 'Done';
 $string['duration'] = 'Duration';
