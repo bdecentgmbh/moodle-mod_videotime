@@ -27,8 +27,6 @@ namespace videotimeplugin_videojs;
 use context_module;
 use context_system;
 use core_component;
-use mod_videotime\hook\dndupload_handle;
-use mod_videotime\hook\dndupload_register;
 use mod_videotime\vimeo_embed;
 use moodle_url;
 use renderer_base;
@@ -111,62 +109,5 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
      */
     public function get_component_name() {
         return 'videotimeplugin_videojs';
-    }
-
-    /**
-     * Register drag and drop file upload handler
-     *
-     * @param dndupload_register $hook Hook
-     */
-    public static function dndupload_register(dndupload_register $hook): void {
-        foreach ([
-            'avi',
-            'mp4',
-            'm3u8',
-            'mkv',
-            'oga',
-            'ogg',
-            'ogv',
-            'webm',
-        ] as $extension) {
-            $hook->register_handler($extension);
-        }
-    }
-
-    /**
-     * Handle drag and drop file upload
-     *
-     * @param dndupload_handle $hook Hook
-     */
-    public static function dndupload_handle(dndupload_handle $hook): void {
-        if ($hook->get_instanceid()) {
-            return;
-        }
-
-        file_save_draft_area_files($hook->get_draftitemid(), $hook->get_context()->id, 'videotimeplugin_videojs', 'mediafile', 0);
-        $fs = get_file_storage();
-        $files = $fs->get_area_files(
-            $hook->get_context()->id,
-            'videotimeplugin_videojs',
-            'mediafile',
-            0,
-            'sortorder, itemid, filepath, filename',
-            false
-        );
-        $file = reset($files);
-
-        // Create a default videotime object to pass to videotime_add_instance()!
-        $videotime = get_config('videotime');
-        $videotime->intro = '';
-        $videotime->introformat = FORMAT_HTML;
-        $videotime->course = $hook->get_course()->id;
-        $videotime->coursemodule = $hook->get_coursemodule();
-        $videotime->grade = $CFG->gradepointdefault;
-
-        $videotime->cmidnumber = '';
-        $videotime->name = $hook->get_displayname();
-        $videotime->reference = $file->get_filename();
-
-        $hook->set_instanceid(videotime_add_instance($videotime, null));
     }
 }
