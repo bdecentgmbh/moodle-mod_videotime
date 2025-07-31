@@ -648,11 +648,11 @@ function videotime_cm_info_view(cm_info $cm) {
 
         $instance = videotime_instance::instance_by_id($cm->instance);
 
-        if ($instance->labelmode == videotime_instance::LABEL_MODE) {
+        if ($instance->label_mode == videotime_instance::LABEL_MODE) {
             $instance->set_embed(true);
             $content = $renderer->render($instance);
             $cm->set_extra_classes('label_mode');
-        } else if ($instance->labelmode == videotime_instance::PREVIEW_MODE) {
+        } else if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
