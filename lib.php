@@ -560,16 +560,14 @@ function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $USER;
 
     try {
+        $instance = videotime_instance::instance_by_id($cm->instance);
+
         // Ensure we are on the course view page. This was throwing an error when viewing the module
         // because OUTPUT was being used.
         if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
             if (!WS_SERVER && !AJAX_SCRIPT) {
                 return;
             }
-        }
-
-        if ($cm->customdata['labelmode'] == videotime_instance::NORMAL_MODE) {
-            return;
         }
 
         if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
@@ -659,8 +657,7 @@ function videotime_get_coursemodule_info($coursemodule) {
     if ($instance->timeopen) {
         $result->customdata['timeopen'] = $instance->timeopen;
     }
-
-    $result->customdata['labelmode'] = $instance->label_mode;
+    $result->customdata['label_mode'] = $instance->label_mode;
 
     return $result;
 }
@@ -817,6 +814,8 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         || !$PAGE->has_set_url()
         || ($PAGE->pagetype == 'course-modedit')
         || $PAGE->user_is_editing()
+        || empty($cm->customdata)
+        || empty($cm->customdata['labelmode'])
     ) {
         return;
     }
