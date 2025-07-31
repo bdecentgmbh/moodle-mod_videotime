@@ -1,6 +1,6 @@
 name: Moodle Plugin CI
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -28,25 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '8.3'
-            moodle-branch: 'main'
-            database: 'pgsql'
           - php: '8.2'
-            moodle-branch: 'main'
-            database: 'pgsql'
-          - php: '8.2'
-            moodle-branch: 'MOODLE_500_STABLE'
-            database: 'pgsql'
-          - php: '8.3'
-            moodle-branch: 'MOODLE_500_STABLE'
-            database: 'mariadb'
-          - php: '8.2'
-            moodle-branch: 'MOODLE_405_STABLE'
-            database: 'pgsql'
-          - php: '8.2'
-            moodle-branch: 'MOODLE_404_STABLE'
-            database: 'mariadb'
-          - php: '8.1'
             moodle-branch: 'MOODLE_403_STABLE'
             database: 'pgsql'
           - php: '8.0'
@@ -113,7 +95,7 @@ jobs:
         run: moodle-plugin-ci mustache
 
       - name: Grunt
-        if: ${{ matrix.moodle-branch == 'MOODLE_405_STABLE' }}
+        if: ${{ always() }}
         run: moodle-plugin-ci grunt
 
       - name: PHPUnit tests
@@ -122,4 +104,4 @@ jobs:
 
       - name: Behat features
         if: ${{ always() }}
-        run: moodle-plugin-ci behat --profile chrome
+        run: moodle-plugin-ci behat --profile firefox
