@@ -560,16 +560,14 @@ function videotime_cm_info_view(cm_info $cm) {
     global $OUTPUT, $PAGE, $USER;
 
     try {
+        $instance = videotime_instance::instance_by_id($cm->instance);
+
         // Ensure we are on the course view page. This was throwing an error when viewing the module
         // because OUTPUT was being used.
         if (!$PAGE->context || $PAGE->context->contextlevel != CONTEXT_COURSE) {
             if (!WS_SERVER && !AJAX_SCRIPT) {
                 return;
             }
-        }
-
-        if ($cm->customdata['labelmode'] == videotime_instance::NORMAL_MODE) {
-            return;
         }
 
         if (!videotime_has_pro() || $cm->deletioninprogress || !$cm->visible) {
@@ -580,11 +578,11 @@ function videotime_cm_info_view(cm_info $cm) {
 
         $instance = videotime_instance::instance_by_id($cm->instance);
 
-        if ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE) {
+        if ($instance->label_mode == videotime_instance::LABEL_MODE) {
             $instance->set_embed(true);
             $content = $renderer->render($instance);
             $cm->set_extra_classes('label_mode');
-        } else if ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE) {
+        } else if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
@@ -659,8 +657,7 @@ function videotime_get_coursemodule_info($coursemodule) {
     if ($instance->timeopen) {
         $result->customdata['timeopen'] = $instance->timeopen;
     }
-
-    $result->customdata['labelmode'] = $instance->label_mode;
+    $result->customdata['label_mode'] = $instance->label_mode;
 
     return $result;
 }
@@ -817,6 +814,8 @@ function videotime_cm_info_dynamic(cm_info $cm) {
         || !$PAGE->has_set_url()
         || ($PAGE->pagetype == 'course-modedit')
         || $PAGE->user_is_editing()
+        || empty($cm->customdata)
+        || empty($cm->customdata['labelmode'])
     ) {
         return;
     }
