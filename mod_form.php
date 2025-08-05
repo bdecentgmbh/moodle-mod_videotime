@@ -214,16 +214,16 @@ class mod_videotime_mod_form extends moodleform_mod {
                 '',
                 get_string('completion_on_view', 'videotime') . ':&nbsp;'
             );
+            $group[] =& $mform->createElement(
+                'duration',
+                $this->get_suffixed_name('completion_on_view_time_second'),
+                ''
+            );
             $mform->addGroup($group, $this->get_suffixed_name('completion_on_view_time_group'), '', [' '], false);
             $mform->disabledIf(
                 $this->get_suffixed_name('completion_on_view_time_second[number]'),
                 $this->get_suffixed_name('completion_on_view_time'),
                 'notchecked'
-            );
-            $mform->addElement(
-                'duration',
-                $this->get_suffixed_name('completion_on_view_time_second'),
-                ''
             );
             $mform->setType($this->get_suffixed_name('completion_on_view_time_second'), PARAM_INT);
             $mform->disabledIf(
