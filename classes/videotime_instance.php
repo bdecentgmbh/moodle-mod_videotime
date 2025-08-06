@@ -307,44 +307,6 @@ class videotime_instance implements \renderable, \templatable {
 
         $record = clone $this->record;
 
-        $record->name = format_string($record->name, FORMAT_HTML);
-
-        $record->intro  = file_rewrite_pluginfile_urls(
-            $record->intro,
-            'pluginfile.php',
-            $this->get_context()->id,
-            'mod_videotime',
-            'intro',
-            null
-        );
-        $record->intro = format_text($record->intro, $record->introformat, [
-            'noclean' => true,
-        ]);
-
-        $record->video_description = file_rewrite_pluginfile_urls(
-            $record->video_description,
-            'pluginfile.php',
-            $this->get_context()->id,
-            'mod_videotime',
-            'video_description',
-            0
-        );
-        $record->video_description = format_text($record->video_description, $record->video_description_format, [
-            'noclean' => true,
-        ]);
-
-        $record->intro_excerpt = videotime_get_excerpt($record->intro);
-        $record->show_more_link = strlen(strip_tags($record->intro_excerpt)) < strlen(strip_tags($record->intro));
-        if (
-            empty($record->show_description_in_player)
-            || (
-                class_exists('core\\output\\activity_header')
-                && $PAGE->context
-                && $PAGE->context instanceof \context_module
-            )
-        ) {
-            $record->intro = '';
-        }
         return $record;
     }
 
@@ -497,14 +459,55 @@ class videotime_instance implements \renderable, \templatable {
      * @return \stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $cm = get_coursemodule_from_instance('videotime', $this->record->id);
 
-        $embeddedplayer = $this->embed_player($this->to_record());
+        $record = $this->to_record();
+
+        $record->name = format_string($record->name, FORMAT_HTML);
+
+        $record->intro  = file_rewrite_pluginfile_urls(
+            $record->intro,
+            'pluginfile.php',
+            $this->get_context()->id,
+            'mod_videotime',
+            'intro',
+            null
+        );
+        $record->intro = format_text($record->intro, $record->introformat, [
+            'noclean' => true,
+        ]);
+
+        $record->video_description = file_rewrite_pluginfile_urls(
+            $record->video_description,
+            'pluginfile.php',
+            $this->get_context()->id,
+            'mod_videotime',
+            'video_description',
+            0
+        );
+        $record->video_description = format_text($record->video_description, $record->video_description_format, [
+            'noclean' => true,
+        ]);
+
+        $record->intro_excerpt = videotime_get_excerpt($record->intro);
+        $record->show_more_link = strlen(strip_tags($record->intro_excerpt)) < strlen(strip_tags($record->intro));
+        if (
+            empty($record->show_description_in_player)
+            || (
+                class_exists('core\\output\\activity_header')
+                && $PAGE->context
+                && $PAGE->context instanceof \context_module
+            )
+        ) {
+            $record->intro = '';
+        }
+
+        $embeddedplayer = $this->embed_player($record);
 
         $context = [
-            'instance' => $this->to_record(),
+            'instance' => $record,
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
             'player' => empty($embeddedplayer) ? '' : $output->render($embeddedplayer),
