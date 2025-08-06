@@ -86,6 +86,7 @@ if ($groupmode) {
 if ($userid = optional_param('userid', null, PARAM_INT)) {
     $userreport = new user_report($cm, $userid);
     echo $OUTPUT->header();
+    echo $groupselector;
     echo $OUTPUT->render($userreport);
     echo $OUTPUT->footer();
     die();

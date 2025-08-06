@@ -66,6 +66,7 @@ class tabs implements \renderable, \templatable {
             $this->set_active_tab(optional_param('active', 'watch', PARAM_ALPHA));
             $this->get_tab('watch')->set_persistent();
         }
+        $this->set_active_tab(optional_param('active', 'watch', PARAM_ALPHA));
     }
 
     /**
@@ -112,6 +113,10 @@ class tabs implements \renderable, \templatable {
             if ($tab->is_visible()) {
                 $tabs[] = $tab->get_data();
             }
+        }
+
+        if (!array_filter(array_column($tabs, 'active'))) {
+            $tabs[0]['active'] = true;
         }
 
         $record->intro = '';
