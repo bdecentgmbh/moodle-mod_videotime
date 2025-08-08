@@ -43,7 +43,7 @@ use local_dash\data_grid\filter\course_field_filter;
 use local_dash\data_grid\filter\customfield_filter;
 use local_dash\data_grid\filter\my_enrolled_courses_condition;
 use local_dash\data_grid\filter\parent_role_condition;
-use local_dash\local\dash_framework\structure\course_table;
+use dashaddon_courses\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_session_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
@@ -60,10 +60,13 @@ class videotime_sessions_data_source extends abstract_data_source {
      * @param context $context
      */
     public function __construct(context $context) {
-        $this->add_table(new videotime_session_table());
         $this->add_table(new videotime_table());
         $this->add_table(new user_table());
-        $this->add_table(new course_table());
+        if (class_exists(course_table::class)) {
+            $this->add_table(new course_table());
+        } else {
+            $this->add_table(new local_dash\local\dash_framework\structure\course_table());
+        }
         parent::__construct($context);
     }
 

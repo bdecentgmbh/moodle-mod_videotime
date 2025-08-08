@@ -42,7 +42,6 @@ class mod_videotime_generator extends testing_module_generator {
         require_once($CFG->dirroot . '/lib/resourcelib.php');
 
         $record = (array)$record + [
-            'name' => 'Testing video time instance',
             'vimeo_url' => 'https://vimeo.com/228296978',
             'video_description' => '',
             'video_description_format' => FORMAT_HTML,

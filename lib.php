@@ -44,17 +44,17 @@ function videotime_supports($feature) {
         return MOD_PURPOSE_CONTENT;
     }
     switch ($feature) {
+        case FEATURE_COMPLETION_HAS_RULES:
+            return videotime_has_pro();
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
         case FEATURE_GRADE_HAS_GRADE:
             return videotime_has_pro();
         case FEATURE_GROUPS:
             return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS:
-            return true;
         case FEATURE_MOD_INTRO:
             return true;
         case FEATURE_BACKUP_MOODLE2:
-            return true;
-        case FEATURE_COMPLETION_HAS_RULES:
             return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
@@ -557,7 +557,7 @@ function videotime_extend_navigation_course($navigation, $course, $context) {
  * @param cm_info $cm Course module information
  */
 function videotime_cm_info_view(cm_info $cm) {
-    global $OUTPUT, $PAGE, $DB, $USER, $COURSE;
+    global $OUTPUT, $PAGE, $USER;
 
     try {
         // Ensure we are on the course view page. This was throwing an error when viewing the module
@@ -580,11 +580,11 @@ function videotime_cm_info_view(cm_info $cm) {
 
         $instance = videotime_instance::instance_by_id($cm->instance);
 
-        if ($instance->label_mode == videotime_instance::LABEL_MODE) {
+        if ($cm->customdata['labelmode'] == videotime_instance::LABEL_MODE) {
             $instance->set_embed(true);
             $content = $renderer->render($instance);
             $cm->set_extra_classes('label_mode');
-        } else if ($instance->label_mode == videotime_instance::PREVIEW_MODE) {
+        } else if ($cm->customdata['labelmode'] == videotime_instance::PREVIEW_MODE) {
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
@@ -647,8 +647,7 @@ function videotime_get_coursemodule_info($coursemodule) {
                     = $instance->completion_on_view_time_second;
             }
             if ($instance->completion_on_percent) {
-                $result->customdata['customcompletionrules']['completion_on_percent']
-                    = $instance->completion_on_percent_value;
+                $result->customdata['customcompletionrules']['completion_on_percent'] = $instance->completion_on_percent_value;
             }
             $result->customdata['customcompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
         }
@@ -694,17 +693,7 @@ function videotime_get_excerpt($description, $maxlength = 150) {
  * @throws dml_exception
  */
 function mod_videotime_treat_as_label(cm_info $mod) {
-    global $DB;
-
-    if ($mod->modname != 'videotime') {
-        return false;
-    }
-
-    if ($instance = $DB->get_record('videotime', ['id' => $mod->instance])) {
-        return $instance->label_mode == 1;
-    }
-
-    return false;
+    return ($mod->modname != 'videotime') && ($mod->customdata['labelmode'] == 1);
 }
 
 /**
@@ -838,4 +827,41 @@ function videotime_cm_info_dynamic(cm_info $cm) {
     ) {
         $cm->set_no_view_link();
     }
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ *
+ * @return array containing details of the files / types the mod can handle
+ */
+function videotime_dndupload_register(): array {
+    global $CFG;
+
+    if ($CFG->branch < 404) {
+        return [];
+    }
+
+    $hook = new \mod_videotime\hook\dndupload_register();
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
+    return ['files' => array_map(function($extension) {
+        return [
+            'extension' => $extension,
+            'message' => get_string('dnduploadvideotime', 'videotime'),
+        ];
+    }, $hook->get_extensions())];
+}
+
+/**
+ * Handle a file that has been uploaded
+ *
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function videotime_dndupload_handle($uploadinfo): int {
+    global $CFG;
+
+    $hook = new \mod_videotime\hook\dndupload_handle($uploadinfo);
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+    return $hook->get_instanceid();
 }
