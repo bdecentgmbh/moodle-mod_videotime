@@ -120,7 +120,7 @@ ob_end_clean();
 
 $videoduration = null;
 if (videotime_has_repository()) {
-    if ($video = $DB->get_record('videotime_vimeo_video', ['link' => $moduleinstance->vimeo_url])) {
+    if ($video = $DB->get_record('videotime_vimeo_video', ['link' => $moduleinstance->vimeo_url], '*', IGNORE_MULTIPLE)) {
         $videoduration = $video->duration;
     }
 }
