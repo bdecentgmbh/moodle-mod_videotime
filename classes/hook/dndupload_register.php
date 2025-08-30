@@ -49,7 +49,7 @@ final class dndupload_register {
      * @return array File extensions to handle
      */
     public function get_extensions(): array {
-        return $this->extensions;
+        return array_unique($this->extensions);
     }
 
     /**
