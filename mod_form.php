@@ -108,7 +108,10 @@ class mod_videotime_mod_form extends moodleform_mod {
                     )
                 );
             }
-            if (has_capability('videotimeplugin/repository:browsevideos', $this->context)) {
+            if (
+                has_capability('videotimeplugin/repository:browsevideos', $this->context)
+                || has_capability('videotimeplugin/repository:browseownvideos', $this->context)
+            ) {
                 $mform->addGroup($group);
             }
 
