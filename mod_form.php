@@ -311,8 +311,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             !empty($data[$this->get_suffixed_name('completion_on_finish')] ||
             (
                 !empty($data[$this->get_suffixed_name('completion_on_percent')])
-                && $data[$this->get_suffixed_name('completion_on_percent_value')])
-            );
+                && $data[$this->get_suffixed_name('completion_on_percent_value')]));
     }
 
     /**
@@ -420,18 +419,20 @@ class mod_videotime_mod_form extends moodleform_mod {
             $defaultvalues['trackid'] = array_keys($texttracks);
             $defaultvalues['tracklabel'] = array_values(array_column($texttracks, 'label'));
             $defaultvalues['tracktype'] = array_values(array_column($texttracks, 'kind'));
-            $defaultvalues['trackvisible'] = array_values(array_column($texttracks, 'visible')) + array_fill(0, count($texttracks) + 2, 1);
+            $defaultvalues['trackvisible'] = array_values(
+                array_column($texttracks, 'visible')
+            ) + array_fill(0, count($texttracks) + 2, 1);
             $defaultvalues['trackdefault'] = array_values(array_column($texttracks, 'isdefault'));
             $defaultvalues['tracks_repeats'] = count($texttracks);
             $cm = get_coursemodule_from_instance('videotime', $this->current->instance);
             $context = context_module::instance($cm->id);
             foreach ($defaultvalues['trackid'] as $key => $trackid) {
                 if ($trackid) {
-                    if (!empty($defaultvalues['texttrack'])
-                        &&!empty($defaultvalues['texttrack'][$key])
+                    if (
+                        !empty($defaultvalues['texttrack'])
+                        && !empty($defaultvalues['texttrack'][$key])
                     ) {
                         $draftitemid = $defaultvalues['texttrack'][$key];
-                        print_r($draftitemid);die();
                     } else {
                         $draftitemid = null;
                     }
@@ -499,6 +500,9 @@ class mod_videotime_mod_form extends moodleform_mod {
         }
     }
 
+    /**
+     * Add text track fields
+     */
     protected function add_text_track_fields() {
         global $DB;
 
@@ -508,7 +512,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $currentlang = \current_language();
         $languages = \get_string_manager()->get_list_of_translations();
-       
+
         $types = [
             'chapters' => get_string('chapters', 'mod_videotime'),
             'captions' => get_string('captions', 'mod_videotime'),
@@ -524,7 +528,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $mform->createElement('advcheckbox', 'trackdefault', get_string('default')),
         ];
         $tracks = [
-            $mform->createElement('hidden', 'trackid'), 
+            $mform->createElement('hidden', 'trackid'),
             $mform->createElement('text', 'tracklabel', get_string('texttrackno', 'mod_videotime')),
             $mform->createElement('group', 'trackattributes', '', $attributes, [
                 get_string('tracktype', 'mod_videotime'),
@@ -569,7 +573,16 @@ class mod_videotime_mod_form extends moodleform_mod {
         $mform->setType('trackid', PARAM_INT);
         $mform->setType('tracklabel', PARAM_TEXT);
         $mform->setType('srclang', PARAM_ALPHANUMEXT);
-        $this->repeat_elements($tracks, $trackno, $options,
-        'tracks_repeats', 'tracks_add_fields', 1, get_string('addtexttrack', 'mod_videotime'), true, 'delete');
+        $this->repeat_elements(
+            $tracks,
+            $trackno,
+            $options,
+            'tracks_repeats',
+            'tracks_add_fields',
+            1,
+            get_string('addtexttrack', 'mod_videotime'),
+            true,
+            'delete'
+        );
     }
 }

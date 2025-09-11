@@ -308,7 +308,9 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     }
     if (!empty($moduleinstance->trackid)) {
         [$sql, $params] = $DB->get_in_or_equal($moduleinstance->trackid, SQL_PARAMS_NAMED);
-        $DB->delete_records_select('videotime_track', "videotime = :videotime AND NOT id $sql", $params + ['videotime' => $moduleinstance->id]);
+        $DB->delete_records_select('videotime_track', "videotime = :videotime AND NOT id $sql", $params + [
+            'videotime' => $moduleinstance->id,
+        ]);
     } else {
         $DB->delete_records('videotime_track', ['videotime' => $moduleinstance->id]);
     }
@@ -467,8 +469,6 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         }
 
         send_stored_file($file, null, 0, $forcedownload, $options);
-    } else if ($filearea == 'texttrack') {
-        print_r($args);die();
     }
 }
 
@@ -924,7 +924,7 @@ function videotime_dndupload_register(): array {
     $hook = new \mod_videotime\hook\dndupload_register();
     \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
-    return ['files' => array_map(function($extension) {
+    return ['files' => array_map(function ($extension) {
         return [
             'extension' => $extension,
             'message' => get_string('dnduploadvideotime', 'videotime'),
@@ -1016,28 +1016,33 @@ function videotime_get_file_info($browser, $areas, $course, $cm, $context, $file
                 $fs = get_file_storage();
                 $filepath = is_null($filepath) ? '/' : $filepath;
                 $filename = is_null($filename) ? '.' : $filename;
-                if ($storedfile = $fs->get_file($context->id, 'videotimeplugin_videojs', $filearea, $itemid, $filepath, $filename)) {
+                if (
+                    $storedfile = $fs->get_file(
+                        $context->id,
+                        'videotimeplugin_videojs',
+                        $filearea,
+                        $itemid,
+                        $filepath,
+                        $filename
+                    )
+                ) {
+                    $urlbase = $CFG->wwwroot . '/pluginfile.php';
 
-        $urlbase = $CFG->wwwroot . '/pluginfile.php';
-
-            if ($filepath === '/' and $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, 'mod_resource', 'content', 0);
-            }
-        return new file_info_stored(
-            $browser,
-            $context,
-            $storedfile,
-            $urlbase,
-            get_string($filearea, 'videotimeplugin_videojs'),
-            false,
-            true,
-            true,
-            false
-        );
+                    if ($filepath === '/' && $filename === '.') {
+                        $storedfile = new virtual_root_file($context->id, 'mod_resource', 'content', 0);
+                    }
+                    return new file_info_stored(
+                        $browser,
+                        $context,
+                        $storedfile,
+                        $urlbase,
+                        get_string($filearea, 'videotimeplugin_videojs'),
+                        false,
+                        true,
+                        true,
+                        false
+                    );
                 }
-
-                //$classname = "\\videotimeplugin_$name\\file_info_container";
-                //return $classname::get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename);
             }
         }
     }
