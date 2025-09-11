@@ -24,11 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cueno'] = 'Cue {no}';
+$string['cues'] = 'Cues';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
 $string['label'] = 'Transcript';
 $string['pluginname'] = 'Video Time Transcript tab';
 $string['privacy:metadata'] = 'The Video Time Transcript tab plugin does not store any personal data.';
 $string['upgradeplugin'] = 'This plugin requires installation of Video Time Business to enable.';
-$string['cues'] = 'Cues';
-$string['cueno'] = 'Cue {no}';

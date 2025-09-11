@@ -855,7 +855,6 @@ function xmldb_videotime_upgrade($oldversion) {
     }
 
     if ($oldversion < 2025080500) {
-
         // Define table videotime_track to be created.
         $table = new xmldb_table('videotime_track');
 
