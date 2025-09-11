@@ -30,6 +30,7 @@ define('VIDEOTIME_EVENT_TYPE_CLOSE', 'close');
 require_once($CFG->dirroot . '/lib/completionlib.php');
 
 use mod_videotime\videotime_instance;
+use mod_videotime\file_info_container;
 
 /**
  * Checks if Videotime supports a specific feature.
@@ -214,6 +215,29 @@ function videotime_add_instance($moduleinstance, $mform = null) {
         $completiontimeexpected
     );
 
+    $context = context_module::instance($moduleinstance->coursemodule);
+    foreach ($moduleinstance->trackid ?? [] as $key => $trackid) {
+        $record = [
+            'videotime' => $moduleinstance->id,
+            'srclang' => $moduleinstance->srclang[$key],
+            'kind' => $moduleinstance->tracktype[$key],
+            'label' => $moduleinstance->tracklabel[$key],
+            'visible' => $moduleinstance->trackvisible[$key],
+            'isdefault' => $moduleinstance->trackdefault[$key],
+        ];
+
+        $record['id'] = $DB->insert_record('videotime_track', $record);
+
+        file_save_draft_area_files(
+            $moduleinstance->texttrack[$key],
+            $context->id,
+            'mod_videotime',
+            'texttrack',
+            $record['id'],
+            ['subdirs' => true]
+        );
+    }
+
     return $moduleinstance->id;
 }
 
@@ -232,6 +256,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     global $DB;
 
     $cm = get_coursemodule_from_id('videotime', $moduleinstance->coursemodule);
+    $context = context_module::instance($moduleinstance->coursemodule);
 
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $cm->instance;
@@ -274,6 +299,47 @@ function videotime_update_instance($moduleinstance, $mform = null) {
 
     $moduleinstance->viewpercentgrade = $moduleinstance->viewpercentgrade ?? 0;
 
+    // Remove orphaned files.
+    $fs = get_file_storage();
+    foreach ($fs->get_area_files($context->id, 'mod_videotime', 'texttrack') as $file) {
+        if (!$file->is_directory() && !in_array($file->get_itemid(), $moduleinstance->trackid)) {
+            $file->delete();
+        }
+    }
+    if (!empty($moduleinstance->trackid)) {
+        [$sql, $params] = $DB->get_in_or_equal($moduleinstance->trackid, SQL_PARAMS_NAMED);
+        $DB->delete_records_select('videotime_track', "videotime = :videotime AND NOT id $sql", $params + ['videotime' => $moduleinstance->id]);
+    } else {
+        $DB->delete_records('videotime_track', ['videotime' => $moduleinstance->id]);
+    }
+
+    foreach ($moduleinstance->trackid ?? [] as $key => $trackid) {
+        $record = [
+            'videotime' => $moduleinstance->id,
+            'srclang' => $moduleinstance->srclang[$key],
+            'kind' => $moduleinstance->tracktype[$key],
+            'label' => $moduleinstance->tracklabel[$key],
+            'visible' => $moduleinstance->trackvisible[$key],
+            'isdefault' => $moduleinstance->trackdefault[$key],
+        ];
+
+        if ($trackid) {
+            $record['id'] = $trackid;
+            $DB->update_record('videotime_track', $record);
+        } else {
+            $record['id'] = $DB->insert_record('videotime_track', $record);
+        }
+
+        file_save_draft_area_files(
+            $moduleinstance->texttrack[$key],
+            $context->id,
+            'mod_videotime',
+            'texttrack',
+            $record['id'],
+            ['subdirs' => true]
+        );
+    }
+
     return $DB->update_record('videotime', $moduleinstance);
 }
 
@@ -292,6 +358,7 @@ function videotime_delete_instance($id) {
     }
 
     $cm = get_coursemodule_from_instance('videotime', $id);
+    $context = context_module::instance($cm->id);
     \core_completion\api::update_completion_date_event($cm->id, 'videotime', $id, null);
 
     foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
@@ -302,6 +369,13 @@ function videotime_delete_instance($id) {
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
         component_callback("videotimeplugin_$name", 'delete_instance', [$id]);
     }
+
+    // Remove and text tracks.
+    $fs = get_file_storage();
+    foreach ($fs->get_area_files($context->id, 'mod_videotime', 'texttrack') as $file) {
+        $file->delete();
+    }
+    $DB->delete_records('videotime_track', ['videotime' => $id]);
 
     $DB->delete_records('videotime', ['id' => $id]);
 
@@ -379,17 +453,22 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 
     require_login($course, true, $cm);
 
-    if ($filearea == 'video_description' || $filearea == 'intro') {
+    if ($filearea == 'video_description' || $filearea == 'intro' || $filearea == 'texttrack') {
+        if ($filearea == 'texttrack') {
+            array_splice($args, 1, 1);
+        }
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/mod_videotime/$filearea/$relativepath";
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+        if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
             return false;
         }
 
         send_stored_file($file, null, 0, $forcedownload, $options);
+    } else if ($filearea == 'texttrack') {
+        print_r($args);die();
     }
 }
 
@@ -830,6 +909,7 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 }
 
 /**
+<<<<<<< HEAD
  * Register the ability to handle drag and drop file uploads
  *
  * @return array containing details of the files / types the mod can handle
@@ -864,4 +944,103 @@ function videotime_dndupload_handle($uploadinfo): int {
     $hook = new \mod_videotime\hook\dndupload_handle($uploadinfo);
     \core\di::get(\core\hook\manager::class)->dispatch($hook);
     return $hook->get_instanceid();
+}
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function videotime_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $modulepagetype = [
+        'mod-videotime-*'       => get_string('page-mod-videotime-x', 'mod_videotime'),
+        'mod-videotime-view'    => get_string('page-mod-videotime-view', 'mod_videotime'),
+    ];
+
+    return $modulepagetype;
+}
+
+/**
+ * Returns the lists of all browsable file areas within the given module context.
+ *
+ * The file area 'intro' for the activity introduction field is added automatically
+ * by {@see file_browser::get_file_info_context_module()}.
+ *
+ * @package     mod_videotime
+ * @category    files
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @return string[].
+ */
+function videotime_get_file_areas($course, $cm, $context) {
+    $areas = [
+        'texttrack' => get_string('texttrack', 'mod_videotime'),
+    ];
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        if (get_config("videotimeplugin_$name", 'enabled')) {
+            $pluginareas = component_callback("videotimeplugin_$name", 'get_file_areas', [$course, $cm, $context], []);
+            $areas = array_merge($areas, $pluginareas);
+        }
+    }
+
+    return $areas;
+}
+
+/**
+ * File browsing support for mod_videotime file areas.
+ *
+ * @package     mod_videotime
+ * @category    files
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return file_info Instance or null if not found.
+ */
+function videotime_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG;
+
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        if (get_config("videotimeplugin_$name", 'enabled')) {
+            $pluginareas = component_callback("videotimeplugin_$name", 'get_file_areas', [$course, $cm, $context], []);
+            if (key_exists($filearea, $pluginareas)) {
+                $fs = get_file_storage();
+                $filepath = is_null($filepath) ? '/' : $filepath;
+                $filename = is_null($filename) ? '.' : $filename;
+                if ($storedfile = $fs->get_file($context->id, 'videotimeplugin_videojs', $filearea, $itemid, $filepath, $filename)) {
+
+        $urlbase = $CFG->wwwroot . '/pluginfile.php';
+
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, 'mod_resource', 'content', 0);
+            }
+        return new file_info_stored(
+            $browser,
+            $context,
+            $storedfile,
+            $urlbase,
+            get_string($filearea, 'videotimeplugin_videojs'),
+            false,
+            true,
+            true,
+            false
+        );
+                }
+
+                //$classname = "\\videotimeplugin_$name\\file_info_container";
+                //return $classname::get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename);
+            }
+        }
+    }
+
+    return file_info_container::get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename);
 }

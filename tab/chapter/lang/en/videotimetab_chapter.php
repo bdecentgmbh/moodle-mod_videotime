@@ -30,3 +30,4 @@ $string['label'] = 'Chapters';
 $string['pluginname'] = 'Video Time Chapter tab';
 $string['privacy:metadata'] = 'The Video Time Chapter tab plugin does not store any personal data.';
 $string['upgradeplugin'] = 'This plugin requires installation of Video Time Pro to enable.';
+$string['chapterno'] = 'Chapter {no}';

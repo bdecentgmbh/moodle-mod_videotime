@@ -24,9 +24,11 @@
 
 namespace mod_videotime;
 
+use context_module;
 use core_component;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
+use moodle_url;
 use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
@@ -108,11 +110,44 @@ class vimeo_embed implements \renderable, \templatable {
             'haspro' => videotime_has_pro(),
             'interval' => $this->record->saveinterval ?? 5,
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
+            'texttracks' => $this->text_tracks(),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
             'video_description' => $this->record->video_description,
         ];
 
         return $context;
+    }
+
+    /**
+     * Get text tracks information
+     *
+     * @return array
+     */
+    public function text_tracks(): array {
+        global $DB;
+
+        $context = context_module::instance($this->get_cm()->id);
+        $fs = get_file_storage();
+
+        $texttracks = $DB->get_records('videotime_track', ['videotime' => $this->get_cm()->instance]);
+
+        foreach ($fs->get_area_files($context->id, 'mod_videotime', 'texttrack') as $file) {
+            if (!$file->is_directory() && key_exists($file->get_itemid(), $texttracks)) {
+                $texttracks[$file->get_itemid()]->url = moodle_url::make_pluginfile_url(
+                    $context->id,
+                    'mod_videotime',
+                    'texttrack',
+                    $file->get_itemid(),
+                    '/' . $file->get_contenthash() . $file->get_filepath(),
+                    $file->get_filename()
+                )->out(false);
+            }
+        }
+        foreach ($texttracks as $texttrack) {
+            $texttrack->{$texttrack->kind} = true;
+        }
+
+        return array_values($texttracks);
     }
 }

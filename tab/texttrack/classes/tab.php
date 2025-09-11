@@ -26,6 +26,7 @@ namespace videotimetab_texttrack;
 
 defined('MOODLE_INTERNAL') || die();
 
+use context_module;
 use stdClass;
 
 require_once("$CFG->dirroot/mod/videotime/lib.php");
@@ -47,17 +48,6 @@ class tab extends \mod_videotime\local\tabs\tab {
         $data = $this->export_for_template();
 
         return $OUTPUT->render_from_template('videotimetab_texttrack/text_tab', $data);
-    }
-
-    /**
-     * Defines the additional form fields.
-     *
-     * @param moodle_form $mform form to modify
-     */
-    public static function add_form_fields($mform) {
-        if (videotime_has_repository()) {
-            parent::add_form_fields($mform);
-        }
     }
 
     /**
@@ -96,6 +86,17 @@ class tab extends \mod_videotime\local\tabs\tab {
         if (
             ($lastupdate < $record->timemodified)
             || $lastupdate < $DB->get_field('videotime_vimeo_video', 'modified_time', ['link' => $record->vimeo_url])
+            || $DB->get_records_sql(
+                "SELECT f.id
+                   FROM {files} f
+                   JOIN {videotime_track} t ON t.id = f.itemid
+                  WHERE t.videotime = :videotime
+                        AND f.timecreated > :lastupdate",
+                [
+                    'videotime' => $record->id,
+                    'lastupdate' => $lastupdate,
+                ]
+            )
         ) {
             $this->update_tracks();
         }
@@ -118,14 +119,18 @@ class tab extends \mod_videotime\local\tabs\tab {
             }
             $track->captions = array_values($captions);
             $track->show = $show;
+            $track->trackid = (int)$track->uri;
             $track->langname = $this->get_language_name($track->lang);
             $show = false;
             $texttracks[] = $track;
         }
 
+        $instance = $this->get_instance();
+        $context = $instance->get_context();
         return [
             'texttracks' => $texttracks,
             'showselector' => count($texttracks) > 1,
+            'canedit' => videotime_has_repository() && has_capability('moodle/course:managefiles', $context),
         ];
     }
 
@@ -141,41 +146,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $api = new \videotimeplugin_repository\api();
         $record = $this->get_instance()->to_record();
-        $endpoint = '/videos/' . mod_videotime_get_vimeo_id_from_link($record->vimeo_url) . '/texttracks';
-        $request = $api->request($endpoint);
-        if ($request['status'] != 200 || empty($request['body']['data'])) {
-            return;
-        }
-
-        try {
-            $transaction = $DB->start_delegated_transaction();
-
-            if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id', 'videotime = ?', [$record->id])) {
-                [$sql, $params] = $DB->get_in_or_equal($trackids);
-                $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
-                $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $record->id]);
-            }
-
-            foreach ($request['body']['data'] as $texttrack) {
-                if ($texttrack['active']) {
-                    $trackid = $DB->insert_record('videotimetab_texttrack_track', [
-                        'videotime' => $record->id,
-                        'lang' => $texttrack['language'],
-                        'uri' => $texttrack['uri'],
-                        'type' => $texttrack['type'],
-                        'link' => $texttrack['link'],
-                    ]);
-                    foreach ($this->parse_texttrack(file_get_contents($texttrack['link'])) as $text) {
-                        $text['track'] = $trackid;
-                        $DB->insert_record('videotimetab_texttrack_text', $text);
-                    }
-                }
-            }
-            $DB->set_field('videotimetab_texttrack', 'lastupdate', time(), ['videotime' => $record->id]);
-            $transaction->allow_commit();
-        } catch (Exception $e) {
-            $transaction->rollback($e);
-        }
+        $api->update_tracks($record);
     }
 
     /**
@@ -231,6 +202,18 @@ class tab extends \mod_videotime\local\tabs\tab {
         } else {
             $defaultvalues['enable_texttrack'] = $DB->record_exists('videotimetab_texttrack', ['videotime' => $instance]);
         }
+        $draftitemid = file_get_submitted_draft_itemid('captions');
+        $cm = get_coursemodule_from_instance('videotime', $instance);
+        $context = context_module::instance($cm->id);
+        file_prepare_draft_area(
+            $draftitemid,
+            $context->id,
+            'videotimetab_texttrack',
+            'captions',
+            0,
+            []
+        );
+        $defaultvalues['captions'] = $draftitemid;
     }
 
     /**

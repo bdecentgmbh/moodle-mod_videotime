@@ -89,7 +89,19 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'enabletabs',
         ]);
 
+        $texttracks = new backup_nested_element('texttracks');
+        $texttrack = new backup_nested_element('texttrack', ['id'], [
+            'videotime',
+            'isdefault',
+            'kind',
+            'label',
+            'srclang',
+            'visible',
+        ]);
+
         // Build the tree.
+        $module->add_child($texttracks);
+        $texttracks->add_child($texttrack);
 
         // Define elements for tab subplugin settings.
         $this->add_subplugin_structure('videotimetab', $module, true);
@@ -99,10 +111,12 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
 
         // Define sources.
         $module->set_source_table('videotime', ['id' => backup::VAR_ACTIVITYID]);
+        $texttrack->set_source_table('videotime_track', ['videotime' => backup::VAR_PARENTID], 'id ASC');
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.
+        $texttrack->annotate_files('mod_videotime', 'texttrack', 'id');
 
         $this->annotate_plugin_config_files($module, 'videotimetab');
         $this->annotate_plugin_config_files($module, 'videotimeplugin');

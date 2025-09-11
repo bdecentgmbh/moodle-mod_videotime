@@ -20,7 +20,7 @@
     This template for text track tab
 
     Variables optional for this template:
-    * textracks - array of available tracks
+    * texttracks - array of available tracks
     * showselect - boolean whether to show language selector
 
     Example context (json):
@@ -47,7 +47,7 @@
     }
 
 }}
-<div class="videotimetab_textrack_content">
+<div class="videotimetab_texttrack_content">
     {{# showselector }}
     <form class="videotimetab_texttrack_selectlang">
     <label>
@@ -65,7 +65,7 @@
         {{# captions }}
         <div id="texttrack-{{ id }}" class="row texttracks"{{^ show }} style="display: none;"{{/ show }} data-lang="{{ lang}}">
             <div class="col-3" style="max-width: 100px;">
-                <a href="#" data-action="cue" data-start="{{ starttime }}">{{starttimedisplay}}</a>
+                <a href="#" data-action="cue" data-start="{{ starttime }}" data-end="{{ endtime }}" >{{starttimedisplay}}</a>
             </div>
             <div class="col-9">
                 {{# lines }}
@@ -74,6 +74,19 @@
             </div>
         </div>
         {{/ captions }}
+        {{# trackid }}
+            {{# canedit }}
+            <button
+                class="btn btn-secondary"
+                type="button"
+                data-action="edit"
+                data-lang="{{ lang}}"
+                data-track="{{ trackid }}"
+            >
+               {{# str }} edit, core {{/ str }}
+            </button>
+            {{/ canedit }}
+        {{/ trackid }}
     {{/ texttracks }}
     </div>
 </div>

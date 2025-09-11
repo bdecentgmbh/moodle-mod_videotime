@@ -45,6 +45,9 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $videotime = new restore_path_element('videotime', '/activity/videotime');
         $paths[] = $videotime;
 
+        $texttrack = new restore_path_element('texttrack', '/activity/videotime/texttracks/texttrack');
+        $paths[] = $texttrack;
+
         if ($userinfo) {
             $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
         }
@@ -82,7 +85,7 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
     }
 
     /**
-     * Processes the videotim restore data.
+     * Processes the videotime restore data.
      *
      * @param array $data Parsed element data.
      */
@@ -100,6 +103,23 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $newitemid = $DB->insert_record('videotime', $data);
         // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
+    }
+
+    /**
+     * Processes the texttrack restore data.
+     *
+     * @param array $data Parsed element data.
+     */
+    protected function process_texttrack($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->videotime = $this->get_new_parentid('videotime');
+
+        // Insert the videotime record.
+        $newitemid = $DB->insert_record('videotime_track', $data);
+        $this->set_mapping('videotime_track', $oldid, $newitemid, true);
     }
 
     /**
@@ -138,6 +158,7 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         // Add videotime related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_videotime', 'intro', null);
         $this->add_related_files('mod_videotime', 'video_description', null);
+        $this->add_related_files('mod_videotime', 'texttrack', 'videotime_track');
 
         $this->add_subplugin_files('videotimeplugin');
     }

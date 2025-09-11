@@ -854,5 +854,32 @@ function xmldb_videotime_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023011205, 'videotime');
     }
 
+    if ($oldversion < 2025080500) {
+
+        // Define table videotime_track to be created.
+        $table = new xmldb_table('videotime_track');
+
+        // Adding fields to table videotime_track.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('videotime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('isdefault', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
+        $table->add_field('kind', XMLDB_TYPE_CHAR, '10', null, null, null, null);
+        $table->add_field('label', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('srclang', XMLDB_TYPE_CHAR, '10', null, null, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
+
+        // Adding keys to table videotime_track.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('videotime', XMLDB_KEY_FOREIGN, ['videotime'], 'videotime', ['id']);
+
+        // Conditionally launch create table for videotime_track.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Videotime savepoint reached.
+        upgrade_mod_savepoint(true, 2025080500, 'videotime');
+    }
+
     return true;
 }

@@ -53,6 +53,14 @@
         {{# poster }} poster="{{ poster }}" {{/ poster }}
         controls {{# playsinline }} playsinline {{/ playsinline }}
     >
+        {{# texttracks }}{{# url }}{{# visible }}
+        <track
+            {{# isdefault }} default {{/ isdefault }}
+            kind="{{ kind }}"
+            srclang="{{ srclang }}"
+            src="{{ url }}"
+        />
+        {{/ visible }}{{/ url }}{{/ texttracks }}
     </video>
     {{/ video }}
     {{^ video }}

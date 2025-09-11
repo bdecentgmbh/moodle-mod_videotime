@@ -45,13 +45,13 @@ require_once("$CFG->dirroot/mod/videotime/lib.php");
  */
 class videotime_instance implements \renderable, \templatable {
     /** const int */
-    const NORMAL_MODE = 0;
+    public const NORMAL_MODE = 0;
 
     /** const int */
-    const LABEL_MODE = 1;
+    public const LABEL_MODE = 1;
 
     /** const int */
-    const PREVIEW_MODE = 2;
+    public const PREVIEW_MODE = 2;
 
     /**
      * @var \stdClass

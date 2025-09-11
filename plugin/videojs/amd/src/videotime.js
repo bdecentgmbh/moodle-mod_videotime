@@ -7,10 +7,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import $ from "jquery";
 import VideoTimeBase from "mod_videotime/videotime";
 import Log from "core/log";
-import Notification from "core/notification";
 import Player from "media_videojs/video-lazy";
 import "media_videojs/Youtube-lazy";
 
@@ -85,61 +83,6 @@ export default class VideoTime extends VideoTimeBase {
      * Register player events to respond to user interaction and play progress.
      */
     async addListeners() {
-        // If this is a tab play set time cues and listener.
-        $($("#" + this.elementId).closest(".videotimetabs")).each(
-            function(i, tabs) {
-                $(tabs)
-                    .find('[data-action="cue"]')
-                    .each(
-                        async function(index, anchor) {
-                            let starttime = anchor.getAttribute("data-start"),
-                                time = starttime.match(
-                                    /((([0-9]+):)?(([0-9]+):))?([0-9]+(\.[0-9]+))/
-                                );
-                            if (time) {
-                                try {
-                                    await this.player.addCuePoint(
-                                        3600 * Number(time[3] || 0) +
-                                            60 * Number(time[5] || 0) +
-                                            Number(time[6]),
-                                        {
-                                            starttime: starttime
-                                        }
-                                    );
-                                } catch (e) {
-                                    Notification.exception(e);
-                                }
-                            }
-                        }.bind(this)
-                    );
-
-                this.player.on("cuepoint", function(event) {
-                    if (event.data.starttime) {
-                        $(tabs)
-                            .find(".videotime-highlight")
-                            .removeClass("videotime-highlight");
-                        $(tabs)
-                            .find(
-                                '[data-action="cue"][data-start="' +
-                                    event.data.starttime +
-                                    '"]'
-                            )
-                            .closest(".row")
-                            .addClass("videotime-highlight");
-                        $(".videotime-highlight").each(function() {
-                            if (this.offsetTop) {
-                                this.parentNode.scrollTo({
-                                    top: this.offsetTop - 50,
-                                    left: 0,
-                                    behavior: "smooth"
-                                });
-                            }
-                        });
-                    }
-                });
-            }.bind(this)
-        );
-
         if (!this.player) {
             Log.debug(
                 "Player was not properly initialized for course module " +
