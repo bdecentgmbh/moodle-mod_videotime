@@ -49,9 +49,11 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB, $OUTPUT, $PAGE, $USER;
 
         $instance = $this->get_instance();
+        $context = $instance->get_context();
         $data = [
             'id' => $instance->id,
             'title' => $instance->name,
+            'canedit' => videotime_has_pro() && has_capability('moodle/course:managefiles', $context),
         ];
 
         return $OUTPUT->render_from_template(
@@ -140,6 +142,18 @@ class tab extends \mod_videotime\local\tabs\tab {
         } else {
             $defaultvalues['enable_chapter'] = 0;
         }
+        $draftitemid = file_get_submitted_draft_itemid('chapters');
+        $cm = get_coursemodule_from_instance('videotime', $instance);
+        $context = context_module::instance($cm->id);
+        file_prepare_draft_area(
+            $draftitemid,
+            $context->id,
+            'videotimetab_texttrack',
+            'chapters',
+            0,
+            []
+        );
+        $defaultvalues['chapters'] = $draftitemid;
     }
 
     /**

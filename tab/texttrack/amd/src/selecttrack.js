@@ -45,7 +45,7 @@ const handleChange = (e) => {
  */
 const setLanguage = (form) => {
     let data = new FormData(form);
-    form.closest('.tab-pane').querySelectorAll('.texttracks .row').forEach((row) => {
+    form.closest('.tab-pane').querySelectorAll('.texttracks .row, .texttracks button[data-action="edit"]').forEach((row) => {
         if (row.getAttribute('data-lang') == data.get('lang')) {
             row.style.display = null;
         } else {

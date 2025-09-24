@@ -119,7 +119,7 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
      * @param dndupload_register $hook Hook
      */
     public static function dndupload_register(dndupload_register $hook): void {
-        foreach ([
+        $extensions = [
             'avi',
             'mp4',
             'm3u8',
@@ -128,7 +128,9 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
             'ogg',
             'ogv',
             'webm',
-        ] as $extension) {
+        ];
+
+        foreach ($extensions as $extension) {
             $hook->register_handler($extension);
         }
     }

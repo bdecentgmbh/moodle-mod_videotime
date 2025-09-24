@@ -106,6 +106,17 @@ function videotimeplugin_videojs_update_instance($moduleinstance, $mform = null)
 function videotimeplugin_videojs_delete_instance($id) {
     global $DB;
 
+    $cm = get_coursemodule_from_instance('videotime', $id);
+    $context = context_module::instance($cm->id);
+
+    $fs = get_file_storage();
+    foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'mediafile') as $file) {
+        $file->delete();
+    }
+    foreach ($fs->get_area_files($context->id, 'videotimeplugin_videojs', 'poster') as $file) {
+        $file->delete();
+    }
+
     $DB->delete_records('videotimeplugin_videojs', ['videotime' => $id]);
 
     return true;
@@ -343,7 +354,8 @@ function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $
 
     if (
         in_array($filearea, [
-        'mediafile', 'poster',
+            'mediafile',
+            'poster',
         ])
     ) {
         $relativepath = implode('/', $args);
@@ -421,4 +433,46 @@ function videotimeplugin_videojs_validation($data, $files) {
         }
     }
     return ['vimeo_url' => get_string('required')];
+}
+
+/**
+ * Returns the lists of all browsable file areas within the given module context.
+ *
+ * The file area 'intro' for the activity introduction field is added automatically
+ * by {@see file_browser::get_file_info_context_module()}.
+ *
+ * @package     videotimeplugin_videojs
+ * @category    files
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @return string[].
+ */
+function videotimeplugin_videojs_get_file_areas($course, $cm, $context) {
+    return [
+        'mediafile' => get_string('mediafile', 'videotimeplugin_videojs'),
+        'poster' => get_string('poster', 'videotimeplugin_videojs'),
+    ];
+}
+
+/**
+ * File browsing support for videotimeplugin_videojs file areas.
+ *
+ * @package     videotimeplugin_videojs
+ * @category    files
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return file_info Instance or null if not found.
+ */
+function videotimeplugin_videojs_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    return file_info_container::get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename);
 }

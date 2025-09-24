@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cueno'] = 'Cue {no}';
+$string['cues'] = 'Cues';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
 $string['label'] = 'Transcript';

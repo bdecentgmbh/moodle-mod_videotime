@@ -38,8 +38,7 @@ final class dndupload_register {
     /**
      * Constructor for the hook
      */
-    public function __construct(
-    ) {
+    public function __construct() {
         $this->extensions = [];
     }
 

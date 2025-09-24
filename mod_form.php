@@ -167,6 +167,9 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
         }
 
+        // Add text tracks.
+        $this->add_text_track_fields();
+
         // Add standard elements.
         $this->standard_coursemodule_elements();
 
@@ -308,8 +311,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             !empty($data[$this->get_suffixed_name('completion_on_finish')] ||
             (
                 !empty($data[$this->get_suffixed_name('completion_on_percent')])
-                && $data[$this->get_suffixed_name('completion_on_percent_value')])
-            );
+                && $data[$this->get_suffixed_name('completion_on_percent_value')]));
     }
 
     /**
@@ -381,6 +383,8 @@ class mod_videotime_mod_form extends moodleform_mod {
      * @param  array $defaultvalues
      */
     public function data_preprocessing(&$defaultvalues) {
+        global $DB;
+
         parent::data_preprocessing($defaultvalues);
 
         // Editing existing instance.
@@ -408,6 +412,39 @@ class mod_videotime_mod_form extends moodleform_mod {
             foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
                 $classname = "\\videotimetab_$name\\tab";
                 $classname::data_preprocessing($defaultvalues, $this->current->instance);
+            }
+
+            $texttracks = $DB->get_records('videotime_track', ['videotime' => $this->current->instance]);
+            $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang'));
+            $defaultvalues['trackid'] = array_keys($texttracks);
+            $defaultvalues['tracklabel'] = array_values(array_column($texttracks, 'label'));
+            $defaultvalues['tracktype'] = array_values(array_column($texttracks, 'kind'));
+            $defaultvalues['trackvisible'] = array_values(
+                array_column($texttracks, 'visible')
+            ) + array_fill(0, count($texttracks) + 2, 1);
+            $defaultvalues['trackdefault'] = array_values(array_column($texttracks, 'isdefault'));
+            $defaultvalues['tracks_repeats'] = count($texttracks);
+            $cm = get_coursemodule_from_instance('videotime', $this->current->instance);
+            $context = context_module::instance($cm->id);
+            foreach ($defaultvalues['trackid'] as $key => $trackid) {
+                if ($trackid) {
+                    if (
+                        !empty($defaultvalues['texttrack'])
+                        && !empty($defaultvalues['texttrack'][$key])
+                    ) {
+                        $draftitemid = $defaultvalues['texttrack'][$key];
+                    } else {
+                        $draftitemid = null;
+                    }
+                    file_prepare_draft_area(
+                        $draftitemid,
+                        $context->id,
+                        'mod_videotime',
+                        'texttrack',
+                        $trackid
+                    );
+                    $defaultvalues['texttrack'][$key] = $draftitemid;
+                }
             }
         }
     }
@@ -461,5 +498,91 @@ class mod_videotime_mod_form extends moodleform_mod {
                 $data->{'completion_hide_detail' . $suffix} = 0;
             }
         }
+    }
+
+    /**
+     * Add text track fields
+     */
+    protected function add_text_track_fields() {
+        global $DB;
+
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'texttrackhdr', get_string('texttracks', 'mod_videotime'));
+
+        $currentlang = \current_language();
+        $languages = \get_string_manager()->get_list_of_translations();
+
+        $types = [
+            'chapters' => get_string('chapters', 'mod_videotime'),
+            'captions' => get_string('captions', 'mod_videotime'),
+            'subtitles' => get_string('subtitles', 'mod_videotime'),
+        ];
+
+        $maxbytes = 20000000;
+        $attributes = [
+            $mform->createElement('static', 'trackno', get_string('texttrackno', 'mod_videotime')),
+            $mform->createElement('select', 'tracktype', get_string('tracktype', 'mod_videotime'), $types),
+            $mform->createElement('select', 'srclang', get_string('language'), $languages),
+            $mform->createElement('advcheckbox', 'trackvisible', get_string('visible')),
+            $mform->createElement('advcheckbox', 'trackdefault', get_string('default')),
+        ];
+        $tracks = [
+            $mform->createElement('hidden', 'trackid'),
+            $mform->createElement('text', 'tracklabel', get_string('texttrackno', 'mod_videotime')),
+            $mform->createElement('group', 'trackattributes', '', $attributes, [
+                get_string('tracktype', 'mod_videotime'),
+                get_string('language'),
+                '',
+                '',
+                '',
+                ' ',
+            ], false),
+            $mform->createElement(
+                'filemanager',
+                'texttrack',
+                '',
+                null,
+                [
+                    'subdirs' => 0,
+                    'maxbytes' => $maxbytes,
+                    'areamaxbytes' => $maxbytes,
+                    'maxfiles' => 1,
+                    'accepted_types' => ['vtt'],
+                    'return_types' => FILE_INTERNAL,
+                ]
+            ),
+            $mform->createElement('submit', 'delete', get_string('delete')),
+        ];
+        if ($this->current->instance) {
+            $records = $DB->get_records('videotime_track', ['videotime' => $this->current->instance]);
+            $mform->setDefault('srclang', array_column($records, 'srclang'));
+            $trackno = count($DB->get_records('videotime_track', ['videotime' => $this->current->instance]));
+            $options = [];
+        } else {
+            $options = [
+                'srclang' => [
+                    'default' => $currentlang,
+                    'type' => PARAM_ALPHANUMEXT,
+                ],
+            ];
+            $trackno = 0;
+        }
+
+        $mform->setDefault('trackid', 0);
+        $mform->setType('trackid', PARAM_INT);
+        $mform->setType('tracklabel', PARAM_TEXT);
+        $mform->setType('srclang', PARAM_ALPHANUMEXT);
+        $this->repeat_elements(
+            $tracks,
+            $trackno,
+            $options,
+            'tracks_repeats',
+            'tracks_add_fields',
+            1,
+            get_string('addtexttrack', 'mod_videotime'),
+            true,
+            'delete'
+        );
     }
 }
