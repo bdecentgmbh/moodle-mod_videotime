@@ -51,28 +51,6 @@ class tab extends \mod_videotime\local\tabs\tab {
     }
 
     /**
-     * Parse track file to array of cues
-     *
-     * @param string $track Text track file contents
-     * @return array
-     */
-    public function parse_texttrack(string $track): array {
-        $matches = [];
-        preg_match_all('/([.:0-9]+)  *-->  *([.:0-9]+)(.*?)^$/ms', $track . '\n', $matches);
-
-        return array_map(function ($starttime, $endtime, $text) {
-            return [
-                'starttime' => $starttime,
-                'endtime' => $endtime,
-                'lines' => array_map(function ($text) {
-                    return ['text' => $text];
-                }, explode("\n", $text)),
-                'text' => $text,
-            ];
-        }, $matches[1], $matches[2], $matches[3]);
-    }
-
-    /**
      * Get data for template
      *
      * @return array
@@ -144,9 +122,8 @@ class tab extends \mod_videotime\local\tabs\tab {
             return;
         }
 
-        $api = new \videotimeplugin_repository\api();
         $record = $this->get_instance()->to_record();
-        $api->update_tracks($record);
+        api::update_tracks($record);
     }
 
     /**
@@ -180,7 +157,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         if ($trackids = $DB->get_fieldset_select('videotimetab_texttrack_track', 'id', 'videotime = ?', [$id])) {
             [$sql, $params] = $DB->get_in_or_equal($trackids);
             $DB->delete_records_select('videotimetab_texttrack_text', "track $sql", $params);
-            $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $record->id]);
+            $DB->delete_records('videotimetab_texttrack_track', ['videotime' => $id]);
         }
 
         $DB->delete_records('videotimetab_texttrack', [

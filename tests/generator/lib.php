@@ -105,4 +105,55 @@ class mod_videotime_generator extends testing_module_generator {
 
         return $session;
     }
+
+    /**
+     * Create text track
+     *
+     * @param null|stdClass $cmid
+     * @param null|array $options
+     * @return stdClass
+     */
+    public function create_texttrack($cmid, ?array $options = null) {
+        global $DB, $USER;
+
+        $cm = get_coursemodule_from_id('videotime', $cmid);
+        $context = \core\context\module::instance($cmid);
+
+        $record = [
+            'videotime' => $cm->instance,
+            'isdefault' => $options['isdefault'] ?? 0,
+            'kind' => $options['kind'] ?? 'captions',
+            'label' => $options['label'] ?? '',
+            'srclang' => $options['srclang'] ?? \core_user::get_property_default('lang'),
+            'visible' => $options['visible'] ?? 1,
+        ];
+        $record['id'] = $DB->insert_record('videotime_track', $record);
+
+        if (empty($options['cues'])) {
+            return (object)$record;
+        }
+
+        $lines = [
+           'WEBVTT',
+        ];
+
+        foreach ($options['cues'] as $cue) {
+            $lines[] = '';
+            $lines = array_merge($lines, $cue);
+        }
+
+        $fileinfo = [
+           'itemid' => $record['id'],
+           'component' => 'mod_videotime',
+           'filearea' => 'texttrack',
+           'filename' => $options['filename'] ?? 'captions.vtt',
+           'filepath' => '/',
+           'contextid' => $context->id,
+        ];
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($fileinfo, implode("\n", $lines));
+
+        return (object)$record;
+    }
 }
