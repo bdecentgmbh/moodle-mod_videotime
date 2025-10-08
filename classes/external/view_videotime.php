@@ -75,6 +75,8 @@ trait view_videotime {
         require_login($course, false, $cm);
         require_capability('mod/videotime:view', $context);
 
+        \core\session\manager::write_close();
+        
         $moduleinstance = videotime_instance::instance_by_id($cm->instance);
 
         // Trigger course_module_viewed event and completion.
