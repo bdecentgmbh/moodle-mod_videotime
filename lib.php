@@ -302,7 +302,7 @@ function videotime_update_instance($moduleinstance, $mform = null) {
     // Remove orphaned files.
     $fs = get_file_storage();
     foreach ($fs->get_area_files($context->id, 'mod_videotime', 'texttrack') as $file) {
-        if (!$file->is_directory() && !in_array($file->get_itemid(), $moduleinstance->trackid ?? [])) {
+        if (!in_array($file->get_itemid(), $moduleinstance->trackid ?? [])) {
             $file->delete();
         }
     }
