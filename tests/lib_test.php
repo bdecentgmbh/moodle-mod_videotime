@@ -264,4 +264,28 @@ final class lib_test extends advanced_testcase {
 
         return calendar_event::create($event);
     }
+
+    public function test_delete_texttrack(): void {
+        // Create the activity.
+        $course = $this->getDataGenerator()->create_course();
+        $videotime = $this->getDataGenerator()->create_module('videotime', ['course' => $course->id]);
+        $cm = get_coursemodule_from_instance('videotime', $videotime->id);
+        $context = \core\context\module::instance($cm->id);
+
+        // Create an text track.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_videotime');
+        $generator->create_texttrack($cm->id, [
+            'cues' => [['0:00:05.000 --> 0:00:10.000', 'Welcome']],
+        ]);
+
+        // Check file was created.
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'mod_videotime', 'texttrack');
+        $this->assertEquals(2, count($files));
+
+        // Checks file deleted when module deleted.
+        videotime_delete_instance($videotime->id);
+        $files = $fs->get_area_files($context->id, 'mod_videotime', 'texttrack');
+        $this->assertEquals(0, count($files));
+    }
 }
