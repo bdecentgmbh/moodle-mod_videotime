@@ -18,9 +18,11 @@ namespace mod_videotime\courseformat;
 
 use cm_info;
 use core\url;
+use core\output\local\properties\button;
 use core\output\local\properties\text_align;
 use core_courseformat\local\overview\overviewitem;
 use core_courseformat\output\local\overview\overviewaction;
+use core\output\action_link;
 
 /**
  * Video Time overview integration class.
@@ -47,12 +49,20 @@ class overview extends \core_courseformat\activityoverviewbase {
         $url = new url('/mod/videotime/report.php', ['id' => $this->cm->id, 'mode' => 'approval']);
         $text = get_string('view_report', 'mod_videotime');
 
-        $content = new overviewaction(
-            url: $url,
-            text: $text,
-            badgevalue: null,
-            badgetitle: null
-        );
+        if (class_exists('overviewaction')) {
+            $content = new overviewaction(
+                url: $url,
+                text: $text,
+                badgevalue: null,
+                badgetitle: null,
+            );
+        } else {
+            $content = new action_link(
+                url: $url,
+                text: $text,
+                attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            );
+        }
 
         return new overviewitem(
             name: get_string('actions'),

@@ -30,7 +30,7 @@ $id = required_param('id', PARAM_INT);
 
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 require_course_login($course);
-if ($CFG->branch > 500) {
+if (class_exists('core_courseformat\\activityoverviewbase')) {
     \core_courseformat\activityoverviewbase::redirect_to_overview_page($id, 'videotime');
 }
 
