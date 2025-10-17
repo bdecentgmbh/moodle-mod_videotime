@@ -172,7 +172,31 @@ class texttrack extends \core_search\base_mod {
      * @return bool
      */
     public function check_access($id) {
-        global $USER;
+        global $DB, $USER;
+
+        if (
+            !$record = $DB->get_record_sql(
+                "SELECT te.id, tr.videotime, v.course
+               FROM {videotimetab_texttrack_text} te
+               JOIN {videotimetab_texttrack_track} tr ON tr.id = te.track
+               JOIN {videotime} v ON v.id = tr.videotime
+              WHERE te.id = :id",
+                ['id' => $id]
+            )
+        ) {
+            return \core_search\manager::ACCESS_DELETED;
+        }
+
+        try {
+            $cm = $this->get_cm('videotime', $record->videotime, $record->course);
+            $context = \context_module::instance($cm->id);
+        } catch (\dml_missing_record_exception $ex) {
+            return \core_search\manager::ACCESS_DELETED;
+        }
+
+        if (!$cm->uservisible) {
+            return \core_search\manager::ACCESS_DENIED;
+        }
 
         return \core_search\manager::ACCESS_GRANTED;
     }

@@ -109,6 +109,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             $track->show = $show;
             $track->trackid = (int)$track->uri;
             $track->langname = $this->get_language_name($track->lang);
+            $track->iscaption = ($track->type == 'captions');
             $show = false;
             $texttracks[] = $track;
         }
@@ -133,7 +134,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         }
 
         $record = $this->get_instance()->to_record();
-        \videotimeplugin_repository\api::update_tracks($record);
+        \videotimeplugin_repository\texttrack::update_tracks($record);
     }
 
     /**
