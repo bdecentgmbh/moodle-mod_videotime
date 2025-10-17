@@ -39,7 +39,7 @@ class backup_videotimetab_related_subplugin extends backup_subplugin {
         $subplugintablesettings = new backup_nested_element(
             'videotimetab_related',
             null,
-            ['text', 'format', 'videotime', 'name']
+            ['videotime']
         );
 
         // Connect XML elements into the tree.
