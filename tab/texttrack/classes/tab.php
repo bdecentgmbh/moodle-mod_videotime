@@ -108,7 +108,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             $track->captions = array_values($captions);
             $track->show = $show;
             $track->trackid = (int)$track->uri;
-            $track->langname = $this->get_language_name($track->lang);
+            $track->langname = $this->get_language_name(preg_replace('/-\d+$/', '', $track->lang));
             $track->iscaption = ($track->type == 'captions');
             $show = false;
             $texttracks[] = $track;
