@@ -40,7 +40,7 @@ export default class VideoTime extends VideoTimeBase {
         Log.debug(options);
         this.player = new Player(this.elementId, options);
 
-        this.player.on("loadedmetadata", () => {
+        this.player.one("canplay", () => {
             if (!instance.resume_playback || instance.resume_time <= 0 || this.resumed) {
                 return true;
             }
