@@ -53,16 +53,20 @@
     <label>
     {{# str }} language, core {{/ str }}
         <select name="lang" class="custom-select text-track-lang">
-             <optgroup label="{{# str }} captions, mod_videotime {{/ str }}">
-                {{# texttracks }}{{# iscaption }}
-                    <option value="{{ lang }}">{{ langname }}</option>
-                {{/ iscaption }}{{/ texttracks }}
-             </optgroup>
-             <optgroup label="{{# str }} subtitles, mod_videotime {{/ str }}">
-                {{# texttracks }}{{^ iscaption }}
-                    <option value="{{ lang }}">{{ langname }}</option>
-                {{/ iscaption }}{{/ texttracks }}
-             </optgroup>
+            {{# texttracks }}{{^ iscaption }}
+                <option value="{{ lang }}">
+                    {{# label }}{{ label }}{{/ label }}
+                    {{^ label }}{{ langname }} {{# autogen }}{{# str }} autogen, videotimetab_texttrack {{/ str }}{{/ autogen }}{{/ label }}
+                    {{# hidden }}{{# str }} hidden {{/ str }}{{/ hidden }}
+                </option>
+            {{/ iscaption }}{{/ texttracks }}
+            {{# texttracks }}{{# iscaption }}
+                <option value="{{ lang }}">
+                    {{# label }}{{ label }}{{/ label }}
+                    {{^ label }}{{ langname }} {{# str }} closedcaption, videotimetab_texttrack {{/ str }} {{# autogen }}{{# str }} autogen, videotimetab_texttrack {{/ str }}{{/ autogen }}{{/ label }}
+                    {{# hidden }}{{# str }} hidden, videotimetab_texttrack {{/ str }}{{/ hidden }}
+                </option>
+            {{/ iscaption }}{{/ texttracks }}
         </select>
     </label>
     </form>
