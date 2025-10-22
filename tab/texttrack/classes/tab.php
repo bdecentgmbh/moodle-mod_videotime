@@ -59,6 +59,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         global $DB, $OUTPUT;
 
         $record = $this->get_instance()->to_record();
+        $context = $this->get_instance()->get_context();
 
         $lastupdate = $DB->get_field('videotimetab_texttrack', 'lastupdate', ['videotime' => $record->id]);
         if (
@@ -92,7 +93,12 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $show = true;
         $query = optional_param('q', '', PARAM_TEXT);
+        $localtracks = $DB->get_records('videotime_track', ['videotime' => $record->id]);
         foreach ($DB->get_records('videotimetab_texttrack_track', ['videotime' => $record->id]) as $track) {
+            $localtrack = $localtracks[$track->uri] ?? null;
+            if (!empty($localtrack) && empty($localtrack->visible) && !has_capability('moodle/course:managefiles', $context)) {
+                continue;
+            }
             $captions = $DB->get_records('videotimetab_texttrack_text', ['track' => $track->id], 'starttime, endtime');
             foreach ($captions as $caption) {
                 $caption->lines = array_map(function ($text) use ($query) {
@@ -107,8 +113,11 @@ class tab extends \mod_videotime\local\tabs\tab {
             }
             $track->captions = array_values($captions);
             $track->show = $show;
+            $track->hidden = !empty($localtrack) && empty($localtrack->visible);
             $track->trackid = (int)$track->uri;
-            $track->langname = $this->get_language_name(preg_replace('/-\d+$/', '', $track->lang));
+            $track->langname = $this->get_language_name(preg_replace('/-\\d+$|-x-autogen/', '', $track->lang));
+            $track->autogen = strpos($track->lang, '-x-autogen');
+            $track->label = $localtrack->label ?? '';
             $track->iscaption = ($track->type == 'captions');
             $show = false;
             $texttracks[] = $track;

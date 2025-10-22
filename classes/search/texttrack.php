@@ -176,7 +176,7 @@ class texttrack extends \core_search\base_mod {
 
         if (
             !$record = $DB->get_record_sql(
-                "SELECT te.id, tr.videotime, v.course
+                "SELECT te.id, tr.videotime, v.course, tr.uri
                FROM {videotimetab_texttrack_text} te
                JOIN {videotimetab_texttrack_track} tr ON tr.id = te.track
                JOIN {videotime} v ON v.id = tr.videotime
@@ -195,6 +195,15 @@ class texttrack extends \core_search\base_mod {
         }
 
         if (!$cm->uservisible) {
+            return \core_search\manager::ACCESS_DENIED;
+        }
+
+        if (
+            (int)($record->uri) && $DB->get_record('videotime_track', [
+            'id' => $record->uri,
+            'visible' => 0,
+            ])
+        ) {
             return \core_search\manager::ACCESS_DENIED;
         }
 

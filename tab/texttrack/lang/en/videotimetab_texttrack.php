@@ -24,10 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['autogen'] = '(auto-generated)';
+$string['closedcaption'] = 'CC';
 $string['cueno'] = 'Cue {no}';
 $string['cues'] = 'Cues';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
+$string['hidden'] = '(Hidden)';
 $string['label'] = 'Transcript';
 $string['pluginname'] = 'Video Time Transcript tab';
 $string['privacy:metadata'] = 'The Video Time Transcript tab plugin does not store any personal data.';
