@@ -415,13 +415,11 @@ class mod_videotime_mod_form extends moodleform_mod {
             }
 
             $texttracks = $DB->get_records('videotime_track', ['videotime' => $this->current->instance]);
-            $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang'));
             $defaultvalues['trackid'] = array_keys($texttracks);
             $defaultvalues['tracklabel'] = array_values(array_column($texttracks, 'label'));
             $defaultvalues['tracktype'] = array_values(array_column($texttracks, 'kind'));
-            $defaultvalues['trackvisible'] = array_values(
-                array_column($texttracks, 'visible')
-            ) + array_fill(0, count($texttracks) + 2, 1);
+            $defaultvalues['trackvisible'] = array_values(array_column($texttracks, 'visible'));
+            $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang'));
             $defaultvalues['trackdefault'] = array_values(array_column($texttracks, 'isdefault'));
             $defaultvalues['tracks_repeats'] = count($texttracks);
             $cm = get_coursemodule_from_instance('videotime', $this->current->instance);
@@ -510,7 +508,7 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'texttrackhdr', get_string('texttracks', 'mod_videotime'));
 
-        $currentlang = \current_language();
+        $currentlang = current_language();
         $languages = \get_string_manager()->get_list_of_translations();
 
         $types = [
@@ -558,16 +556,23 @@ class mod_videotime_mod_form extends moodleform_mod {
             $records = $DB->get_records('videotime_track', ['videotime' => $this->current->instance]);
             $mform->setDefault('srclang', array_column($records, 'srclang'));
             $trackno = count($DB->get_records('videotime_track', ['videotime' => $this->current->instance]));
-            $options = [];
         } else {
-            $options = [
-                'srclang' => [
-                    'default' => $currentlang,
-                    'type' => PARAM_ALPHANUMEXT,
-                ],
-            ];
             $trackno = 0;
         }
+        $options = [
+            'srclang' => [
+                'default' => $currentlang,
+                'type' => PARAM_ALPHANUMEXT,
+            ],
+            'tracktype' => [
+                'default' => get_config('videotime', 'trackkind'),
+                'type' => PARAM_ALPHA,
+            ],
+            'trackvisible' => [
+                'default' => get_config('videotime', 'trackvisibility'),
+                'type' => PARAM_BOOL,
+            ],
+        ];
 
         $mform->setDefault('trackid', 0);
         $mform->setType('trackid', PARAM_INT);

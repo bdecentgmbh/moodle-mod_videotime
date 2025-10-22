@@ -79,9 +79,28 @@ if ($ADMIN->fulltree) {
         get_string('defaulttabsize_help', 'videotime'),
         'videotime-size-6',
         [
-            'videotime-size-3' => get_string('panelwidthsmall', 'videotime'),
-            'videotime-size-6' => get_string('panelwidthmedium', 'videotime'),
-            'videotime-size-9' => get_string('panelwidthlarge', 'videotime'),
+            'videotime-size-3' => new lang_string('panelwidthsmall', 'videotime'),
+            'videotime-size-6' => new lang_string('panelwidthmedium', 'videotime'),
+            'videotime-size-9' => new lang_string('panelwidthlarge', 'videotime'),
+        ]
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'videotime/trackvisibility',
+        new lang_string('trackvisibility', 'videotime'),
+        new lang_string('trackvisibility_help', 'videotime'),
+        1
+    ));
+
+    $settings->add(new admin_setting_configselect(
+        'videotime/trackkind',
+        new lang_string('trackkind', 'videotime'),
+        new lang_string('trackkind_help', 'videotime'),
+        'chapters',
+        [
+            'chapters' => new lang_string('chapters', 'mod_videotime'),
+            'captions' => new lang_string('captions', 'mod_videotime'),
+            'subtitles' => new lang_string('subtitles', 'mod_videotime'),
         ]
     ));
 

@@ -70,18 +70,43 @@ class texttrack extends \core_search\base_mod {
         }
 
         $sql = "SELECT te.id, te.text, tr.lang, te.starttime, v.name,
-                           CASE WHEN v.timemodified > vv.modified_time THEN v.timemodified
-                                ELSE vv.modified_time
-                            END AS timemodified,
+                           MAX(
+                               CASE
+                                  WHEN v.timemodified >= vv.modified_time
+                                       AND v.timemodified >= f.timecreated
+                                      THEN v.timemodified
+                                  WHEN vv.modified_time >= f.timecreated
+                                      THEN vv.modified_time
+                                  ELSE f.timecreated
+                               END
+                           ) AS timemodified,
                            v.course, v.id AS moduleinstanceid
                   FROM {videotime} v
                   JOIN {videotimetab_texttrack} t ON v.id = t.videotime
                   JOIN {videotimetab_texttrack_track} tr ON v.id = tr.videotime
                   JOIN {videotimetab_texttrack_text} te ON tr.id = te.track
+                  JOIN {course_modules} cm ON cm.instance = v.id
+                  JOIN {modules} m ON m.id = cm.module
+                  JOIN {context} ctx ON ctx.instanceid = cm.id
+             LEFT JOIN {files} f ON ctx.id = f.contextid
              LEFT JOIN {videotime_vimeo_video} vv ON v.vimeo_url = vv.link
           $contextjoin
-                 WHERE timemodified >= ? ORDER BY timemodified ASC";
-        return $DB->get_recordset_sql($sql, array_merge($contextparams, [$modifiedfrom]));
+                 WHERE (v.timemodified >= ?
+                            OR f.timecreated >= ?
+                            OR vv.modified_time >= ?
+                       )
+                       AND f.component = 'mod_videotime'
+                       AND f.filearea = 'texttrack'
+                       AND ctx.contextlevel = ?
+                       AND m.name = 'videotime'
+              GROUP BY te.id, te.text, tr.lang, te.starttime, v.name, v.course, moduleinstanceid
+              ";
+        return $DB->get_recordset_sql($sql, array_merge($contextparams, [
+            $modifiedfrom,
+            $modifiedfrom,
+            $modifiedfrom,
+            CONTEXT_MODULE,
+        ]));
     }
 
     /**
