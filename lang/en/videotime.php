@@ -307,11 +307,11 @@ $string['totara_video_discovery_help'] = '<p>You may execute this task manually 
 <p>Otherwise you may have to wait until the scheduled task runs.</p>
 <p>You can also run the command to pull in album information manually (instead of waiting):</p>
 <p><b>/usr/bin/php admin/tool/task/cli/schedule_task.php --execute=\\\\videotimeplugin_repository\\\\task\\\\update_albums</b></p>';
-$string['trackkind'] = 'Default kind text track to add';
-$string['trackkind_help'] = 'Choose default kind of text track to be selected with and new track is added.';
+$string['trackkind'] = 'Default text track type';
+$string['trackkind_help'] = 'Choose which type of text track will be selected by default when adding a new track.';
 $string['tracktype'] = 'Track type';
-$string['trackvisibility'] = 'Default text track visibility setting';
-$string['trackvisibility_help'] = 'Choose whether text tracks will be vistible to students by default on tabs or in player.';
+$string['trackvisibility'] = 'Default text track visibility';
+$string['trackvisibility_help'] = 'Choose whether text tracks are visible to students by default in tabs or in the VideoJS player. Local text tracks are not visible in the Vimeo player.';
 $string['update_albums'] = 'Update video albums';
 $string['upgrade_vimeo_account'] = 'NOTICE: Consider upgrading your Vimeo account. Your API request limit is too low.';
 $string['use'] = 'Use';
