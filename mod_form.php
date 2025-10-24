@@ -417,10 +417,22 @@ class mod_videotime_mod_form extends moodleform_mod {
             $texttracks = $DB->get_records('videotime_track', ['videotime' => $this->current->instance]);
             $defaultvalues['trackid'] = array_keys($texttracks);
             $defaultvalues['tracklabel'] = array_values(array_column($texttracks, 'label'));
-            $defaultvalues['tracktype'] = array_values(array_column($texttracks, 'kind'));
-            $defaultvalues['trackvisible'] = array_values(array_column($texttracks, 'visible'));
-            $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang'));
-            $defaultvalues['trackdefault'] = array_values(array_column($texttracks, 'isdefault'));
+            $defaultvalues['tracktype'] = array_values(array_column($texttracks, 'kind') + array_fill(
+                0,
+                count($texttracks) + 20,
+                get_config('videotime', 'trackkind')
+            ));
+            $defaultvalues['trackvisible'] = array_values(array_column($texttracks, 'visible') + array_fill(
+                0,
+                count($texttracks) + 20,
+                get_config('videotime', 'trackvisibility')
+            ));
+            $currentlang = current_language();
+            $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang') + array_fill(
+                0,
+                count($texttracks) + 20,
+                $currentlang
+            ));
             $defaultvalues['tracks_repeats'] = count($texttracks);
             $cm = get_coursemodule_from_instance('videotime', $this->current->instance);
             $context = context_module::instance($cm->id);
@@ -508,7 +520,6 @@ class mod_videotime_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'texttrackhdr', get_string('texttracks', 'mod_videotime'));
 
-        $currentlang = current_language();
         $languages = \get_string_manager()->get_list_of_translations();
 
         $types = [
@@ -559,20 +570,7 @@ class mod_videotime_mod_form extends moodleform_mod {
         } else {
             $trackno = 0;
         }
-        $options = [
-            'srclang' => [
-                'default' => $currentlang,
-                'type' => PARAM_ALPHANUMEXT,
-            ],
-            'tracktype' => [
-                'default' => get_config('videotime', 'trackkind'),
-                'type' => PARAM_ALPHA,
-            ],
-            'trackvisible' => [
-                'default' => get_config('videotime', 'trackvisibility'),
-                'type' => PARAM_BOOL,
-            ],
-        ];
+        $options = [];
 
         $mform->setDefault('trackid', 0);
         $mform->setType('trackid', PARAM_INT);
