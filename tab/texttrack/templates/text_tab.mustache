@@ -54,14 +54,14 @@
     {{# str }} language, core {{/ str }}
         <select name="lang" class="custom-select text-track-lang">
             {{# texttracks }}{{^ iscaption }}
-                <option value="{{ lang }}">
+                <option value="{{ lang }}"{{# isdefault }} selected{{/ isdefault }}>
                     {{# label }}{{ label }}{{/ label }}
                     {{^ label }}{{ langname }} {{# autogen }}{{# str }} autogen, videotimetab_texttrack {{/ str }}{{/ autogen }}{{/ label }}
                     {{# hidden }}{{# str }} hidden, videotimetab_texttrack {{/ str }}{{/ hidden }}
                 </option>
             {{/ iscaption }}{{/ texttracks }}
             {{# texttracks }}{{# iscaption }}
-                <option value="{{ lang }}">
+                <option value="{{ lang }}"{{# isdefault }} selected{{/ isdefault }}>
                     {{# label }}{{ label }}{{/ label }}
                     {{^ label }}{{ langname }} {{# str }} closedcaption, videotimetab_texttrack {{/ str }} {{# autogen }}{{# str }} autogen, videotimetab_texttrack {{/ str }}{{/ autogen }}{{/ label }}
                     {{# hidden }}{{# str }} hidden, videotimetab_texttrack {{/ str }}{{/ hidden }}

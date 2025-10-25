@@ -427,6 +427,8 @@ class mod_videotime_mod_form extends moodleform_mod {
                 count($texttracks) + 20,
                 get_config('videotime', 'trackvisibility')
             ));
+            $defaultvalues['trackdefault'] = array_values(array_column($texttracks, 'isdefault'));
+            $currentlang = current_language();
             $currentlang = current_language();
             $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang') + array_fill(
                 0,
