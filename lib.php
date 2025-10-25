@@ -174,6 +174,7 @@ function videotime_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
     $moduleinstance->timecreated = time();
+    $moduleinstance->timemodified = $moduleinstance->timecreated;
 
     $moduleinstance = videotime_process_video_description($moduleinstance);
 
