@@ -429,7 +429,6 @@ class mod_videotime_mod_form extends moodleform_mod {
             ));
             $defaultvalues['trackdefault'] = array_values(array_column($texttracks, 'isdefault'));
             $currentlang = current_language();
-            $currentlang = current_language();
             $defaultvalues['srclang'] = array_values(array_column($texttracks, 'srclang') + array_fill(
                 0,
                 count($texttracks) + 20,
@@ -458,6 +457,23 @@ class mod_videotime_mod_form extends moodleform_mod {
                     $defaultvalues['texttrack'][$key] = $draftitemid;
                 }
             }
+        } else {
+            $defaultvalues['tracktype'] = array_fill(
+                0,
+                20,
+                get_config('videotime', 'trackkind')
+            );
+            $defaultvalues['trackvisible'] = array_fill(
+                0,
+                20,
+                get_config('videotime', 'trackvisibility')
+            );
+            $currentlang = current_language();
+            $defaultvalues['srclang'] = array_fill(
+                0,
+                20,
+                $currentlang
+            );
         }
     }
 
