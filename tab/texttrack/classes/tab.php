@@ -81,7 +81,7 @@ class tab extends \mod_videotime\local\tabs\tab {
         }
 
         $texttracks = $DB->get_records_sql(
-            "SELECT t.id AS trackid,
+            "SELECT t.id AS trackid, t.isdefault,
                         t.srclang AS lang
                FROM {videotime_track} t
           LEFT JOIN {files} f ON f.itemid = t.id
@@ -118,6 +118,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             $track->langname = $this->get_language_name(preg_replace('/-\\d+$|-x-autogen/', '', $track->lang));
             $track->autogen = strpos($track->lang, '-x-autogen');
             $track->label = $localtrack->label ?? '';
+            $track->isdefault = $localtrack->isdefault ?? '';
             $track->iscaption = ($track->type == 'captions');
             $show = false;
             $texttracks[] = $track;
