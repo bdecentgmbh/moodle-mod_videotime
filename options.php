@@ -85,11 +85,11 @@ if ($form->is_cancelled()) {
     }
     $moduleinstance = ['coursemodule' => $cm->id] + array_intersect_key($defaults, [
         'vimeo_url' => true,
-    ]) + (array) $data + array_diff((array) $moduleinstance->to_record(), [
-        'intro' => true,
-        'introformat' => true,
-    ]) + $defaults;
-    videotime_update_instance((object) $moduleinstance, $form);
+    ]) + (array) $data + (array) $moduleinstance->to_record() + $defaults;
+    foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+        component_callback("videotimeplugin_$name", 'update_instance', [(object)$moduleinstance]);
+    }
+    $DB->set_field('videotime', 'timemodified', time(), ['id' => $moduleinstance['id']]);
     redirect($returnurl);
 }
 
