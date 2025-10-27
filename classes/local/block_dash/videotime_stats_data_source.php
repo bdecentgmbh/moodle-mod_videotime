@@ -43,7 +43,6 @@ use local_dash\data_grid\filter\customfield_filter;
 use local_dash\data_grid\filter\my_enrolled_courses_condition;
 use local_dash\data_grid\filter\tags_condition;
 use local_dash\data_grid\filter\tags_field_filter;
-use dashaddon_courses\local\dash_framework\structure\course_table;
 use mod_videotime\local\dash_framework\structure\videotime_table;
 
 /**
@@ -60,12 +59,16 @@ class videotime_stats_data_source extends abstract_data_source {
      * @param context $context
      */
     public function __construct(context $context) {
+
         $this->add_table(new videotime_table());
-        if (class_exists(course_table::class)) {
-            $this->add_table(new course_table());
-        } else {
-            $this->add_table(new local_dash\local\dash_framework\structure\course_table());
+
+        // Dash 2.0 compatibility: Check if course_table exists in dashaddon_courses.
+        if (class_exists('dashaddon_courses\local\dash_framework\structure\course_table')) {
+            $this->add_table(new \dashaddon_courses\local\dash_framework\structure\course_table());
+        } else  {
+            $this->add_table(new \local_dash\local\dash_framework\structure\course_table());
         }
+
         parent::__construct($context);
     }
 
