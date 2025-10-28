@@ -39,7 +39,7 @@ class backup_videotimetab_related_subplugin extends backup_subplugin {
         $subplugintablesettings = new backup_nested_element(
             'videotimetab_related',
             null,
-            ['videotime']
+            ['text', 'format', 'videotime', 'name']
         );
 
         // Connect XML elements into the tree.
@@ -51,6 +51,9 @@ class backup_videotimetab_related_subplugin extends backup_subplugin {
             'videotimetab_related',
             ['videotime' => backup::VAR_ACTIVITYID]
         );
+
+        // Define file annotations.
+        $subplugintablesettings->annotate_files('videotimetab_related', 'text', null); // This file area hasn't itemid.
 
         return $subplugin;
     }

@@ -61,5 +61,12 @@ class restore_videotimetab_related_subplugin extends restore_subplugin {
         $oldvideotime = $data->videotime;
         $data->videotime = $this->get_new_parentid('videotime');
         $DB->insert_record('videotimetab_related', $data);
+
+        // Add files match context. No need to map id.
+        $this->add_related_files(
+            'videotimetab_related',
+            'text',
+            null
+        );
     }
 }

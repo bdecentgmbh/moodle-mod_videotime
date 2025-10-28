@@ -52,6 +52,9 @@ class backup_videotimetab_information_subplugin extends backup_subplugin {
             ['videotime' => backup::VAR_ACTIVITYID]
         );
 
+        // Define file annotations.
+        $subplugintablesettings->annotate_files('videotimetab_information', 'text', null); // This file area hasn't itemid.
+
         return $subplugin;
     }
 }
