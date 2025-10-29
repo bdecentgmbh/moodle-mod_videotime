@@ -87,7 +87,7 @@ if ($form->is_cancelled()) {
         'vimeo_url' => true,
     ]) + (array) $data + (array) $moduleinstance->to_record() + $defaults;
     foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
-        component_callback("videotimeplugin_$name", 'update_instance', [(object)$moduleinstance]);
+        component_callback("videotimeplugin_$name", 'update_instance', [(object)$moduleinstance, $form]);
     }
     $DB->set_field('videotime', 'timemodified', time(), ['id' => $moduleinstance['id']]);
     redirect($returnurl);
