@@ -45,7 +45,7 @@ class custom_completion extends activity_custom_completion {
         // Get videotime details.
 
         $sessions = \videotimeplugin_pro\module_sessions::get($this->cm->id, $this->userid);
-        $rules = $this->cm->customdata['customcompletionrules'];
+        $rules = $this->cm->customdata['customcompletionrules'] + ($this->cm->customdata['hiddencompletionrules'] ?? []);
 
         switch ($rule) {
             case 'completion_on_view_time':
