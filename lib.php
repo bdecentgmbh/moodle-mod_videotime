@@ -618,7 +618,7 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
  */
 function videotime_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get('coursereports');
-    if (videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
+    if (!empty($node) && videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
         $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
         $node->add(
             get_string('pluginname', 'videotime'),
@@ -726,7 +726,7 @@ function videotime_get_coursemodule_info($coursemodule) {
                     = $instance->completion_on_view_time_second;
             }
             if ($instance->completion_on_percent) {
-                $result->customdata['hiddencompletionrules']['completion_on_percent_value']
+                $result->customdata['hiddencompletionrules']['completion_on_percent']
                     = $instance->completion_on_percent_value;
             }
             $result->customdata['hiddencompletionrules']['completion_on_finish'] = $instance->completion_on_finish;
