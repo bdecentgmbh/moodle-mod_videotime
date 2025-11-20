@@ -70,7 +70,7 @@ class custom_completion extends activity_custom_completion {
 
                 $status = $status && (
                     empty($rules['completion_on_percent']) ||
-                    (($sessions->get_percent() * 100) >= $rules['completion_on_percent_value'])
+                    (($sessions->get_percent() * 100) >= $rules['completion_on_percent'])
                 );
                 break;
             default:
