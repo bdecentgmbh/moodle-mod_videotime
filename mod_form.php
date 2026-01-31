@@ -405,15 +405,6 @@ class mod_videotime_mod_form extends moodleform_mod {
             );
             $defaultvalues['video_description']['itemid'] = $draftitemid;
 
-            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
-                component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaultvalues, $this->current->instance]);
-            }
-
-            foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
-                $classname = "\\videotimetab_$name\\tab";
-                $classname::data_preprocessing($defaultvalues, $this->current->instance);
-            }
-
             $texttracks = $DB->get_records('videotime_track', ['videotime' => $this->current->instance]);
             $defaultvalues['trackid'] = array_keys($texttracks);
             $defaultvalues['tracklabel'] = array_values(array_column($texttracks, 'label'));
@@ -456,6 +447,15 @@ class mod_videotime_mod_form extends moodleform_mod {
                     );
                     $defaultvalues['texttrack'][$key] = $draftitemid;
                 }
+            }
+
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaultvalues, $this->current->instance]);
+            }
+
+            foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+                $classname = "\\videotimetab_$name\\tab";
+                $classname::data_preprocessing($defaultvalues, $this->current->instance);
             }
         } else {
             $defaultvalues['tracktype'] = array_fill(
@@ -589,6 +589,14 @@ class mod_videotime_mod_form extends moodleform_mod {
             $trackno = 0;
         }
         $options = [];
+        if (
+            ($mediatimedata = json_decode(optional_param('mediatimedata', 'null', PARAM_RAW)))
+            && !empty($mediatimedata->texttracks)
+        ) {
+            $newtracks = (int)$mediatimedata->texttracks;
+        } else {
+            $newtracks = 1;
+        }
 
         $mform->setDefault('trackid', 0);
         $mform->setType('trackid', PARAM_INT);
@@ -600,7 +608,7 @@ class mod_videotime_mod_form extends moodleform_mod {
             $options,
             'tracks_repeats',
             'tracks_add_fields',
-            1,
+            $newtracks,
             get_string('addtexttrack', 'mod_videotime'),
             true,
             'delete'
