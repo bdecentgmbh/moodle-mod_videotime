@@ -48,7 +48,7 @@ final class dndupload_register {
      * @return array File extensions to handle
      */
     public function get_extensions(): array {
-        return $this->extensions;
+        return array_values($this->extensions);
     }
 
     /**
@@ -57,6 +57,6 @@ final class dndupload_register {
      * @param string $ext Extension
      */
     public function register_handler(string $ext) {
-        $this->extensions[] = $ext;
+        $this->extensions[$ext] = $ext;
     }
 }
