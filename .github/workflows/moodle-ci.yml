@@ -28,10 +28,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '8.3'
+          - php: '8.4'
             moodle-branch: 'main'
             database: 'pgsql'
-          - php: '8.2'
+          - php: '8.3'
             moodle-branch: 'main'
             database: 'pgsql'
           - php: '8.2'

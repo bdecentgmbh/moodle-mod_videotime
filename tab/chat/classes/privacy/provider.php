@@ -39,10 +39,8 @@ use core_privacy\local\request\writer;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    // The block_deft block stores user provided data.
-    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\metadata\provider,
-    // The block_deft block provides data directly to core.
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
     /**
      * Returns meta data about this system.
