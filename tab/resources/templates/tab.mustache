@@ -25,6 +25,23 @@
     * editurl   - URL to the mod form (fallback link, only for editing teachers when JS fails)
     * canedit   - boolean: true when the current user can manage resources
     * cmid      - course module id, used by JS to open the file-picker modal
+
+    Example context (json):
+    {
+        "canedit": true,
+        "editurl": "#",
+        "cmid": 1,
+        "hasfiles": true,
+        "filelist": [
+            {
+                "name": "example.pdf",
+                "url": "#",
+                "size": "1.2 MB",
+                "extension": "PDF",
+                "icon": "/path/to/icon.png"
+            }
+        ]
+    }
 }}
 <div class="videotimetab_resources p-3">
 
