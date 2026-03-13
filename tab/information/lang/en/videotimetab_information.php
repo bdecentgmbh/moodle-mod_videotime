@@ -29,5 +29,5 @@ $string['default_help'] = 'Whether tab is enabled by default';
 $string['information'] = 'Information tab content';
 $string['informationtab_name'] = 'Custom tab name';
 $string['label'] = 'Information';
-$string['pluginname'] = 'Video Time Information tab';
+$string['pluginname'] = 'Information tab';
 $string['privacy:metadata'] = 'The Video Time Information tab plugin does not store any personal data.';

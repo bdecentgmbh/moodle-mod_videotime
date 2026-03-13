@@ -30,5 +30,5 @@ $string['default_help'] = 'Whether tab is enabled by default';
 $string['editlabelbutton'] = 'Go to view page';
 $string['editlabelmessage'] = 'These blocks should be edited on Video Time view page';
 $string['label'] = 'Blocks';
-$string['pluginname'] = 'Video Time Block tab';
+$string['pluginname'] = 'Block tab';
 $string['privacy:metadata'] = 'The Video Time Block tab plugin does not store any personal data.';

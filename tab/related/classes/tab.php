@@ -110,11 +110,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             ]
         );
         $mform->setType('relatedinformation', PARAM_RAW);
-        $mform->disabledIf('relatedinformation', 'enable_related');
+        $mform->hideIf('relatedinformation', 'enable_related', 'notchecked');
 
         $mform->addElement('text', 'relatedtab_name', get_string('relatedtab_name', 'videotimetab_related'));
         $mform->setType('relatedtab_name', PARAM_TEXT);
-        $mform->disabledIf('relatedtab_name', 'enable_related');
+        $mform->hideIf('relatedtab_name', 'enable_related', 'notchecked');
+
+        $mform->addElement('static', 'tab_separator_related', '', '<hr class="mt-1 mb-2">');
+        $mform->hideIf('tab_separator_related', 'enable_related', 'notchecked');
     }
 
     /**

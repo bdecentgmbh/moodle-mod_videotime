@@ -28,7 +28,7 @@ Feature: Customize related tab label
     Given I log in as "teacher"
     And I am on the "Video1" "videotime activity editing" page
     And I set the following fields to these values:
-      | Video Time Information tab | 1          |
+      | Information tab | 1          |
       | Custom tab name            | CustomName |
     When I press "Save and display"
     Then I should see "CustomName" in the "region-main" "region"
