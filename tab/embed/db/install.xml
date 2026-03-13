@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/videotime/tab/embed/db" VERSION="20260312" COMMENT="XMLDB file for Moodle mod/videotime/tab/embed"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="videotimetab_embed" COMMENT="Stores per-instance enable state for the Embed tab">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="videotime" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom tab label"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="videotime" TYPE="foreign-unique" FIELDS="videotime" REFTABLE="videotime" REFFIELDS="id" COMMENT="Video time instance"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
