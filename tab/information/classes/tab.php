@@ -91,11 +91,14 @@ class tab extends \mod_videotime\local\tabs\tab {
             ]
         );
         $mform->setType('information', PARAM_RAW);
-        $mform->disabledIf('information', 'enable_information');
+        $mform->hideIf('information', 'enable_information', 'notchecked');
 
         $mform->addElement('text', 'informationtab_name', get_string('informationtab_name', 'videotimetab_information'));
         $mform->setType('informationtab_name', PARAM_TEXT);
-        $mform->disabledIf('informationtab_name', 'enable_information');
+        $mform->hideIf('informationtab_name', 'enable_information', 'notchecked');
+
+        $mform->addElement('static', 'tab_separator_information', '', '<hr class="mt-1 mb-2">');
+        $mform->hideIf('tab_separator_information', 'enable_information', 'notchecked');
     }
 
     /**

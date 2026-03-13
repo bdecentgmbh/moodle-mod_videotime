@@ -74,6 +74,10 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $mform->addElement('text', 'chattab_name', get_string('chattab_name', 'videotimetab_chat'));
         $mform->setType('chattab_name', PARAM_TEXT);
+        $mform->hideIf('chattab_name', 'enable_chat', 'notchecked');
+
+        $mform->addElement('static', 'tab_separator_chat', '', '<hr class="mt-1 mb-2">');
+        $mform->hideIf('tab_separator_chat', 'enable_chat', 'notchecked');
     }
 
     /**
