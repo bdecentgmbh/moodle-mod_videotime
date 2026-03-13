@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/videotime/tab/resources/db" VERSION="20260313" COMMENT="XMLDB file for Moodle mod/videotime/tab/resources"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="videotimetab_resources" COMMENT="Tracks which Video Time instances have the Resources tab enabled">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="videotime" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom tab label"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="videotime" TYPE="foreign-unique" FIELDS="videotime" REFTABLE="videotime" REFFIELDS="id" COMMENT="Video Time instance"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
