@@ -30,7 +30,7 @@ Feature: Configure videotime block tab
     And I turn editing mode on
     And I am on the "Video1" "videotime activity editing" page
     And I set the following fields to these values:
-      | Video Time Block tab  | 1   |
+      | Block tab  | 1   |
     And I press "Save and display"
     When I follow "Blocks"
     And I set the field "Add a block" to "Comments"
@@ -46,6 +46,6 @@ Feature: Configure videotime block tab
     And I turn editing mode on
     And I am on the "Video1" "videotime activity editing" page
     And I set the following fields to these values:
-      | Video Time Block tab       | 0                           |
+      | Block tab       | 0                           |
     When I press "Save and display"
     Then I should not see "Blocks" in the "region-main" "region"

@@ -24,7 +24,7 @@ Feature: Video Time notes
         | videotime | Video Time with no info       | This video has information | C1     | https://vimeo.com/347119375 | 0          | 1       | 1          | The world is round | 0                          |
     And I am on the "Video Time with tabs" "videotime activity editing" page logged in as "teacher"
     And I set the following fields to these values:
-      | Video Time Information tab | 1                           |
+      | Information tab            | 1                           |
       | Information tab content    | A big rabbit                |
     And I press "Save and display"
 

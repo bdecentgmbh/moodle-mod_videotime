@@ -32,7 +32,7 @@ Feature: Customize videotime related tab label
     Given I log in as "teacher"
     And I am on the "Video1" "videotime activity editing" page
     And I set the following fields to these values:
-      | Video Time Related activities tab | 1          |
+      | Related activities tab | 1          |
     When I press "Save and display"
     And I follow "Related activities"
     Then I should see "Page1" in the ".videotimetabs" "css_element"

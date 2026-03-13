@@ -117,6 +117,10 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $mform->addElement('text', 'blocktab_name', get_string('blocktab_name', 'videotimetab_block'));
         $mform->setType('blocktab_name', PARAM_TEXT);
+        $mform->hideIf('blocktab_name', 'enable_block', 'notchecked');
+
+        $mform->addElement('static', 'tab_separator_block', '', '<hr class="mt-1 mb-2">');
+        $mform->hideIf('tab_separator_block', 'enable_block', 'notchecked');
     }
 
     /**
