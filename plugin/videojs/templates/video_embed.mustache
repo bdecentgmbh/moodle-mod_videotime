@@ -61,6 +61,12 @@
             src="{{ url }}"
         />
         {{/ visible }}{{/ url }}{{/ texttracks }}
+        {{# metadataurl }}
+        <track
+            kind="metadata"
+            src="{{ metadataurl }}"
+        />
+        {{/ metadataurl }}
     </video>
     {{/ video }}
     {{^ video }}

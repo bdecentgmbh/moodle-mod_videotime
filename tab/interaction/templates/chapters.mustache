@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template videotimetab_chapter/upgrade
+
+    This template for text track tab
+
+    Variables optional for this template:
+    * chapters - chapter data
+    * title - chapter title
+    * startTime - chapter start in seconds
+    * displaystarttime - chapter start formated
+    * imageurl - thumbnail image for chapter if available
+
+    Example context (json):
+    {
+        "chapters": [
+            {
+                "title": "Information",
+                "startTime": 125,
+                "starttimedisplay": "2:05",
+                "imageurl": "https://school.edu/pluginfile.php/99/videotimeplugin_repository/thumbnail/8/image.png"
+            }
+        ]
+    }
+
+}}
+<div class="videotimetab_chapter_content">
+    {{# chapters }}
+        <div class="col-12">
+            <a href="#" data-action="cue" data-start="{{ startTime }}">
+                <div class="card">
+                    {{# imageurl }}
+                    <img class="card-img-top" src="{{ imageurl }}" alt="{{ title }}">
+                    {{/ imageurl }}
+                    <div class="card-body">
+                        <div class="card-text text-justify">
+                            <span class="float-left">{{ title }}</span>
+                            <span class="float-right">{{ starttimedisplay }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {{/ chapters }}
+</div>
