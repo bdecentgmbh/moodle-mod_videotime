@@ -175,7 +175,7 @@ export default class VideoTime extends VideoTimeBase {
      * @param {float} secs time
      * @returns {Promise}
      */
-    setCurrentPosition(secs) {
+    async setCurrentPosition(secs) {
         return new Promise(resolve => {
             resolve(this.player.currentTime(secs));
             return true;
@@ -189,11 +189,14 @@ export default class VideoTime extends VideoTimeBase {
      */
     async getCurrentPosition() {
         let position = await this.player.currentTime();
-        this.plugins.forEach(async plugin => {
+
+        for (let i = 0; i < this.plugins.length; i++) {
+            const plugin = this.plugins[i];
             if (plugin.getCurrentPosition) {
                 position = await plugin.getCurrentPosition(position);
             }
-        });
+        }
+
         return position;
     }
 
