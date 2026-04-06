@@ -179,7 +179,12 @@ function videotimeplugin_videojs_load_settings($instance) {
             } else {
                 $instance['type'] = resourcelib_guess_url_mimetype($instance['vimeo_url']);
             }
-        } else if (!empty($instance['mediatimeid']) && $mediarecord = $DB->get_record('tool_mediatime', ['id' => $instance['mediatimeid']])) {
+        } else if (
+            !empty($instance['mediatimeid']) && $mediarecord = $DB->get_record(
+                'tool_mediatime',
+                ['id' => $instance['mediatimeid']]
+            )
+        ) {
             $resource = new \tool_mediatime\output\media_resource($mediarecord);
             if ($url = $resource->video_url($OUTPUT)) {
                 $instance['type'] = resourcelib_guess_url_mimetype($url) ?: 'video/m3u8';

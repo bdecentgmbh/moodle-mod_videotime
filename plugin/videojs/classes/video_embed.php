@@ -73,7 +73,11 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
                 )->out(false);
             }
         }
-        if (empty($poster) && !empty($this->record->mediatimeid) && $mediarecord = $DB->get_record('tool_mediatime', ['id' => $this->record->mediatimeid])) {
+        if (
+            empty($poster)
+            && !empty($this->record->mediatimeid)
+            && $mediarecord = $DB->get_record('tool_mediatime', ['id' => $this->record->mediatimeid])
+        ) {
             $resource = new \tool_mediatime\output\media_resource($mediarecord);
             if ($url = $resource->image_url($OUTPUT)) {
                 $poster = $url;
