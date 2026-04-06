@@ -44,5 +44,4 @@ Feature: Configure videojs settings
       | controls | 0        | videotimeplugin_videojs |
     When I am on the "Video Time with controls" "videotime activity" page logged in as "teacher"
     And I wait "3" seconds
-    And I switch to "" class iframe
-    Then "Play" "button" should not be visible
+    Then ".vjs-controls-disabled" "css_element" should exist

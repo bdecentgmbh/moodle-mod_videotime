@@ -333,10 +333,16 @@ class mod_videotime_mod_form extends moodleform_mod {
         if (!isset($data['vimeo_url']) || empty($data['vimeo_url'])) {
             $fs = get_file_storage();
             if (
-                empty($data['mediatimeid']) &&
-                empty($data['livefeed']) && (
-                empty($data['mediafile'])
-                || !$files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile'])
+                empty($data['mediatimeid'])
+                && empty($data['livefeed'])
+                && (
+                    empty($data['mediafile'])
+                    || !$files = $fs->get_area_files(
+                        context_user::instance($USER->id)->id,
+                        'user',
+                        'draft',
+                        $data['mediafile']
+                    )
                 )
             ) {
                 $errors['vimeo_url'] = get_string('required');
