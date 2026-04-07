@@ -643,11 +643,14 @@ define([
      */
     VideoTime.prototype.getCurrentPosition = async function() {
         let position = await this.player.getCurrentTime();
-        this.plugins.forEach(async plugin => {
+
+        for (let i = 0; i < this.plugins.length; i++) {
+            const plugin = this.plugins[i];
             if (plugin.getCurrentPosition) {
                 position = await plugin.getCurrentPosition(position);
             }
-        });
+        }
+
         return position;
     };
 
