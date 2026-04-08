@@ -62,12 +62,14 @@ define([
     };
 
     VideoTime.prototype.initialize = function() {
-        let instance = this.instance;
+        const instance = this.instance;
+        const vimeourl = new URL(instance.vimeo_url);
         Log.debug('Initializing Video Time ' + this.elementId);
 
         Log.debug('Initializing Vimeo player with options:');
         Log.debug(instance);
         this.player = new Vimeo(this.elementId, {
+            audiotrack: vimeourl.searchParams.get('audiotrack'),
             autopause: Number(instance.autopause),
             autoplay: Number(instance.autoplay),
             background: Number(instance.background),
@@ -85,13 +87,14 @@ define([
             playsinline: instance.playsinline,
             responsive: Number(instance.responsive),
             speed: instance.speed,
+            texttrack: vimeourl.searchParams.get('texttrack'),
             title: Number(instance.title),
             transparent: Number(instance.transparent),
             url: instance.vimeo_url,
             width: instance.width
         });
 
-        let url = new URL(window.location.href),
+        const url = new URL(window.location.href),
             q = url.searchParams.get('q'),
             starttime = (url.searchParams.get('time') || '').match(/^([0-9]+:){0,2}([0-9]+)(\.[0-9]+)$/);
         if (starttime) {
