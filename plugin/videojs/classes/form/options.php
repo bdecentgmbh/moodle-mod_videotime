@@ -233,4 +233,26 @@ class options extends moodleform {
             $mform->disabledIf($fieldname, 'disable', 'eq', 1);
         }
     }
+
+    /**
+     * Validate form
+     *
+     * @param array $data Form data
+     * @param array $files Files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (empty($data['responsive'])) {
+            if (empty($data['height']) || $data['height'] <= 0) {
+                $errors["height"] = get_string('required');
+            }
+            if (empty($data['width']) || $data['width'] <= 0) {
+                $errors["width"] = get_string('required');
+            }
+        }
+
+        return $errors;
+    }
 }
