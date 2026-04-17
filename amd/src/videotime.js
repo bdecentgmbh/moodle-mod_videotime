@@ -75,7 +75,7 @@ define([
             controls: Number(instance.controls),
             dnt: Number(instance.dnt),
             height: instance.height,
-            loop: Number(instance.option_loop),
+            loop: Number(instance.option_loop) || Number(instance.background),
             maxheight: instance.maxheight,
             maxwidth: instance.maxwidth,
             muted: Number(instance.muted),
