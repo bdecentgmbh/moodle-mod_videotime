@@ -129,7 +129,7 @@ function videotimeplugin_videojs_delete_instance($id) {
  * @return object
  */
 function videotimeplugin_videojs_load_settings($instance) {
-    global $DB, $USER;
+    global $DB, $OUTPUT, $USER;
 
     $instance = (object) $instance;
     if (
@@ -178,6 +178,17 @@ function videotimeplugin_videojs_load_settings($instance) {
                 $instance['type'] = 'video/youtube';
             } else {
                 $instance['type'] = resourcelib_guess_url_mimetype($instance['vimeo_url']);
+            }
+        } else if (
+            !empty($instance['mediatimeid']) && $mediarecord = $DB->get_record(
+                'tool_mediatime',
+                ['id' => $instance['mediatimeid']]
+            )
+        ) {
+            $resource = new \tool_mediatime\output\media_resource($mediarecord);
+            if ($url = $resource->video_url($OUTPUT)) {
+                $instance['type'] = resourcelib_guess_url_mimetype($url) ?: 'video/m3u8';
+                $instance['vimeo_url'] = $url;
             }
         }
 
@@ -243,7 +254,7 @@ function videotimeplugin_videojs_embed_player($instance) {
 
     if (
         empty(get_config('videotimeplugin_videojs', 'enabled'))
-        || empty($instance->vimeo_url)
+        || (empty($instance->vimeo_url) && empty($instance->mediatimeid))
         || mod_videotime_get_vimeo_id_from_link($instance->vimeo_url)
     ) {
         return null;
@@ -411,6 +422,7 @@ function videotimeplugin_videojs_validation($data, $files) {
         || mod_videotime_get_vimeo_id_from_link($data['vimeo_url'])
         || (resourcelib_get_extension($data['vimeo_url']) == 'm3u8')
         || videotimeplugin_videojs_youtube($data['vimeo_url'])
+        || !empty($data['mediatimeid'])
     ) {
         $fs = get_file_storage();
         if (count($fs->get_area_files(\context_user::instance($USER->id)->id, 'user', 'draft', $data['mediafile'])) < 2) {

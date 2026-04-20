@@ -919,7 +919,6 @@ function videotime_cm_info_dynamic(cm_info $cm) {
 }
 
 /**
-<<<<<<< HEAD
  * Register the ability to handle drag and drop file uploads
  *
  * @return array containing details of the files / types the mod can handle

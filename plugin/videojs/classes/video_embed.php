@@ -55,7 +55,7 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
      * @return \stdClass|array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG;
+        global $CFG, $DB, $OUTPUT;
 
         $mimetype = resourcelib_guess_url_mimetype($this->record->vimeo_url);
 
@@ -71,6 +71,16 @@ class video_embed extends vimeo_embed implements \renderable, \templatable {
                     $file->get_filepath(),
                     $file->get_filename()
                 )->out(false);
+            }
+        }
+        if (
+            empty($poster)
+            && !empty($this->record->mediatimeid)
+            && $mediarecord = $DB->get_record('tool_mediatime', ['id' => $this->record->mediatimeid])
+        ) {
+            $resource = new \tool_mediatime\output\media_resource($mediarecord);
+            if ($url = $resource->image_url($OUTPUT)) {
+                $poster = $url;
             }
         }
 
