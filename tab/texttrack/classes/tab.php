@@ -197,6 +197,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         if (empty($instance)) {
             $defaultvalues['enable_texttrack'] = get_config('videotimetab_texttrack', 'default');
+            return;
         } else {
             $defaultvalues['enable_texttrack'] = $DB->record_exists('videotimetab_texttrack', ['videotime' => $instance]);
         }
