@@ -137,6 +137,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         if (empty($instance)) {
             $defaultvalues['enable_chapter'] = get_config('videotimetab_chapter', 'default');
+            return;
         } else if ($record = $DB->get_record('videotimetab_chapter', ['videotime' => $instance])) {
             $defaultvalues['enable_chapter'] = 1;
         } else {

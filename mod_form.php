@@ -481,6 +481,15 @@ class mod_videotime_mod_form extends moodleform_mod {
                 20,
                 $currentlang
             );
+
+            foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name) {
+                component_callback("videotimeplugin_$name", 'data_preprocessing', [&$defaultvalues, 0]);
+            }
+
+            foreach (array_keys(core_component::get_plugin_list('videotimetab')) as $name) {
+                $classname = "\\videotimetab_$name\\tab";
+                $classname::data_preprocessing($defaultvalues, 0);
+            }
         }
     }
 
