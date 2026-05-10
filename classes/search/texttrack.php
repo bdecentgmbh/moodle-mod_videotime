@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/videotime/lib.php');
 
 use core_component;
+use core_search\document;
+use core_search\document_icon;
 
 /**
  * Search area for mod_videotime activities.
@@ -137,7 +139,7 @@ class texttrack extends \core_search\base_mod {
 
         // Prepare associative array with data from DB.
         $doc = \core_search\document_factory::instance($record->id, $this->componentname, $this->areaname);
-        $doc->set('title', content_to_text($record->name, false));
+        $doc->set('title', '');
         $doc->set('content', $record->text);
         $doc->set('description1', $record->starttime);
         $doc->set('contextid', $context->id);
@@ -249,5 +251,38 @@ class texttrack extends \core_search\base_mod {
         $docparams = ['id' => $contextmodule->instanceid];
 
         return new \moodle_url('/mod/videotime/view.php', $docparams);
+    }
+
+    /**
+     * Returns an icon instance for the document.
+     *
+     * @param \core_search\document $doc
+     * @return \core_search\document_icon
+     */
+    public function get_doc_icon(document $doc): document_icon {
+        return new document_icon('i/tip');
+    }
+
+    /**
+     * Returns the document title to display.
+     *
+     * Allow to customize the document title string to display.
+     *
+     * @param \core_search\document $doc
+     * @return string Document title to display in the search results page
+     */
+    public function get_document_display_title(\core_search\document $doc) {
+        global $DB;
+
+        $record = $DB->get_record_sql(
+            "SELECT v.name, tr.type
+               FROM {videotimetab_texttrack_text} te
+               JOIN {videotimetab_texttrack_track} tr ON tr.id = te.track
+               JOIN {videotime} v ON v.id = tr.videotime
+              WHERE te.id = :id",
+            ['id' => $doc->get('itemid')]
+        );
+
+        return $record->name . ' - ' . get_string($record->type, 'mod_videotime');
     }
 }
