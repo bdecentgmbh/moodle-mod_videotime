@@ -109,6 +109,7 @@ class vimeo_embed implements \renderable, \templatable {
             'cmid' => $cm->id,
             'haspro' => videotime_has_pro(),
             'interval' => $this->record->saveinterval ?? 5,
+            'metadataurl' => $this->metadata_url(),
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'texttracks' => $this->text_tracks(),
             'uniqueid' => $this->get_uniqueid(),
@@ -149,5 +150,31 @@ class vimeo_embed implements \renderable, \templatable {
         }
 
         return array_values($texttracks);
+    }
+
+    /**
+     * Get the urlfor metadata to be loaded
+     */
+    public function metadata_url(): string {
+        global $DB;
+
+        if (
+            !videotime_has_pro()
+            || !get_config('videotimetab_interaction', 'enabled')
+            || !$DB->get_records('videotimetab_interaction_cue', ['videotime' => $this->record->id])
+            || !$settings = $DB->get_record('videotimetab_interaction', ['videotime' => $this->record->id])
+        ) {
+            return '';
+        }
+        $context = context_module::instance($this->get_cm()->id);
+
+        return moodle_url::make_pluginfile_url(
+            $context->id,
+            'videotimeplugin_pro',
+            'metadata',
+            0,
+            "/$settings->timemodified/",
+            'metadata.vtt'
+        )->out(false);
     }
 }

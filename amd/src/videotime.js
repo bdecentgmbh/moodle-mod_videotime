@@ -203,6 +203,7 @@ define([
         // Catch all events where video plays.
         this.player.on('play', function() {
             this.playing = true;
+            document.getElementById(this.elementId).dataset.status = true;
             Log.debug('VIDEO_TIME play');
         }.bind(this));
         this.player.on('playing', function() {
@@ -213,6 +214,7 @@ define([
         // Catch all events where video stops.
         this.player.on('pause', function() {
             this.playing = false;
+            document.getElementById(this.elementId).dataset.status = null;
             Log.debug('VIDEO_TIME pause');
         }.bind(this));
         this.player.on('stalled', function() {
@@ -293,6 +295,7 @@ define([
      * Handle pause
      */
     VideoTime.prototype.handlePause = function() {
+        document.getElementById(this.elementId).dataset.status = null;
         this.plugins.forEach(plugin => {
             if (typeof plugin.handlePause == 'function') {
                 plugin.handlePause();
