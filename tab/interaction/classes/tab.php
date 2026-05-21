@@ -85,6 +85,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             get_string('interval', 'videotimetab_interaction'),
             ['optional' => true]
         );
+        $mform->setDefault('randominterval', get_config('videotimetab_interaction', 'interval'));
         $mform->addHelpButton('randominterval', 'interval', 'videotimetab_interaction');
     }
 
@@ -159,6 +160,9 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
+        $DB->delete_records('videotimetab_interaction_cue', [
+            'videotime' => $id,
+        ]);
         $DB->delete_records('videotimetab_interaction', [
             'videotime' => $id,
         ]);

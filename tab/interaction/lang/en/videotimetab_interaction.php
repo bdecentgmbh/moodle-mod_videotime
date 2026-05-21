@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['action'] = 'Action';
+$string['countdown'] = 'Count down';
+$string['countdown_help'] = 'This determines the time that the user will have to click continue before the video is paused';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
 $string['editprompts'] = 'Edit prompts';

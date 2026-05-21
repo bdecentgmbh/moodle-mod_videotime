@@ -34,4 +34,26 @@ if ($hassiteconfig) {
     );
 
     $settings->add($setting);
+
+    $setting = new admin_setting_configduration(
+        'videotimetab_interaction/interval',
+        new lang_string('interval', 'videotimetab_interaction'),
+        new lang_string('interval_help', 'videotimetab_interaction'),
+        MINSECS,
+        PARAM_FLOAT
+    );
+    $setting->set_max_duration(DAYSECS);
+
+    $settings->add($setting);
+
+    $setting = new admin_setting_configduration(
+        'videotimetab_interaction/countdown',
+        new lang_string('countdown', 'videotimetab_interaction'),
+        new lang_string('countdown_help', 'videotimetab_interaction'),
+        10,
+        PARAM_INT
+    );
+    $setting->set_max_duration(HOURSECS);
+
+    $settings->add($setting);
 }
