@@ -39,3 +39,4 @@ $string['interval_help'] = 'This sets a prompt to appear when video it playing. 
 $string['label'] = 'Interactions';
 $string['pluginname'] = 'Video Time Interactions tab';
 $string['randomprompt'] = 'Click to continue watching video';
+$string['timing'] = 'Timing';

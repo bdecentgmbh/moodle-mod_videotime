@@ -61,8 +61,6 @@ function videotime_supports($feature) {
             return true;
         case FEATURE_GRADE_OUTCOMES:
             return false;
-        case FEATURE_USES_QUESTIONS:
-            return true;
         default:
             return null;
     }

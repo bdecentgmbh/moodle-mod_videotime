@@ -66,7 +66,7 @@ class backup_videotimetab_interaction_subplugin extends backup_subplugin {
         );
 
         // Define file annotations.
-        $subplugintablesettings->annotate_files('videotimetab_interaction', 'metadata', null); // This file area hasn't itemid.
+        $cue->annotate_files('videotimetab_interaction', 'content', 'id');
 
         return $subplugin;
     }
