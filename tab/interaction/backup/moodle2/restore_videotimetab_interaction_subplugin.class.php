@@ -65,13 +65,6 @@ class restore_videotimetab_interaction_subplugin extends restore_subplugin {
         $oldvideotime = $data->videotime;
         $data->videotime = $this->get_new_parentid('videotime');
         $DB->insert_record('videotimetab_interaction', $data);
-
-        // Add files match context. No need to map id.
-        $this->add_related_files(
-            'videotimetab_information',
-            'metadata',
-            null
-        );
     }
 
     /**
@@ -82,8 +75,19 @@ class restore_videotimetab_interaction_subplugin extends restore_subplugin {
         global $DB;
 
         $data = (object)$data;
+        $oldid = $data->id;
         $oldvideotime = $data->videotime;
         $data->videotime = $this->get_new_parentid('videotime');
-        $DB->insert_record('videotimetab_interaction_cue', $data);
+        $newitemid = $DB->insert_record('videotimetab_interaction_cue', $data);
+        $this->set_mapping('videotimetab_interaction_cue', $oldid, $newitemid, true);
+
+        // For each interaction restore associateed files.
+        $this->add_related_files(
+            'videotimetab_interaction',
+            'content',
+            'videotimetab_interaction_cue',
+            null,
+            $oldid
+        );
     }
 }

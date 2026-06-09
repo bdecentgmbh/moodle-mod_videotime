@@ -167,6 +167,15 @@ class tab extends \mod_videotime\local\tabs\tab {
         $DB->delete_records('videotimetab_interaction', [
             'videotime' => $id,
         ]);
+        $cm = get_coursemodule_from_instance('videotime', $id);
+        $context = \context_module::instance($cm->id);
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'videotimetab_interaction', 'content');
+
+        foreach ($files as $file) {
+            $file->delete();
+        }
     }
 
     /**
