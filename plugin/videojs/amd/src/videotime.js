@@ -41,30 +41,7 @@ export default class VideoTime extends VideoTimeBase {
         this.player = new Player(this.elementId, options);
 
         this.player.one("loadedmetadata", () => {
-            if (!instance.resume_playback || instance.resume_time <= 0 || this.resumed) {
-                return true;
-            }
-
-            let duration = this.getPlayer().duration(),
-                resumeTime = instance.resume_time;
-            // Duration is often a little greater than a resume time at the end of the video.
-            // A user may have watched 100 seconds when the video ends, but the duration may be
-            // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
-            // video loads, so it may be 101 seconds. Hence the +1 and Math.floor usage.
-            if (resumeTime + 1 >= Math.floor(duration)) {
-                Log.debug(
-                    "VIDEO_TIME video finished, resuming at start of video."
-                );
-                resumeTime = 0;
-            }
-            Log.debug("VIDEO_TIME duration is " + duration);
-            Log.debug("VIDEO_TIME resuming at " + resumeTime);
-            if (resumeTime) {
-                setTimeout(() => {
-                this.setCurrentPosition(resumeTime);
-                }, 10);
-            }
-            return true;
+            this.resume();
         });
 
         this.handleStartTime();

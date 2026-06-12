@@ -271,8 +271,14 @@ define([
     };
 
     VideoTime.prototype.resume = async function() {
+        if (this.resumed) {
+            return false;
+        }
         const duration = await this.getDuration();
         let resumeTime = this.instance.resume_time;
+        if (!duration || !resumeTime) {
+            return false;
+        }
         // Duration is often a little greater than a resume time at the end of the video.
         // A user may have watched 100 seconds when the video ends, but the duration may be
         // 100.56 seconds. BUT, sometimes the duration is rounded depending on when the
@@ -285,6 +291,7 @@ define([
         }
         Log.debug("VIDEO_TIME duration is " + duration);
         Log.debug("VIDEO_TIME resuming at " + resumeTime);
+        this.resumed = true;
         await this.setCurrentPosition(resumeTime);
         return true;
     };
@@ -497,27 +504,6 @@ define([
             done: (response) => {
                 this.instance = response;
                 return this.instance;
-            },
-            fail: Notification.exception
-        }])[0];
-    };
-
-    /**
-     * Get time to resume video as seconds.
-     *
-     * @returns {Promise}
-     */
-    VideoTime.prototype.getResumeTime = async function() {
-        if (this.resumeTime) {
-            return this.resumeTime;
-        }
-
-        return await Ajax.call([{
-            methodname: 'videotimeplugin_pro_get_resume_time',
-            args: {cmid: this.cmId},
-            done: (response) => {
-                this.resumeTime = response.seconds;
-                return this.resumeTime;
             },
             fail: Notification.exception
         }])[0];
