@@ -39,7 +39,7 @@ class backup_videotimetab_interaction_subplugin extends backup_subplugin {
         $subplugintablesettings = new backup_nested_element(
             'videotimetab_interaction',
             null,
-            ['interval', 'videotime']
+            ['spacing', 'videotime']
         );
         $cues = new backup_nested_element('videotimetab_interaction_cues');
         $cue = new backup_nested_element('videotimetab_interaction_cue', ['id'], [

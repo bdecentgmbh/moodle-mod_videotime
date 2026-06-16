@@ -36,9 +36,9 @@ if ($hassiteconfig) {
     $settings->add($setting);
 
     $setting = new admin_setting_configduration(
-        'videotimetab_interaction/interval',
-        new lang_string('interval', 'videotimetab_interaction'),
-        new lang_string('interval_help', 'videotimetab_interaction'),
+        'videotimetab_interaction/spacing',
+        new lang_string('spacing', 'videotimetab_interaction'),
+        new lang_string('spacing_help', 'videotimetab_interaction'),
         MINSECS,
         PARAM_FLOAT
     );

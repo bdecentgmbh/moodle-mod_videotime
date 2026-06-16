@@ -34,10 +34,21 @@ function xmldb_videotimetab_interaction_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // For further information please read {@link https://docs.moodle.org/dev/Upgrade_API}.
-    //
-    // You will also have to create the db/install.xml file by using the XMLDB Editor.
-    // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
+    if ($oldversion < 2026031001) {
+
+        // Rename field spacing on table videotimetab_interaction to NEWNAMEGOESHERE.
+        $table = new xmldb_table('videotimetab_interaction');
+        $field = new xmldb_field('interval', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'videotime');
+
+        // Launch rename field spacing.
+        $dbman->rename_field($table, $field, 'spacing');
+
+        // Copy settings.
+        set_config('spacing', get_config('videotimetab_interaction', 'interval'), 'videotimetab_interaction');
+
+        // Interaction savepoint reached.
+        upgrade_plugin_savepoint(true, 2026031001, 'videotimetab', 'interaction');
+    }
 
     return true;
 }

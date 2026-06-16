@@ -42,6 +42,7 @@
     >
        {{# str }} editprompts, videotimetab_interaction {{/ str }}
     </button>
+    {{# editquestions }}
     <button
         class="btn btn-secondary"
         type="button"
@@ -50,13 +51,14 @@
     >
        {{# str }} editquestions, videotimetab_interaction {{/ str }}
     </button>
+    {{/ editquestions }}
     {{/ canedit }}
     <div data-region="interactions-{{ id }}"></div>
 </div>
 {{# js }}
-{{# interval }}
+{{# spacing }}
     require(['videotimeplugin_pro/local/interaction/random'], function(Interaction) {
-        Interaction.initialize({{ id }}, {{ interactionid }}, {{ interval }});
+        Interaction.initialize({{ id }}, {{ interactionid }}, {{ spacing }});
     });
-{{/ interval }}
+{{/ spacing }}
 {{/ js }}

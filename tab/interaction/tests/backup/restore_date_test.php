@@ -54,14 +54,14 @@ final class restore_date_test extends \restore_date_testcase {
         // Do backup and restore.
         $newcourseid = $this->backup_and_restore($course);
         $newvideotime = $DB->get_record_sql(
-            "SELECT v.*, i.interval
+            "SELECT v.*, i.spacing
                FROM {videotimetab_interaction} i
                JOIN {videotime} v ON v.id = i.videotime
               WHERE v.course = :course",
             ['course' => $newcourseid]
         );
         $oldvideotime = $DB->get_record_sql(
-            "SELECT v.*, i.interval
+            "SELECT v.*, i.spacing
                FROM {videotimetab_interaction} i
                JOIN {videotime} v ON v.id = i.videotime
               WHERE v.id = :id",
@@ -69,6 +69,6 @@ final class restore_date_test extends \restore_date_testcase {
         );
         $this->assertNotEmpty($newvideotime);
 
-        $this->assertFieldsNotRolledForward($oldvideotime, $newvideotime, ['interval']);
+        $this->assertFieldsNotRolledForward($oldvideotime, $newvideotime, ['spacing']);
     }
 }
