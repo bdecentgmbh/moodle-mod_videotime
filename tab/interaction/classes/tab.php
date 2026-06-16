@@ -56,7 +56,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             'contextid' => $instance->get_context()->id,
             'id' => $instance->id,
             'interactionid' => $interaction->id ?? null,
-            'interval' => $settings->interval ?? null,
+            'spacing' => $settings->spacing ?? null,
         ];
 
         return $OUTPUT->render_from_template(
@@ -83,11 +83,11 @@ class tab extends \mod_videotime\local\tabs\tab {
         $mform->addElement(
             'duration',
             'randominterval',
-            get_string('interval', 'videotimetab_interaction'),
+            get_string('spacing', 'videotimetab_interaction'),
             ['optional' => true]
         );
-        $mform->setDefault('randominterval', get_config('videotimetab_interaction', 'interval'));
-        $mform->addHelpButton('randominterval', 'interval', 'videotimetab_interaction');
+        $mform->setDefault('randominterval', get_config('videotimetab_interaction', 'spacing'));
+        $mform->addHelpButton('randominterval', 'spacing', 'videotimetab_interaction');
     }
 
     /**
@@ -121,13 +121,13 @@ class tab extends \mod_videotime\local\tabs\tab {
             if (!$record = $DB->get_record('videotimetab_interaction', ['videotime' => $data->id])) {
                 $DB->insert_record('videotimetab_interaction', [
                     'videotime' => $data->id,
-                    'interval' => $data->randominterval ?? null,
-                    'timemodified' => $clock->time(),
+                    'spacing' => $data->randominterval ?? null,
+                    'timemodified' => 0,
                 ]);
             } else {
                 $DB->update_record('videotimetab_interaction', [
                     'id' => $record->id,
-                    'interval' => $data->randominterval ?? null,
+                    'spacing' => $data->randominterval ?? null,
                     'timemodified' => $clock->time(),
                 ]);
             }
@@ -191,7 +191,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             $defaultvalues['enable_interaction'] = get_config('videotimetab_interaction', 'default');
         } else if ($record = $DB->get_record('videotimetab_interaction', ['videotime' => $instance])) {
             $defaultvalues['enable_interaction'] = 1;
-            $defaultvalues['randominterval'] = $record->interval;
+            $defaultvalues['randominterval'] = $record->spacing;
         } else {
             $defaultvalues['enable_interaction'] = 0;
         }
