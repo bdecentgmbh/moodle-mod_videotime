@@ -165,6 +165,7 @@ export default class VideoTime extends VideoTimeBase {
      * @returns {Promise}
      */
     async getCurrentPosition() {
+        const paused = this.getPaused();
         let position = await this.player.currentTime();
 
         for (let i = 0; i < this.plugins.length; i++) {
@@ -172,6 +173,9 @@ export default class VideoTime extends VideoTimeBase {
             if (plugin.getCurrentPosition) {
                 position = await plugin.getCurrentPosition(position);
             }
+        }
+        if (!paused) {
+            this.player.play();
         }
 
         return position;
