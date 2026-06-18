@@ -668,7 +668,7 @@ function videotime_cm_info_view(cm_info $cm) {
             $preview = new \videotimeplugin_repository\output\video_preview($instance, $USER->id);
             $content = $renderer->render($preview);
 
-            $columnclass = 'previewfull';
+            $columnclass = 'col-sm-12 previewfull';
             if ($instance->columns == 2) {
                 $columnclass = 'col-sm-6';
             } else if ($instance->columns == 3) {
