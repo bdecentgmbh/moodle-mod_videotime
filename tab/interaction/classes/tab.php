@@ -57,6 +57,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             'id' => $instance->id,
             'interactionid' => $interaction->id ?? null,
             'spacing' => $settings->spacing ?? null,
+            'count' => get_config('videotimetab_interaction', 'countdown'),
         ];
 
         return $OUTPUT->render_from_template(
@@ -161,6 +162,9 @@ class tab extends \mod_videotime\local\tabs\tab {
     public static function delete_settings(int $id) {
         global $DB;
 
+        $DB->delete_records('videotimetab_interaction_question', [
+            'videotime' => $id,
+        ]);
         $DB->delete_records('videotimetab_interaction_cue', [
             'videotime' => $id,
         ]);
@@ -169,6 +173,10 @@ class tab extends \mod_videotime\local\tabs\tab {
         ]);
         $cm = get_coursemodule_from_instance('videotime', $id);
         $context = \context_module::instance($cm->id);
+        $DB->delete_records('question_references', [
+            'usingcontextid' => $context->id,
+            'component' => 'mod_videotime',
+        ]);
 
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, 'videotimetab_interaction', 'content');

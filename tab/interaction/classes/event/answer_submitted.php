@@ -21,19 +21,19 @@ use core\event\base;
 use stdClass;
 
 /**
- * The interaction_viewed event class.
+ * The answer_submitted event class.
  *
  * @package     videotimetab_interaction
  * @category    event
  * @copyright   2026 bdecent gmbh <https://bdecent.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class interaction_viewed extends base {
+class answer_submitted extends base {
     /**
      * Init method.
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'w';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'videotimetab_interaction_cue';
     }
@@ -65,7 +65,7 @@ class interaction_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventinteractionviewed', 'videotimetab_interaction');
+        return get_string('eventanswersubmitted', 'videotimetab_interaction');
     }
 
     /**
@@ -86,7 +86,7 @@ class interaction_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed interaction with id '$this->objectid'"
+        return "The user with id '$this->userid' answered interactive quetion with id '$this->objectid'"
             . " in Video Time with course module id '$this->contextinstanceid'.";
     }
 

@@ -16,24 +16,22 @@
 
 namespace videotimetab_interaction\event;
 
-use context_module;
 use core\event\base;
-use stdClass;
 
 /**
- * The interaction_viewed event class.
+ * The timer_ended event class.
  *
  * @package     videotimetab_interaction
  * @category    event
  * @copyright   2026 bdecent gmbh <https://bdecent.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class interaction_viewed extends base {
+class timer_ended extends base {
     /**
      * Init method.
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'videotimetab_interaction_cue';
     }
@@ -41,19 +39,17 @@ class interaction_viewed extends base {
     /**
      * Creates an instance from interaction record
      *
-     * @param stdClass $interaction Interaction record
-     * @param context_module $context Context
+     * @param stdClass $interaction
+     * @param cm_info|stdClass $cm
      * @return timer_ended
      */
-    public static function create_from_record(stdClass $interaction, context_module $context) {
+    public static function create_from_record($interaction, $cm) {
         $event = self::create([
             'objectid' => $interaction->id,
-            'context' => $context,
-            'other' => [
-                'starttime' => $interaction->starttime ?? 0,
-            ],
+            'context' => \context_module::instance($cm->id),
         ]);
         $event->add_record_snapshot('videotimetab_interaction_cue', $interaction);
+        $event->add_record_snapshot('course_modules', $cm);
         return $event;
     }
 
@@ -65,7 +61,7 @@ class interaction_viewed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventinteractionviewed', 'videotimetab_interaction');
+        return get_string('eventtimerexpired', 'videotimetab_interaction');
     }
 
     /**
@@ -76,7 +72,6 @@ class interaction_viewed extends base {
     public function get_url() {
         return new \moodle_url('/mod/videotime/view.php', [
             'id' => $this->contextinstanceid,
-            'time' => $this->other['starttime'] ?? 0,
         ]);
     }
 
@@ -86,7 +81,7 @@ class interaction_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' viewed interaction with id '$this->objectid'"
+        return "The user with id '$this->userid' missed a prompt for interaction with id '$this->objectid'"
             . " in Video Time with course module id '$this->contextinstanceid'.";
     }
 

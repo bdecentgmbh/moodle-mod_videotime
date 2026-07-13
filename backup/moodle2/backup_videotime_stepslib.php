@@ -28,7 +28,7 @@
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_videotime_activity_structure_step extends backup_activity_structure_step {
+class backup_videotime_activity_structure_step extends backup_questions_activity_structure_step {
     /**
      * Annotate files from plugin configuration
      * @param backup_nested_element $videotime the backup structure of the activity
@@ -99,6 +99,39 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
             'visible',
         ]);
 
+        $qinstances = new backup_nested_element('question_instances');
+
+        $qinstance = new backup_nested_element('question_instance', ['id'], [
+            'videotime',
+            'cueid',
+            'questionid',
+        ]);
+
+        $this->add_question_references($qinstance, 'mod_videotime', 'slot');
+
+        $this->add_question_set_references($qinstance, 'mod_videotime', 'slot');
+
+        $this->annotate_set_reference_bank_entries(
+            $this->task->get_contextid(),
+            'mod_videotime',
+            'slot',
+            $this->task->get_backupid()
+        );
+
+        $attempts = new backup_nested_element('attempts');
+
+        $attempt = new backup_nested_element('attempt', ['id'], [
+            'videotime',
+            'userid',
+            'qubaid',
+            'timecreated',
+            'timemodified',
+        ]);
+
+        // This module is using questions, so produce the related question states and sessions
+        // attaching them to the $attempt element based in 'uniqueid' matching.
+        $this->add_question_usages($attempt, 'qubaid');
+
         // Build the tree.
         $module->add_child($texttracks);
         $texttracks->add_child($texttrack);
@@ -109,9 +142,28 @@ class backup_videotime_activity_structure_step extends backup_activity_structure
         // Define elements for plugin subplugin settings.
         $this->add_subplugin_structure('videotimeplugin', $module, true);
 
+        $module->add_child($qinstances);
+        $qinstances->add_child($qinstance);
+
+        $module->add_child($attempts);
+        $attempts->add_child($attempt);
+
         // Define sources.
         $module->set_source_table('videotime', ['id' => backup::VAR_ACTIVITYID]);
         $texttrack->set_source_table('videotime_track', ['videotime' => backup::VAR_PARENTID], 'id ASC');
+
+        if (class_exists('\videotimetab_interaction\tab')) {
+            $qinstance->set_source_table('videotimetab_interaction_question', ['videotime' => backup::VAR_ACTIVITYID]);
+        }
+
+        // If users included save attempt data.
+        if ($userinfo && videotime_has_pro()) {
+            $attempt->set_source_table('videotimeplugin_pro_attempt', ['videotime' => backup::VAR_ACTIVITYID]);
+        }
+
+        // This module is using questions, so produce the related question states and sessions
+        // attaching them to the $attempt element based in 'uniqueid' matching.
+        $this->add_question_usages($attempt, 'qubaid', 'videotime_');
 
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
