@@ -43,6 +43,11 @@ class backup_videotime_activity_task extends backup_activity_task {
      */
     protected function define_my_steps() {
         $this->add_step(new backup_videotime_activity_structure_step('videotime_structure', 'videotime.xml'));
+
+        // Process all the annotated questions to calculate the question
+        // categories needing to be included in backup for this activity
+        // plus the categories belonging to the activity context itself.
+        $this->add_step(new backup_calculate_question_categories('activity_question_categories'));
     }
 
     /**
