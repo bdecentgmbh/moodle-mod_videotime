@@ -54,4 +54,11 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
         ],
     ],
+
+    'mod/videotime:ignoretimelimits' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+        ],
+    ],
 ];
