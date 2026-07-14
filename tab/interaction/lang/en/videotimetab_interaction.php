@@ -26,8 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['action'] = 'Action';
+$string['continue'] = 'Continue';
 $string['countdown'] = 'Count down';
 $string['countdown_help'] = 'This determines the time that the user will have to click continue before the video is paused';
+$string['cueno'] = 'Cue {no}';
+$string['cues'] = 'Cues';
 $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
 $string['editprompts'] = 'Edit prompts';
@@ -35,6 +38,7 @@ $string['editquestions'] = 'Edit questions';
 $string['eventanswersubmitted'] = 'Answer submitted';
 $string['eventinteractionviewed'] = 'Interaction viewed';
 $string['eventtimerexpired'] = 'Timer expired';
+$string['information'] = 'Information';
 $string['interaction:edit'] = 'Edit';
 $string['interaction:editquestions'] = 'Edit questions';
 $string['interaction:interact'] = 'Interact';
