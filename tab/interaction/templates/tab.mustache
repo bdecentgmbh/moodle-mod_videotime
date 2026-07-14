@@ -42,7 +42,7 @@
     >
        {{# str }} editprompts, videotimetab_interaction {{/ str }}
     </button>
-    {{^ editquestions }}
+    {{# editquestions }}
     <button
         class="btn btn-secondary"
         type="button"
@@ -53,6 +53,7 @@
     </button>
     {{/ editquestions }}
     {{/ canedit }}
+    {{# canreset }}
     <button
         class="btn btn-secondary"
         type="button"
@@ -61,6 +62,7 @@
     >
        {{# str }} reset {{/ str }}
     </button>
+    {{/ canreset }}
     <div data-region="interactions-{{ id }}"></div>
 </div>
 {{# js }}
