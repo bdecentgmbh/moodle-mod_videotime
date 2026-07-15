@@ -83,6 +83,7 @@ $string['controls'] = 'Controls';
 $string['coverage_help'] = 'Amount of video seen at least once by user';
 $string['create_vimeo_app'] = 'Create Vimeo App';
 $string['currentwatchtime'] = 'Current watch time';
+$string['datasource:videotime_attempts_data_source'] = 'Video Time attempts';
 $string['datasource:videotime_sessions_data_source'] = 'Video Time sessions';
 $string['datasource:videotime_stats_data_source'] = 'Video Time stats';
 $string['default'] = 'Default';
