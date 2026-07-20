@@ -55,6 +55,7 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $data = [
             'canedit' => has_capability('moodle/course:manageactivities', $context),
+            'count' => get_config('videotimetab_interaction', 'countdown'),
             'canreset' => has_capability('videotimetab/interaction:resetattempt', $context) && $DB->get_records('videotimetab_interaction_cue', [
                 'action' => 'questions',
                 'videotime' => $instance->id,
@@ -64,7 +65,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             'id' => $instance->id,
             'interactionid' => $interaction->id ?? null,
             'spacing' => $settings->spacing ?? null,
-            'count' => get_config('videotimetab_interaction', 'countdown'),
+            'prompteffect' => (float)get_config('videotimetab_interaction', 'prompteffect'),
         ];
 
         return $OUTPUT->render_from_template(

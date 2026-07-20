@@ -56,4 +56,22 @@ if ($hassiteconfig) {
     $setting->set_max_duration(HOURSECS);
 
     $settings->add($setting);
+
+    $options = [
+        '1' => '100%',
+        '1.20' => '120%',
+        '1.40' => '140%',
+        '1.65' => '165%',
+        '2' => '200%',
+        '2.50' => '250%',
+        '3.20' => '320%',
+        '4' => '400%',
+    ];
+    $settings->add(new admin_setting_configselect(
+        'videotimetab_interaction/prompteffect',
+        new lang_string('prompteffect', 'videotimetab_interaction'),
+        new lang_string('prompteffect_help', 'videotimetab_interaction'),
+        '1',
+        $options
+    ));
 }
