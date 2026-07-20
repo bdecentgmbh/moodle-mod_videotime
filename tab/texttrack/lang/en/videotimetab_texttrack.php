@@ -34,4 +34,4 @@ $string['hidden'] = '(Hidden)';
 $string['label'] = 'Transcript';
 $string['pluginname'] = 'Video Time Transcript tab';
 $string['privacy:metadata'] = 'The Video Time Transcript tab plugin does not store any personal data.';
-$string['upgradeplugin'] = 'This plugin requires installation of Video Time Business to enable.';
+$string['upgradeplugin'] = 'This plugin requires installation of Video Time Premium to enable.';
