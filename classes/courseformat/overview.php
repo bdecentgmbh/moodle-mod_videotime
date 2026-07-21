@@ -35,7 +35,7 @@ class overview extends \core_courseformat\activityoverviewbase {
     #[\Override]
     public function get_extra_overview_items(): array {
         return [
-            'totalviews' => $this->get_extra_totalviews_overview(),
+            // Views have been hidden.
         ];
     }
 
