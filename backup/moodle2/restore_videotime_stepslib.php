@@ -237,7 +237,7 @@ class restore_videotime_activity_structure_step extends restore_questions_activi
     /**
      * Record new question usage
      *
-     * @param int $newusage New usage id
+     * @param int $newusageid New usage id
      */
     protected function inform_new_usage_id($newusageid) {
         global $DB;

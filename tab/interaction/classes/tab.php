@@ -56,10 +56,11 @@ class tab extends \mod_videotime\local\tabs\tab {
         $data = [
             'canedit' => has_capability('moodle/course:manageactivities', $context),
             'count' => get_config('videotimetab_interaction', 'countdown'),
-            'canreset' => has_capability('videotimetab/interaction:resetattempt', $context) && $DB->get_records('videotimetab_interaction_cue', [
-                'action' => 'questions',
-                'videotime' => $instance->id,
-            ]),
+            'canreset' => has_capability('videotimetab/interaction:resetattempt', $context)
+                && $DB->get_records('videotimetab_interaction_cue', [
+                    'action' => 'questions',
+                    'videotime' => $instance->id,
+                ]),
             'contextid' => $context->id,
             'editquestions' => has_capability('videotimetab/interaction:editquestions', $context),
             'id' => $instance->id,
