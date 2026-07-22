@@ -161,10 +161,6 @@ class backup_videotime_activity_structure_step extends backup_questions_activity
             $attempt->set_source_table('videotimeplugin_pro_attempt', ['videotime' => backup::VAR_ACTIVITYID]);
         }
 
-        // This module is using questions, so produce the related question states and sessions
-        // attaching them to the $attempt element based in 'uniqueid' matching.
-        $this->add_question_usages($attempt, 'qubaid', 'videotime_');
-
         // Define file annotations.
         $module->annotate_files('mod_videotime', 'intro', null); // This file area hasn't itemid.
         $module->annotate_files('mod_videotime', 'video_description', null); // This file area hasn't itemid.
