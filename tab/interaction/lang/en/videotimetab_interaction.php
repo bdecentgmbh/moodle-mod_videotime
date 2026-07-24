@@ -45,6 +45,7 @@ $string['interaction:interact'] = 'Interact';
 $string['interaction:resetattempt'] = 'Reset attempt';
 $string['label'] = 'Interactions';
 $string['pluginname'] = 'Video Time Interactions tab';
+$string['privacy:metadata'] = 'The Video Time Interaction tab plugin does not store any personal data.';
 $string['prompteffect'] = 'Ratio';
 $string['prompteffect_help'] = 'This determines the effect for successfully responding to prompt. Select the desired ratio for the spacing of succeding attempts.';
 $string['questionno'] = 'Question {no}';

@@ -41,10 +41,20 @@ final class restore_date_test extends \restore_date_testcase {
     public function test_restore_dates(): void {
         global $DB;
 
+        if (!videotime_has_pro()) {
+            $this->markTestSkipped('Video Time Pro not installed');
+            return;
+        }
+
+        set_config('enabled', 1, 'videotimetab_interaction');
+        set_config('default', 1, 'videotimetab_interaction');
+
         // Create videotime data.
         $record = [
             'enabletabs' => true,
             'enable_interaction' => true,
+            'randominterval' => 15,
+            'spacing' => 15,
             'timemodified' => 100,
             'timeopen' => time(),
             'timeclose' => time() + DAYSECS,
@@ -69,6 +79,6 @@ final class restore_date_test extends \restore_date_testcase {
         );
         $this->assertNotEmpty($newvideotime);
 
-        $this->assertFieldsNotRolledForward($oldvideotime, $newvideotime, ['spacing']);
+        $this->assertEquals(15, $newvideotime->spacing);
     }
 }

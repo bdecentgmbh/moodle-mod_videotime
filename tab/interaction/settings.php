@@ -74,4 +74,14 @@ if ($hassiteconfig) {
         '1',
         $options
     ));
+
+    // Preferred behaviour.
+    $setting = new admin_setting_question_behaviour(
+        'videotimetab_interaction/preferredbehaviour',
+        get_string('howquestionsbehave', 'question'),
+        get_string('howquestionsbehave_desc', 'quiz'),
+        'adaptive'
+    );
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
 }
