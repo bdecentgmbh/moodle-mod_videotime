@@ -42,18 +42,17 @@ if ($hassiteconfig) {
         MINSECS,
         PARAM_FLOAT
     );
-    $setting->set_max_duration(DAYSECS);
+    $setting->set_max_duration(DAYSECS - 1);
 
     $settings->add($setting);
 
-    $setting = new admin_setting_configduration(
+    $setting = new admin_setting_configtext(
         'videotimetab_interaction/countdown',
         new lang_string('countdown', 'videotimetab_interaction'),
         new lang_string('countdown_help', 'videotimetab_interaction'),
         10,
         PARAM_INT
     );
-    $setting->set_max_duration(HOURSECS);
 
     $settings->add($setting);
 
