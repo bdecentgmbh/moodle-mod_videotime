@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'videotimetab_interaction';
 $plugin->release = '1.0';
-$plugin->version = 2026031006;
+$plugin->version = 2026031007;
 $plugin->requires = 2024041600;
 $plugin->maturity = MATURITY_STABLE;

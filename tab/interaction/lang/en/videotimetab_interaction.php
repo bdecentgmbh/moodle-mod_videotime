@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['action'] = 'Action';
+$string['confirmresetattempt'] = 'Questions attempt reset';
 $string['continue'] = 'Continue';
 $string['countdown'] = 'Count down';
 $string['countdown_help'] = 'This determines the time that the user will have to click continue before the video is paused';
