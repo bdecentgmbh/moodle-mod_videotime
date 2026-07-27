@@ -53,6 +53,7 @@ $string['prompteffect'] = 'Ratio';
 $string['prompteffect_help'] = 'This determines the effect for successfully responding to prompt. Select the desired ratio for the spacing of succeding attempts.';
 $string['questionno'] = 'Question {no}';
 $string['randomprompt'] = 'Click to continue watching video';
+$string['reset_help'] = 'Erase your answers to all questions and start again.';
 $string['resetquestionattempt'] = 'Do you want to erase question attempts for "{$a}"?';
 $string['spacing'] = 'Interval';
 $string['spacing_help'] = 'This sets a prompt to appear when video it playing. The time indicates average time between prompts.';
