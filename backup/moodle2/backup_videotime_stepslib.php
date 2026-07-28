@@ -109,15 +109,6 @@ class backup_videotime_activity_structure_step extends backup_questions_activity
 
         $this->add_question_references($qinstance, 'mod_videotime', 'slot');
 
-        $this->add_question_set_references($qinstance, 'mod_videotime', 'slot');
-
-        $this->annotate_set_reference_bank_entries(
-            $this->task->get_contextid(),
-            'mod_videotime',
-            'slot',
-            $this->task->get_backupid()
-        );
-
         $attempts = new backup_nested_element('attempts');
 
         $attempt = new backup_nested_element('attempt', ['id'], [

@@ -282,10 +282,6 @@ class restore_videotime_activity_structure_step extends restore_questions_activi
         );
         foreach ($records as $record) {
             $DB->update_record('videotimetab_interaction_question', $record);
-            $DB->update_record('videotimetab_interaction_cue', [
-                'id' => $record->cueid,
-                'data' => $record->questionid,
-            ]);
         }
     }
 }
