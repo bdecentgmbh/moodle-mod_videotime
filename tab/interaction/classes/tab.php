@@ -97,6 +97,8 @@ class tab extends \mod_videotime\local\tabs\tab {
             ['optional' => true]
         );
         $mform->setDefault('randominterval', get_config('videotimetab_interaction', 'spacing'));
+        $mform->disabledIf('randominterval', 'enable_interaction', 'unchecked');
+        $mform->disabledIf('randominterval', 'enabletabs', 'unchecked');
         $mform->addHelpButton('randominterval', 'spacing', 'videotimetab_interaction');
     }
 

@@ -95,7 +95,10 @@ class tab extends \mod_videotime\local\tabs\tab {
 
         $mform->addElement('text', 'informationtab_name', get_string('informationtab_name', 'videotimetab_information'));
         $mform->setType('informationtab_name', PARAM_TEXT);
-        $mform->disabledIf('informationtab_name', 'enable_information');
+        $mform->disabledIf('informationtab_name', 'enable_information', 'unchecked');
+        $mform->disabledIf('informationtab_name', 'enabletabs', 'unchecked');
+        $mform->disabledIf('information', 'enable_information', 'unchecked');
+        $mform->disabledIf('information', 'enabletabs', 'unchecked');
     }
 
     /**

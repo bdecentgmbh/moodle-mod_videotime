@@ -38,7 +38,7 @@ if ($hassiteconfig) {
     $setting = new admin_setting_configduration(
         'videotimetab_interaction/spacing',
         new lang_string('spacing', 'videotimetab_interaction'),
-        new lang_string('spacing_help', 'videotimetab_interaction'),
+        new lang_string('spacing_desc', 'videotimetab_interaction'),
         MINSECS,
         PARAM_FLOAT
     );
@@ -78,9 +78,8 @@ if ($hassiteconfig) {
     $setting = new admin_setting_question_behaviour(
         'videotimetab_interaction/preferredbehaviour',
         get_string('howquestionsbehave', 'question'),
-        get_string('howquestionsbehave_desc', 'quiz'),
+        get_string('howquestionsbehave_desc', 'videotimetab_interaction'),
         'adaptive'
     );
-    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 }
