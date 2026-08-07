@@ -385,6 +385,9 @@ class videotime_instance implements \renderable, \templatable {
                 'option' => $label,
                 'value' => $value,
             ]));
+            if (in_array($fieldname, $advanced)) {
+                $mform->setAdvanced($fieldname . '_forced');
+            }
             if ($group) {
                 $group[] = $newelement;
             } else {
