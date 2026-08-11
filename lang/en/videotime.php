@@ -130,26 +130,7 @@ $string['mode_help'] = '<b>Normal mode</b>: Displays the standard activity link,
 <b>Label mode</b>: Embed video on course layout, similar to the Label activity.<br>
 <b>Preview image mode</b>: Displays video thumbnail on course page that links to activity (Video Time Repository only).';
 $string['modulename'] = 'Video Time';
-$string['modulename_help'] = 'The Video Time activity enables the teacher
-<ul>
-    <li>to easily embed videos from Vimeo, just by adding the url</li>
-    <li>to add content above and below of the video player.</li>
-</ul>
-
-Video Time Pro has advanced features to
-<ul>
-    <li>track the user’s viewing time using activity completion</li>
-    <li>get insights about each user’s viewing time</li>
-    <li>set default embed options for the plugin</li>
-    <li>and override the instances\' embed options globally.</li>
-</ul>
-
-Get Video Time Pro now on <a href="https://bdecent.de/products/videotimepro">https://bdecent.de/products/videotimepro</a>.
-
-We are constantly improving the plugin, so stay tuned for upcoming versions. You can see what we’re working on and add feature requests in our public roadmap on <a href="https://bdecent.de/products/videotimepro/roadmap">https://bdecent.de/products/videotimepro/roadmap</a>.
-
-Please let us know if you have any feedback for us.
-';
+$string['modulename_help'] = '<p>The Video Time activity enables teachers to easily embed videos from platforms like Vimeo and YouTube, or upload local media files directly into the course.</p><p>Key features include:</p><ul><li>Tracking user viewing time and configuring activity completion based on watch progress.</li><li>Preventing video skipping and allowing students to seamlessly resume playback.</li><li>Enhancing the video experience with interactive tabs for chapters, transcripts, extra information, or embedded blocks.</li></ul><p>For detailed setup instructions and feature guides, please visit the <a href="https://intercom.help/bdecent/en/collections/12188418-video-time" target="_blank" rel="noopener">Video Time documentation</a>. We are constantly improving the plugin, so please let us know if you have any <a href="mailto:support@bdecent.de">feedback for us</a>!</p>';
 $string['modulenameplural'] = 'Video Time instances';
 $string['modulenamepro_help'] = 'The Video Time Pro activity enables the teacher
 <ul>
