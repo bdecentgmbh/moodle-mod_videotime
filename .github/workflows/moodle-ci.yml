@@ -8,21 +8,23 @@ jobs:
 
     services:
       postgres:
-        image: postgres:17
+        image: ${{ matrix.database == 'pgsql' && 'postgres:17' || '' }}
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+
       mariadb:
-        image: mariadb:10.11
+        image: ${{ matrix.database == 'mariadb' && 'mariadb:11' || '' }}
         env:
-          MYSQL_USER: 'root'
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
+          MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval 10s --health-timeout 5s --health-retries 3
 
     strategy:
       fail-fast: false
@@ -33,7 +35,7 @@ jobs:
             database: 'pgsql'
           - php: '8.3'
             moodle-branch: 'main'
-            database: 'pgsql'
+            database: 'mariadb'
           - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'pgsql'
@@ -52,7 +54,7 @@ jobs:
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: plugin
 
@@ -78,7 +80,7 @@ jobs:
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
       - name: PHP Lint
-        if: ${{ matrix.moodle-branch != 'MOODLE_402_STABLE' }}
+        if: ${{ always() }}
         run: moodle-plugin-ci phplint
 
         # - name: PHP Copy/Paste Detector
