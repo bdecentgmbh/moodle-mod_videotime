@@ -14,19 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace videotimetab_interaction\privacy;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * The videotimetab_interaction module does not store any data.
  *
- * @package     mod_videotime
- * @copyright   2021 bdecent gmbh <https://bdecent.de>
+ * @package     videotimetab_interaction
+ * @copyright   2026 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'mod_videotime';
-$plugin->release = '1.13 RC';
-$plugin->version = 2026090100;
-$plugin->requires = 2024041600;
-$plugin->supported = [404, 503];
-$plugin->maturity = MATURITY_RC;
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}

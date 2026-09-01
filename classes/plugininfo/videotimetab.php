@@ -105,6 +105,7 @@ class videotimetab extends \core\plugininfo\base {
      * @return null|bool
      */
     public function is_enabled() {
-        return !empty(get_config($this->type . '_' . $this->name, 'enabled'));
+        return !empty(get_config($this->type . '_' . $this->name, 'enabled')) &&
+            empty("\\videotimetab_$this->name\\tab"::added_dependencies());
     }
 }

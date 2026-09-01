@@ -35,13 +35,13 @@ class overview extends \core_courseformat\activityoverviewbase {
     #[\Override]
     public function get_extra_overview_items(): array {
         return [
-            'totalviews' => $this->get_extra_totalviews_overview(),
+            // Views have been hidden.
         ];
     }
 
     #[\Override]
     public function get_actions_overview(): ?overviewitem {
-        if (!videotime_has_pro() || !has_capability('mod/videotime:view_report', $this->context)) {
+        if (!videotime_has_pro() || !has_capability('mod/videotime:view_report', $this->cm->context)) {
             return null;
         }
 
@@ -83,7 +83,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $columnheader = get_string('views', 'mod_videotime');
 
         $params = ['module_id' => $this->cm->id];
-        if (!has_capability('moodle/course:viewparticipants', $this->context)) {
+        if (!has_capability('moodle/course:viewparticipants', $this->cm->context)) {
             $params['user_id'] = $USER->id;
         }
         $viewscount = $DB->get_field(

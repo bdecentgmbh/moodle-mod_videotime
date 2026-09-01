@@ -28,7 +28,10 @@
  * @copyright   2018 bdecent gmbh <https://bdecent.de>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_videotime_activity_structure_step extends restore_activity_structure_step {
+class restore_videotime_activity_structure_step extends restore_questions_activity_structure_step {
+    /** @var stdClass|null $currentquizattempt Track the current attempt being restored. */
+    protected $currentattempt = null;
+
     /**
      * Defines the structure to be restored.
      *
@@ -48,13 +51,34 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $texttrack = new restore_path_element('texttrack', '/activity/videotime/texttracks/texttrack');
         $paths[] = $texttrack;
 
-        if ($userinfo) {
-            $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
-        }
-
         // A chance for tab subplugins to set up their data.
         $this->add_subplugin_structure('videotimetab', $videotime);
         $this->add_subplugin_structure('videotimeplugin', $videotime);
+
+        if (class_exists('\videotimetab_interaction\tab')) {
+             $videotimequestioninstance = new restore_path_element(
+                 'videotime_question_instance',
+                 '/activity/videotime/question_instances/question_instance'
+             );
+             $paths[] = $videotimequestioninstance;
+             $this->add_question_references($videotimequestioninstance, $paths);
+             $this->add_question_set_references($videotimequestioninstance, $paths);
+        }
+
+        if ($userinfo) {
+            $paths[] = new restore_path_element('videotime_session', '/activity/videotime/sessions/session');
+
+            if (class_exists('\videotimetab_interaction\tab')) {
+                 $attempt = new restore_path_element(
+                     'videotime_attempt',
+                     '/activity/videotime/attempts/attempt'
+                 );
+                 $paths[] = $attempt;
+
+                 // Add states and sessions.
+                 $this->add_question_usages($attempt, $paths);
+            }
+        }
 
         $paths[] = new restore_path_element('vimeooptions', '/activity/videotime/vimeo_options');
 
@@ -123,6 +147,49 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
     }
 
     /**
+     * Process quiz slots.
+     *
+     * @param stdClass|array $data
+     */
+    protected function process_videotime_question_instance($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->cueid = $this->get_mappingid('videotimetab_interaction_cue', $data->cueid);
+
+        // Backwards compatibility for old field names (MDL-43670).
+        if (!isset($data->questionid) && isset($data->question)) {
+            $data->questionid = $data->question;
+        }
+
+        $data->videotime = $this->get_new_parentid('videotime');
+
+        $newitemid = $DB->insert_record('videotimetab_interaction_question', $data);
+
+        // Add mapping, restore of slot tags (for random questions) need it.
+        $this->set_mapping('videotime_question_instance', $oldid, $newitemid);
+    }
+
+
+    /**
+     * Process attempt data
+     *
+     * @param array $data data
+     */
+    protected function process_videotime_attempt($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->videotime = $this->get_new_parentid('videotime');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        // The data is actually inserted into the database later in inform_new_usage_id.
+        $this->currentattempt = clone($data);
+    }
+
+
+    /**
      * Process session data
      *
      * @param array $data data
@@ -150,16 +217,71 @@ class restore_videotime_activity_structure_step extends restore_activity_structu
         $data->videotime = $this->get_new_parentid('videotime');
     }
 
+    /**
+     * Process question references which replaces the direct connection to quiz slots to question.
+     *
+     * @param array $data the data from the XML file.
+     */
+    public function process_question_reference($data) {
+        global $DB;
+
+        $data = (object) $data;
+        $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
+        $data->itemid = $this->get_new_parentid('videotime_question_instance');
+        if ($entry = $this->get_mappingid('question_bank_entry', $data->questionbankentryid)) {
+            $data->questionbankentryid = $entry;
+        }
+        $DB->insert_record('question_references', $data);
+    }
+
+    /**
+     * Record new question usage
+     *
+     * @param int $newusageid New usage id
+     */
+    protected function inform_new_usage_id($newusageid) {
+        global $DB;
+
+        $data = $this->currentattempt;
+        if ($data === null) {
+            return;
+        }
+
+        $oldid = $data->id;
+        $data->qubaid = $newusageid;
+
+        $newitemid = $DB->insert_record('videotimeplugin_pro_attempt', $data);
+
+        // Save quiz_attempt->id mapping, because logs use it.
+        $this->set_mapping('videotime_attempt', $oldid, $newitemid, false);
+    }
 
     /**
      * Defines post-execution actions to dd files
      */
     protected function after_execute() {
+        global $DB;
+
         // Add videotime related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_videotime', 'intro', null);
         $this->add_related_files('mod_videotime', 'video_description', null);
         $this->add_related_files('mod_videotime', 'texttrack', 'videotime_track');
 
         $this->add_subplugin_files('videotimeplugin');
+
+        $records = $DB->get_records_sql(
+            "SELECT qr.itemid AS id, MAX(qv.questionid) AS questionid, iq.cueid
+               FROM {question_versions} qv
+               JOIN {question_references} qr ON qv.questionbankentryid = qr.questionbankentryid
+               JOIN {videotimetab_interaction_question} iq ON iq.id = qr.itemid
+              WHERE qr.usingcontextid = :contextid
+                    AND qr.component = 'mod_videotime'
+                    AND qr.questionarea = 'slot'
+           GROUP BY qr.itemid, iq.cueid",
+            ['contextid' => $this->task->get_contextid()]
+        );
+        foreach ($records as $record) {
+            $DB->update_record('videotimetab_interaction_question', $record);
+        }
     }
 }

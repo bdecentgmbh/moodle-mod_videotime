@@ -1,6 +1,6 @@
 # Video Time #
 
-The Video Time product family is a set of plugins to integrate Vimeo videos into moodle. The base activity is free to use and makes embedding videos into moodle super easy. The pro add-on provides a lot of features like tracking, resume, in-activity, app support, privacy support, next activity and many more. Business connects moodle to Vimeo, allowing the teacher to simply choose the video from within moodle.
+The Video Time product family is a set of plugins to integrate Vimeo videos into moodle. The base activity is free to use and makes embedding videos into moodle super easy. The pro add-on provides a lot of features like tracking, resume, in-activity, app support, privacy support, next activity and many more. Premium connects moodle to Vimeo, allowing the teacher to simply choose the video from within moodle.
 
 Read more about the Video Time Product Family here: <a href="http://bdecent.de/videotime">http://bdecent.de/videotime</a>.
 

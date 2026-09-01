@@ -70,6 +70,7 @@ export default class VideoTime extends VideoTimeBase {
 
         // Fire view event in Moodle on first play only.
         this.player.on("play", () => {
+            document.getElementById(this.elementId).dataset.status = true;
             if (!this.played) {
                 if (this.hasPro) {
                     this.startWatchInterval();

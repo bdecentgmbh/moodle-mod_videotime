@@ -28,6 +28,7 @@ define('VIDEOTIME_EVENT_TYPE_OPEN', 'open');
 define('VIDEOTIME_EVENT_TYPE_CLOSE', 'close');
 
 require_once($CFG->dirroot . '/lib/completionlib.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 
 use mod_videotime\videotime_instance;
 use mod_videotime\file_info_container;
@@ -61,6 +62,8 @@ function videotime_supports($feature) {
             return true;
         case FEATURE_GRADE_OUTCOMES:
             return false;
+        case FEATURE_USES_QUESTIONS:
+            return videotime_has_pro();
         default:
             return null;
     }
@@ -448,7 +451,7 @@ function videotime_update_completion($cmid) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+function mod_videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -471,6 +474,53 @@ function videotime_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 
         send_stored_file($file, null, 0, $forcedownload, $options);
     }
+}
+
+/**
+ * Called via pluginfile.php -> question_pluginfile to serve files belonging to
+ * a question in a question_attempt when that attempt is a videotime attempt.
+ *
+ * @param stdClass $course course settings object
+ * @param stdClass $context context object
+ * @param string $component the name of the component we are serving files for.
+ * @param string $filearea the name of the file area.
+ * @param int $qubaid the attempt usage id.
+ * @param int $slot the id of a question in this quiz attempt.
+ * @param array $args the remaining bits of the file path.
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function mod_videotime_question_pluginfile(
+    $course,
+    $context,
+    $component,
+    $filearea,
+    $qubaid,
+    $slot,
+    $args,
+    $forcedownload,
+    array $options = []
+) {
+    global $CFG, $DB, $USER;
+
+    $attempt = $DB->get_record('videotimeplugin_pro_attempt', ['qubaid' => $qubaid]);
+    $instance = mod_videotime\videotime_instance::instance_by_id($attempt->videotime);
+    require_login($course, false, $instance->get_cm());
+
+    // Change this if adding logic for review attempt.
+    if ($USER->id != $attempt->userid) {
+        send_file_not_found();
+    }
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/$component/$filearea/$relativepath";
+    if ((!$file = $fs->get_file_by_hash(sha1($fullpath))) || $file->is_directory()) {
+        send_file_not_found();
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
@@ -552,17 +602,17 @@ function videotime_is_totara() {
  * context when this is called
  *
  * @param settings_navigation $settings
- * @param navigation_node $videtimenode
+ * @param navigation_node $videotimenode
  * @return void
  * @throws \coding_exception
  * @throws moodle_exception
  */
-function videotime_extend_settings_navigation($settings, $videtimenode) {
+function videotime_extend_settings_navigation($settings, $videotimenode) {
     global $PAGE, $CFG;
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
-    $keys = $videtimenode->get_children_key_list();
+    $keys = $videotimenode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
     if ($i === false && array_key_exists(0, $keys)) {
@@ -583,7 +633,7 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
             'mod_videotime_options',
             new pix_icon('t/play', '')
         );
-        $videtimenode->add_node($node, $beforekey);
+        $videotimenode->add_node($node, $beforekey);
     }
     if (videotime_has_pro() && $PAGE->cm && has_capability('mod/videotime:view_report', $PAGE->cm->context)) {
         $node = navigation_node::create(
@@ -594,7 +644,7 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
             'mod_videotime_report',
             new pix_icon('t/grades', '')
         );
-        $videtimenode->add_node($node, $beforekey);
+        $videotimenode->add_node($node, $beforekey);
     }
 
     // Give subplugins a chance to extend the settings navigation.
@@ -603,9 +653,14 @@ function videotime_extend_settings_navigation($settings, $videtimenode) {
             require_once($directory . '/lib.php');
             $function = 'videotimeplugin_' . $plugin . '_extend_settings_navigation';
             if (function_exists($function)) {
-                $function($settings, $videtimenode);
+                $function($settings, $videotimenode);
             }
         }
+    }
+
+    // Add question bank.
+    if (videotime_has_pro()) {
+        question_extend_settings_navigation($videotimenode, $settings->get_page()->cm->context)->trim_if_empty();
     }
 }
 

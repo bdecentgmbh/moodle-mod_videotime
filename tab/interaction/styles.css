@@ -1,0 +1,12 @@
+.videotimetab_interaction .que {
+    display: flow;
+}
+
+.videotimetab_interaction .que .info {
+    float: none;
+    margin: 0;
+    width: 100%;
+}
+.videotimetab_interaction .que .content {
+    margin: 0;
+}

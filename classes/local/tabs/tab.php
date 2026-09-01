@@ -212,7 +212,7 @@ abstract class tab {
      */
     public function is_enabled(): bool {
         $name = preg_replace('/^videotimetab_(.*)\\\\tab/', '$1', get_called_class());
-        return !empty(get_config("videotimetab_$name", 'enabled')) && empty(self::added_dependencies());
+        return !empty(get_config("videotimetab_$name", 'enabled')) && empty(static::added_dependencies());
     }
 
     /**
