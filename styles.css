@@ -16,7 +16,8 @@ div.videotimetab-resize {
         display: block;
     }
     .videotimetab-resize-handle,
-    .vimeo-video-description,
+    .videotime-tab-instance .vimeo-container .vimeo-video-description,
+    .videotime-tab-instance .videotime-container .vimeo-video-description,
     .videotime-large-view {
         display: none;
     }
