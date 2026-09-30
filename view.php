@@ -22,7 +22,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_videotime\output\next_activity_button;
 use mod_videotime\videotime_instance;
 
 require(__DIR__ . '/../../config.php');
@@ -32,6 +31,7 @@ global $USER;
 
 // Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
+$full = optional_param('full', 0, PARAM_INT);
 
 // ... module instance id.
 $v  = optional_param('v', 0, PARAM_INT);
@@ -57,6 +57,9 @@ require_capability('mod/videotime:view', $context);
 
 $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
+if ($full) {
+    $PAGE->set_pagelayout('popup');
+}
 if (class_exists('core\\output\\activity_header') && empty($moduleinstance->show_description_in_player)) {
     $PAGE->activityheader->set_description('');
 }
@@ -78,7 +81,7 @@ $renderer = $PAGE->get_renderer('mod_videotime');
 
 echo $OUTPUT->header();
 
-if (!class_exists('core\\output\\activity_header')) {
+if (!class_exists('core\\output\\activity_header') && !$full) {
     echo $OUTPUT->heading(format_string($moduleinstance->name), 2);
 }
 
@@ -97,6 +100,9 @@ if (empty($player)) {
         $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
         $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
         echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+    }
+    if ($full) {
+        echo $OUTPUT->heading(format_string($moduleinstance->name));
     }
 
     echo $renderer->render($moduleinstance);
