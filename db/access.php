@@ -46,6 +46,13 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/course:manageactivities',
     ],
 
+    'mod/videotime:expandview' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+        ],
+    ],
+
     'mod/videotime:view_report' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
