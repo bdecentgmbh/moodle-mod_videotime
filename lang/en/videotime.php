@@ -306,6 +306,7 @@ $string['videoopen'] = 'Allow viewing from';
 $string['videos_discovered'] = 'Videos discovered';
 $string['videos_processed'] = 'Videos processed';
 $string['videotime:addinstance'] = 'Add a new Video Time module';
+$string['videotime:expandview'] = 'Expand view';
 $string['videotime:ignorepreventfastforwarding'] = 'Ignore prevent fast forwarding';
 $string['videotime:view'] = 'View Video Time video';
 $string['videotime:view_report'] = 'View report (Pro only)';
