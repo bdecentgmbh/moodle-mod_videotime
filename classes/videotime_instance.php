@@ -29,6 +29,8 @@ use core_component;
 use core_external\external_description;
 use core_external\external_single_structure;
 use core_external\external_value;
+use moodle_url;
+use single_button;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
@@ -413,6 +415,30 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
+     * Get fullscreen button for instance.
+     *
+     * @return single_button|null
+     * @throws \coding_exception
+     */
+    public function get_fullscreen_button(): ?single_button {
+        $full = optional_param('full', 0, PARAM_INT);
+        $cm = $this->get_cm();
+
+        if ($full) {
+            $button = new single_button(new moodle_url('/mod/videotime/view.php', [
+                'id' => $cm->id,
+            ]), get_string('collapse'), 'get');
+        } else {
+            $button = new single_button(new moodle_url('/mod/videotime/view.php', [
+                'id' => $cm->id,
+                'full' => 1,
+            ]), get_string('expand'), 'get', single_button::BUTTON_PRIMARY, ['title' => 'Fullscreen']);
+        }
+
+        return $button;
+    }
+
+    /**
      * Get next activity button for instance.
      *
      * @return next_activity_button|null
@@ -517,6 +543,10 @@ class videotime_instance implements \renderable, \templatable {
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
+            'fullscreen_button' => has_capability('mod/videotime:expandview', $this->get_context()) ? $output->render(
+                $this->get_fullscreen_button()
+            ) : '',
+
         ];
 
         if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
