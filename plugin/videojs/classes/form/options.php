@@ -73,6 +73,9 @@ class options extends moodleform {
 
         $mform = $this->_form;
 
+        $mform->addElement('hidden', 'mediatimeid', $this->_customdata['instance']->mediatimeid ?? 0);
+        $mform->setType('mediatimeid', PARAM_INT);
+
         if (!videotime_has_pro()) {
             $mform->addElement('static', '', '', html_writer::link(
                 new moodle_url('https://link.bdecent.de/videotimepro1'),

@@ -145,6 +145,16 @@ class vimeo_embed implements \renderable, \templatable {
                 )->out(false);
             }
         }
+        if (!empty($this->record->mediatimeid) && !empty($this->record->mediatimetracks)) {
+            $record = $DB->get_record('tool_mediatime', ['id' => $this->record->mediatimeid]);
+            $resource = new \tool_mediatime\output\media_resource($record);
+            foreach ($resource->texttracks() as $texttrack) {
+                $texttrack->kind = $texttrack->type;
+                $texttrack->srclang = $texttrack->language;
+                $texttrack->visible = true;
+                $texttracks[] = $texttrack;
+            }
+        }
         foreach ($texttracks as $texttrack) {
             $texttrack->{$texttrack->kind} = true;
         }
