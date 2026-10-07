@@ -41,7 +41,7 @@ if ($id) {
     $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
     $moduleinstance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
 } else if ($v) {
-    $moduleinstance = $DB->get_record('videotime', ['id' => $n], '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', ['id' => $v], '*', MUST_EXIST);
     $course         = $DB->get_record('course', ['id' => $moduleinstance->course], '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
@@ -72,7 +72,9 @@ foreach (array_keys(core_component::get_plugin_list('videotimeplugin')) as $name
 }
 
 $returnurl = new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]);
-if ($form->is_cancelled()) {
+if (empty($form)) {
+    throw new \moodle_exception('No player available');
+} else if ($form->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $form->get_data()) {
     $defaults = [];

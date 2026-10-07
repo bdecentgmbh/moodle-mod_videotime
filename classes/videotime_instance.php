@@ -129,10 +129,14 @@ class videotime_instance implements \renderable, \templatable {
     public static function instance_by_id($id, $token = ''): videotime_instance {
         global $DB;
 
-        $instance = new videotime_instance($DB->get_record('videotime', ['id' => $id], "*, '{$token}' AS token", MUST_EXIST));
+        $record = $DB->get_record('videotime', ['id' => $id], "*", MUST_EXIST);
+        $record->token = $token;
+        $instance = new videotime_instance($record);
+
         if ($instance->enabletabs) {
             $instance->tabs = new tabs($instance);
         }
+
         return $instance;
     }
 

@@ -103,8 +103,9 @@ class tab extends \mod_videotime\local\tabs\tab {
             foreach ($captions as $caption) {
                 $caption->lines = array_map(function ($text) use ($query) {
                     $text = s($text);
+                    $needle = s($query);
                     if ($query) {
-                        $text = str_replace($query, "<span class=\"text-secondary\">$query</span>", s($text));
+                        $text = str_replace($query, "<span class=\"text-secondary\">$needle</span>", s($text));
                     }
                     return ['text' => $text];
                 }, explode("\n", $caption->text));

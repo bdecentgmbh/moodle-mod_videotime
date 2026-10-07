@@ -59,6 +59,7 @@ class renew_token extends external_api {
 
         $context = context::instance_by_id($contextid);
         self::validate_context($context);
+        require_capability('mod/videotime:view', $context);
 
         $socket = new socket($context);
         $token = $socket->get_token();

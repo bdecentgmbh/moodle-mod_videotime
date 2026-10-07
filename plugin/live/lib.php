@@ -226,6 +226,8 @@ function videotimeplugin_live_pluginfile($course, $cm, $context, $filearea, $arg
         return false;
     }
 
+    require_login();
+
     // Extract the filename / filepath from the $args array.
     $filename = array_pop($args);
     if (!$args) {
