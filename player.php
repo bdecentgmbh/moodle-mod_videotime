@@ -66,12 +66,10 @@ if (
     ])
 ) {
     \core\session\manager::login_user($user);
-} else {
-    require_login($course, true, $cm);
-    throw new moodle_exception('notoken');
-
-    require_capability('mod/videotime:view', $context);
 }
+
+require_login($course, true, $cm);
+require_capability('mod/videotime:view', $context);
 
 $PAGE->set_url('/mod/videotime/player.php', ['id' => $cm->id]);
 $PAGE->set_pagelayout('popup');
