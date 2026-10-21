@@ -73,6 +73,7 @@ require_capability('mod/videotime:view', $context);
 
 $PAGE->set_cm($cm, $course);
 $PAGE->set_url('/mod/videotime/player.php', ['id' => $cm->id]);
+$PAGE->set_cm($cm, $course);
 $PAGE->set_pagelayout('popup');
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->add_body_class('limitedwidth');
