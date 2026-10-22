@@ -73,5 +73,19 @@ function xmldb_videotimetab_interaction_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026031003, 'videotimetab', 'interaction');
     }
 
+    if ($oldversion < 2026031009) {
+        // Define field action to be added to videotimetab_interaction.
+        $table = new xmldb_table('videotimetab_interaction');
+        $field = new xmldb_field('action', XMLDB_TYPE_CHAR, '40', null, null, null, 'pause', 'videotime');
+
+        // Conditionally launch add field action.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Interaction savepoint reached.
+        upgrade_plugin_savepoint(true, 2026031009, 'videotimetab', 'interaction');
+    }
+
     return true;
 }

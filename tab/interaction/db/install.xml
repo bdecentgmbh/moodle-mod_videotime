@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/videotime/tab/interaction/db" VERSION="20260704" COMMENT="XMLDB file for Moodle mod/videotime/tab/interaction"
+<XMLDB PATH="mod/videotime/tab/interaction/db" VERSION="20261022" COMMENT="XMLDB file for Moodle mod/videotime/tab/interaction"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="videotimetab_interaction" COMMENT="Default comment for videotimetab_interaction, please edit me">
+    <TABLE NAME="videotimetab_interaction" COMMENT="Settings for interaction tab">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="videotime" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="40" NOTNULL="false" DEFAULT="pause" SEQUENCE="false"/>
         <FIELD NAME="spacing" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Interval used for random interactions"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
