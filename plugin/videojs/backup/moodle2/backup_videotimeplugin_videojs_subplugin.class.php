@@ -40,6 +40,7 @@ class backup_videotimeplugin_videojs_subplugin extends backup_subplugin {
             'responsive',
             'autoplay',
             'controls',
+            'fullscreen',
             'muted',
             'height',
             'option_loop',
