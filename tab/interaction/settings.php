@@ -74,6 +74,18 @@ if ($hassiteconfig) {
         $options
     ));
 
+    $settings->add(new admin_setting_configselect(
+        'videotimetab_interaction/promptposition',
+        new lang_string('promptposition', 'videotimetab_interaction'),
+        new lang_string('promptposition_desc', 'videotimetab_interaction'),
+        'below',
+        [
+            'below' => new lang_string('promptpositionbelow', 'videotimetab_interaction'),
+            'above' => new lang_string('promptpositionabove', 'videotimetab_interaction'),
+            'overlay' => new lang_string('promptpositionoverlay', 'videotimetab_interaction'),
+        ]
+    ));
+
     // Preferred behaviour.
     $setting = new admin_setting_question_behaviour(
         'videotimetab_interaction/preferredbehaviour',
