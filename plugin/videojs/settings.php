@@ -71,6 +71,13 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configcheckbox(
+        'videotimeplugin_videojs/fullscreen',
+        get_string('option_fullscreen', 'videotime'),
+        get_string('option_fullscreen_help', 'videotime'),
+        '1'
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
         'videotimeplugin_videojs/option_loop',
         get_string('option_loop', 'videotime'),
         get_string('option_loop_help', 'videotime'),
@@ -118,6 +125,7 @@ if ($ADMIN->fulltree) {
         'autoplay' => new lang_string('option_autoplay', 'videotime'),
         'responsive' => new lang_string('option_responsive', 'videotime'),
         'controls' => new lang_string('option_controls', 'videotime'),
+        'fullscreen' => new lang_string('option_fullscreen', 'videotime'),
         'height' => new lang_string('option_height', 'videotime'),
         'muted' => new lang_string('option_muted', 'videotime'),
         'option_loop' => new lang_string('option_loop', 'videotime'),
