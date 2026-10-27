@@ -122,6 +122,7 @@ final class force_settings_test extends advanced_testcase {
         return [
             'autoplay',
             'controls',
+            'fullscreen',
             'muted',
             'option_loop',
             'playsinline',

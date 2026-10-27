@@ -45,3 +45,15 @@ Feature: Configure videojs settings
     When I am on the "Video Time with controls" "videotime activity" page logged in as "teacher"
     And I wait "3" seconds
     Then ".vjs-controls-disabled" "css_element" should exist
+
+  @javascript
+  Scenario: Force fullscreen setting off
+    Given the following config values are set as admin:
+      | forced     | fullscreen | videotimeplugin_videojs |
+      | fullscreen | 0          | videotimeplugin_videojs |
+    When I am on the "Video Time with controls" "mod_videotime > Embed options" page logged in as "teacher"
+    Then I should see "Fullscreen is globally forced to: No"
+    And I am on the "Video Time with controls" "videotime activity" page
+    And I wait "3" seconds
+    And ".vjs-play-control" "css_element" should exist
+    And ".vjs-fullscreen-control" "css_element" should not exist
