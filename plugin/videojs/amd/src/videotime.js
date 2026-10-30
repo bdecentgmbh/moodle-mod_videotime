@@ -44,11 +44,15 @@ export default class VideoTime extends VideoTimeBase {
         Log.debug(options);
         this.player = new Player(this.elementId, options);
 
+        this.rememberVolume();
+
         this.player.one("loadedmetadata", () => {
             this.resume();
         });
 
         this.handleStartTime();
+
+        this.handleTheatreMode();
 
         this.addListeners();
 
@@ -58,6 +62,24 @@ export default class VideoTime extends VideoTimeBase {
         }
 
         return true;
+    }
+
+    /**
+     * Keep the volume level between page loads, as the Vimeo player does.
+     */
+    rememberVolume() {
+        const key = "videotimeplugin_videojs_volume";
+        try {
+            const volume = window.localStorage.getItem(key);
+            if (volume !== null) {
+                this.player.volume(Number(volume));
+            }
+            this.player.on("volumechange", () => {
+                window.localStorage.setItem(key, this.player.volume());
+            });
+        } catch (e) {
+            Log.debug(e);
+        }
     }
 
     /**

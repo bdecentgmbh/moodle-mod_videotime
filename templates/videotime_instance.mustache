@@ -50,7 +50,7 @@
             <div class="videotime-theatre-navbar flex-grow-1">
                 {{{ navbar }}}
             </div>
-            <a class="videotime-theatre-close btn btn-icon flex-shrink-0" href="{{ exiturl }}"
+            <a class="videotime-theatre-close btn btn-icon flex-shrink-0" href="{{ exiturl }}" data-action="theatremode"
                 title="{{# str }} exittheatremode, mod_videotime {{/ str }}"
                 aria-label="{{# str }} exittheatremode, mod_videotime {{/ str }}"
             >{{# pix }} e/cancel, core {{/ pix }}</a>
@@ -64,7 +64,7 @@
                 {{{next_activity_button_html}}}
             </div>
             {{#theatremodeurl}}
-                <a class="btn btn-secondary mb-2" href="{{ theatremodeurl }}">
+                <a class="btn btn-secondary mb-2" href="{{ theatremodeurl }}" data-action="theatremode">
                     {{# pix }} e/fullscreen, core {{/ pix }}{{# str }} theatremode, mod_videotime {{/ str }}
                 </a>
             {{/theatremodeurl}}

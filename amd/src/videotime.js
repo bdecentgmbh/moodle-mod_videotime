@@ -92,6 +92,8 @@ define([
 
         this.handleStartTime();
 
+        this.handleTheatreMode();
+
         this.addListeners();
 
         for (let i = 0; i < this.plugins.length; i++) {
@@ -112,6 +114,33 @@ define([
         if (q && window.find) {
             window.find(q);
         }
+    };
+
+    /**
+     * Keep the position and open tab when switching to or from theatre mode.
+     */
+    VideoTime.prototype.handleTheatreMode = function() {
+        document.querySelectorAll('[data-action="theatremode"]').forEach(link => {
+            link.addEventListener('click', async(e) => {
+                e.preventDefault();
+                const url = new URL(link.href),
+                    tab = document.querySelector('.videotimetabs [role="tab"].active');
+                if (tab) {
+                    url.searchParams.set('active', tab.dataset.name);
+                }
+                try {
+                    // Pausing also records the watch time in pro.
+                    await this.player.pause();
+                    const position = await this.getCurrentPosition();
+                    if (position) {
+                        url.searchParams.set('time', position.toFixed(2));
+                    }
+                } catch (error) {
+                    Log.debug(error);
+                }
+                window.location.href = url.href;
+            });
+        });
     };
 
     /**
@@ -273,7 +302,8 @@ define([
     };
 
     VideoTime.prototype.resume = async function() {
-        if (this.resumed) {
+        // A start time in the URL takes precedence.
+        if (this.resumed || this.resumeTime !== null) {
             return false;
         }
         const duration = await this.getDuration();
