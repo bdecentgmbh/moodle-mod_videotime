@@ -29,6 +29,8 @@
 
     Variables optional for this template:
     * next_activity_button_html - markup for next activity button
+    * theatremodeurl - link to theatre mode
+    * theatremode - breadcrumb and exit link when in theatre mode
 
     Example context (json):
     {
@@ -36,21 +38,37 @@
         "uniqueid": "60dccff8871f6",
         "next_activity_button_html": "<button>Next</button>",
         "player": "<iframe></iframe>",
-        "video_description": "UX design tips"
+        "video_description": "UX design tips",
+        "theatremodeurl": "#"
     }
 
 }}
 {{#instance}}
-    <div style="display: flex">
-        <div id="next-activity-button">
-            {{{next_activity_button_html}}}
+    {{#theatremode}}
+        <div class="videotime-theatre-bar d-flex align-items-center mb-1">
+            <h1 class="accesshide">{{{ name }}}</h1>
+            <div class="videotime-theatre-navbar flex-grow-1">
+                {{{ navbar }}}
+            </div>
+            <a class="videotime-theatre-close btn btn-icon flex-shrink-0" href="{{ exiturl }}"
+                title="{{# str }} exittheatremode, mod_videotime {{/ str }}"
+                aria-label="{{# str }} exittheatremode, mod_videotime {{/ str }}"
+            >{{# pix }} e/cancel, core {{/ pix }}</a>
         </div>
-        <div id="fullscreen-button">
-            {{{ fullscreen_button }}}
-        </div>
-    </div>
+    {{/theatremode}}
 
-    <div class="container-fluid position-relative">
+    <div class="container-fluid position-relative{{#theatremode}} videotime-theatre mx-auto{{/theatremode}}">
+        <div class="videotime-toolbar d-flex justify-content-end align-items-start">
+            {{! The button does not link to theatre mode, but the player script updates it. }}
+            <div id="next-activity-button"{{#theatremode}} class="d-none"{{/theatremode}}>
+                {{{next_activity_button_html}}}
+            </div>
+            {{#theatremodeurl}}
+                <a class="btn btn-secondary mb-2" href="{{ theatremodeurl }}">
+                    {{# pix }} e/fullscreen, core {{/ pix }}{{# str }} theatremode, mod_videotime {{/ str }}
+                </a>
+            {{/theatremodeurl}}
+        </div>
     {{^tabshtml}}
         {{{ intro }}}
         {{{ player }}}

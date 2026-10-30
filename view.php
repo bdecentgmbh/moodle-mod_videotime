@@ -59,6 +59,10 @@ $PAGE->set_url('/mod/videotime/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 if ($full) {
     $PAGE->set_pagelayout('popup');
+    // Moodle 5.3 and later show course navigation in a footer.
+    if (method_exists($PAGE, 'set_show_navigation_footer')) {
+        $PAGE->set_show_navigation_footer(false);
+    }
 }
 if (class_exists('core\\output\\activity_header') && empty($moduleinstance->show_description_in_player)) {
     $PAGE->activityheader->set_description('');
@@ -100,9 +104,6 @@ if (empty($player)) {
         $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
         $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
         echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-    }
-    if ($full) {
-        echo $OUTPUT->heading(format_string($moduleinstance->name));
     }
 
     echo $renderer->render($moduleinstance);

@@ -30,7 +30,6 @@ use core_external\external_description;
 use core_external\external_single_structure;
 use core_external\external_value;
 use moodle_url;
-use single_button;
 use mod_videotime\local\tabs\tabs;
 use mod_videotime\output\next_activity_button;
 use renderer_base;
@@ -419,27 +418,31 @@ class videotime_instance implements \renderable, \templatable {
     }
 
     /**
-     * Get fullscreen button for instance.
+     * Get template data for the theatre mode button or bar.
      *
-     * @return single_button|null
+     * @return array
      * @throws \coding_exception
      */
-    public function get_fullscreen_button(): ?single_button {
-        $full = optional_param('full', 0, PARAM_INT);
-        $cm = $this->get_cm();
+    public function get_theatre_mode(): array {
+        global $OUTPUT;
 
-        if ($full) {
-            $button = new single_button(new moodle_url('/mod/videotime/view.php', [
-                'id' => $cm->id,
-            ]), get_string('collapse'), 'get');
-        } else {
-            $button = new single_button(new moodle_url('/mod/videotime/view.php', [
-                'id' => $cm->id,
-                'full' => 1,
-            ]), get_string('expand'), 'get', single_button::BUTTON_PRIMARY, ['title' => 'Fullscreen']);
+        $cm = $this->get_cm();
+        $url = new moodle_url('/mod/videotime/view.php', ['id' => $cm->id]);
+
+        if ($this->is_embed() || !empty($this->token)) {
+            // Not in label mode or the mobile app player.
+            return [];
+        } else if (optional_param('full', 0, PARAM_INT)) {
+            return ['theatremode' => [
+                'navbar' => $OUTPUT->navbar(),
+                'exiturl' => $url->out(false),
+            ]];
+        } else if (has_capability('mod/videotime:expandview', $this->get_context())) {
+            $url->param('full', 1);
+            return ['theatremodeurl' => $url->out(false)];
         }
 
-        return $button;
+        return [];
     }
 
     /**
@@ -547,11 +550,7 @@ class videotime_instance implements \renderable, \templatable {
             'plugins' => file_exists($CFG->dirroot . '/mod/videotime/plugin/pro/templates/plugins.mustache'),
             'uniqueid' => $this->get_uniqueid(),
             'toast' => file_exists($CFG->dirroot . '/lib/amd/src/toast.js'),
-            'fullscreen_button' => has_capability('mod/videotime:expandview', $this->get_context()) ? $output->render(
-                $this->get_fullscreen_button()
-            ) : '',
-
-        ];
+        ] + $this->get_theatre_mode();
 
         if (videotime_has_pro() && !$this->is_embed() && $nextactivitybutton = $this->get_next_activity_button()) {
             $context['next_activity_button_html'] = $output->render($nextactivitybutton);

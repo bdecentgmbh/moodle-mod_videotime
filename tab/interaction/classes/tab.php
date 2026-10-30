@@ -68,7 +68,9 @@ class tab extends \mod_videotime\local\tabs\tab {
             'spacing' => $settings->spacing ?? null,
             'prompteffect' => (float)get_config('videotimetab_interaction', 'prompteffect'),
             'interactionpenalty' => $settings->action,
-            'promptposition' => get_config('videotimetab_interaction', 'promptposition'),
+            // Theatre mode always shows prompts on the video.
+            'promptposition' => optional_param('full', 0, PARAM_INT)
+                ? 'overlay' : get_config('videotimetab_interaction', 'promptposition'),
         ];
 
         return $OUTPUT->render_from_template(

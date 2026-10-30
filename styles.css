@@ -814,3 +814,90 @@ body.ie .video-image-preview .img-responsive {
 .modtype_videotime.label_mode .description .course-description-item:last-child {
     padding: 5px;
 }
+
+.videotime-toolbar,
+.videotime-theatre-bar {
+    gap: .5rem;
+}
+
+/* Theatre mode uses the popup layout, which keeps space for a navbar it doesn't show. */
+#page-mod-videotime-view.pagelayout-popup #page {
+    margin-top: 0;
+}
+
+/* Page width without the scrollbar, for cqw units below. */
+#page-mod-videotime-view.pagelayout-popup {
+    container-type: inline-size; /* stylelint-disable-line csstree/validator */
+}
+
+/* Subtle background across the full width of the screen. */
+.videotime-theatre-bar {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    box-shadow: 0 0 0 100vmax var(--bs-secondary-bg, #e9ecef);
+    clip-path: inset(-100vmax -100vmax 0);
+}
+
+/* The breadcrumb stays on one row, as in core on small screens. */
+.videotime-theatre-navbar {
+    min-width: 0;
+}
+
+.videotime-theatre-navbar .breadcrumb:not(:empty) {
+    flex-wrap: nowrap;
+    margin-bottom: 0;
+}
+
+.videotime-theatre-navbar .breadcrumb-item {
+    display: inline-flex;
+    overflow: hidden;
+}
+
+.videotime-theatre-navbar .breadcrumb-item a,
+.videotime-theatre-navbar .breadcrumb-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* A larger area to click or tap than the icon itself. */
+.videotime-theatre-bar .videotime-theatre-close {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Fit a 16:9 video between the bar and the bottom of the screen. */
+.videotime-theatre {
+    --videotime-theatre-height: calc(100vh - 7.5rem);
+    max-width: calc(var(--videotime-theatre-height) * 16 / 9);
+}
+
+/* Without tabs, the video also gets the height of the tab bar. */
+.videotime-theatre:not(:has(.videotimetabs)) {
+    --videotime-theatre-height: calc(100vh - 4rem);
+}
+
+/* The video uses the full screen width, unless the screen height limits it. */
+.videotime-theatre .persistent-tab .instance-container,
+.videotime-theatre .videotime-small-view.instance-container,
+.videotime-theatre:not(:has(.videotimetabs)) :is(.vimeo-embed, .videotime-embed) {
+    margin-left: calc(50% - min(50cqw, var(--videotime-theatre-height) * 8 / 9));
+    margin-right: calc(50% - min(50cqw, var(--videotime-theatre-height) * 8 / 9));
+}
+
+/* Black bands beside the video in the Watch tab, or without tabs. */
+.videotime-theatre:has(.persistent-tab.active) .videotime-tab-instance iframe:not(.videotime-interaction-overlay *),
+.videotime-theatre:has(.persistent-tab.active) .videotime-tab-instance .video-js:not(.videotime-interaction-overlay *),
+.videotime-theatre:not(:has(.videotimetabs)) :is(.vimeo-embed, .videotime-embed) :is(iframe, .video-js) {
+    box-shadow: 0 0 0 100vmax #000;
+    clip-path: inset(0 -100vmax);
+}
+
+/* Notes go below the video, as on small screens. */
+.videotime-theatre .videotime-tab-instance .vimeo-video-description {
+    display: none;
+}
+
+.videotime-theatre .persistent-tab .videotime-small-view {
+    display: block;
+    margin-top: 1rem;
+}
