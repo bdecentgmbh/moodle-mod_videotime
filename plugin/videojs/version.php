@@ -30,6 +30,6 @@ $plugin->version = 2025092204;
 $plugin->requires = 2015111610;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = [
-    'videotime' => 2023011200,
+    'mod_videotime' => 2023011200,
     'media_videojs' => 2015111600,
 ];
