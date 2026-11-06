@@ -32,6 +32,7 @@ $string['default'] = 'Default';
 $string['default_help'] = 'Whether tab is enabled by default';
 $string['hidden'] = '(Hidden)';
 $string['label'] = 'Transcript';
+$string['metadata'] = 'Metadata';
 $string['pluginname'] = 'Video Time Transcript tab';
 $string['privacy:metadata'] = 'The Video Time Transcript tab plugin does not store any personal data.';
 $string['upgradeplugin'] = 'This plugin requires installation of Video Time Premium to enable.';
