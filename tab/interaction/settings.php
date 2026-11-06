@@ -86,6 +86,18 @@ if ($hassiteconfig) {
         ]
     ));
 
+    $settings->add(new admin_setting_configselect(
+        'videotimetab_interaction/interactionpenalty',
+        new lang_string('interactionpenalty', 'videotimetab_interaction'),
+        new lang_string('interactionpenalty_help', 'videotimetab_interaction'),
+        'pause',
+        [
+            'pause' => new lang_string('pause', 'videotimetab_interaction'),
+            'restart' => new lang_string('restart', 'videotimetab_interaction'),
+            'lastinteraction' => new lang_string('lastinteraction', 'videotimetab_interaction'),
+        ]
+    ));
+
     // Preferred behaviour.
     $setting = new admin_setting_question_behaviour(
         'videotimetab_interaction/preferredbehaviour',

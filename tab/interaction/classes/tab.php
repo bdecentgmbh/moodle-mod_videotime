@@ -67,7 +67,7 @@ class tab extends \mod_videotime\local\tabs\tab {
             'interactionid' => $interaction->id ?? null,
             'spacing' => $settings->spacing ?? null,
             'prompteffect' => (float)get_config('videotimetab_interaction', 'prompteffect'),
-            'interactionpenalty' => $settings->action,
+            'interactionpenalty' => $settings->action ?? get_config('videotimetab_interaction', 'interactionpenalty'),
             // Theatre mode always shows prompts on the video.
             'promptposition' => optional_param('full', 0, PARAM_INT)
                 ? 'overlay' : get_config('videotimetab_interaction', 'promptposition'),
@@ -109,6 +109,9 @@ class tab extends \mod_videotime\local\tabs\tab {
             'restart' => get_string('restart', 'videotimetab_interaction'),
             'lastinteraction' => get_string('lastinteraction', 'videotimetab_interaction'),
         ]);
+        $mform->setDefault('interactionpenalty', get_config('videotimetab_interaction', 'interactionpenalty'));
+        $mform->disabledIf('interactionpenalty', 'enabletabs', 'unchecked');
+        $mform->disabledIf('interactionpenalty', 'enable_interaction', 'unchecked');
         $mform->addHelpButton('interactionpenalty', 'interactionpenalty', 'videotimetab_interaction');
     }
 
