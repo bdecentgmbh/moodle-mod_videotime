@@ -29,6 +29,10 @@ export default class VideoTime extends VideoTimeBase {
                     : [1],
                 muted: Number(instance.muted)
             };
+        if (!Number(instance.fullscreen)) {
+            options.controlBar = {fullscreenToggle: false};
+            options.userActions = {doubleClick: false};
+        }
         if (instance.type === "video/youtube") {
             options.techOrder = ["youtube"];
         }
