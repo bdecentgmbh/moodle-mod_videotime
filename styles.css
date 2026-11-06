@@ -814,3 +814,7 @@ body.ie .video-image-preview .img-responsive {
 .modtype_videotime.label_mode .description .course-description-item:last-child {
     padding: 5px;
 }
+
+.videotime-buttons {
+    display: flex;
+}
