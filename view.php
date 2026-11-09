@@ -65,6 +65,7 @@ if (class_exists('core\\output\\activity_header') && empty($moduleinstance->show
 }
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->add_body_class('limitedwidth');
+$PAGE->requires->js_call_amd('mod_videotime/fullscreen', 'initialize', []);
 
 $edit = optional_param('edit', null, PARAM_BOOL);
 if ($edit !== null && confirm_sesskey() && $PAGE->user_allowed_editing()) {
