@@ -1,0 +1,297 @@
+name: Release
+
+# Release workflow of bdecent's Moodle plugins – standalone copy of bdecentgmbh/bd-workflows
+# .github/workflows/moodle-plugin-release.yml (keep them in step; a public repository cannot call that private one).
+# Unlike there, releases are made from master, the default branch of this repository. Runs when a GitHub release
+# is published:
+#
+#   Pre-release (tick "Set as a pre-release"), tag v<release> or v<release>-<suffix>, e.g. v1.1-rc1, from any branch:
+#     ZIP attached to the GitHub release, then staging.bdecent.de only (the shop products of the repo).
+#   Release, tag v<release> or v<release>-r<n>, on master, with a "## <release> (<version>)" section in CHANGES.md:
+#     ZIP attached, Moodle Marketplace, then bdecent.de and staging:
+#     the ZIP goes to every product whose GitHub tab names the repo, and a draft release note is created
+#     (bdecent-core, includes/release-webhook.php). Promoting a pre-release to a release runs the release steps.
+#
+#   Totara, tag v<release>t or v<release>t-r<n>, e.g. v1.5t-r2, and the older Video Time form v<release>-t<n>,
+#     e.g. v1.8.2-t18: not handled here, the run stops without publishing anything. Totara builds are published by
+#     hand in the product's GitHub tab.
+#
+# Video Time Pro and Premium are not released here: see "Releases" in README.md.
+#
+# Before anything is published, "Moodle Plugin CI" (moodle-ci.yml) must have passed on the tagged commit.
+# Re-run: Actions > Release > Run workflow, with the tag (the release must exist on GitHub).
+#
+# Repository secrets:
+#   BDECENT_RELEASE_SECRET   HMAC key of the bdecent.de release webhook (wp-config.php BDECENT_RELEASE_SECRET).
+#   BDECENT_STAGING_AUTH     "user:password" of staging.bdecent.de's basic auth.
+#   MOODLE_MARKETPLACE_TOKEN API token of a maintainer of mod_videotime at https://marketplace.moodle.com/account/security.
+on:
+  release:
+    types: [prereleased, released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag of an existing GitHub release (e.g. v1.1)'
+        required: true
+      dry_run:
+        description: 'Only check, do not publish'
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-${{ inputs.tag || github.event.release.tag_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  platform:
+    name: Check the platform
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      moodle: ${{ steps.tag.outputs.moodle }}
+    steps:
+      - name: Stop on a Totara tag
+        id: tag
+        env:
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          if [[ "${TAG}" =~ ^v[0-9]+(\.[0-9]+)*t(-|$) || "${TAG}" =~ ^v[0-9]+(\.[0-9]+)*-t[0-9]+$ ]]; then
+            echo "::notice::${TAG} is a Totara tag: nothing was published. Publish Totara builds by hand in the product's GitHub tab."
+            echo "moodle=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "moodle=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  prepare:
+    name: Check the release
+    needs: platform
+    if: ${{ needs.platform.outputs.moodle == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      prerelease: ${{ steps.release.outputs.prerelease }}
+      release: ${{ steps.check.outputs.release }}
+      component: ${{ steps.check.outputs.component }}
+      zip: ${{ steps.check.outputs.zip }}
+      notes: ${{ steps.notes.outputs.notes }}
+      marketplace_notes: ${{ steps.notes.outputs.marketplace }}
+    steps:
+      - name: Find the GitHub release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TAG}" ]; then
+            echo "::error::No tag: call this workflow from a release event or pass the tag."
+            exit 1
+          fi
+          # Read the flag from GitHub, so a re-run uses the release's current state.
+          PRE=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}" --jq '.prerelease')
+          echo "Release ${TAG}, pre-release: ${PRE}"
+          { echo "tag=${TAG}"; echo "prerelease=${PRE}"; } >> "$GITHUB_OUTPUT"
+
+      - name: Check out the tag
+        uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Check tag, version.php and branch
+        id: check
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          PRE: ${{ steps.release.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+          VERSIONPHP='foreach (["MATURITY_ALPHA" => 50, "MATURITY_BETA" => 100, "MATURITY_RC" => 150, "MATURITY_STABLE" => 200] as $k => $v) define($k, $v); define("MOODLE_INTERNAL", 1); $plugin = new stdClass(); include "version.php";'
+          RELEASE=$(php -r "${VERSIONPHP} echo \$plugin->release;")
+          VERSION=$(php -r "${VERSIONPHP} echo \$plugin->version;")
+          COMPONENT=$(php -r "${VERSIONPHP} echo \$plugin->component;")
+          if [ -z "${COMPONENT}" ] || [[ "${COMPONENT}" != *_* ]]; then
+            echo "::error::version.php has no \$plugin->component."
+            exit 1
+          fi
+          if [ "${PRE}" = "true" ]; then
+            # Pre-release: v<release> or v<release>-<suffix> (e.g. v1.1-rc1), any branch.
+            [[ "${TAG}" == "v${RELEASE}" || "${TAG}" == "v${RELEASE}-"* ]] || {
+              echo "::error::Pre-release tag ${TAG} does not start with v${RELEASE} (\$plugin->release in version.php)."; exit 1; }
+          else
+            # Release: v<release> or v<release>-r<n>, on master.
+            if [[ "${TAG}" =~ ^v(.+)-r[0-9]+$ ]]; then TAGRELEASE="${BASH_REMATCH[1]}"; else TAGRELEASE="${TAG#v}"; fi
+            if [ "${TAG:0:1}" != "v" ] || [ "${TAGRELEASE}" != "${RELEASE}" ]; then
+              echo "::error::Tag ${TAG} does not match \$plugin->release '${RELEASE}' (expected v${RELEASE} or v${RELEASE}-r<n>). Tick 'Set as a pre-release' for test builds."
+              exit 1
+            fi
+            if ! git merge-base --is-ancestor "${TAG}^{commit}" origin/master; then
+              echo "::error::${TAG} is not on master. Merge dev into master and tag the merge commit, or publish it as a pre-release."
+              exit 1
+            fi
+          fi
+          echo "Releasing ${COMPONENT} ${RELEASE} (${VERSION}) from $(git rev-parse --short "${TAG}^{commit}")."
+          {
+            echo "release=${RELEASE}"
+            echo "component=${COMPONENT}"
+            echo "zip=${COMPONENT}_${TAG#v}.zip"
+            echo "sha=$(git rev-parse "${TAG}^{commit}")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Take the release notes from CHANGES.md
+        id: notes
+        env:
+          RELEASE: ${{ steps.check.outputs.release }}
+          PRE: ${{ steps.release.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+          # The section from "## <release> (" to the next "## " heading, without its heading.
+          touch notes.md
+          if [ -f CHANGES.md ]; then
+            awk -v heading="## ${RELEASE} (" 'index($0, heading) == 1 {found = 1; next} found && /^## / {exit} found' \
+              CHANGES.md | sed -e '/./,$!d' > notes.md
+          fi
+          if [ ! -s notes.md ]; then
+            if [ "${PRE}" = "true" ]; then
+              echo "Pre-release ${RELEASE} (test build)." > notes.md
+            else
+              echo "::error::CHANGES.md has no section \"## ${RELEASE} (...)\"."
+              exit 1
+            fi
+          fi
+          cat notes.md
+          DELIMITER="notes-$(openssl rand -hex 16)"
+          {
+            echo "notes<<${DELIMITER}"
+            cat notes.md
+            echo "${DELIMITER}"
+            # The pinned Moodle HQ workflow sends the notes with curl -F, which cuts them at the first ";" unless they
+            # are quoted, so they are quoted with \ and " escaped. Remove when the pin sends them with --form-string.
+            echo "marketplace<<${DELIMITER}"
+            printf '"%s"\n' "$(sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' notes.md)"
+            echo "${DELIMITER}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Wait for Moodle Plugin CI on the tagged commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.check.outputs.sha }}
+          CI: moodle-ci.yml
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 90); do
+            RUN=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${CI}/runs?head_sha=${SHA}&per_page=1" \
+              --jq '.workflow_runs[0] | select(.) | "\(.status) \(.conclusion) \(.html_url)"')
+            read -r STATUS CONCLUSION URL <<< "${RUN:-none none none}"
+            if [ "${STATUS}" = "none" ]; then
+              if [ "${attempt}" -ge 10 ]; then
+                echo "::error::${CI} never ran on ${SHA}. Tag a commit that CI has tested."
+                exit 1
+              fi
+              echo "No ${CI} run on ${SHA} yet, waiting..."
+              sleep 30
+              continue
+            fi
+            if [ "${STATUS}" = "completed" ]; then
+              if [ "${CONCLUSION}" = "success" ]; then
+                echo "CI passed: ${URL}"
+                exit 0
+              fi
+              echo "::error::CI ended with ${CONCLUSION}: ${URL}"
+              exit 1
+            fi
+            echo "CI: ${STATUS} (${URL}), waiting..."
+            sleep 30
+          done
+          echo "::error::CI did not pass on ${SHA} within 45 minutes. Run this workflow again when it has."
+          exit 1
+
+  zip:
+    name: Attach the ZIP to the GitHub release
+    needs: prepare
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the tag
+        uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ needs.prepare.outputs.tag }}
+
+      - name: Build and upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+          COMPONENT: ${{ needs.prepare.outputs.component }}
+          ZIP: ${{ needs.prepare.outputs.zip }}
+          NOTES: ${{ needs.prepare.outputs.notes }}
+        run: |
+          set -euo pipefail
+          # Moodle's folder is the plugin name (mod_videotime → videotime). .gitattributes export-ignore keeps
+          # .github and other repository files out of the archive.
+          git archive --format=zip --prefix="${COMPONENT#*_}/" -o "${ZIP}" HEAD
+          gh release upload "${TAG}" "${ZIP}" --clobber
+          # Release notes from CHANGES.md when the release was published without text (the website draft uses them).
+          if [ -z "$(gh release view "${TAG}" --json body --jq .body)" ]; then
+            printf '%s\n' "${NOTES}" > notes.md
+            gh release edit "${TAG}" --notes-file notes.md
+          fi
+
+  marketplace:
+    name: Publish to Moodle Marketplace
+    needs: [prepare, zip]
+    if: ${{ !inputs.dry_run && needs.prepare.outputs.prerelease != 'true' }}
+    permissions:
+      contents: read
+    # Moodle HQ's reusable workflow (revision 2026091801), pinned because it receives the token.
+    # Update: https://github.com/moodlehq/moodle-plugin-release/commits/main
+    uses: moodlehq/moodle-plugin-release/.github/workflows/moodle-release.yml@4467fd51a0e7f4bcda665eb2f8fb00365d10a39d
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+      release_notes: ${{ needs.prepare.outputs.marketplace_notes }}
+    secrets:
+      MOODLE_MARKETPLACE_TOKEN: ${{ secrets.MOODLE_MARKETPLACE_TOKEN }}
+
+  website:
+    name: Update bdecent.de
+    needs: [prepare, zip]
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the release webhook
+        env:
+          SECRET: ${{ secrets.BDECENT_RELEASE_SECRET }}
+          STAGING_AUTH: ${{ secrets.BDECENT_STAGING_AUTH }}
+          PRE: ${{ needs.prepare.outputs.prerelease }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+          COMPONENT: ${{ needs.prepare.outputs.component }}
+        run: |
+          set -euo pipefail
+          BODY=$(jq -cn --arg repo "${GITHUB_REPOSITORY,,}" --arg tag "${TAG}" --arg component "${COMPONENT}" \
+            '{repo: $repo, tag: $tag, component: $component}')
+          call() { # site, extra curl args…
+            local site="$1"; shift
+            local ts sig code
+            ts=$(date +%s)
+            sig="sha256=$(printf '%s' "${ts}.${BODY}" | openssl dgst -sha256 -hmac "${SECRET}" -r | cut -d' ' -f1)"
+            code=$(curl -sS -o response.json -w '%{http_code}' -X POST "https://${site}/wp-json/bdecent/v1/github-release" \
+              -H 'Content-Type: application/json' -H "X-BD-Timestamp: ${ts}" -H "X-BD-Signature: ${sig}" \
+              --data "${BODY}" --max-time 180 "$@")
+            echo "${site}: HTTP ${code}"
+            jq . response.json || cat response.json
+            [ "${code}" = "200" ]
+          }
+          FAILED=0
+          # Pre-releases go to staging only; releases to bdecent.de and staging.
+          if [ "${PRE}" != "true" ]; then
+            call bdecent.de || FAILED=1
+          fi
+          call staging.bdecent.de -u "${STAGING_AUTH}" || FAILED=1
+          exit "${FAILED}"
