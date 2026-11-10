@@ -59,6 +59,7 @@ class options extends moodleform {
         'autopause',
         'background',
         'controls',
+        'fullscreen',
         'pip',
         'dnt',
         'width',
@@ -125,6 +126,12 @@ class options extends moodleform {
         $mform->addHelpButton('controls', 'option_controls', 'videotime');
         $mform->setDefault('controls', get_config('videotime', 'controls'));
         self::create_additional_field_form_elements('controls', $mform);
+
+        $mform->addElement('advcheckbox', 'fullscreen', get_string('option_fullscreen', 'videotime'));
+        $mform->setType('fullscreen', PARAM_BOOL);
+        $mform->addHelpButton('fullscreen', 'option_fullscreen', 'videotime');
+        $mform->setDefault('fullscreen', get_config('videotimeplugin_videojs', 'fullscreen'));
+        self::create_additional_field_form_elements('fullscreen', $mform);
 
         $mform->addElement('advcheckbox', 'option_loop', get_string('option_loop', 'videotime'));
         $mform->setType('option_loop', PARAM_BOOL);
