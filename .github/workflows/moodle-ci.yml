@@ -1,6 +1,13 @@
 name: Moodle Plugin CI
 
-on: [push, pull_request]
+on:
+  # Pull requests are built on every branch. Direct pushes build only on master, so that a push to
+  # a branch with an open pull request doesn't run the whole matrix twice. Work reaches dev through
+  # a pull request, which tests the merge result. The release workflow waits for the run on master.
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
