@@ -16,7 +16,7 @@ name: Release
 #     e.g. v1.8.2-t18: not handled here, the run stops without publishing anything. Totara builds are published by
 #     hand in the product's GitHub tab.
 #
-# Video Time Pro and Premium are not released here: see "Releases" in README.md.
+# Video Time Pro and Premium are not released here: see .github/RELEASING.md.
 #
 # Before anything is published, "Moodle Plugin CI" (moodle-ci.yml) must have passed on the tagged commit.
 # Re-run: Actions > Release > Run workflow, with the tag (the release must exist on GitHub).
