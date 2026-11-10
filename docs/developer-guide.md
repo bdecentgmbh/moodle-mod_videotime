@@ -224,9 +224,9 @@ The subplugins have their own tests in their `tests` folders.
 
 ## Continuous integration
 
-`.github/workflows/moodle-ci.yml` runs on every push and pull request with `moodle-plugin-ci` 4. The
-matrix covers Moodle 4.4 (PHP 8.2, MariaDB), 4.5 (PHP 8.2, PostgreSQL), 5.0 and 5.1 (PHP 8.3,
-MariaDB), 5.2 (PHP 8.4, PostgreSQL) and `main` (PHP 8.4 with PostgreSQL, PHP 8.3 with MariaDB).
+`.github/workflows/moodle-ci.yml` runs `moodle-plugin-ci` 4 for pull requests and for pushes to
+`master`, on every Moodle version Video Time supports and on `main`. The PHP versions and databases
+are in the matrix of the file.
 It runs PHP lint, PHP Mess Detector, the code checker with `--max-warnings 0`, the PHPDoc checker,
 validation, the upgrade savepoint check, Mustache lint, Grunt, PHPUnit and Behat (Chrome). The CI
 checks out only this repository, so it runs without Pro and Premium.
