@@ -37,6 +37,9 @@ jobs:
             moodle-branch: 'main'
             database: 'mariadb'
           - php: '8.4'
+            moodle-branch: 'MOODLE_503_STABLE'
+            database: 'mariadb'
+          - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
             database: 'pgsql'
           - php: '8.3'
@@ -96,7 +99,7 @@ jobs:
         run: moodle-plugin-ci codechecker --max-warnings 0 
 
       - name: Moodle PHPDoc Checker
-        if: ${{ matrix.moodle-branch != 'MOODLE_402_STABLE' }}
+        if: ${{ always() }}
         run: moodle-plugin-ci phpdoc
 
       - name: Validating
