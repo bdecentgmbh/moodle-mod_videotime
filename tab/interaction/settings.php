@@ -39,7 +39,7 @@ if ($hassiteconfig) {
         'videotimetab_interaction/spacing',
         new lang_string('spacing', 'videotimetab_interaction'),
         new lang_string('spacing_desc', 'videotimetab_interaction'),
-        MINSECS,
+        0,
         PARAM_FLOAT
     );
     $setting->set_max_duration(DAYSECS - 1);
