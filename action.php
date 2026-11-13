@@ -42,7 +42,7 @@ if ($id) {
     $course         = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
     $moduleinstance = $DB->get_record('videotime', ['id' => $cm->instance], '*', MUST_EXIST);
 } else if ($v) {
-    $moduleinstance = $DB->get_record('videotime', ['id' => $n], '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('videotime', ['id' => $v], '*', MUST_EXIST);
     $course         = $DB->get_record('course', ['id' => $moduleinstance->course], '*', MUST_EXIST);
     $cm             = get_coursemodule_from_instance('videotime', $moduleinstance->id, $course->id, false, MUST_EXIST);
 } else {
@@ -53,6 +53,7 @@ require_login($course, true, $cm);
 if (!is_siteadmin()) {
     throw new coding_exception('Only admins can view this page.');
 }
+require_sesskey();
 
 if (!videotime_has_pro()) {
     throw new \Exception('Video Time Pro not installed.');

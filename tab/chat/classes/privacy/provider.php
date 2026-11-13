@@ -119,7 +119,7 @@ class provider implements
             }
             \core_comment\privacy\provider::export_comments(
                 $context,
-                'videotiometab_chat',
+                'videotimetab_chat',
                 'chat',
                 0,
                 []

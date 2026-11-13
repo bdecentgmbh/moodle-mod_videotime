@@ -338,6 +338,8 @@ function videotimeplugin_videojs_data_preprocessing(array &$defaultvalues, int $
  */
 function videotimeplugin_videojs_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     if ($context->contextlevel == CONTEXT_SYSTEM && $filearea == 'audioimage') {
+        require_login();
+
         // Extract the filename / filepath from the $args array.
         $filename = array_pop($args);
         if (!$args) {

@@ -1,0 +1,4 @@
+# Left out of the release ZIP (git archive), also by Moodle HQ's release workflow.
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
