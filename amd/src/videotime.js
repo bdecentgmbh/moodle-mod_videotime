@@ -243,7 +243,7 @@ define([
                 if (event.seconds === event.duration) {
                     this.plugins.forEach(async(plugin) => {
                         if (typeof plugin.setCurrentTime == 'function') {
-                            const session = plugin.getSession();
+                            const session = await plugin.getSession();
                             plugin.setCurrentTime(session.id, event.seconds);
                         }
                     });
