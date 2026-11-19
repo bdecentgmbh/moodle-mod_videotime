@@ -673,7 +673,7 @@ function videotime_extend_settings_navigation($settings, $videotimenode) {
  */
 function videotime_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get('coursereports');
-    if (!empty($node) && videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
+    if ($node && videotime_has_pro() && has_capability('mod/videotime:view_report', $context)) {
         $url = new moodle_url('/mod/videotime/index.php', ['id' => $course->id]);
         $node->add(
             get_string('pluginname', 'videotime'),
