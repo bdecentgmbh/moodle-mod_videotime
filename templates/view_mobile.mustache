@@ -41,7 +41,13 @@
 {{#instance}}
     <ion-card>
         <ion-card-content>
-            {{{intro}}}
+            <core-course-module-info
+                [module]="module"
+                description="{{ intro }}"
+                component="mod_videotime"
+                componentId="{{ cmid }}"
+                [courseId]="courseId"
+            ></core-course-module-info>
         </ion-card-content>
     </ion-card>
     {{# iframe }}
